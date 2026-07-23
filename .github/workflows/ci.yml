@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install
+        run: npm ci
+      - name: Lint
+        run: npm run lint --if-present
+      - name: Build (web + admin)
+        run: npm run build
+        env:
+          # A URL da API é injetada no build. Em produção aponta para o
+          # deploy do repositório pulsepass-api.
+          VITE_API_URL: ${{ vars.VITE_API_URL || 'http://localhost:4000/api' }}

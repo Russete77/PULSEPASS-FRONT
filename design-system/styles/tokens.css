@@ -1,0 +1,207 @@
+/* ═══════════════════════════════════════════════════════════
+   PULSEPASS DESIGN SYSTEM — v3 Premium Glass
+   Sistema Operacional de Eventos · Ticketeria + Guest + Cashless
+   ═══════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap');
+
+:root {
+  /* ── Brand ── */
+  --pp-pulse:           #00FF85;       /* primary neon — pulse */
+  --pp-pulse-hi:        #4DFFA8;       /* brightened */
+  --pp-pulse-lo:        #00CC6A;       /* aaa contrast on light */
+  --pp-pulse-ink:       #003C1F;       /* deep brand ink */
+  --pp-pulse-rgb:       0, 255, 133;
+
+  /* Accents — violet (premium / loyalty) + cyan (data / live) */
+  --pp-violet:          #A78BFA;
+  --pp-violet-hi:       #C4B5FD;
+  --pp-violet-lo:       #7C3AED;
+  --pp-cyan:            #22D3EE;
+  --pp-cyan-hi:         #67E8F9;
+  --pp-cyan-lo:         #0891B2;
+
+  /* Magenta for cashless / status alerts */
+  --pp-pink:            #FF3D88;
+  --pp-amber:           #FFB800;
+  --pp-red:             #FF3B30;
+
+  /* ── Ink (dark base — primary surface) ── */
+  --pp-ink-950:         #06070A;       /* deepest — body bg */
+  --pp-ink-900:         #0B0D12;
+  --pp-ink-850:         #11141B;
+  --pp-ink-800:         #161A23;
+  --pp-ink-700:         #1F2430;
+  --pp-ink-600:         #2A3140;
+  --pp-ink-500:         #3A4254;
+
+  /* Pure */
+  --pp-white:           #FFFFFF;
+  --pp-cream:           #F5F3EE;
+
+  /* ── Text on dark ── */
+  --pp-fg:              #FFFFFF;
+  --pp-fg-2:            rgba(255, 255, 255, 0.74);
+  --pp-fg-3:            rgba(255, 255, 255, 0.52);
+  --pp-fg-4:            rgba(255, 255, 255, 0.34);
+  --pp-fg-5:            rgba(255, 255, 255, 0.18);
+
+  /* ── Glass surfaces ── */
+  --pp-glass-1:         rgba(255, 255, 255, 0.03);   /* faintest tint */
+  --pp-glass-2:         rgba(255, 255, 255, 0.06);
+  --pp-glass-3:         rgba(255, 255, 255, 0.10);
+  --pp-glass-4:         rgba(255, 255, 255, 0.14);
+  --pp-glass-5:         rgba(255, 255, 255, 0.20);
+
+  /* ── Glass borders (white at low opacity = the magic) ── */
+  --pp-edge-1:          rgba(255, 255, 255, 0.06);
+  --pp-edge-2:          rgba(255, 255, 255, 0.10);
+  --pp-edge-3:          rgba(255, 255, 255, 0.16);
+  --pp-edge-4:          rgba(255, 255, 255, 0.24);
+
+  /* ── Hairline highlight (inner top edge of glass) ── */
+  --pp-shine:           inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  --pp-shine-strong:    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+
+  /* ── Typography ── */
+  --pp-font-display:    'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --pp-font-body:       'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --pp-font-mono:       'JetBrains Mono', ui-monospace, 'SF Mono', monospace;
+  --pp-font-serif:      'Newsreader', Georgia, 'Times New Roman', serif;
+
+  /* ── Type scale ── */
+  --pp-fs-12:  0.75rem;
+  --pp-fs-13:  0.8125rem;
+  --pp-fs-14:  0.875rem;
+  --pp-fs-15:  0.9375rem;
+  --pp-fs-16:  1rem;
+  --pp-fs-18:  1.125rem;
+  --pp-fs-20:  1.25rem;
+  --pp-fs-24:  1.5rem;
+  --pp-fs-28:  1.75rem;
+  --pp-fs-32:  2rem;
+  --pp-fs-40:  2.5rem;
+  --pp-fs-48:  3rem;
+  --pp-fs-56:  3.5rem;
+  --pp-fs-72:  4.5rem;
+
+  /* ── Spacing (4px grid) ── */
+  --pp-s-1: 4px; --pp-s-2: 8px; --pp-s-3: 12px; --pp-s-4: 16px;
+  --pp-s-5: 20px; --pp-s-6: 24px; --pp-s-8: 32px; --pp-s-10: 40px;
+  --pp-s-12: 48px; --pp-s-16: 64px; --pp-s-20: 80px;
+
+  /* ── Radius (generous, premium) ── */
+  --pp-r-xs: 6px;
+  --pp-r-sm: 10px;
+  --pp-r-md: 14px;
+  --pp-r-lg: 20px;
+  --pp-r-xl: 28px;
+  --pp-r-2xl: 36px;
+  --pp-r-pill: 999px;
+
+  /* ── Shadow / glow ── */
+  --pp-shadow-1:     0 1px 2px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.3);
+  --pp-shadow-2:     0 4px 16px rgba(0,0,0,0.5), 0 12px 32px rgba(0,0,0,0.4);
+  --pp-shadow-3:     0 8px 24px rgba(0,0,0,0.55), 0 24px 64px rgba(0,0,0,0.5);
+  --pp-shadow-pop:   0 30px 80px -20px rgba(0,0,0,0.7), 0 12px 36px -8px rgba(0,0,0,0.5);
+
+  --pp-glow-pulse:   0 0 0 1px rgba(0,255,133,0.35), 0 8px 28px rgba(0,255,133,0.28);
+  --pp-glow-pulse-soft: 0 0 32px rgba(0,255,133,0.18);
+  --pp-glow-violet:  0 0 32px rgba(167,139,250,0.30);
+  --pp-glow-cyan:    0 0 32px rgba(34,211,238,0.30);
+
+  /* ── Blur values ── */
+  --pp-blur-sm:  blur(12px) saturate(150%);
+  --pp-blur-md:  blur(24px) saturate(160%);
+  --pp-blur-lg:  blur(40px) saturate(180%);
+  --pp-blur-xl:  blur(64px) saturate(200%);
+
+  /* ── Easing / motion ── */
+  --pp-ease:        cubic-bezier(0.22, 1, 0.36, 1);
+  --pp-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --pp-dur-1: 120ms;
+  --pp-dur-2: 220ms;
+  --pp-dur-3: 360ms;
+  --pp-dur-4: 560ms;
+}
+
+/* ─────────────────────────────────────────────────
+   GLASS PRIMITIVES — reusable utility classes
+   ───────────────────────────────────────────────── */
+.pp-glass {
+  background: var(--pp-glass-2);
+  backdrop-filter: var(--pp-blur-md);
+  -webkit-backdrop-filter: var(--pp-blur-md);
+  border: 1px solid var(--pp-edge-2);
+  box-shadow: var(--pp-shine), var(--pp-shadow-2);
+}
+.pp-glass-strong {
+  background: var(--pp-glass-3);
+  backdrop-filter: var(--pp-blur-lg);
+  -webkit-backdrop-filter: var(--pp-blur-lg);
+  border: 1px solid var(--pp-edge-3);
+  box-shadow: var(--pp-shine-strong), var(--pp-shadow-3);
+}
+.pp-glass-faint {
+  background: var(--pp-glass-1);
+  backdrop-filter: var(--pp-blur-sm);
+  -webkit-backdrop-filter: var(--pp-blur-sm);
+  border: 1px solid var(--pp-edge-1);
+}
+
+/* Aurora mesh background — signature look */
+.pp-aurora {
+  position: relative;
+  background: var(--pp-ink-950);
+  isolation: isolate;
+}
+.pp-aurora::before {
+  content: '';
+  position: absolute;
+  inset: -10%;
+  z-index: -1;
+  background:
+    radial-gradient(45% 35% at 22% 18%, rgba(0,255,133,0.35), transparent 70%),
+    radial-gradient(40% 30% at 80% 12%, rgba(167,139,250,0.32), transparent 70%),
+    radial-gradient(50% 40% at 65% 85%, rgba(34,211,238,0.22), transparent 70%),
+    radial-gradient(30% 30% at 10% 80%, rgba(255,61,136,0.18), transparent 70%);
+  filter: blur(40px) saturate(160%);
+  opacity: 0.85;
+}
+
+/* Pulse dot — live indicator */
+.pp-pulse-dot {
+  display: inline-block;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--pp-pulse);
+  box-shadow: 0 0 0 0 rgba(0,255,133,0.7);
+  animation: pp-pulse-ring 1.6s var(--pp-ease) infinite;
+}
+@keyframes pp-pulse-ring {
+  0%   { box-shadow: 0 0 0 0 rgba(0,255,133,0.7); }
+  70%  { box-shadow: 0 0 0 10px rgba(0,255,133,0); }
+  100% { box-shadow: 0 0 0 0 rgba(0,255,133,0); }
+}
+
+/* Rotating ticket border (QR JWT rotativo) */
+@keyframes pp-rotate-border {
+  to { transform: rotate(360deg); }
+}
+
+/* Shimmer / loading */
+@keyframes pp-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Reset for the document */
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  font-family: var(--pp-font-body);
+  color: var(--pp-fg);
+  background: var(--pp-ink-950);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}

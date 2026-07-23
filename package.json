@@ -1,0 +1,23 @@
+{
+  "name": "pulsepass-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "PulsePass — frontends (web do cliente, cockpit da produtora/PulseADM e app mobile) sobre o design system compartilhado. Consome a API do repositório pulsepass-api.",
+  "packageManager": "npm@10.9.7",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "dev:web": "npm run dev -w pulsepass-web",
+    "dev:admin": "npm run dev -w pulsepass-admin",
+    "dev:mobile": "npm run start -w pulsepass-mobile"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0"
+  }
+}

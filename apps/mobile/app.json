@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "PulsePass",
+    "slug": "pulsepass",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "pulsepass",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.pulsepass.app"
+    },
+    "android": {
+      "package": "com.pulsepass.app",
+      "edgeToEdgeEnabled": true
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static"
+    },
+    "plugins": ["expo-router"],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
