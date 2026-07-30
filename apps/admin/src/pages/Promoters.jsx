@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Shell, Loading, ErrorBox } from '../components/Shell.jsx';
+import { Shell, Loading, ErrorBox, BackLink } from '../components/Shell.jsx';
 import { api } from '../lib/api.js';
 import { brl } from '../lib/format.js';
 
@@ -89,7 +89,7 @@ export default function Promoters() {
 
   return (
     <Shell>
-      <Link to={`/eventos/${id}`} className="ck-btn ck-btn--glass ck-btn--sm" style={{ marginBottom: "16px" }}>← Dashboard</Link>
+      <BackLink to={`/eventos/${id}`} label="Dashboard" />
       <div className="ck-eyebrow">lista · promoters (azlist)</div>
       <h1 className="ck-h1">Promoters & Guest List</h1>
       <p className="ck-sub">Crie promoters, compartilhe o link público e acompanhe inscritos e comissão.</p>
@@ -118,7 +118,7 @@ export default function Promoters() {
         <div className="ck-row" style={{ marginTop: 10 }}>
           <div className="ck-field" style={{ margin: 0 }}>
             <label className="ck-label">Tipo de lista</label>
-            <select className="ck-input" value={listType} onChange={(e) => setListType(e.target.value)}>
+            <select className="ck-select" value={listType} onChange={(e) => setListType(e.target.value)}>
               <option value="standard">Padrão</option>
               <option value="free_until">Grátis até (horário)</option>
               <option value="birthday">Aniversário</option>

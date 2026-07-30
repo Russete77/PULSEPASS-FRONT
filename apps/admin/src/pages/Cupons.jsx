@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Shell, Loading, ErrorBox } from '../components/Shell.jsx';
+import { Shell, Loading, ErrorBox, BackLink } from '../components/Shell.jsx';
+import { Icon } from '@pulsepass/shared/Icon';
 import { api } from '../lib/api.js';
 import { brl } from '../lib/format.js';
 
@@ -60,7 +61,7 @@ export default function Cupons() {
 
   return (
     <Shell>
-      <Link to={`/eventos/${id}`} className="ck-btn ck-btn--glass ck-btn--sm" style={{ marginBottom: "16px" }}>← Dashboard</Link>
+      <BackLink to={`/eventos/${id}`} label="Dashboard" />
       <div className="ck-eyebrow">cupons · desconto</div>
       <h1 className="ck-h1">Cupons de desconto</h1>
       <p className="ck-sub">Percentual ou valor fixo, com limite de usos e validade opcionais.</p>
@@ -75,7 +76,7 @@ export default function Cupons() {
           </div>
           <div className="ck-field">
             <label className="ck-label">Tipo</label>
-            <select className="ck-input" value={form.kind} onChange={set('kind')}>
+            <select className="ck-select" value={form.kind} onChange={set('kind')}>
               <option value="percent">Percentual (%)</option>
               <option value="fixed">Valor fixo (R$)</option>
             </select>
@@ -114,7 +115,7 @@ export default function Cupons() {
                 <td>
                   <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
                     <button className="ck-btn ck-btn--glass" onClick={() => toggle(c)}>{c.active ? 'Desativar' : 'Ativar'}</button>
-                    <button className="ck-iconbtn" onClick={() => remove(c)} title="Excluir">✕</button>
+                    <button className="ck-iconbtn" onClick={() => remove(c)} title="Excluir"><Icon name="close" size={15} /></button>
                   </div>
                 </td>
               </tr>

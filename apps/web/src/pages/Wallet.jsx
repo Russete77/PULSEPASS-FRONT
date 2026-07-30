@@ -45,11 +45,12 @@ export default function Wallet() {
             <button className="pp-btn pp-btn--primary" onClick={() => setRechargeOpen(true)}>
               <Icon name="wallet" size={16} /> Recarregar
             </button>
+            {/* Só duas ações reais: entrar dinheiro e sair dinheiro. Havia um
+                terceiro botão "Pix" que abria o MESMO modal de recarga — com
+                ícone de copiar, dando a entender que copiava uma chave. Numa
+                carteira, botão que engana custa confiança. A recarga já é Pix. */}
             <button className="pp-btn pp-btn--glass" onClick={() => sacar(load, setError)} disabled={cents <= 0}>
-              Sacar
-            </button>
-            <button className="pp-btn pp-btn--glass" onClick={() => setRechargeOpen(true)}>
-              <Icon name="copy" size={15} /> Pix
+              <Icon name="download" size={15} /> Sacar
             </button>
           </div>
         </div>
@@ -148,7 +149,7 @@ export function RechargeSheet({ onClose, onPaid, eventId = null }) {
       <div className="pp-modal" onClick={(e) => e.stopPropagation()}>
         <div className="pp-modal__head">
           <div className="pp-modal__title">Recarregar carteira</div>
-          <button className="pp-modal__close" onClick={onClose} aria-label="fechar">×</button>
+          <button className="pp-modal__close" onClick={onClose} aria-label="fechar"><Icon name="close" size={16} /></button>
         </div>
 
         {step === 'form' ? (

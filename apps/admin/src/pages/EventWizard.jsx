@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Shell, Loading, ErrorBox } from '../components/Shell.jsx';
+import { Icon } from '@pulsepass/shared/Icon';
 import { api } from '../lib/api.js';
 import { toDatetimeLocal } from '../lib/format.js';
 
@@ -135,7 +136,7 @@ export default function EventWizard() {
               <label className="ck-label">Qtd.</label>
               <input className="ck-input" type="number" min="0" value={t.quantity_total} onChange={(e) => setTier(i, 'quantity_total', e.target.value)} />
             </div>
-            <button type="button" className="ck-iconbtn" onClick={() => removeTier(i)} disabled={tiers.length === 1}>✕</button>
+            <button type="button" className="ck-iconbtn" onClick={() => removeTier(i)} disabled={tiers.length === 1}><Icon name="close" size={15} /></button>
             </div>
             <div className="ck-row" style={{ marginTop: 6 }}>
               <div className="ck-field" style={{ margin: 0 }}>

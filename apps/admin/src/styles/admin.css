@@ -3,6 +3,10 @@
    CSS global puro sobre os tokens do design system.
    ═══════════════════════════════════════════════════════════ */
 
+/* O cockpit é escuro: avisa o navegador para que popup de select, scrollbar,
+   date picker e autofill nasçam escuros em vez de brancos. */
+:root { color-scheme: dark; }
+
 a { color: inherit; text-decoration: none; }
 button, input, select, textarea { font-family: inherit; }
 button { cursor: pointer; }
@@ -85,6 +89,15 @@ h1.ck-h1 { font-family: var(--pp-font-display); font-weight: 700; font-size: var
   transition: border-color var(--pp-dur-2) var(--pp-ease), box-shadow var(--pp-dur-2) var(--pp-ease);
 }
 .ck-input::placeholder, .ck-textarea::placeholder { color: var(--pp-fg-4); }
+/* Dropdown precisa PARECER dropdown: sem a seta ele passa por campo de texto. */
+.ck-select {
+  appearance: none; -webkit-appearance: none; cursor: pointer;
+  padding-right: var(--pp-s-10);
+  background-image: linear-gradient(45deg, transparent 50%, var(--pp-fg-3) 50%),
+                    linear-gradient(135deg, var(--pp-fg-3) 50%, transparent 50%);
+  background-position: right 17px center, right 12px center;
+  background-size: 5px 5px, 5px 5px; background-repeat: no-repeat;
+}
 .ck-textarea { height: auto; padding: var(--pp-s-3) var(--pp-s-4); min-height: 88px; }
 .ck-input:focus, .ck-textarea:focus, .ck-select:focus { border-color: rgba(var(--pp-pulse-rgb), 0.55); box-shadow: 0 0 0 3px rgba(var(--pp-pulse-rgb), 0.12); }
 .ck-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--pp-s-4); }
@@ -124,8 +137,16 @@ h1.ck-h1 { font-family: var(--pp-font-display); font-weight: 700; font-size: var
 @keyframes pp-spin { to { transform: rotate(360deg); } }
 
 /* ── Tier editor rows ── */
-.ck-tier { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: var(--pp-s-3); align-items: end; margin-bottom: var(--pp-s-3); }
-@media (max-width: 640px) { .ck-tier { grid-template-columns: 1fr 1fr; } }
+/* 5 colunas para 5 filhos: nome, preço, meia, qtd e o botão de remover.
+   Com 4 colunas declaradas o 5º filho caía numa coluna implícita e a linha
+   estourava o card (o campo "Meia" vazava pra fora). */
+.ck-tier { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: var(--pp-s-3); align-items: end; margin-bottom: var(--pp-s-3); }
+/* input[type=number] tem largura mínima intrínseca: sem min-width:0 o item de
+   grid não encolhe e transborda o container. Vale pra toda grid do cockpit. */
+.ck-tier > *, .ck-row > * { min-width: 0; }
+.ck-tier input, .ck-row input, .ck-tier select, .ck-row select { width: 100%; }
+@media (max-width: 900px) { .ck-tier { grid-template-columns: 1fr 1fr 1fr auto; } }
+@media (max-width: 640px) { .ck-tier { grid-template-columns: 1fr 1fr; } .ck-row { grid-template-columns: 1fr; } }
 .ck-iconbtn { width: 44px; height: 46px; border-radius: var(--pp-r-md); background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2); color: var(--pp-fg-2); }
 
 .ck-live { display: inline-flex; align-items: center; gap: 8px; color: var(--pp-fg-3); font-size: var(--pp-fs-13); }

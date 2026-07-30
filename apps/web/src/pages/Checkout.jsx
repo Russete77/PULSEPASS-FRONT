@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Page } from '../components/Layout.jsx';
 import { Loading, ErrorBox } from '../components/States.jsx';
+import { Icon } from '@pulsepass/shared/Icon';
 import { api } from '../lib/api.js';
 import { brl } from '../lib/format.js';
 
@@ -66,7 +67,7 @@ export default function Checkout() {
     <Page>
       <div className="pp-checkout pp-reveal">
         <div className="pp-checkout__nav">
-          <button className="pp-btn pp-btn--glass pp-btn--icon pp-btn--sm" onClick={() => navigate(-1)} aria-label="voltar">←</button>
+          <button className="pp-btn pp-btn--glass pp-btn--icon pp-btn--sm" onClick={() => navigate(-1)} aria-label="voltar"><Icon name="arrowLeft" size={18} /></button>
           <span className="title">Pagamento · 3 de 3</span>
           <span className="pp-tag-secure">SEGURO</span>
         </div>

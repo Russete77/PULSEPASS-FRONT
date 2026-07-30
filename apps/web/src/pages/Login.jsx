@@ -123,7 +123,7 @@ export default function Login() {
               </>
             )}
             {mode !== 'login' && (
-              <button type="button" className="pp-link" onClick={() => switchMode('login')}>← Voltar ao login</button>
+              <button type="button" className="pp-link" onClick={() => switchMode('login')}>Voltar ao login</button>
             )}
           </div>
         </div>

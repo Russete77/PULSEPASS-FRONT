@@ -63,7 +63,7 @@ export default function MyTickets() {
         <Empty>
           <div className="pp-empty__icon"><Icon name="ticket" size={30} /></div>
           <div className="pp-empty__title">Nenhum ingresso ainda</div>
-          <p>Bora achar um rolê? <Link to="/" className="pp-link">Explorar eventos →</Link></p>
+          <p>Bora achar um rolê? <Link to="/" className="pp-link">Explorar eventos</Link></p>
         </Empty>
       )}
 

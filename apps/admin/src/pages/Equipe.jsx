@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Shell, Loading, ErrorBox } from '../components/Shell.jsx';
+import { Shell, Loading, ErrorBox, BackLink } from '../components/Shell.jsx';
 import { api } from '../lib/api.js';
 
 const ROLES = [
@@ -44,7 +44,7 @@ export default function Equipe() {
 
   return (
     <Shell>
-      <Link to={`/eventos/${id}`} className="ck-btn ck-btn--glass ck-btn--sm" style={{ marginBottom: "16px" }}>← Dashboard</Link>
+      <BackLink to={`/eventos/${id}`} label="Dashboard" />
       <div className="ck-eyebrow">evento · equipe</div>
       <h1 className="ck-h1">Equipe do evento</h1>
       <p className="ck-sub">Delegue acesso por papel: gerente, porta ou bar. O dono sempre tem acesso total.</p>
@@ -57,7 +57,7 @@ export default function Equipe() {
           </div>
           <div className="ck-field" style={{ margin: 0 }}>
             <label className="ck-label">Papel</label>
-            <select className="ck-input" value={role} onChange={(e) => setRole(e.target.value)}>
+            <select className="ck-select" value={role} onChange={(e) => setRole(e.target.value)}>
               {ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
             </select>
           </div>

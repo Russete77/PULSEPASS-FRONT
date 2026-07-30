@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Shell, Loading, ErrorBox } from '../components/Shell.jsx';
+import { Shell, Loading, ErrorBox, BackLink } from '../components/Shell.jsx';
+import { Icon } from '@pulsepass/shared/Icon';
 import { api } from '../lib/api.js';
 import { brl } from '../lib/format.js';
 
@@ -48,7 +49,7 @@ export default function Camarotes() {
 
   return (
     <Shell>
-      <Link to={`/eventos/${id}`} className="ck-btn ck-btn--glass ck-btn--sm" style={{ marginBottom: "16px" }}>← Dashboard</Link>
+      <BackLink to={`/eventos/${id}`} label="Dashboard" />
       <div className="ck-eyebrow">azlist · camarotes</div>
       <h1 className="ck-h1">Camarotes & reservas</h1>
       <p className="ck-sub">Cadastre camarotes/mesas com consumação mínima e aprove as solicitações de reserva.</p>
@@ -90,7 +91,7 @@ export default function Camarotes() {
                 <td style={{ color: 'var(--pp-fg-3)' }}>{t.area}</td>
                 <td>{t.capacity ?? '—'}</td>
                 <td>{t.min_spend_cents ? brl(t.min_spend_cents) : '—'}</td>
-                <td style={{ textAlign: 'right' }}><button className="ck-iconbtn" onClick={() => removeTable(t)} title="Excluir">✕</button></td>
+                <td style={{ textAlign: 'right' }}><button className="ck-iconbtn" onClick={() => removeTable(t)} title="Excluir"><Icon name="close" size={15} /></button></td>
               </tr>
             ))}
             {tables.length === 0 && <tr><td colSpan={5} style={{ color: 'var(--pp-fg-3)' }}>Nenhum camarote cadastrado.</td></tr>}

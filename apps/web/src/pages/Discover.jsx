@@ -115,7 +115,7 @@ export default function Discover() {
               <div className="pp-featured__venue">{featured.venue_name ? `${featured.venue_name} · ` : ''}{featured.city}/{featured.state}</div>
               <div className="pp-featured__meta">{featured.min_price_cents != null ? `a partir de ${priceLabel(featured.min_price_cents)}` : 'Ingressos · Lista · Bar'}</div>
             </div>
-            <span className="pp-btn pp-btn--primary pp-btn--sm">Comprar →</span>
+            <span className="pp-btn pp-btn--primary pp-btn--sm">Comprar <Icon name="arrowRight" size={15} /></span>
           </div>
         </Link>
       )}

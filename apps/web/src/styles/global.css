@@ -6,6 +6,9 @@
    (catálogo, evento, checkout, ingresso).
    ═══════════════════════════════════════════════════════════ */
 
+/* App escuro: popup de select, scrollbar, date picker e autofill nascem escuros. */
+:root { color-scheme: dark; }
+
 a { color: inherit; text-decoration: none; }
 button { font-family: inherit; cursor: pointer; }
 img { display: block; max-width: 100%; }
@@ -73,7 +76,11 @@ input, button, select, textarea { font-family: inherit; }
 
 /* ── Featured card (destaque grande — spec Home) ── */
 .pp-featured { position: relative; border-radius: 24px; overflow: hidden; border: 1px solid rgba(255,255,255,0.10); box-shadow: 0 20px 40px rgba(0,0,0,0.5); isolation: isolate; display: block; }
-.pp-featured__art { position: relative; aspect-ratio: 16 / 10; min-height: 260px; background: radial-gradient(80% 80% at 30% 20%, #00FF85, transparent 60%), radial-gradient(80% 80% at 80% 90%, #A78BFA, transparent 60%), #0a0a0c; }
+/* width:100% é obrigatório aqui: sem largura definida, o aspect-ratio deriva a
+   LARGURA a partir do min-height (260 × 1.6 = 416px) e o art vaza pra fora do
+   card. Com a largura fixada, o ratio passa a derivar a altura e o min-height
+   volta a ser só um piso. */
+.pp-featured__art { position: relative; width: 100%; aspect-ratio: 16 / 10; min-height: 260px; background: radial-gradient(80% 80% at 30% 20%, #00FF85, transparent 60%), radial-gradient(80% 80% at 80% 90%, #A78BFA, transparent 60%), #0a0a0c; }
 @media (min-width: 700px) { .pp-featured__art { aspect-ratio: auto; height: 340px; min-height: 0; } }
 .pp-featured { max-width: 920px; }
 .pp-featured__art img { width: 100%; height: 100%; object-fit: cover; }
@@ -244,8 +251,11 @@ input, button, select, textarea { font-family: inherit; }
 .pp-balance__amount { margin-top: 8px; font-family: var(--pp-font-mono); font-weight: 700; font-size: 42px; letter-spacing: -0.02em; display: flex; align-items: baseline; gap: 6px; position: relative; }
 .pp-balance__amount .cur { font-size: 22px; color: rgba(255,255,255,0.55); }
 .pp-balance__amount .cents { font-size: 28px; color: rgba(255,255,255,0.6); }
-.pp-balance__actions { margin-top: 18px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; position: relative; }
-.pp-balance__actions .pp-btn { height: 44px; }
+.pp-balance__actions { margin-top: 18px; display: grid; grid-template-columns: 1.35fr 1fr; gap: 10px; position: relative; }
+/* min-width:0 permite o botão encolher abaixo do seu min-content; sem isso os
+   3 botões somados estouram o cartão de saldo em telas de 375px. */
+.pp-balance__actions > * { min-width: 0; }
+.pp-balance__actions .pp-btn { height: 44px; padding-left: 10px; padding-right: 10px; }
 
 .pp-txlist { margin-top: var(--pp-s-6); }
 .pp-tx { display: flex; align-items: center; gap: 12px; padding: 10px 4px; }

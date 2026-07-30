@@ -31,7 +31,7 @@ export function DirectionsButton({ venue, address, city, state, className = '', 
           <div className="pp-modal" onClick={(e) => e.stopPropagation()}>
             <div className="pp-modal__head">
               <div className="pp-modal__title">Como chegar</div>
-              <button className="pp-modal__close" onClick={() => setOpen(false)} aria-label="fechar">×</button>
+              <button className="pp-modal__close" onClick={() => setOpen(false)} aria-label="fechar"><Icon name="close" size={16} /></button>
             </div>
             <div className="pp-modal__body pp-stack pp-stack-4">
               <div>

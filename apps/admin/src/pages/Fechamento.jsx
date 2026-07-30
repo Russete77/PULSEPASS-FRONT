@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Shell, Loading, ErrorBox } from '../components/Shell.jsx';
+import { Shell, Loading, ErrorBox, BackLink } from '../components/Shell.jsx';
 import { api } from '../lib/api.js';
 import { brl } from '../lib/format.js';
 
@@ -25,7 +25,7 @@ export default function Fechamento() {
 
   return (
     <Shell>
-      <Link to={`/eventos/${id}`} className="ck-btn ck-btn--glass ck-btn--sm" style={{ marginBottom: "16px" }}>← Dashboard</Link>
+      <BackLink to={`/eventos/${id}`} label="Dashboard" />
       <div className="ck-eyebrow">bar · fechamento de caixa</div>
       <h1 className="ck-h1">Fechamento por operador</h1>
       <p className="ck-sub">Total processado no PDV por cada operador (débito de saldo — cashless, sem dinheiro em espécie).</p>

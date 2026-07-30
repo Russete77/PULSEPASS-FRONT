@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Shell, Loading, ErrorBox } from '../components/Shell.jsx';
+import { Shell, Loading, ErrorBox, BackLink } from '../components/Shell.jsx';
 import { api } from '../lib/api.js';
 import { brl, eventDate, dateTime } from '../lib/format.js';
 
@@ -42,7 +42,7 @@ export default function Dashboard() {
 
   return (
     <Shell>
-      <Link to="/" className="ck-btn ck-btn--glass ck-btn--sm" style={{ marginBottom: "16px" }}>← Eventos</Link>
+      <BackLink to="/" label="Eventos" />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 12 }}>
         <div>
           <div className="ck-eyebrow">

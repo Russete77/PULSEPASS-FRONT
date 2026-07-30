@@ -228,6 +228,15 @@
   background-position: right 18px center, right 13px center;
   background-size: 5px 5px, 5px 5px; background-repeat: no-repeat; padding-right: var(--pp-s-10); }
 .pp-input::placeholder, .pp-textarea::placeholder { color: rgba(255,255,255,0.45); }
+/* Dropdown nativo: o popup é desenhado pelo SO, não pelo nosso CSS. Sem isto ele
+   abre CLARO no Windows/Linux enquanto a option herda texto branco do select —
+   branco no branco, ilegível. color-scheme força o popup escuro (e também acerta
+   scrollbar, date picker e autofill); as regras de option são o cinto de segurança
+   pros navegadores que ignoram o color-scheme. */
+select, .pp-select, .pp-input, .pp-textarea { color-scheme: dark; }
+select option, select optgroup, .pp-select option, .pp-select optgroup {
+  background-color: #14161A; color: #F2F4F7;
+}
 .pp-input:focus, .pp-textarea:focus, .pp-select:focus { border-color: rgba(var(--pp-pulse-rgb), 0.55); box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 0 0 3px rgba(var(--pp-pulse-rgb), 0.12); }
 .pp-field--invalid .pp-input, .pp-field--invalid .pp-textarea, .pp-field--invalid .pp-select,
 .pp-input--invalid { border-color: rgba(255,59,48,0.5); }

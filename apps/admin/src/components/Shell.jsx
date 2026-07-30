@@ -67,6 +67,15 @@ export function Loading({ label = 'Carregando…' }) {
 }
 export function ErrorBox({ children }) { return <div className="ck-error">{children}</div>; }
 
+/** Voltar padrão do cockpit — ícone de linha, nunca glifo "←" digitado. */
+export function BackLink({ to, label }) {
+  return (
+    <Link to={to} className="ck-btn ck-btn--glass ck-btn--sm" style={{ marginBottom: 'var(--pp-s-4)' }}>
+      <Icon name="arrowLeft" size={16} /> {label}
+    </Link>
+  );
+}
+
 /**
  * Voltar das telas de operação. Porteiro/barman não têm dashboard de evento —
  * mandá-los pra lá dá "Sem acesso a este evento" e prende a pessoa na fila.

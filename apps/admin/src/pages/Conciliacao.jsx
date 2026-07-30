@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Shell, Loading, ErrorBox } from '../components/Shell.jsx';
+import { Shell, Loading, ErrorBox, BackLink } from '../components/Shell.jsx';
 import { api } from '../lib/api.js';
 import { brl } from '../lib/format.js';
 
@@ -33,7 +33,7 @@ export default function Conciliacao() {
 
   return (
     <Shell>
-      <Link to={`/eventos/${id}`} className="ck-btn ck-btn--glass ck-btn--sm" style={{ marginBottom: "16px" }}>← Dashboard</Link>
+      <BackLink to={`/eventos/${id}`} label="Dashboard" />
       <div className="ck-eyebrow">financeiro · conciliação</div>
       <h1 className="ck-h1">Conciliação do evento</h1>
       <p className="ck-sub">{r.orders_paid} pedidos pagos · taxa da plataforma {r.platform_fee_percent}%</p>
