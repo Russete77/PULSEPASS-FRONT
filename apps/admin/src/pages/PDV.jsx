@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Shell, Loading, ErrorBox } from '../components/Shell.jsx';
+import { Shell, Loading, ErrorBox, OpsBack } from '../components/Shell.jsx';
 import { Icon } from '@pulsepass/shared/Icon';
 import { api } from '../lib/api.js';
 import { brl } from '../lib/format.js';
@@ -72,7 +72,7 @@ export default function PDV() {
 
   return (
     <Shell>
-      <Link to={`/eventos/${id}`} className="ck-btn ck-btn--glass ck-btn--sm" style={{ marginBottom: 'var(--pp-s-4)' }}><Icon name="arrowLeft" size={16} /> Dashboard</Link>
+      <OpsBack eventId={id} />
       <div className="ck-eyebrow">pdv · cashless</div>
       <h1 className="ck-h1">Bar — lançar pedido</h1>
       <p className="ck-sub">Identifique o cliente, monte o pedido e debite o saldo da carteira.</p>

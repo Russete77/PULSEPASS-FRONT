@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Shell, ErrorBox } from '../components/Shell.jsx';
+import { Shell, ErrorBox, OpsBack } from '../components/Shell.jsx';
 import { Icon } from '@pulsepass/shared/Icon';
 import { api } from '../lib/api.js';
 import {
@@ -143,7 +143,7 @@ export default function Porta() {
 
   return (
     <Shell>
-      <Link to={`/eventos/${id}`} className="ck-btn ck-btn--glass ck-btn--sm" style={{ marginBottom: 'var(--pp-s-4)' }}><Icon name="arrowLeft" size={16} /> Dashboard</Link>
+      <OpsBack eventId={id} />
       <div className="ck-eyebrow">porta · check-in</div>
       <h1 className="ck-h1">Validar entrada</h1>
       <p className="ck-sub">Escaneie o QR ou digite o código do ingresso (PP-XXXX-XXXX).</p>

@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { BrandWordmark } from '@pulsepass/shared/Logo';
+import { Icon } from '@pulsepass/shared/Icon';
 import { useAuth } from '../context/AuthContext.jsx';
 import { api } from '../lib/api.js';
 
 export function Shell({ children }) {
-  const { user, signOut } = useAuth();
+  const { user, signOut, isStaffOnly } = useAuth();
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -19,19 +20,25 @@ export function Shell({ children }) {
     <div className="ck-shell">
       <aside className="ck-side">
         <div className="ck-brand">
-          <BrandWordmark size={30} tag="OS" tagline="cockpit produtora" />
+          <BrandWordmark size={30} tag="OS" tagline={isStaffOnly ? 'cockpit operação' : 'cockpit produtora'} />
         </div>
         <nav className="ck-nav">
-          <NavLink to="/" end className="ck-navlink">Eventos</NavLink>
-          <NavLink to="/novo" className="ck-navlink">Criar evento</NavLink>
-          <NavLink to="/repasse" className="ck-navlink">Repasse</NavLink>
+          {isStaffOnly ? (
+            <NavLink to="/" end className="ck-navlink">Meus plantões</NavLink>
+          ) : (
+            <>
+              <NavLink to="/" end className="ck-navlink">Eventos</NavLink>
+              <NavLink to="/novo" className="ck-navlink">Criar evento</NavLink>
+              <NavLink to="/repasse" className="ck-navlink">Repasse</NavLink>
+            </>
+          )}
           {isAdmin && (
             <NavLink to="/plataforma" className="ck-navlink" style={{ color: 'var(--pp-pink)', marginTop: 'var(--pp-s-4)' }}>
               ◆ PulseADM
             </NavLink>
           )}
         </nav>
-        <div className="ck-side-foot">Cockpit · Produtora</div>
+        <div className="ck-side-foot">{isStaffOnly ? 'Cockpit · Operação' : 'Cockpit · Produtora'}</div>
       </aside>
 
       <div className="ck-main">
@@ -59,3 +66,17 @@ export function Loading({ label = 'Carregando…' }) {
   return <div className="ck-loading"><div className="ck-spinner" /><p style={{ marginTop: 14 }}>{label}</p></div>;
 }
 export function ErrorBox({ children }) { return <div className="ck-error">{children}</div>; }
+
+/**
+ * Voltar das telas de operação. Porteiro/barman não têm dashboard de evento —
+ * mandá-los pra lá dá "Sem acesso a este evento" e prende a pessoa na fila.
+ */
+export function OpsBack({ eventId }) {
+  const { isStaffOnly } = useAuth();
+  const to = isStaffOnly ? '/' : `/eventos/${eventId}`;
+  return (
+    <Link to={to} className="ck-btn ck-btn--glass ck-btn--sm" style={{ marginBottom: 'var(--pp-s-4)' }}>
+      <Icon name="arrowLeft" size={16} /> {isStaffOnly ? 'Meus plantões' : 'Dashboard'}
+    </Link>
+  );
+}

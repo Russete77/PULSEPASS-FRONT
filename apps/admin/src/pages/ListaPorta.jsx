@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Shell, Loading, ErrorBox } from '../components/Shell.jsx';
+import { Shell, Loading, ErrorBox, OpsBack } from '../components/Shell.jsx';
 import { Icon } from '@pulsepass/shared/Icon';
 import { api } from '../lib/api.js';
 
@@ -38,7 +38,7 @@ export default function ListaPorta() {
 
   return (
     <Shell>
-      <Link to={`/eventos/${id}`} className="ck-btn ck-btn--glass ck-btn--sm" style={{ marginBottom: 'var(--pp-s-4)' }}><Icon name="arrowLeft" size={16} /> Dashboard</Link>
+      <OpsBack eventId={id} />
       <div className="ck-eyebrow">porta · lista (azlist)</div>
       <h1 className="ck-h1">Check-in da lista</h1>
       <p className="ck-sub">Busque o nome do convidado e libere a entrada. {present}/{guests.length} presentes.</p>
