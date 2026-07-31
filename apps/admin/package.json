@@ -7,17 +7,20 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node --test src/**/*.test.mjs"
   },
   "dependencies": {
     "@pulsepass/shared": "*",
     "@supabase/supabase-js": "^2.45.0",
+    "jsqr": "^1.4.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.1.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
+    "qrcode": "^1.5.4",
     "vite": "^6.0.0"
   }
 }

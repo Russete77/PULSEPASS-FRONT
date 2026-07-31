@@ -6,6 +6,7 @@ import { api } from '../lib/api.js';
 import {
   syncManifest, checkLocal, syncQueue, pendingCount, manifestMeta,
 } from '../lib/offlineDoor.js';
+import { startScanner, cameraSupported, secureContextOk, feedback } from '../lib/qrScanner.js';
 
 const RESULT_STYLE = {
   ok: { bg: 'rgba(0,255,133,0.10)', border: 'rgba(0,255,133,0.45)', color: 'var(--pp-pulse)' },
@@ -24,8 +25,10 @@ export default function Porta() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [scanning, setScanning] = useState(false);
+  const [torchAvailable, setTorchAvailable] = useState(false);
+  const [torchOn, setTorchOn] = useState(false);
   const videoRef = useRef(null);
-  const streamRef = useRef(null);
+  const scannerRef = useRef(null);
 
   // ── estado offline ──
   const [online, setOnline] = useState(typeof navigator !== 'undefined' ? navigator.onLine : true);
@@ -33,7 +36,9 @@ export default function Porta() {
   const [manifest, setManifest] = useState(null);
   const [manifestBusy, setManifestBusy] = useState(false);
 
-  const scanSupported = typeof window !== 'undefined' && 'BarcodeDetector' in window;
+  // Câmera existe? (BarcodeDetector não é mais requisito — jsQR cobre iOS/Firefox.)
+  const scanSupported = cameraSupported();
+  const scanBlockedByHttp = scanSupported && !secureContextOk();
 
   async function refreshOfflineState() {
     try { setPending(await pendingCount()); setManifest(await manifestMeta()); } catch { /* idb indisponível */ }
@@ -80,6 +85,7 @@ export default function Porta() {
       if (typeof navigator !== 'undefined' && !navigator.onLine) throw new Error('fetch:offline');
       const r = await api.checkIn(id, input);
       setResult(r);
+      feedback(r.result === 'ok');
       setCode('');
     } catch (e) {
       // Sem rede → valida contra o manifesto offline e enfileira.
@@ -87,6 +93,7 @@ export default function Porta() {
         try {
           const r = await checkLocal(input);
           setResult(r);
+          feedback(r.result === 'ok');
           setCode('');
           await refreshOfflineState();
         } catch (le) {
@@ -100,41 +107,35 @@ export default function Porta() {
     }
   }
 
+  // Câmera: fica LIGADA enquanto a fila anda. Cada QR novo é validado na hora,
+  // com beep/vibração — o porteiro acompanha pelo som, sem depender da tela.
   async function startScan() {
-    if (!scanSupported) return;
-    setScanning(true);
+    setError('');
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-      streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        await videoRef.current.play();
-      }
-      // eslint-disable-next-line no-undef
-      const detector = new window.BarcodeDetector({ formats: ['qr_code'] });
-      const tick = async () => {
-        if (!streamRef.current) return;
-        try {
-          const codes = await detector.detect(videoRef.current);
-          if (codes[0]?.rawValue) {
-            stopScan();
-            submit(codes[0].rawValue);
-            return;
-          }
-        } catch {/* ignore frame errors */}
-        requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
+      const ctrl = await startScanner({
+        video: videoRef.current,
+        onCode: (raw) => submit(raw),
+        onError: () => { /* frame ruim: ignora e tenta o próximo */ },
+      });
+      scannerRef.current = ctrl;
+      setTorchAvailable(ctrl.torchAvailable);
+      setScanning(true);
     } catch (e) {
-      setError('Câmera indisponível: ' + e.message);
+      setError(e.message);
       setScanning(false);
     }
   }
 
   function stopScan() {
-    streamRef.current?.getTracks().forEach((t) => t.stop());
-    streamRef.current = null;
+    scannerRef.current?.stop();
+    scannerRef.current = null;
     setScanning(false);
+    setTorchOn(false);
+  }
+
+  async function toggleTorch() {
+    const on = await scannerRef.current?.toggleTorch();
+    setTorchOn(!!on);
   }
 
   useEffect(() => () => stopScan(), []);
@@ -198,20 +199,45 @@ export default function Porta() {
               {busy ? 'Validando…' : 'Validar'}
             </button>
             {scanSupported && !scanning && (
-              <button type="button" className="ck-btn ck-btn--glass" onClick={startScan}>Escanear QR</button>
+              <button type="button" className="ck-btn ck-btn--glass" onClick={startScan}>
+                <Icon name="scan" size={15} /> Escanear QR
+              </button>
             )}
             {scanning && (
-              <button type="button" className="ck-btn ck-btn--glass" onClick={stopScan}>Parar câmera</button>
+              <>
+                <button type="button" className="ck-btn ck-btn--glass" onClick={stopScan}>Parar câmera</button>
+                {torchAvailable && (
+                  <button type="button" className={`ck-btn ${torchOn ? 'ck-btn--primary' : 'ck-btn--glass'}`} onClick={toggleTorch}>
+                    {torchOn ? 'Lanterna ligada' : 'Lanterna'}
+                  </button>
+                )}
+              </>
             )}
           </div>
         </form>
 
-        {scanning && (
-          <video ref={videoRef} muted playsInline style={{ width: '100%', borderRadius: 12, marginTop: 16, background: '#000' }} />
+        {/* O vídeo fica montado sempre: o ref precisa existir ANTES de startScanner. */}
+        <div style={{ display: scanning ? 'block' : 'none', marginTop: 16, position: 'relative' }}>
+          <video ref={videoRef} muted playsInline
+            style={{ width: '100%', borderRadius: 12, background: '#000', aspectRatio: '4 / 3', objectFit: 'cover' }} />
+          {/* Mira: ajuda o porteiro a centralizar o QR sem pensar. */}
+          <div aria-hidden style={{
+            position: 'absolute', inset: '18% 22%', border: '2px solid rgba(0,255,133,0.85)',
+            borderRadius: 14, boxShadow: '0 0 0 9999px rgba(0,0,0,0.28)', pointerEvents: 'none',
+          }} />
+          <p style={{ color: 'var(--pp-fg-4)', fontSize: 12, marginTop: 10 }}>
+            Câmera ligada — a fila pode andar sem parar. Cada leitura apita.
+          </p>
+        </div>
+
+        {scanBlockedByHttp && (
+          <p style={{ color: 'var(--pp-amber)', fontSize: 12, marginTop: 12 }}>
+            A câmera exige HTTPS. Abra o cockpit por um endereço https:// para escanear.
+          </p>
         )}
         {!scanSupported && (
           <p style={{ color: 'var(--pp-fg-4)', fontSize: 12, marginTop: 12 }}>
-            Scanner de câmera indisponível neste navegador — use a entrada manual.
+            Este dispositivo não expõe câmera ao navegador — use a entrada manual.
           </p>
         )}
       </div>
