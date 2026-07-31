@@ -8,7 +8,11 @@ const STAFF_LABEL = { door: 'Portaria', bar: 'Bar', manager: 'Gerente' };
 
 // Estação de trabalho de cada papel — pra onde o plantão leva.
 const STATIONS = {
-  door: [{ to: '/porta', label: 'Abrir portaria' }, { to: '/lista-porta', label: 'Lista de convidados' }],
+  door: [
+    { to: '/porta', label: 'Abrir portaria' },
+    { to: '/bilheteria', label: 'Bilheteria' },
+    { to: '/lista-porta', label: 'Lista de convidados' },
+  ],
   bar: [{ to: '/pdv', label: 'Abrir PDV' }],
   manager: [{ to: '', label: 'Abrir painel' }],
 };

@@ -9,6 +9,7 @@ import EventWizard from './pages/EventWizard.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Porta from './pages/Porta.jsx';
 import PDV from './pages/PDV.jsx';
+import Bilheteria from './pages/Bilheteria.jsx';
 import Cardapio from './pages/Cardapio.jsx';
 import Fechamento from './pages/Fechamento.jsx';
 import Camarotes from './pages/Camarotes.jsx';
@@ -42,6 +43,7 @@ export default function App() {
       <Route path="/eventos/:id" element={<Protected><Dashboard /></Protected>} />
       <Route path="/eventos/:id/porta" element={<Protected><Porta /></Protected>} />
       <Route path="/eventos/:id/lista-porta" element={<Protected><ListaPorta /></Protected>} />
+      <Route path="/eventos/:id/bilheteria" element={<Protected><Bilheteria /></Protected>} />
       <Route path="/eventos/:id/pdv" element={<Protected><PDV /></Protected>} />
       <Route path="/eventos/:id/cardapio" element={<Protected><Cardapio /></Protected>} />
       <Route path="/eventos/:id/fechamento" element={<Protected><Fechamento /></Protected>} />

@@ -64,6 +64,11 @@ export const api = {
   deleteMenuItem: (itemId) => request(`/admin/menu-items/${itemId}`, { method: 'DELETE' }),
   cashierReport: (id) => request(`/admin/events/${id}/cashier`),
 
+  // Bilheteria física (venda na entrada: dinheiro / maquininha / Pix / cortesia)
+  boxOfficeOpen: (id) => request(`/admin/events/${id}/box-office`),
+  boxOfficeSell: (id, body) => request(`/admin/events/${id}/box-office/sales`, { method: 'POST', body }),
+  boxOfficeReport: (id) => request(`/admin/events/${id}/box-office/report`),
+
   // Camarotes / reservas (AZList)
   listTables: (id) => request(`/admin/events/${id}/tables`),
   createTable: (id, body) => request(`/admin/events/${id}/tables`, { method: 'POST', body }),

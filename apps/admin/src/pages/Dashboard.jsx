@@ -53,6 +53,7 @@ export default function Dashboard() {
         </div>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <Link to={`/eventos/${id}/porta`} className="ck-btn ck-btn--glass">Porta</Link>
+          <Link to={`/eventos/${id}/bilheteria`} className="ck-btn ck-btn--glass">Bilheteria</Link>
           <Link to={`/eventos/${id}/pdv`} className="ck-btn ck-btn--glass">PDV</Link>
           <Link to={`/eventos/${id}/cardapio`} className="ck-btn ck-btn--glass">Cardápio</Link>
           <Link to={`/eventos/${id}/fechamento`} className="ck-btn ck-btn--glass">Fechamento</Link>
