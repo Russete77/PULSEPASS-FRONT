@@ -17,3 +17,14 @@ createRoot(document.getElementById('root')).render(
     </BrowserRouter>
   </StrictMode>,
 );
+
+// Service worker só no build de produção: em dev ele brigaria com o HMR do Vite
+// e serviria código velho. Em produção é o que faz o cockpit ABRIR sem rede —
+// sem isso, fechar o navegador na porta deixava o porteiro sem ferramenta.
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {
+      /* sem SW o app segue funcionando online — não vale quebrar o boot por isso */
+    });
+  });
+}
