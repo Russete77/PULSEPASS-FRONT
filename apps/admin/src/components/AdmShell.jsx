@@ -7,10 +7,11 @@ const NAV = [
   { to: '/plataforma', icon: 'chart', label: 'Plataforma', end: true },
   { to: '/plataforma/orgs', icon: 'users', label: 'Orgs' },
   { to: '/plataforma/financeiro', icon: 'dollar', label: 'Financeiro' },
+  { to: '/plataforma/taxas', icon: 'tag', label: 'Taxas' },
   { to: '/plataforma/fraude', icon: 'scan', label: 'Antifraude' },
   { to: '/plataforma/audit', icon: 'receipt', label: 'Audit log' },
 ];
-const SOON = ['Suporte', 'Taxas', 'Feature flags'];
+const SOON = ['Suporte', 'Feature flags'];
 
 function AdmLogo() {
   return (

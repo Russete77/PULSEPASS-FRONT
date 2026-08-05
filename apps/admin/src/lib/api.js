@@ -25,6 +25,12 @@ export const api = {
   platformFraud: () => request('/platform/fraud'),
   platformFinance: () => request('/platform/finance'),
   platformActivity: () => request('/platform/activity'),
+  // Taxa da plataforma (padrao + excecao por produtora)
+  platformBilling: () => request('/platform/billing'),
+  setDefaultFee: (fee_bps) => request('/platform/billing/default-fee', { method: 'PATCH', body: { fee_bps } }),
+  setOrgFee: (orgId, fee_bps) => request(`/platform/billing/orgs/${orgId}/fee`, { method: 'PATCH', body: { fee_bps } }),
+  // Transparencia do repasse (visao da produtora)
+  repasse: (orgId) => request(`/admin/organizations/${orgId}/repasse`),
   createOrg: (name, cnpj) => request('/admin/organizations', { method: 'POST', body: { name, cnpj } }),
 
   listEvents: () => request('/admin/events'),

@@ -23,6 +23,7 @@ import Platform from './pages/plataforma/Platform.jsx';
 import PlatformOrgs from './pages/plataforma/Orgs.jsx';
 import PlatformFraud from './pages/plataforma/Fraud.jsx';
 import PlatformFinance from './pages/plataforma/Finance.jsx';
+import PlatformTaxas from './pages/plataforma/Taxas.jsx';
 import PlatformAudit from './pages/plataforma/Audit.jsx';
 
 function Protected({ children }) {
@@ -56,6 +57,7 @@ export default function App() {
       <Route path="/plataforma" element={<Protected><Platform /></Protected>} />
       <Route path="/plataforma/orgs" element={<Protected><PlatformOrgs /></Protected>} />
       <Route path="/plataforma/fraude" element={<Protected><PlatformFraud /></Protected>} />
+      <Route path="/plataforma/taxas" element={<Protected><PlatformTaxas /></Protected>} />
       <Route path="/plataforma/financeiro" element={<Protected><PlatformFinance /></Protected>} />
       <Route path="/plataforma/audit" element={<Protected><PlatformAudit /></Protected>} />
       <Route path="*" element={<Navigate to="/" replace />} />
