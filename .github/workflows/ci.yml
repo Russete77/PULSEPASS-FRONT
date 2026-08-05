@@ -18,6 +18,11 @@ jobs:
         run: npm ci
       - name: Lint
         run: npm run lint --if-present
+      # O decodificador de QR da portaria roda pelo caminho jsQR — o único que
+      # funciona no Safari/iOS. Se ele quebrar, a porta para de ler ingresso no
+      # iPhone e ninguém percebe até a fila do evento.
+      - name: Test (decodificador de QR da porta)
+        run: npm test --workspace pulsepass-admin
       - name: Build (web + admin)
         run: npm run build
         env:
