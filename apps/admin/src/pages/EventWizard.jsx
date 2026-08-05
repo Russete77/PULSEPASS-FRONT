@@ -15,6 +15,7 @@ export default function EventWizard() {
   const [form, setForm] = useState({
     title: '', venue_name: '', address: '', city: '', state: '',
     starts_at: toDatetimeLocal(), description: '', service_fee_pct: '',
+    reentry_enabled: false, reentry_max: '',
   });
   const [tiers, setTiers] = useState([{ name: '1º Lote', price_reais: '', half_reais: '', quantity_total: '', sales_start: '', sales_end: '' }]);
 
@@ -48,6 +49,8 @@ export default function EventWizard() {
         state: form.state.toUpperCase(),
         starts_at: new Date(form.starts_at).toISOString(),
         service_fee_bps: form.service_fee_pct !== '' ? Math.round(Number(form.service_fee_pct) * 100) : 0,
+        reentry_enabled: form.reentry_enabled,
+        reentry_max: form.reentry_enabled && form.reentry_max !== '' ? Number(form.reentry_max) : null,
         tiers: tiers
           .filter((t) => t.name && t.price_reais !== '' && t.quantity_total !== '')
           .map((t) => ({
@@ -114,6 +117,24 @@ export default function EventWizard() {
         <div className="ck-field">
           <label className="ck-label">Taxa de serviço (%) — aplicada sobre o subtotal no checkout</label>
           <input className="ck-input" type="number" min="0" max="100" step="0.01" placeholder="0" value={form.service_fee_pct} onChange={set('service_fee_pct')} style={{ maxWidth: 200 }} />
+        </div>
+
+        {/* Reentrada: desligada por padrão de propósito. Liberar sem a casa
+            pedir é convite a ingresso emprestado. */}
+        <div className="ck-field">
+          <label className="ck-label">Reentrada</label>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', padding: '10px 0' }}>
+            <input type="checkbox" checked={form.reentry_enabled}
+              onChange={(e) => setForm((f) => ({ ...f, reentry_enabled: e.target.checked }))} />
+            <span>Permitir sair e voltar com o mesmo ingresso</span>
+          </label>
+          {form.reentry_enabled && (
+            <input className="ck-input" type="number" min="1" max="20" placeholder="Máximo de entradas (vazio = sem limite)"
+              value={form.reentry_max} onChange={set('reentry_max')} style={{ maxWidth: 320 }} />
+          )}
+          <p style={{ color: 'var(--pp-fg-4)', fontSize: 12, marginTop: 6 }}>
+            Com reentrada, a porta alterna entrada e saída e mostra a lotação ao vivo.
+          </p>
         </div>
 
         <div className="ck-label" style={{ marginTop: 16, marginBottom: 10 }}>Lotes <span style={{ color: 'var(--pp-fg-4)', fontWeight: 400 }}>· deixe “Meia” vazio para não oferecer meia-entrada</span></div>

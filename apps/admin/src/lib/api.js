@@ -34,9 +34,12 @@ export const api = {
   dashboard: (id) => request(`/admin/events/${id}/dashboard`),
   reconciliation: (id) => request(`/admin/events/${id}/reconciliation`),
 
-  checkIn: (id, input) => request(`/admin/events/${id}/checkin`, { method: 'POST', body: { input } }),
+  checkIn: (id, input, direction) => request(`/admin/events/${id}/checkin`, {
+    method: 'POST', body: { input, ...(direction ? { direction } : {}) },
+  }),
   // Modo offline na porta
   manifest: (id) => request(`/admin/events/${id}/manifest`),
+  occupancy: (id) => request(`/admin/events/${id}/occupancy`),
   checkInBatch: (id, scans) => request(`/admin/events/${id}/checkin-batch`, { method: 'POST', body: { scans } }),
   eventMenu: (id) => request(`/admin/events/${id}/menu`),
   walletLookup: (id, email) => request(`/admin/events/${id}/wallet-lookup?email=${encodeURIComponent(email)}`),

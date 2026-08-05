@@ -35,6 +35,7 @@ export default function Porta() {
   const [pending, setPending] = useState(0);
   const [manifest, setManifest] = useState(null);
   const [manifestBusy, setManifestBusy] = useState(false);
+  const [occupancy, setOccupancy] = useState(null);
 
   // Câmera existe? (BarcodeDetector não é mais requisito — jsQR cobre iOS/Firefox.)
   const scanSupported = cameraSupported();
@@ -42,6 +43,12 @@ export default function Porta() {
 
   async function refreshOfflineState() {
     try { setPending(await pendingCount()); setManifest(await manifestMeta()); } catch { /* idb indisponível */ }
+  }
+
+  // Lotação: quantos estão DENTRO agora. É o número que segurança e bombeiro
+  // perguntam, e o porteiro precisa ver sem sair da tela de validação.
+  async function refreshOccupancy() {
+    try { setOccupancy(await api.occupancy(id)); } catch { /* offline: mantém o último */ }
   }
 
   async function doSync() {
@@ -65,6 +72,7 @@ export default function Porta() {
 
   useEffect(() => {
     refreshOfflineState();
+    refreshOccupancy();
     const goOnline = () => { setOnline(true); doSync(); };
     const goOffline = () => setOnline(false);
     window.addEventListener('online', goOnline);
@@ -87,6 +95,7 @@ export default function Porta() {
       setResult(r);
       feedback(r.result === 'ok');
       setCode('');
+      refreshOccupancy();
     } catch (e) {
       // Sem rede → valida contra o manifesto offline e enfileira.
       if (e.message === 'fetch:offline' || isNetworkError(e.message)) {
@@ -170,6 +179,14 @@ export default function Porta() {
         {pending > 0 && (
           <span style={{ color: 'var(--pp-amber)', fontSize: 13 }}>· {pending} na fila</span>
         )}
+        {occupancy && (
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13 }}>
+            <Icon name="users" size={14} />
+            <strong style={{ fontFamily: 'var(--pp-font-mono)', fontSize: 15 }}>{occupancy.inside}</strong>
+            <span style={{ color: 'var(--pp-fg-4)' }}>dentro</span>
+            {occupancy.left > 0 && <span style={{ color: 'var(--pp-fg-4)' }}>· {occupancy.left} saíram</span>}
+          </span>
+        )}
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
           <button type="button" className="ck-btn ck-btn--glass" onClick={downloadManifest} disabled={manifestBusy || !online}>
             {manifestBusy ? 'Baixando…' : 'Baixar manifesto'}
@@ -247,9 +264,21 @@ export default function Porta() {
           className="ck-card"
           style={{ maxWidth: 520, marginTop: 20, background: rs.bg, borderColor: rs.border }}
         >
+          {/* A mensagem vem do servidor e já distingue entrada, reentrada e
+              saída — o porteiro precisa ver QUAL foi, não só "ok". */}
           <div style={{ fontFamily: 'var(--pp-font-display)', fontWeight: 700, fontSize: 'var(--pp-fs-24)', color: rs.color, display: 'flex', alignItems: 'center', gap: 10 }}>
-            {result.result === 'ok' ? <><Icon name="check" size={22} strokeWidth={2.5} /> Entrada liberada</> : result.message}
+            {result.result === 'ok' ? (
+              <>
+                <Icon name={result.direction === 'out' ? 'arrowRight' : 'check'} size={22} strokeWidth={2.5} />
+                {result.message ?? 'Entrada liberada'}
+              </>
+            ) : result.message}
           </div>
+          {result.result === 'ok' && result.entries > 1 && (
+            <p style={{ color: 'var(--pp-fg-3)', fontSize: 13, marginTop: 4 }}>
+              {result.entries}ª entrada deste ingresso
+            </p>
+          )}
           {result.offline && <p style={{ color: 'var(--pp-amber)', fontSize: 12, marginTop: 4 }}>validado offline · será sincronizado</p>}
           {result.holder && <p style={{ marginTop: 8 }}>{result.holder} · {result.tier}</p>}
           {result.code && <p style={{ color: 'var(--pp-fg-3)', fontFamily: 'var(--pp-font-mono)' }}>{result.code}</p>}
