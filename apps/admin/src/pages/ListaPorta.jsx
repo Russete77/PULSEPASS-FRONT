@@ -19,11 +19,16 @@ export default function ListaPorta() {
   }, [id]);
   useEffect(() => { load(); }, [load]);
 
-  async function checkin(g) {
+  /** Libera `people` pessoas do convite. O grupo raramente chega junto. */
+  async function checkin(g, people = 1) {
     setBusy(g.id); setError('');
     try {
-      await api.checkinGuest(g.id);
-      setGuests((gs) => gs.map((x) => x.id === g.id ? { ...x, status: 'checked_in', checked_in_at: new Date().toISOString() } : x));
+      const r = await api.checkinGuest(g.id, people);
+      if (r.result === 'over_capacity') { setError(r.message); return; }
+      setGuests((gs) => gs.map((x) => (x.id === g.id
+        ? { ...x, status: 'checked_in', checked_in_count: r.checked_in_count,
+            checked_in_at: x.checked_in_at ?? new Date().toISOString() }
+        : x)));
     } catch (e) { setError(e.message); } finally { setBusy(null); }
   }
 
@@ -53,21 +58,41 @@ export default function ListaPorta() {
       <div className="ck-card" style={{ padding: 0, overflow: 'hidden', maxWidth: 640 }}>
         {filtered.length === 0 && <p className="pp-muted" style={{ padding: 'var(--pp-s-6)' }}>Nenhum convidado {q ? 'encontrado' : 'na lista ainda'}.</p>}
         {filtered.map((g, i) => {
-          const inside = g.status === 'checked_in';
+          const total = g.party_size ?? 1;
+          const dentro = g.checked_in_count ?? (g.status === 'checked_in' ? 1 : 0);
+          const faltam = total - dentro;
+          const completo = faltam <= 0;
           return (
             <div key={g.id} className="pp-between" style={{ padding: '14px 18px', borderBottom: i < filtered.length - 1 ? '1px solid var(--pp-edge-1)' : 'none', gap: 12 }}>
               <div className="pp-grow" style={{ minWidth: 0 }}>
-                <div style={{ fontWeight: 600 }}>{g.name}</div>
+                <div style={{ fontWeight: 600 }}>
+                  {g.name}{total > 1 && <span style={{ color: 'var(--pp-fg-3)', fontWeight: 400 }}> +{total - 1}</span>}
+                </div>
                 <div className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 2 }}>
-                  {g.promoter ? `lista de ${g.promoter}` : 'lista'}{g.email ? ` · ${g.email}` : ''}
+                  {g.promoter ? `lista de ${g.promoter}` : 'lista'}
+                  {total > 1 && ` · ${dentro} de ${total} dentro`}
+                  {g.email ? ` · ${g.email}` : ''}
                 </div>
               </div>
-              {inside ? (
-                <span className="ck-badge ck-badge--success"><Icon name="check" size={13} /> presente</span>
+              {completo ? (
+                <span className="ck-badge ck-badge--success">
+                  <Icon name="check" size={13} /> {total > 1 ? 'grupo completo' : 'presente'}
+                </span>
               ) : (
-                <button className={`ck-btn ck-btn--primary ck-btn--sm ${busy === g.id ? '' : ''}`} disabled={busy === g.id} onClick={() => checkin(g)}>
-                  {busy === g.id ? '…' : 'Liberar entrada'}
-                </button>
+                // Com acompanhantes o porteiro escolhe QUANTOS estão entrando
+                // agora — obrigar o grupo a chegar junto trava a fila.
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                  <button className="ck-btn ck-btn--primary ck-btn--sm" disabled={busy === g.id}
+                    onClick={() => checkin(g, 1)}>
+                    {busy === g.id ? '…' : total > 1 ? '+1 entrou' : 'Liberar entrada'}
+                  </button>
+                  {faltam > 1 && (
+                    <button className="ck-btn ck-btn--glass ck-btn--sm" disabled={busy === g.id}
+                      onClick={() => checkin(g, faltam)}>
+                      Todos ({faltam})
+                    </button>
+                  )}
+                </div>
               )}
             </div>
           );

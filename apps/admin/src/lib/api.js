@@ -51,7 +51,9 @@ export const api = {
   listPromoters: (id) => request(`/admin/events/${id}/promoters`),
   promoterGuests: (promoterId) => request(`/admin/promoters/${promoterId}/guests`),
   eventGuests: (id) => request(`/admin/events/${id}/guests`),
-  checkinGuest: (guestId) => request(`/admin/guests/${guestId}/checkin`, { method: 'POST' }),
+  // people = quantas pessoas do convite estão entrando agora (grupo +N).
+  checkinGuest: (guestId, people = 1) =>
+    request(`/admin/guests/${guestId}/checkin`, { method: 'POST', body: { people } }),
   commissionPaid: (promoterId, paid = true) =>
     request(`/admin/promoters/${promoterId}/commission-paid`, { method: 'POST', body: { paid } }),
 
