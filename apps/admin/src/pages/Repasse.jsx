@@ -18,6 +18,7 @@ export default function Repasse() {
   const [orgs, setOrgs] = useState([]);        // [{ org, repasse }]
   const [draft, setDraft] = useState({});
   const [savedId, setSavedId] = useState('');
+  const [abrindo, setAbrindo] = useState(null);   // orgId com o formulário aberto
   const [error, setError] = useState('');
 
   const load = useCallback(async () => {
@@ -128,9 +129,49 @@ export default function Repasse() {
             </div>
           )}
 
+          {/* Subconta já criada por aqui: mostra o estado e o que falta. */}
+          {repasse?.subconta && (
+            <div className="ck-card" style={{ marginBottom: 12 }}>
+              <div className="ck-label">Conta Asaas da produtora</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 8, flexWrap: 'wrap' }}>
+                <span className={`ck-badge ${repasse.subconta.status === 'approved' ? 'ck-badge--success' : ''}`}>
+                  {repasse.subconta.status}
+                </span>
+                <span style={{ fontFamily: 'var(--pp-font-mono)', fontSize: 12, color: 'var(--pp-fg-3)' }}>
+                  {repasse.subconta.account_id}
+                </span>
+              </div>
+              {repasse.subconta.pendente_documentos && (
+                <p style={{ color: 'var(--pp-amber)', fontSize: 13, marginTop: 10 }}>
+                  Faltam documentos. Sem aprovação a conta não recebe —{' '}
+                  <a href={repasse.subconta.onboarding_url} target="_blank" rel="noreferrer"
+                    style={{ color: 'var(--pp-pulse)', textDecoration: 'underline' }}>
+                    enviar agora
+                  </a>.
+                </p>
+              )}
+            </div>
+          )}
+
           <div className="ck-card">
+            {!repasse?.subconta && (
+              <>
+                <div className="ck-label">Ainda não tem conta Asaas?</div>
+                <p style={{ color: 'var(--pp-fg-4)', fontSize: 12, margin: '6px 0 12px' }}>
+                  Abrimos a conta para você aqui mesmo — o destino do repasse fica
+                  configurado na hora, sem precisar procurar código em outro painel.
+                </p>
+                <button className="ck-btn ck-btn--primary" style={{ marginBottom: 20 }}
+                  onClick={() => setAbrindo(org.id)}>
+                  <Icon name="plus" size={15} /> Criar conta Asaas
+                </button>
+              </>
+            )}
+
             <div className="ck-field">
-              <label className="ck-label">Carteira Asaas (walletId) — destino do repasse</label>
+              <label className="ck-label">
+                {repasse?.subconta ? 'Carteira (walletId)' : 'Ou informe o walletId de uma conta que você já tem'}
+              </label>
               <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
                 <input
                   className="ck-input"
@@ -145,8 +186,133 @@ export default function Repasse() {
               </div>
             </div>
           </div>
+
+          {abrindo === org.id && (
+            <NovaContaAsaas
+              orgName={org.name}
+              onCancel={() => setAbrindo(null)}
+              onDone={() => { setAbrindo(null); load(); }}
+              onError={setError}
+              orgId={org.id}
+            />
+          )}
         </div>
       ))}
     </Shell>
+  );
+}
+
+/**
+ * Abertura da conta Asaas da produtora.
+ *
+ * Os campos são exatamente os que o provedor exige em POST /accounts — pedir
+ * menos gera erro só no envio, e pedir mais é fricção à toa. O aviso sobre
+ * documentos aparece antes: conta criada sem documento aprovado NÃO recebe, e
+ * descobrir isso na véspera do evento é tarde.
+ */
+function NovaContaAsaas({ orgId, orgName, onCancel, onDone, onError }) {
+  const [f, setF] = useState({
+    name: orgName ?? '', email: '', cpfCnpj: '', mobilePhone: '', incomeValue: '',
+    postalCode: '', address: '', addressNumber: '', province: '', complement: '',
+    companyType: 'LIMITED',
+  });
+  const [enviando, setEnviando] = useState(false);
+  const set = (k) => (e) => setF((v) => ({ ...v, [k]: e.target.value }));
+
+  async function enviar(e) {
+    e.preventDefault();
+    setEnviando(true); onError('');
+    try {
+      await api.createAsaasSubaccount(orgId, {
+        ...f,
+        incomeValue: Number(String(f.incomeValue).replace(',', '.')),
+        complement: f.complement || undefined,
+      });
+      onDone();
+    } catch (err) { onError(err.message); } finally { setEnviando(false); }
+  }
+
+  return (
+    <form className="ck-card" style={{ marginTop: 12 }} onSubmit={enviar}>
+      <div className="ck-label">Abrir conta Asaas · {orgName}</div>
+      <p style={{ color: 'var(--pp-fg-4)', fontSize: 12, margin: '6px 0 14px' }}>
+        A conta é aberta em nome da sua produtora e o repasse passa a ser automático.
+        Depois de criada, o Asaas pode pedir documentos — sem essa aprovação a conta
+        não recebe.
+      </p>
+
+      <div className="ck-row">
+        <div className="ck-field" style={{ margin: 0 }}>
+          <label className="ck-label">Razão social / nome</label>
+          <input className="ck-input" value={f.name} onChange={set('name')} required minLength={2} />
+        </div>
+        <div className="ck-field" style={{ margin: 0 }}>
+          <label className="ck-label">CNPJ ou CPF</label>
+          <input className="ck-input" value={f.cpfCnpj} onChange={set('cpfCnpj')} required
+            placeholder="somente números" />
+        </div>
+      </div>
+
+      <div className="ck-row">
+        <div className="ck-field" style={{ margin: 0 }}>
+          <label className="ck-label">E-mail da conta</label>
+          <input className="ck-input" type="email" value={f.email} onChange={set('email')} required />
+        </div>
+        <div className="ck-field" style={{ margin: 0 }}>
+          <label className="ck-label">Celular</label>
+          <input className="ck-input" value={f.mobilePhone} onChange={set('mobilePhone')} required
+            placeholder="11999998888" />
+        </div>
+      </div>
+
+      <div className="ck-row">
+        <div className="ck-field" style={{ margin: 0 }}>
+          <label className="ck-label">Faturamento mensal (R$)</label>
+          <input className="ck-input" type="number" min="1" step="0.01"
+            value={f.incomeValue} onChange={set('incomeValue')} required />
+        </div>
+        <div className="ck-field" style={{ margin: 0 }}>
+          <label className="ck-label">Tipo</label>
+          <select className="ck-select" value={f.companyType} onChange={set('companyType')}>
+            <option value="MEI">MEI</option>
+            <option value="LIMITED">LTDA</option>
+            <option value="INDIVIDUAL">Individual</option>
+            <option value="ASSOCIATION">Associação</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="ck-row">
+        <div className="ck-field" style={{ margin: 0 }}>
+          <label className="ck-label">CEP</label>
+          <input className="ck-input" value={f.postalCode} onChange={set('postalCode')} required
+            placeholder="01001000" />
+        </div>
+        <div className="ck-field" style={{ margin: 0 }}>
+          <label className="ck-label">Bairro</label>
+          <input className="ck-input" value={f.province} onChange={set('province')} required />
+        </div>
+      </div>
+
+      <div className="ck-row">
+        <div className="ck-field" style={{ margin: 0 }}>
+          <label className="ck-label">Endereço</label>
+          <input className="ck-input" value={f.address} onChange={set('address')} required />
+        </div>
+        <div className="ck-field" style={{ margin: 0 }}>
+          <label className="ck-label">Número</label>
+          <input className="ck-input" value={f.addressNumber} onChange={set('addressNumber')} required />
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', gap: 10, marginTop: 18, flexWrap: 'wrap' }}>
+        <button className="ck-btn ck-btn--primary" disabled={enviando}>
+          {enviando ? 'Abrindo conta…' : 'Abrir conta'}
+        </button>
+        <button type="button" className="ck-btn ck-btn--glass" onClick={onCancel} disabled={enviando}>
+          Cancelar
+        </button>
+      </div>
+    </form>
   );
 }

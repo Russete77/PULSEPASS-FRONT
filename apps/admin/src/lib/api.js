@@ -31,6 +31,11 @@ export const api = {
   setOrgFee: (orgId, fee_bps) => request(`/platform/billing/orgs/${orgId}/fee`, { method: 'PATCH', body: { fee_bps } }),
   // Transparencia do repasse (visao da produtora)
   repasse: (orgId) => request(`/admin/organizations/${orgId}/repasse`),
+  // Subconta Asaas: a produtora abre a conta sem sair do cockpit.
+  createAsaasSubaccount: (orgId, dados) =>
+    request(`/admin/organizations/${orgId}/asaas-subaccount`, { method: 'POST', body: dados }),
+  refreshAsaasSubaccount: (orgId) =>
+    request(`/admin/organizations/${orgId}/asaas-subaccount/refresh`, { method: 'POST' }),
   createOrg: (name, cnpj) => request('/admin/organizations', { method: 'POST', body: { name, cnpj } }),
 
   listEvents: () => request('/admin/events'),
