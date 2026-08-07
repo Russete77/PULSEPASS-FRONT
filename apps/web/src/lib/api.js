@@ -26,6 +26,11 @@ export const api = {
   listOrders: () => request('/orders', { auth: true }),
   getOrder: (id) => request(`/orders/${id}`, { auth: true }),
   refundOrder: (id) => request(`/orders/${id}/refund`, { method: 'POST', auth: true }),
+  // Reenvio do ingresso: o cliente resolve sozinho em vez de abrir suporte.
+  resendTickets: (id) => request(`/orders/${id}/resend-tickets`, { method: 'POST', auth: true }),
+  // Fila de espera de lote esgotado (publico: nao exige login).
+  joinWaitlist: (slug, body) =>
+    request(`/events/${slug}/waitlist`, { method: 'POST', body }),
   simulatePaid: (id) =>
     request(`/orders/${id}/simulate-paid`, { method: 'POST', auth: true }),
 

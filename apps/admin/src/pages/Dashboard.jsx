@@ -57,6 +57,9 @@ export default function Dashboard() {
           <Link to={`/eventos/${id}/pdv`} className="ck-btn ck-btn--glass">PDV</Link>
           <Link to={`/eventos/${id}/cardapio`} className="ck-btn ck-btn--glass">Cardápio</Link>
           <Link to={`/eventos/${id}/fechamento`} className="ck-btn ck-btn--glass">Fechamento</Link>
+          <Link to={`/eventos/${id}/fila-espera`} className="ck-btn ck-btn--glass">Fila de espera</Link>
+          <Link to={`/eventos/${id}/fiscal`} className="ck-btn ck-btn--glass">Notas fiscais</Link>
+          <Link to={`/eventos/${id}/auditoria`} className="ck-btn ck-btn--glass">Auditoria</Link>
           <Link to={`/eventos/${id}/promoters`} className="ck-btn ck-btn--glass">Promoters</Link>
           <Link to={`/eventos/${id}/cupons`} className="ck-btn ck-btn--glass">Cupons</Link>
           <Link to={`/eventos/${id}/camarotes`} className="ck-btn ck-btn--glass">Camarotes</Link>

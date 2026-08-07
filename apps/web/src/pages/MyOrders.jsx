@@ -16,6 +16,7 @@ const STATUS = {
 export default function MyOrders() {
   const [orders, setOrders] = useState([]);
   const [status, setStatus] = useState('loading');
+  const [enviado, setEnviado] = useState(null);   // pedido cujo reenvio deu certo
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(null);
 
@@ -31,6 +32,26 @@ export default function MyOrders() {
     setError('');
     try { await api.refundOrder(o.id); await load(); }
     catch (e) { setError(e.message); }
+    finally { setBusy(null); }
+  }
+
+  /**
+   * Reenvia os ingressos por e-mail.
+   *
+   * "Não recebi meu ingresso" é o motivo nº 1 de contato com suporte, e a
+   * resposta é sempre a mesma. Deixar o cliente resolver sozinho tira o
+   * atendimento do caminho — e mostra o que aconteceu quando não dá certo.
+   */
+  async function resend(o) {
+    setBusy(o.id);
+    setError(''); setEnviado(null);
+    try {
+      const r = await api.resendTickets(o.id);
+      if (r.sent) setEnviado(o.id);
+      else setError(r.reason === 'not_configured'
+        ? 'O envio por e-mail ainda não está ativo. Seus ingressos continuam disponíveis em "Meus ingressos".'
+        : 'Não conseguimos enviar agora. Tente novamente em alguns minutos.');
+    } catch (e) { setError(e.message); }
     finally { setBusy(null); }
   }
 
@@ -67,9 +88,16 @@ export default function MyOrders() {
               <div className="pp-order__right">
                 <span className="pp-order__total">{brl(o.total_cents)}</span>
                 {o.status === 'paid' && (
-                  <button className={`pp-btn pp-btn--glass pp-btn--sm ${busy === o.id ? 'is-loading' : ''}`} disabled={busy === o.id} onClick={() => refund(o)}>
-                    Reembolsar
-                  </button>
+                  <>
+                    <button className={`pp-btn pp-btn--glass pp-btn--sm ${busy === o.id ? 'is-loading' : ''}`}
+                      disabled={busy === o.id} onClick={() => resend(o)}>
+                      {enviado === o.id ? 'Enviado ✓' : 'Reenviar por e-mail'}
+                    </button>
+                    <button className={`pp-btn pp-btn--glass pp-btn--sm ${busy === o.id ? 'is-loading' : ''}`}
+                      disabled={busy === o.id} onClick={() => refund(o)}>
+                      Reembolsar
+                    </button>
+                  </>
                 )}
               </div>
             </div>

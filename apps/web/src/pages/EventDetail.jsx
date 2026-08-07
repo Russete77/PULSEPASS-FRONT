@@ -198,6 +198,11 @@ export default function EventDetail() {
                     incDisabled={locked || combined >= cap}
                   />
                 )}
+
+                {/* Lote esgotado: em vez de encerrar a conversa com "Esgotado",
+                    oferece a fila. Reembolso e pedido expirado devolvem vaga —
+                    sem a fila ela reabre de madrugada sem ninguém pra comprar. */}
+                {st === 'sold_out' && <FilaDeEspera slug={event.slug} tier={t} />}
               </div>
             );
           })}
@@ -296,5 +301,83 @@ function TierRow({ label, sublabel, price, qty, onDec, onInc, decDisabled, incDi
         <button onClick={onInc} disabled={incDisabled} aria-label="aumentar">+</button>
       </div>
     </div>
+  );
+}
+
+/**
+ * Fila de espera de um lote esgotado.
+ *
+ * "Esgotado" encerra a conversa e manda o cliente pro cambista. Aqui ele deixa
+ * o e-mail e é chamado quando abre vaga — o que acontece o tempo todo, porque
+ * reembolso e pedido expirado devolvem ingresso ao estoque.
+ *
+ * Não exige login de propósito: pedir cadastro na hora da frustração é perder
+ * a pessoa. O e-mail basta pra avisar.
+ */
+function FilaDeEspera({ slug, tier }) {
+  const { user } = useAuth();
+  const [aberto, setAberto] = useState(false);
+  const [email, setEmail] = useState(user?.email ?? '');
+  const [nome, setNome] = useState('');
+  const [enviando, setEnviando] = useState(false);
+  const [pronto, setPronto] = useState(null);   // { ahead, already }
+  const [erro, setErro] = useState('');
+
+  async function entrar(e) {
+    e.preventDefault();
+    setEnviando(true); setErro('');
+    try {
+      const r = await api.joinWaitlist(slug, {
+        ticket_tier_id: tier.id,
+        email: email.trim() || undefined,
+        name: nome.trim() || undefined,
+      });
+      setPronto(r);
+    } catch (err) { setErro(err.message); } finally { setEnviando(false); }
+  }
+
+  if (pronto) {
+    return (
+      <div className="pp-card" style={{ marginTop: 10, padding: 14, background: 'rgba(0,255,133,0.07)' }}>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', color: 'var(--pp-pulse)', fontWeight: 600 }}>
+          <Icon name="check" size={16} />
+          {pronto.already ? 'Você já está na fila' : 'Pronto, você está na fila'}
+        </div>
+        <p style={{ color: 'var(--pp-fg-3)', fontSize: 13, marginTop: 6 }}>
+          {pronto.ahead === 0
+            ? 'Você é o próximo a ser chamado quando abrir vaga.'
+            : `Há ${pronto.ahead} pessoa(s) na sua frente.`}
+          {' '}Avisamos por e-mail e você terá 1 hora para comprar.
+        </p>
+      </div>
+    );
+  }
+
+  if (!aberto) {
+    return (
+      <button type="button" className="pp-btn pp-btn--glass pp-btn--sm" style={{ marginTop: 8 }}
+        onClick={() => setAberto(true)}>
+        <Icon name="clock" size={14} /> Avise-me se abrir vaga
+      </button>
+    );
+  }
+
+  return (
+    <form onSubmit={entrar} style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <input className="pp-input" type="email" required placeholder="seu@email.com"
+        value={email} onChange={(e) => setEmail(e.target.value)} />
+      <input className="pp-input" placeholder="Seu nome (opcional)"
+        value={nome} onChange={(e) => setNome(e.target.value)} />
+      {erro && <span style={{ color: '#FF6B61', fontSize: 12 }}>{erro}</span>}
+      <div style={{ display: 'flex', gap: 8 }}>
+        <button className="pp-btn pp-btn--primary pp-btn--sm" disabled={enviando}>
+          {enviando ? 'Entrando…' : 'Entrar na fila'}
+        </button>
+        <button type="button" className="pp-btn pp-btn--glass pp-btn--sm"
+          onClick={() => setAberto(false)} disabled={enviando}>
+          Cancelar
+        </button>
+      </div>
+    </form>
   );
 }

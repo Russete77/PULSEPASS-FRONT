@@ -93,6 +93,25 @@ export const api = {
   setReservation: (reservationId, status) => request(`/admin/reservations/${reservationId}`, { method: 'PATCH', body: { status } }),
   ledgerCheck: (id) => request(`/admin/events/${id}/ledger-check`),
 
+  // Fila de espera do evento (quem aguarda e quem ja foi convidado)
+  eventWaitlist: (id) => request(`/admin/events/${id}/waitlist`),
+
+  // Notas fiscais (NFS-e)
+  eventFiscal: (id) => request(`/admin/events/${id}/fiscal`),
+  issueInvoice: (id, order_id) =>
+    request(`/admin/events/${id}/fiscal/issue`, { method: 'POST', body: { order_id } }),
+
+  // Trilha de auditoria e casos de fraude do evento
+  eventAudit: (id, opts = {}) => {
+    const q = new URLSearchParams();
+    if (opts.action) q.set('action', opts.action);
+    if (opts.money) q.set('money', '1');
+    const s = q.toString();
+    return request(`/admin/events/${id}/audit${s ? `?${s}` : ''}`);
+  },
+  eventFraudCases: (id) => request(`/admin/events/${id}/fraud-cases`),
+  resolveFraudCase: (caseId) => request(`/admin/fraud-cases/${caseId}/resolve`, { method: 'POST' }),
+
   // Cupons de desconto (Sympla)
   listCoupons: (id) => request(`/admin/events/${id}/coupons`),
   createCoupon: (id, body) => request(`/admin/events/${id}/coupons`, { method: 'POST', body }),
