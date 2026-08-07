@@ -40,6 +40,9 @@ export default function Dashboard() {
   if (status === 'error') return <Shell><ErrorBox>{error}</ErrorBox></Shell>;
 
   const m = dash.metrics;
+  // Só bloqueia a TRANSIÇÃO para publicado: evento já no ar não é derrubado
+  // por falta de capa, e rascunho continua livre.
+  const publicarBloqueado = event.status !== 'published' && !event.cover_url;
 
   return (
     <Shell>
@@ -66,11 +69,32 @@ export default function Dashboard() {
           <Link to={`/eventos/${id}/camarotes`} className="ck-btn ck-btn--glass">Camarotes</Link>
           <Link to={`/eventos/${id}/conciliacao`} className="ck-btn ck-btn--glass">Financeiro</Link>
           <Link to={`/eventos/${id}/equipe`} className="ck-btn ck-btn--glass">Equipe</Link>
-          <button className="ck-btn ck-btn--primary" onClick={togglePublish}>
+          {/* Publicar sem capa é bloqueado no servidor. Aqui o botão explica
+              o porquê ANTES do clique, em vez de deixar a produtora esbarrar
+              num erro depois de tentar. */}
+          <button
+            className="ck-btn ck-btn--primary"
+            onClick={togglePublish}
+            disabled={publicarBloqueado}
+            title={publicarBloqueado ? 'Adicione a capa do evento para publicar' : undefined}
+          >
             {event.status === 'published' ? 'Pausar vendas' : 'Publicar'}
           </button>
         </div>
       </div>
+
+      {publicarBloqueado && (
+        <div className="ck-card" style={{
+          marginTop: 18, maxWidth: 560,
+          borderColor: 'rgba(255,184,0,0.42)', background: 'rgba(255,184,0,0.08)',
+        }}>
+          <strong>Falta a capa para publicar</strong>
+          <p style={{ color: 'var(--pp-fg-2)', fontSize: 14, margin: '6px 0 0' }}>
+            Um evento sem imagem na vitrine vende menos e derruba a percepção dos
+            outros ao lado. Adicione abaixo e o botão de publicar libera.
+          </p>
+        </div>
+      )}
 
       <div style={{ marginTop: 20 }}>
         <CapaDoEvento
