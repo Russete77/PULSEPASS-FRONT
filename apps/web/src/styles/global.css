@@ -25,7 +25,7 @@ input, button, select, textarea { font-family: inherit; }
   position: sticky; top: 0; z-index: 50;
   display: flex; align-items: center; justify-content: space-between;
   height: 64px; padding: 0 var(--pp-s-5);
-  background: rgba(6, 7, 10, 0.72);
+  background: rgba(12, 9, 16, 0.74);
   backdrop-filter: var(--pp-blur-md); -webkit-backdrop-filter: var(--pp-blur-md);
   border-bottom: 1px solid var(--pp-edge-1);
 }
@@ -33,7 +33,7 @@ input, button, select, textarea { font-family: inherit; }
   display: flex; align-items: center; gap: 10px;
   font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-18); letter-spacing: -0.02em;
 }
-.pp-brand .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--pp-pulse); box-shadow: 0 0 0 0 rgba(0,255,133,0.7); animation: pp-pulse-ring 1.8s var(--pp-ease) infinite; }
+.pp-brand .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--pp-pulse); animation: pp-pulse-ring 1.8s var(--pp-ease) infinite; }
 .pp-topbar-actions { display: flex; align-items: center; gap: var(--pp-s-3); }
 
 /* nav leve — links de texto, sem pílulas */
@@ -45,8 +45,8 @@ input, button, select, textarea { font-family: inherit; }
 
 /* ── Page scaffolding ── */
 .pp-page { flex: 1; padding: var(--pp-s-8) 0 var(--pp-s-16); }
-.pp-page h1 { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-32); letter-spacing: -0.03em; margin: 0 0 var(--pp-s-2); }
-@media (min-width: 768px) { .pp-page h1 { font-size: var(--pp-fs-40); } }
+.pp-page h1 { font-family: var(--pp-font-display); font-weight: 800; font-size: var(--pp-t-title); line-height: 1.06; letter-spacing: -0.03em; margin: 0 0 var(--pp-s-2); }
+
 .pp-page .sub { color: var(--pp-fg-3); margin: 0 0 var(--pp-s-8); font-size: var(--pp-fs-15); }
 
 /* ── Auth (login / signup) ── */
@@ -75,12 +75,12 @@ input, button, select, textarea { font-family: inherit; }
 .pp-section-head .see { font-size: var(--pp-fs-13); color: var(--pp-fg-3); }
 
 /* ── Featured card (destaque grande — spec Home) ── */
-.pp-featured { position: relative; border-radius: 24px; overflow: hidden; border: 1px solid rgba(255,255,255,0.10); box-shadow: 0 20px 40px rgba(0,0,0,0.5); isolation: isolate; display: block; }
+.pp-featured { position: relative; border-radius: var(--pp-r-card); overflow: hidden; border: 1px solid rgba(255,255,255,0.10); box-shadow: 0 20px 40px rgba(0,0,0,0.5); isolation: isolate; display: block; }
 /* width:100% é obrigatório aqui: sem largura definida, o aspect-ratio deriva a
    LARGURA a partir do min-height (260 × 1.6 = 416px) e o art vaza pra fora do
    card. Com a largura fixada, o ratio passa a derivar a altura e o min-height
    volta a ser só um piso. */
-.pp-featured__art { position: relative; width: 100%; aspect-ratio: 16 / 10; min-height: 260px; background: radial-gradient(80% 80% at 30% 20%, #00FF85, transparent 60%), radial-gradient(80% 80% at 80% 90%, #A78BFA, transparent 60%), #0a0a0c; }
+.pp-featured__art { position: relative; width: 100%; aspect-ratio: 16 / 10; min-height: 260px; background: radial-gradient(90% 90% at 25% 15%, #1E1826, transparent 62%), radial-gradient(80% 80% at 85% 95%, #2A2235, transparent 60%), var(--pp-ink-950); }
 @media (min-width: 700px) { .pp-featured__art { aspect-ratio: auto; height: 340px; min-height: 0; } }
 .pp-featured { max-width: 920px; }
 .pp-featured__art img { width: 100%; height: 100%; object-fit: cover; }
@@ -88,9 +88,10 @@ input, button, select, textarea { font-family: inherit; }
 .pp-featured__live { position: absolute; top: 16px; left: 16px; z-index: 1; display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; background: rgba(0,0,0,0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.16); font-family: var(--pp-font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #fff; }
 .pp-featured__live::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--pp-pink); box-shadow: 0 0 0 0 rgba(255,61,136,0.7); animation: pp-pulse-ring 1.6s var(--pp-ease) infinite; }
 .pp-featured__info { position: absolute; bottom: 16px; left: 16px; right: 16px; z-index: 1; }
-.pp-featured__date { font-family: var(--pp-font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--pp-pulse); }
-.pp-featured__title { font-family: var(--pp-font-display); font-weight: 700; font-size: 28px; line-height: 1.05; letter-spacing: -0.025em; margin-top: 6px; color: #fff; }
-.pp-featured__foot { padding: 14px; background: rgba(11,13,18,0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; align-items: center; justify-content: space-between; gap: var(--pp-s-3); border-top: 1px solid rgba(255,255,255,0.06); }
+/* Data em branco translucido: sobre foto, acento verde compete com o CTA. */
+.pp-featured__date { font-family: var(--pp-font-mono); font-size: var(--pp-t-label); letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.72); }
+.pp-featured__title { font-family: var(--pp-font-display); font-weight: 800; font-size: clamp(28px, 5vw, 44px); line-height: 0.98; letter-spacing: -0.035em; margin-top: 8px; color: #fff; }
+.pp-featured__foot { padding: 14px; background: rgba(18, 14, 23, 0.66); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; align-items: center; justify-content: space-between; gap: var(--pp-s-3); border-top: 1px solid rgba(255,255,255,0.06); }
 .pp-featured__venue { font-size: var(--pp-fs-13); color: rgba(255,255,255,0.75); }
 .pp-featured__meta { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 2px; font-family: var(--pp-font-mono); }
 
@@ -100,7 +101,7 @@ input, button, select, textarea { font-family: inherit; }
 @media (min-width: 980px) { .pp-grid { grid-template-columns: repeat(4, 1fr); } }
 
 /* ── Flyer card (spec Flyer) ── */
-.pp-flyer { display: block; position: relative; border-radius: 18px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); isolation: isolate; transition: transform var(--pp-dur-2) var(--pp-ease); }
+.pp-flyer { display: block; position: relative; border-radius: var(--pp-r-card); overflow: hidden; border: 1px solid rgba(255,255,255,0.08); isolation: isolate; transition: transform var(--pp-dur-2) var(--pp-ease); }
 .pp-flyer:hover { transform: translateY(-4px); }
 .pp-flyer__art { position: relative; aspect-ratio: 3 / 4; }
 .pp-flyer__art img { width: 100%; height: 100%; object-fit: cover; }
@@ -109,7 +110,9 @@ input, button, select, textarea { font-family: inherit; }
 .pp-flyer__body { position: absolute; bottom: 12px; left: 12px; right: 12px; }
 .pp-flyer__title { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-16); line-height: 1.05; letter-spacing: -0.02em; color: #fff; text-shadow: 0 2px 12px rgba(0,0,0,0.6); }
 .pp-flyer__meta { font-family: var(--pp-font-mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(255,255,255,0.6); margin-top: 4px; }
-.pp-flyer__price { font-family: var(--pp-font-mono); font-size: var(--pp-fs-13); font-weight: 700; color: var(--pp-pulse); margin-top: 4px; }
+/* PRECO: display + branco. O tamanho destaca, nao a cor — ver a auditoria
+   v4. tabular-nums para alinhar as colunas numa lista de lotes. */
+.pp-flyer__price { font-family: var(--pp-font-display); font-size: var(--pp-fs-15); font-weight: 700; color: var(--pp-fg); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin-top: 4px; }
 .pp-flyer__rank { position: absolute; top: 10px; right: 10px; padding: 3px 8px; border-radius: 999px; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font-family: var(--pp-font-mono); font-size: 11px; font-weight: 700; color: var(--pp-pink); }
 
 /* header de cidade (estilo Catalog/Sympla) */
@@ -136,8 +139,10 @@ input, button, select, textarea { font-family: inherit; }
 .pp-hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .pp-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 45%, rgba(6,7,10,0.9)); }
 .pp-hero__in { position: relative; z-index: 1; }
-.pp-hero__title { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-32); line-height: 1.02; letter-spacing: -0.03em; margin: 12px 0 0; }
-@media (min-width: 768px) { .pp-hero__title { font-size: var(--pp-fs-40); } }
+/* Nome do evento: o degrau de heroi. Peso 800 e tracking negativo dao a
+   energia de cartaz — com o eixo optico da display, quanto maior, mais
+   apertado o desenho. */
+.pp-hero__title { font-family: var(--pp-font-display); font-weight: 800; font-size: var(--pp-t-hero); line-height: 0.96; letter-spacing: -0.04em; margin: 14px 0 0; text-wrap: balance; }
 
 /* Feature chips (recursos reais do evento) */
 .pp-feature-chips { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -152,7 +157,7 @@ input, button, select, textarea { font-family: inherit; }
 .pp-tier { display: flex; align-items: center; justify-content: space-between; gap: var(--pp-s-4); padding: var(--pp-s-4); border-bottom: 1px solid var(--pp-edge-1); }
 .pp-tier:last-child { border-bottom: none; }
 .pp-tier__name { font-weight: 600; }
-.pp-tier__price { font-family: var(--pp-font-mono); color: var(--pp-pulse); font-weight: 600; }
+.pp-tier__price { font-family: var(--pp-font-display); color: var(--pp-fg); font-weight: 700; font-size: var(--pp-fs-20); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1.1; }
 
 /* ── Summary / checkout ── */
 .pp-summary { padding: var(--pp-s-5); position: sticky; top: 84px; }
@@ -166,7 +171,7 @@ input, button, select, textarea { font-family: inherit; }
 .pp-tag-secure { font-family: var(--pp-font-mono); font-size: 11px; color: var(--pp-pulse); padding: 4px 8px; border-radius: 8px; background: rgba(0,255,133,0.12); border: 1px solid rgba(0,255,133,0.25); }
 .pp-steps { display: flex; gap: 6px; margin-bottom: var(--pp-s-6); }
 .pp-steps .bar { flex: 1; height: 4px; border-radius: 99px; background: rgba(255,255,255,0.1); }
-.pp-steps .bar.on { background: var(--pp-pulse); box-shadow: 0 0 12px rgba(0,255,133,0.5); }
+.pp-steps .bar.on { background: var(--pp-pulse); }
 .pp-checkout h1 { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-28); line-height: 1; letter-spacing: -0.025em; margin: 8px 0 0; }
 .pp-checkout h1 .accent { font-family: var(--pp-font-serif); font-style: italic; font-weight: 400; color: var(--pp-pulse); font-size: var(--pp-fs-24); }
 .pp-countdown { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; background: rgba(255,184,0,0.10); border: 1px solid rgba(255,184,0,0.25); font-family: var(--pp-font-mono); font-size: var(--pp-fs-13); font-weight: 600; color: #FFD15C; }
@@ -180,7 +185,7 @@ input, button, select, textarea { font-family: inherit; }
 
 .pp-ordersum { display: flex; align-items: center; gap: 12px; padding: 16px; border-radius: 18px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); }
 .pp-ordersum__thumb { width: 48px; height: 48px; border-radius: 10px; flex-shrink: 0; background: radial-gradient(#00FF85, transparent), #A78BFA; }
-.pp-ordersum__price { font-family: var(--pp-font-mono); font-weight: 700; font-size: var(--pp-fs-16); color: var(--pp-pulse); }
+.pp-ordersum__price { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-money); letter-spacing: -0.03em; color: var(--pp-fg); font-variant-numeric: tabular-nums; }
 
 /* ══ TICKET QR (spec TicketScreen) — moldura cônica rotativa ══ */
 .pp-ticketwrap { max-width: 420px; margin: 0 auto; }
@@ -195,7 +200,7 @@ input, button, select, textarea { font-family: inherit; }
 .pp-perf__notch { position: absolute; top: -10px; width: 20px; height: 20px; border-radius: 50%; background: var(--pp-ink-950); }
 .pp-perf__notch.l { left: -10px; } .pp-perf__notch.r { right: -10px; }
 .pp-jwt { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; background: rgba(0,255,133,0.08); border: 1px solid rgba(0,255,133,0.2); font-family: var(--pp-font-mono); font-size: 11px; font-weight: 600; color: var(--pp-pulse); }
-.pp-jwt::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--pp-pulse); box-shadow: 0 0 8px rgba(0,255,133,0.8); }
+.pp-jwt::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--pp-pulse); }
 .pp-stub { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
 .pp-stub__k { font-family: var(--pp-font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.5); }
 .pp-stub__v { font-size: var(--pp-fs-14); font-weight: 600; margin-top: 3px; }
@@ -279,7 +284,7 @@ input, button, select, textarea { font-family: inherit; }
 .pp-menuitem { display: flex; align-items: center; gap: var(--pp-s-4); padding: 12px 0; border-bottom: 1px solid var(--pp-edge-1); }
 .pp-menuitem__name { font-weight: 600; font-size: var(--pp-fs-15); }
 .pp-menuitem__desc { font-size: var(--pp-fs-12); color: var(--pp-fg-3); margin-top: 2px; }
-.pp-menuitem__price { font-family: var(--pp-font-mono); color: var(--pp-pulse); font-weight: 600; font-size: var(--pp-fs-14); margin-top: 3px; }
+.pp-menuitem__price { font-family: var(--pp-font-display); color: var(--pp-fg); font-weight: 700; font-size: var(--pp-fs-18); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin-top: 3px; }
 .pp-menuitem__out { font-size: var(--pp-fs-12); color: var(--pp-fg-4); }
 .pp-barbar {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;

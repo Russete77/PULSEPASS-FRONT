@@ -46,12 +46,19 @@
 .pp-mono    { font-family: var(--pp-font-mono); }
 .pp-num     { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
 .pp-truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Sobrancelha em CINZA, não em acento. Ela orienta, não age — e acento
+   espalhado por título de seção foi o que diluiu o verde a ponto de
+   ele deixar de significar "toque aqui". */
 .pp-eyebrow {
-  font-family: var(--pp-font-mono); font-size: var(--pp-fs-12);
-  letter-spacing: 0.14em; text-transform: uppercase; color: var(--pp-pulse);
+  font-family: var(--pp-font-mono); font-size: var(--pp-t-label);
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--pp-fg-3);
 }
 .pp-display { font-family: var(--pp-font-display); font-weight: 700; letter-spacing: -0.03em; }
-.pp-price   { font-family: var(--pp-font-mono); color: var(--pp-pulse); font-weight: 600; font-variant-numeric: tabular-nums; }
+/* Preço saiu do mono verde. Ver .pp-money — o tamanho é que destaca. */
+.pp-price {
+  font-family: var(--pp-font-display); color: var(--pp-fg);
+  font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums;
+}
 /* Assinatura editorial — Newsreader itálico verde ("Sinta o pulso do evento.") */
 .pp-accent  { font-family: var(--pp-font-serif); font-style: italic; font-weight: 400; color: var(--pp-pulse); }
 /* Meta em mono uppercase (spec: "SEX · 22 NOV · 22H") */
@@ -64,8 +71,10 @@
 .pp-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 10px;
   height: 46px; padding: 0 22px;
-  border-radius: var(--pp-r-pill);
-  font-family: var(--pp-font-body); font-weight: 600; font-size: var(--pp-fs-14);
+  /* Controle usa raio de controle. A pílula ficou reservada a etiqueta:
+     botão-pílula em tudo é o que datava a interface. */
+  border-radius: var(--pp-r-control);
+  font-family: var(--pp-font-body); font-weight: 600; font-size: var(--pp-fs-15);
   letter-spacing: -0.005em;
   border: 1px solid transparent; background: transparent; color: var(--pp-fg);
   white-space: nowrap; user-select: none;
@@ -78,13 +87,13 @@
 .pp-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 .pp-btn:focus-visible { outline: 2px solid rgba(var(--pp-pulse-rgb), 0.6); outline-offset: 2px; }
 
+/* Cor chapada, sem gradiente nem sombra colorida. O botão principal já é
+   o único elemento em acento na tela — não precisa brilhar para ser achado. */
 .pp-btn--primary {
-  background: linear-gradient(180deg, #4DFFA8 0%, #00FF85 60%, #00CC6A 100%);
+  background: var(--pp-pulse);
   color: var(--pp-pulse-ink); font-weight: 700;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 0 0 1px rgba(0,255,133,0.4),
-              0 8px 24px rgba(0,255,133,0.32), 0 1px 2px rgba(0,0,0,0.4);
 }
-.pp-btn--primary:hover:not(:disabled) { filter: brightness(1.06) saturate(1.05); }
+.pp-btn--primary:hover:not(:disabled) { background: var(--pp-pulse-hi); }
 .pp-btn--glass {
   background: rgba(255,255,255,0.08); color: var(--pp-fg);
   border-color: rgba(255,255,255,0.16);
@@ -97,11 +106,10 @@
 .pp-btn--bare { background: transparent; color: var(--pp-fg-2); border-color: transparent; }
 .pp-btn--bare:hover:not(:disabled) { color: var(--pp-fg); }
 .pp-btn--violet {
-  background: linear-gradient(180deg, #C4B5FD 0%, #A78BFA 60%, #7C3AED 100%);
+  background: var(--pp-violet);
   color: #1A0040; font-weight: 700;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 0 0 1px rgba(167,139,250,0.4), 0 8px 24px rgba(167,139,250,0.32);
 }
-.pp-btn--violet:hover:not(:disabled) { filter: brightness(1.06); }
+.pp-btn--violet:hover:not(:disabled) { background: var(--pp-violet-hi); }
 .pp-btn--danger { background: var(--pp-red); color: #fff; }
 .pp-btn--danger:hover:not(:disabled) { filter: brightness(1.08); }
 .pp-btn--danger-soft { background: rgba(255,59,48,0.14); color: #FF6B61; border-color: rgba(255,59,48,0.30); }
@@ -206,12 +214,13 @@
 .pp-field + .pp-field { margin-top: var(--pp-s-4); }
 .pp-label { font-size: var(--pp-fs-12); color: var(--pp-fg-3); font-family: var(--pp-font-mono); letter-spacing: 0.06em; text-transform: uppercase; }
 .pp-input, .pp-select {
-  width: 100%; height: 50px; padding: 0 18px;
+  width: 100%; height: 50px; padding: 0 16px;
   background: rgba(255,255,255,0.06); color: var(--pp-fg);
-  border: 1px solid rgba(255,255,255,0.10); border-radius: var(--pp-r-pill);
+  /* Campo é controle, não etiqueta: raio de controle. */
+  border: 1px solid rgba(255,255,255,0.10); border-radius: var(--pp-r-control);
   backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
-  font-family: var(--pp-font-body); font-size: var(--pp-fs-14); outline: none;
+  font-family: var(--pp-font-body); font-size: var(--pp-fs-15); outline: none;
   transition: border-color var(--pp-dur-2) var(--pp-ease), box-shadow var(--pp-dur-2) var(--pp-ease);
 }
 .pp-textarea {
@@ -414,3 +423,86 @@ select option, select optgroup, .pp-select option, .pp-select optgroup {
 @media (prefers-reduced-motion: reduce) {
   .pp-reveal, .pp-reveal-group > *, .pp-modal, .pp-sheet, .pp-toast, .pp-overlay, .pp-popover { animation: none !important; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   v4 · HIERARQUIA
+   A auditoria mostrou 66 de 82 textos no mesmo tamanho. Estas classes
+   dão papel ao texto: quem usa sabe qual degrau está pegando, e o
+   salto entre degraus vizinhos é visível a um metro de distância.
+   ═══════════════════════════════════════════════════════════ */
+
+/* Nome do evento. Display com eixo óptico apertado + tracking negativo:
+   é a energia de cartaz que a interface não tinha. */
+.pp-t-hero {
+  font-family: var(--pp-font-display);
+  font-size: var(--pp-t-hero); font-weight: 800;
+  line-height: 0.98; letter-spacing: -0.035em;
+  text-wrap: balance; margin: 0;
+}
+.pp-t-title {
+  font-family: var(--pp-font-display);
+  font-size: var(--pp-t-title); font-weight: 700;
+  line-height: 1.08; letter-spacing: -0.025em;
+  text-wrap: balance; margin: 0;
+}
+.pp-t-section {
+  font-family: var(--pp-font-display);
+  font-size: var(--pp-t-section); font-weight: 600;
+  line-height: 1.2; letter-spacing: -0.015em; margin: 0;
+}
+.pp-t-support { font-size: var(--pp-t-support); color: var(--pp-fg-3); }
+
+/* Etiqueta: o ÚNICO lugar onde caixa-alta espaçada faz sentido —
+   texto curto, funcional, que a pessoa não lê, reconhece. */
+.pp-t-label {
+  font-family: var(--pp-font-mono); font-size: var(--pp-t-label);
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--pp-fg-3);
+}
+
+/* ── Dinheiro ──
+   Preço em display, não em mono: é peça de desejo, o número que a
+   pessoa compara e decide. tabular-nums mantém as colunas alinhadas
+   numa lista de lotes, que é o único motivo real para usar mono aqui. */
+.pp-money {
+  font-family: var(--pp-font-display);
+  font-size: var(--pp-t-money); font-weight: 700;
+  letter-spacing: -0.03em; font-variant-numeric: tabular-nums;
+  color: var(--pp-fg);   /* branco: o TAMANHO destaca, não a cor */
+  line-height: 1;
+}
+.pp-money--sm { font-size: var(--pp-fs-20); }
+.pp-money--lg { font-size: clamp(2.25rem, 7vw, 3rem); }
+/* Verde só quando o número É a boa notícia (saldo disponível, entrada). */
+.pp-money--positivo { color: var(--pp-pulse); }
+
+/* ── Materialidade de ingresso ──
+   O entalhe lateral é a única forma que só um app de ingresso pode ter.
+   Feito com máscara radial, sem imagem: escala em qualquer tamanho e
+   funciona sobre qualquer fundo. */
+.pp-ticket {
+  position: relative;
+  background: var(--pp-ink-850);
+  border-radius: var(--pp-r-card);
+  --pp-notch: 13px;
+  -webkit-mask:
+    radial-gradient(var(--pp-notch) at 0 var(--pp-notch-y, 62%), #0000 98%, #000) left / 51% 100% no-repeat,
+    radial-gradient(var(--pp-notch) at 100% var(--pp-notch-y, 62%), #0000 98%, #000) right / 51% 100% no-repeat;
+  mask:
+    radial-gradient(var(--pp-notch) at 0 var(--pp-notch-y, 62%), #0000 98%, #000) left / 51% 100% no-repeat,
+    radial-gradient(var(--pp-notch) at 100% var(--pp-notch-y, 62%), #0000 98%, #000) right / 51% 100% no-repeat;
+}
+/* O picote entre o corpo do ingresso e o canhoto. */
+.pp-ticket__picote {
+  border: 0; border-top: 2px dashed var(--pp-edge-3);
+  margin: 0; height: 0;
+}
+
+/* ── Ritmo vertical ──
+   A regra que resolve 90% dos casos de espaçamento: o espaço ACIMA de
+   um título é maior que o espaço abaixo dele. Título grudado no que
+   vem antes e solto do que vem depois é o erro mais comum. */
+.pp-ritmo > * + * { margin-top: var(--pp-s-4); }
+.pp-ritmo > * + .pp-t-section,
+.pp-ritmo > * + .pp-t-title { margin-top: var(--pp-s-10); }
+.pp-ritmo > .pp-t-section + *,
+.pp-ritmo > .pp-t-title + * { margin-top: var(--pp-s-3); }

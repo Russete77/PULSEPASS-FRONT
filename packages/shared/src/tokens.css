@@ -1,18 +1,44 @@
 /* ═══════════════════════════════════════════════════════════
-   PULSEPASS DESIGN SYSTEM — v3 Premium Glass · FONTE ÚNICA
+   PULSEPASS DESIGN SYSTEM — v4 · FONTE ÚNICA
    Sistema Operacional de Eventos · Ticketeria + Guest + Cashless
    Consumido por web/ e admin/ via @pulsepass/shared/tokens.css
+
+   O QUE MUDOU NA v4 E POR QUÊ
+   ───────────────────────────
+   A auditoria mediu a tela do evento e encontrou três coisas:
+   66 de 82 textos no mesmo tamanho, o acento em 37% deles, e a fonte
+   de display aparecendo UMA vez na página. Não era mau gosto — era
+   ausência de hierarquia, que o olho lê como interface datada.
+
+   1. TIPOGRAFIA. Space Grotesk + Inter é o par mais repetido da
+      internet; virou assinatura de template. Trocado por Bricolage
+      Grotesque (display, com eixo óptico que aperta o texto grande —
+      energia de cartaz) e Instrument Sans (texto, contemporânea e
+      levemente estreita). O contraste entre as duas é o que faz a
+      tela parecer desenhada em vez de configurada.
+
+   2. FUNDO. O quase-preto azulado (#06070A) somado a verde ácido é
+      o vocabulário de todo app cripto/gamer desde 2021. A escala
+      passou a ter viés de AMEIXA: mesma profundidade, temperatura
+      própria. É o que dá identidade sem trocar a marca.
+
+   3. BRILHO. Sombra colorida difusa nasceu em UI de jogo e envelheceu
+      rápido. Os tokens de glow viraram sombra neutra curta; a
+      profundidade agora vem de elevação real, não de neon.
    ═══════════════════════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
   /* ── Brand ── */
-  --pp-pulse:           #00FF85;       /* primary neon — pulse */
-  --pp-pulse-hi:        #4DFFA8;       /* brightened */
-  --pp-pulse-lo:        #00CC6A;       /* aaa contrast on light */
-  --pp-pulse-ink:       #003C1F;       /* deep brand ink */
-  --pp-pulse-rgb:       0, 255, 133;
+  /* O verde saiu do fluorescente puro (#00FF85). Continua sendo a cor
+     da marca, mas com um passo a menos de luminância: para no olho em
+     vez de vibrar, e sobra contraste para o branco ser o destaque. */
+  --pp-pulse:           #0BE87D;
+  --pp-pulse-hi:        #3DF29A;
+  --pp-pulse-lo:        #06A85A;
+  --pp-pulse-ink:       #04250F;       /* texto sobre o verde */
+  --pp-pulse-rgb:       11, 232, 125;
 
   /* Accents — violet (premium / loyalty) + cyan (data / live) */
   --pp-violet:          #A78BFA;
@@ -27,25 +53,31 @@
   --pp-amber:           #FFB800;
   --pp-red:             #FF3B30;
 
-  /* ── Ink (dark base — primary surface) ── */
-  --pp-ink-950:         #06070A;       /* deepest — body bg */
-  --pp-ink-900:         #0B0D12;
-  --pp-ink-850:         #11141B;
-  --pp-ink-800:         #161A23;
-  --pp-ink-700:         #1F2430;
-  --pp-ink-600:         #2A3140;
-  --pp-ink-500:         #3A4254;
+  /* ── Ink (base escura — superfície primária) ──
+     Viés de AMEIXA, não de azul. A diferença por token é pequena, mas
+     numa tela inteira é o que separa "app noturno com identidade" de
+     "mais um dark mode de cripto". O verde da marca fica mais quente
+     por contraste, sem precisar mudar de matiz. */
+  --pp-ink-950:         #0C0910;       /* mais profundo — fundo do body */
+  --pp-ink-900:         #120E17;
+  --pp-ink-850:         #17131E;
+  --pp-ink-800:         #1E1826;
+  --pp-ink-700:         #2A2235;
+  --pp-ink-600:         #382E46;
+  --pp-ink-500:         #4B3F5C;
 
   /* Pure */
   --pp-white:           #FFFFFF;
   --pp-cream:           #F5F3EE;
 
-  /* ── Text on dark ── */
-  --pp-fg:              #FFFFFF;
-  --pp-fg-2:            rgba(255, 255, 255, 0.74);
-  --pp-fg-3:            rgba(255, 255, 255, 0.52);
-  --pp-fg-4:            rgba(255, 255, 255, 0.34);
-  --pp-fg-5:            rgba(255, 255, 255, 0.18);
+  /* ── Texto sobre escuro ──
+     Branco levemente quente: branco puro sobre fundo ameixa "azula" na
+     percepção. Este acerta a temperatura sem perder contraste. */
+  --pp-fg:              #F7F4F9;
+  --pp-fg-2:            rgba(247, 244, 249, 0.74);
+  --pp-fg-3:            rgba(247, 244, 249, 0.54);
+  --pp-fg-4:            rgba(247, 244, 249, 0.36);
+  --pp-fg-5:            rgba(247, 244, 249, 0.18);
 
   /* ── Glass surfaces ── */
   --pp-glass-1:         rgba(255, 255, 255, 0.03);   /* faintest tint */
@@ -64,11 +96,16 @@
   --pp-shine:           inset 0 1px 0 rgba(255, 255, 255, 0.12);
   --pp-shine-strong:    inset 0 1px 0 rgba(255, 255, 255, 0.22);
 
-  /* ── Typography ── */
-  --pp-font-display:    'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
-  --pp-font-body:       'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  /* ── Tipografia ──
+     Display com eixo óptico: quanto maior o corpo, mais apertado o
+     desenho. É o que dá energia de cartaz ao nome do evento — e é o
+     oposto de uma grotesca neutra esticada. */
+  --pp-font-display:    'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+  --pp-font-body:       'Instrument Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  /* Mono SÓ para dado técnico: código de ingresso, id, extrato.
+     Nunca para preço — preço é peça de desejo, não leitura de terminal. */
   --pp-font-mono:       'JetBrains Mono', ui-monospace, 'SF Mono', monospace;
-  --pp-font-serif:      'Newsreader', Georgia, 'Times New Roman', serif;
+  --pp-font-serif:      Georgia, 'Times New Roman', serif;
 
   /* ── Type scale ── */
   --pp-fs-12:  0.75rem;
@@ -86,19 +123,41 @@
   --pp-fs-56:  3.5rem;
   --pp-fs-72:  4.5rem;
 
+  /* ── Papéis tipográficos ──
+     A escala acima é a paleta; estes são os degraus que a tela pode
+     usar. A auditoria achou 66 de 82 textos num único tamanho porque
+     não havia papel definido — cada tela escolhia sozinha. Use estes.
+     O salto entre dois degraus vizinhos tem que ser visível de longe. */
+  --pp-t-hero:    clamp(2.5rem, 6vw, 3.5rem);   /* nome do evento */
+  --pp-t-title:   clamp(1.75rem, 4vw, 2.25rem); /* título de tela */
+  --pp-t-money:   1.875rem;                     /* preço, saldo, total */
+  --pp-t-section: 1.25rem;                      /* título de bloco */
+  --pp-t-body:    1rem;                         /* corpo */
+  --pp-t-support: 0.875rem;                     /* apoio, legenda */
+  --pp-t-label:   0.6875rem;                    /* etiqueta (mono, caixa alta) */
+
   /* ── Spacing (4px grid) ── */
   --pp-s-1: 4px; --pp-s-2: 8px; --pp-s-3: 12px; --pp-s-4: 16px;
   --pp-s-5: 20px; --pp-s-6: 24px; --pp-s-8: 32px; --pp-s-10: 40px;
   --pp-s-12: 48px; --pp-s-16: 64px; --pp-s-20: 80px;
 
-  /* ── Radius (generous, premium) ── */
-  --pp-r-xs: 6px;
-  --pp-r-sm: 10px;
-  --pp-r-md: 14px;
-  --pp-r-lg: 20px;
-  --pp-r-xl: 28px;
-  --pp-r-2xl: 36px;
-  --pp-r-pill: 999px;
+  /* ── Raio de canto ──
+     A auditoria achou CINCO raios diferentes convivendo na mesma tela
+     (8, 12, 20, 28 e pílula). O olho lê isso como desalinho mesmo sem
+     saber nomear. Agora são três, com função — e a pílula, que estava
+     em botão, campo e card, volta a ser só de etiqueta. */
+  --pp-r-control: 8px;    /* botão, campo, seletor */
+  --pp-r-card:    12px;   /* card, painel, folha */
+  --pp-r-pill:    999px;  /* SÓ etiqueta e chip de filtro */
+
+  /* Compatibilidade com o que ainda referencia os nomes antigos.
+     Apontam para os três acima — não introduzem valores novos. */
+  --pp-r-xs: var(--pp-r-control);
+  --pp-r-sm: var(--pp-r-control);
+  --pp-r-md: var(--pp-r-control);
+  --pp-r-lg: var(--pp-r-card);
+  --pp-r-xl: var(--pp-r-card);
+  --pp-r-2xl: var(--pp-r-card);
 
   /* ── Shadow / glow ── */
   --pp-shadow-1:     0 1px 2px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.3);
@@ -106,10 +165,18 @@
   --pp-shadow-3:     0 8px 24px rgba(0,0,0,0.55), 0 24px 64px rgba(0,0,0,0.5);
   --pp-shadow-pop:   0 30px 80px -20px rgba(0,0,0,0.7), 0 12px 36px -8px rgba(0,0,0,0.5);
 
-  --pp-glow-pulse:   0 0 0 1px rgba(0,255,133,0.35), 0 8px 28px rgba(0,255,133,0.28);
-  --pp-glow-pulse-soft: 0 0 32px rgba(0,255,133,0.18);
-  --pp-glow-violet:  0 0 32px rgba(167,139,250,0.30);
-  --pp-glow-cyan:    0 0 32px rgba(34,211,238,0.30);
+  /* ── Fim do brilho colorido ──
+     Sombra colorida difusa nasceu em interface de jogo e envelheceu
+     rápido: hoje lê como enfeite, não como profundidade — e era o
+     detalhe que mais entregava a idade do visual.
+
+     Os nomes continuam para não quebrar quem os usa, mas agora
+     entregam contorno e sombra NEUTRA. Profundidade só onde existe
+     elevação real: folha sobre conteúdo, barra fixa sobre lista. */
+  --pp-glow-pulse:      0 0 0 1px rgba(var(--pp-pulse-rgb), 0.30);
+  --pp-glow-pulse-soft: 0 2px 10px rgba(0, 0, 0, 0.35);
+  --pp-glow-violet:     0 2px 10px rgba(0, 0, 0, 0.35);
+  --pp-glow-cyan:       0 2px 10px rgba(0, 0, 0, 0.35);
 
   /* ── Blur values ── */
   --pp-blur-sm:  blur(12px) saturate(150%);

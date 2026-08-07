@@ -28,7 +28,7 @@ button { cursor: pointer; }
   font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-18);
   margin-bottom: var(--pp-s-6);
 }
-.ck-brand .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--pp-pulse); box-shadow: 0 0 0 0 rgba(0,255,133,0.7); animation: pp-pulse-ring 1.8s var(--pp-ease) infinite; }
+.ck-brand .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--pp-pulse); animation: pp-pulse-ring 1.8s var(--pp-ease) infinite; }
 .ck-nav { display: flex; flex-direction: column; gap: 4px; flex: 1; }
 .ck-navlink {
   padding: 10px 12px; border-radius: var(--pp-r-md);
@@ -43,7 +43,7 @@ button { cursor: pointer; }
   height: 64px; display: flex; align-items: center; justify-content: space-between;
   padding: 0 var(--pp-s-8); border-bottom: 1px solid var(--pp-edge-1);
   position: sticky; top: 0; z-index: 10;
-  background: rgba(6,7,10,0.7); backdrop-filter: var(--pp-blur-md);
+  background: rgba(12, 9, 16, 0.72); backdrop-filter: var(--pp-blur-md);
 }
 .ck-content { padding: var(--pp-s-8); max-width: 1200px; }
 
@@ -61,14 +61,16 @@ button { cursor: pointer; }
 }
 
 /* ── Headings ── */
-.ck-eyebrow { font-family: var(--pp-font-mono); font-size: var(--pp-fs-12); letter-spacing: 0.14em; text-transform: uppercase; color: var(--pp-pulse); }
-h1.ck-h1 { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-32); letter-spacing: -0.03em; margin: 6px 0 4px; }
+/* Cinza, nao acento: sobrancelha orienta, nao age. */
+.ck-eyebrow { font-family: var(--pp-font-mono); font-size: var(--pp-t-label); letter-spacing: 0.14em; text-transform: uppercase; color: var(--pp-fg-3); }
+h1.ck-h1 { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-title); line-height: 1.08; letter-spacing: -0.025em; margin: 8px 0 4px; }
 .ck-sub { color: var(--pp-fg-3); margin: 0 0 var(--pp-s-6); }
 
 /* ── Buttons (alinhado ao spec pp-) ── */
-.ck-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 22px; border-radius: var(--pp-r-pill); font-family: var(--pp-font-body); font-weight: 600; font-size: var(--pp-fs-14); letter-spacing: -0.005em; border: 1px solid transparent; transition: filter var(--pp-dur-1) var(--pp-ease), background var(--pp-dur-2) var(--pp-ease); }
-.ck-btn--primary { background: linear-gradient(180deg, #4DFFA8 0%, #00FF85 60%, #00CC6A 100%); color: var(--pp-pulse-ink); font-weight: 700; box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 0 0 1px rgba(0,255,133,0.4), 0 8px 24px rgba(0,255,133,0.28); }
-.ck-btn--primary:hover:not(:disabled) { filter: brightness(1.06); }
+.ck-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 22px; border-radius: var(--pp-r-control); font-family: var(--pp-font-body); font-weight: 600; font-size: var(--pp-fs-14); letter-spacing: -0.005em; border: 1px solid transparent; transition: filter var(--pp-dur-1) var(--pp-ease), background var(--pp-dur-2) var(--pp-ease); }
+/* Chapado: sem gradiente nem sombra colorida (ver tokens v4). */
+.ck-btn--primary { background: var(--pp-pulse); color: var(--pp-pulse-ink); font-weight: 700; }
+.ck-btn--primary:hover:not(:disabled) { background: var(--pp-pulse-hi); }
 .ck-btn--glass { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.16); color: var(--pp-fg); box-shadow: inset 0 1px 0 rgba(255,255,255,0.12); }
 .ck-btn--glass:hover:not(:disabled) { background: rgba(255,255,255,0.12); }
 .ck-btn--ghost { background: transparent; color: var(--pp-fg-2); }
@@ -109,7 +111,8 @@ h1.ck-h1 { font-family: var(--pp-font-display); font-weight: 700; font-size: var
 .ck-metric { padding: var(--pp-s-5); background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2); border-radius: var(--pp-r-lg); box-shadow: var(--pp-shine), var(--pp-shadow-1); }
 .ck-metric .lbl { font-size: var(--pp-fs-12); color: var(--pp-fg-3); font-family: var(--pp-font-mono); text-transform: uppercase; letter-spacing: 0.08em; }
 .ck-metric .val { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-32); margin-top: 8px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
-.ck-metric .val.accent { color: var(--pp-pulse); font-family: var(--pp-font-mono); }
+/* Numero grande fica na display: mono e para dado tecnico, nao para KPI. */
+.ck-metric .val.accent { color: var(--pp-pulse); }
 
 /* ── Table ── */
 .ck-table { width: 100%; border-collapse: collapse; }
@@ -160,7 +163,7 @@ h1.ck-h1 { font-family: var(--pp-font-display); font-weight: 700; font-size: var
 .adm-navlink { padding: 10px 12px; border-radius: var(--pp-r-md); color: var(--pp-fg-3); font-size: var(--pp-fs-14); font-weight: 500; display: flex; align-items: center; gap: 10px; }
 .adm-navlink:hover { background: var(--pp-glass-1); color: var(--pp-fg-2); }
 .adm-navlink.active { background: rgba(255,61,136,0.10); border: 1px solid rgba(255,61,136,0.25); color: var(--pp-pink); }
-.adm-topbar { height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 0 var(--pp-s-8); border-bottom: 1px solid var(--pp-edge-1); position: sticky; top: 0; z-index: 10; background: rgba(6,7,10,0.7); backdrop-filter: var(--pp-blur-md); }
+.adm-topbar { height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 0 var(--pp-s-8); border-bottom: 1px solid var(--pp-edge-1); position: sticky; top: 0; z-index: 10; background: rgba(12, 9, 16, 0.72); backdrop-filter: var(--pp-blur-md); }
 .adm-secpill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; background: rgba(255,59,48,0.10); border: 1px solid rgba(255,59,48,0.28); font-family: var(--pp-font-mono); font-size: 10px; font-weight: 600; letter-spacing: 0.06em; color: #FF7A75; }
 .adm-content { padding: var(--pp-s-8); max-width: 1280px; }
 .adm-eyebrow { font-family: var(--pp-font-mono); font-size: var(--pp-fs-12); letter-spacing: 0.14em; text-transform: uppercase; color: var(--pp-pink); }
