@@ -82,8 +82,8 @@ export default function PDV() {
       <div className="ck-card" style={{ maxWidth: 520 }}>
         <form onSubmit={lookup} style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }}>
           <div className="ck-field" style={{ flex: 1, margin: 0 }}>
-            <label className="ck-label">E-mail do cliente</label>
-            <input className="ck-input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="cliente@email.com" />
+            <label htmlFor="pdv-1" className="ck-label">E-mail do cliente</label>
+            <input id="pdv-1" className="ck-input" type="email" autoComplete="email" inputMode="email" autoCapitalize="off" autoCorrect="off" spellCheck="false" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="cliente@email.com" />
           </div>
           <button className="ck-btn ck-btn--glass" disabled={looking || !email.includes('@')}>
             {looking ? '…' : 'Buscar'}
@@ -115,14 +115,34 @@ export default function PDV() {
               <div style={{ color: 'var(--pp-fg-4)', fontSize: 12 }}>{it.category}</div>
               <div style={{ color: 'var(--pp-pulse)', fontFamily: 'var(--pp-font-mono)', marginTop: 4 }}>{brl(it.price_cents)}</div>
             </div>
+            {/* "−" e "+" sozinhos não dizem de qual item. O rótulo acessível
+                nomeia o produto e a quantidade é anunciada ao vivo. */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <button className="ck-iconbtn" onClick={() => setQty(it.id, -1)}>−</button>
-              <span style={{ minWidth: 20, textAlign: 'center' }}>{cart[it.id] ?? 0}</span>
-              <button className="ck-iconbtn" onClick={() => setQty(it.id, +1)}>+</button>
+              <button className="ck-iconbtn" onClick={() => setQty(it.id, -1)}
+                disabled={!cart[it.id]} aria-label={`Tirar um ${it.name}`}>−</button>
+              <span style={{ minWidth: 20, textAlign: 'center' }}
+                aria-live="polite" aria-label={`${cart[it.id] ?? 0} ${it.name}`}>{cart[it.id] ?? 0}</span>
+              <button className="ck-iconbtn" onClick={() => setQty(it.id, +1)}
+                aria-label={`Adicionar um ${it.name}`}>+</button>
             </div>
           </div>
         ))}
       </div>
+
+      {/* Cardápio vazio deixava a tela em branco embaixo do título: no meio do
+          evento, o operador não sabe se travou, se não carregou, ou se falta
+          cadastrar. Diz o que houve e leva direto para onde se resolve. */}
+      {menu.length === 0 && (
+        <div className="ck-card" style={{ maxWidth: 520 }}>
+          <strong>Nenhum item no cardápio</strong>
+          <p style={{ color: 'var(--pp-fg-3)', fontSize: 14, margin: '6px 0 14px' }}>
+            O bar não tem produtos cadastrados, então não há o que vender aqui.
+          </p>
+          <Link to={`/eventos/${id}/cardapio`} className="ck-btn ck-btn--primary">
+            Montar o cardápio
+          </Link>
+        </div>
+      )}
       {!customer && <p style={{ color: 'var(--pp-fg-4)', fontSize: 13, marginTop: 10 }}>Busque um cliente para liberar o cardápio.</p>}
 
       {customer && count > 0 && (

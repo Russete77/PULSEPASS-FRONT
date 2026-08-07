@@ -103,12 +103,12 @@ export default function Events() {
         <p className="ck-sub">A casa/produtora dona dos eventos. Você poderá criar eventos em seguida.</p>
         <form className="ck-card" style={{ maxWidth: 520 }} onSubmit={createOrg}>
           <div className="ck-field">
-            <label className="ck-label">Nome da organização</label>
-            <input className="ck-input" value={orgName} onChange={(e) => setOrgName(e.target.value)} required minLength={2} placeholder="Ex.: Casa Pulse" />
+            <label htmlFor="events-1" className="ck-label">Nome da organização</label>
+            <input id="events-1" className="ck-input" value={orgName} onChange={(e) => setOrgName(e.target.value)} required minLength={2} placeholder="Ex.: Casa Pulse" />
           </div>
           <div className="ck-field">
-            <label className="ck-label">CNPJ (opcional)</label>
-            <input className="ck-input" value={cnpj} onChange={(e) => setCnpj(e.target.value)} placeholder="00.000.000/0001-00" />
+            <label htmlFor="events-2" className="ck-label">CNPJ (opcional)</label>
+            <input id="events-2" className="ck-input" value={cnpj} onChange={(e) => setCnpj(e.target.value)} placeholder="00.000.000/0001-00" />
           </div>
           {error && <ErrorBox>{error}</ErrorBox>}
           <button className="ck-btn ck-btn--primary" disabled={creating}>

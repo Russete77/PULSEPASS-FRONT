@@ -88,12 +88,12 @@ export default function CamarotesPublic() {
 
             {openId === t.id && (
               <div className="pp-stack" style={{ marginTop: 'var(--pp-s-4)' }}>
-                <div className="pp-field"><label className="pp-label">Seu nome</label>
-                  <input className="pp-input" value={form.name} onChange={set('name')} required minLength={2} /></div>
-                <div className="pp-field"><label className="pp-label">Contato (WhatsApp/e-mail)</label>
-                  <input className="pp-input" value={form.contact} onChange={set('contact')} placeholder="(11) 90000-0000" /></div>
-                <div className="pp-field"><label className="pp-label">Nº de pessoas</label>
-                  <input className="pp-input" type="number" min="1" value={form.party_size} onChange={set('party_size')} /></div>
+                <div className="pp-field"><label htmlFor={`cam-${t.id}-nome`} className="pp-label">Seu nome</label>
+                  <input id={`cam-${t.id}-nome`} className="pp-input" value={form.name} onChange={set('name')} required minLength={2} /></div>
+                <div className="pp-field"><label htmlFor={`cam-${t.id}-contato`} className="pp-label">Contato (WhatsApp/e-mail)</label>
+                  <input id={`cam-${t.id}-contato`} className="pp-input" value={form.contact} onChange={set('contact')} placeholder="(11) 90000-0000" /></div>
+                <div className="pp-field"><label htmlFor={`cam-${t.id}-pessoas`} className="pp-label">Nº de pessoas</label>
+                  <input id={`cam-${t.id}-pessoas`} className="pp-input" type="number" inputMode="numeric" min="1" value={form.party_size} onChange={set('party_size')} /></div>
                 <button className={`pp-btn pp-btn--primary pp-btn--block ${busy ? 'is-loading' : ''}`} disabled={busy || form.name.trim().length < 2} onClick={() => reserve(t)}>
                   Solicitar reserva
                 </button>

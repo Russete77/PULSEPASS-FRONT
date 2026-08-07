@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Shell, Loading, ErrorBox, BackLink } from '../components/Shell.jsx';
+import Confirmar from '@pulsepass/shared/Confirmar';
 import { api } from '../lib/api.js';
 
 const ROLES = [
@@ -17,6 +18,7 @@ export default function Equipe() {
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('door');
   const [busy, setBusy] = useState(false);
+  const [aRemover, setARemover] = useState(null);   // membro aguardando confirmação
 
   async function load() {
     try { setStaff(await api.listStaff(id)); setStatus('done'); }
@@ -36,8 +38,8 @@ export default function Equipe() {
   }
 
   async function remove(staffId) {
-    try { await api.removeStaff(id, staffId); await load(); }
-    catch (err) { setError(err.message); }
+    await api.removeStaff(id, staffId);
+    await load();
   }
 
   if (status === 'loading') return <Shell><Loading /></Shell>;
@@ -52,12 +54,12 @@ export default function Equipe() {
       <div className="ck-card" style={{ maxWidth: 560 }}>
         <form onSubmit={add} style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'flex-end' }}>
           <div className="ck-field" style={{ flex: '1 1 220px', margin: 0 }}>
-            <label className="ck-label">E-mail (já cadastrado no PulsePass)</label>
-            <input className="ck-input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="pessoa@email.com" />
+            <label htmlFor="equipe-1" className="ck-label">E-mail (já cadastrado no PulsePass)</label>
+            <input id="equipe-1" className="ck-input" type="email" autoComplete="email" inputMode="email" autoCapitalize="off" autoCorrect="off" spellCheck="false" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="pessoa@email.com" />
           </div>
           <div className="ck-field" style={{ margin: 0 }}>
-            <label className="ck-label">Papel</label>
-            <select className="ck-select" value={role} onChange={(e) => setRole(e.target.value)}>
+            <label htmlFor="equipe-2" className="ck-label">Papel</label>
+            <select id="equipe-2" className="ck-select" value={role} onChange={(e) => setRole(e.target.value)}>
               {ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
             </select>
           </div>
@@ -79,13 +81,36 @@ export default function Equipe() {
                 <tr key={s.id}>
                   <td>{s.profiles?.full_name || s.profiles?.email}<br /><span style={{ color: 'var(--pp-fg-4)', fontSize: 12 }}>{s.profiles?.email}</span></td>
                   <td>{ROLES.find((r) => r.value === s.role)?.label ?? s.role}</td>
-                  <td><button className="ck-btn ck-btn--glass" onClick={() => remove(s.id)}>Remover</button></td>
+                  {/* Ação destrutiva não pode ter a mesma cara de "Ativar" ou
+                      "Editar": quem opera com pressa clica pela posição. */}
+                  <td>
+                    <button className="ck-btn ck-btn--danger-soft" onClick={() => setARemover(s)}>
+                      Remover
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
       </div>
+
+      {/* Tirar alguém da equipe DURANTE o evento derruba o acesso na hora: o
+          porteiro para de validar ingresso no meio da fila. Por isso o
+          diálogo diz o papel, e não só o nome. */}
+      <Confirmar
+        aberto={!!aRemover}
+        titulo="Remover da equipe?"
+        descricao={
+          `${aRemover?.profiles?.full_name || aRemover?.profiles?.email} perde o acesso de `
+          + `"${ROLES.find((r) => r.value === aRemover?.role)?.label ?? aRemover?.role}" imediatamente. `
+          + 'Se o evento estiver rolando, a tela dessa pessoa para de funcionar na hora. '
+          + 'Você pode adicionar de volta depois.'
+        }
+        confirmar="Remover acesso"
+        onConfirmar={() => remove(aRemover.id)}
+        onFechar={() => setARemover(null)}
+      />
     </Shell>
   );
 }

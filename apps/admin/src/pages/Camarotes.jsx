@@ -59,20 +59,20 @@ export default function Camarotes() {
       <form onSubmit={create} className="ck-card" style={{ maxWidth: 720 }}>
         <div className="ck-row">
           <div className="ck-field" style={{ margin: 0 }}>
-            <label className="ck-label">Nome</label>
-            <input className="ck-input" value={form.name} onChange={set('name')} required placeholder="Camarote A" />
+            <label htmlFor="camarotes-1" className="ck-label">Nome</label>
+            <input id="camarotes-1" className="ck-input" value={form.name} onChange={set('name')} required placeholder="Camarote A" />
           </div>
           <div className="ck-field" style={{ margin: 0 }}>
-            <label className="ck-label">Área</label>
-            <input className="ck-input" value={form.area} onChange={set('area')} placeholder="Camarote" />
+            <label htmlFor="camarotes-2" className="ck-label">Área</label>
+            <input id="camarotes-2" className="ck-input" value={form.area} onChange={set('area')} placeholder="Camarote" />
           </div>
           <div className="ck-field" style={{ margin: 0 }}>
-            <label className="ck-label">Capacidade</label>
-            <input className="ck-input" type="number" min="1" value={form.capacity} onChange={set('capacity')} placeholder="—" />
+            <label htmlFor="camarotes-3" className="ck-label">Capacidade</label>
+            <input id="camarotes-3" className="ck-input" type="number" min="1" value={form.capacity} onChange={set('capacity')} placeholder="—" />
           </div>
           <div className="ck-field" style={{ margin: 0 }}>
-            <label className="ck-label">Consumação mín. (R$)</label>
-            <input className="ck-input" type="number" min="0" step="0.01" value={form.min_reais} onChange={set('min_reais')} placeholder="0,00" />
+            <label htmlFor="camarotes-4" className="ck-label">Consumação mín. (R$)</label>
+            <input id="camarotes-4" className="ck-input" type="number" min="0" step="0.01" value={form.min_reais} onChange={set('min_reais')} placeholder="0,00" />
           </div>
         </div>
         <button className="ck-btn ck-btn--primary" style={{ marginTop: 12 }} disabled={saving || !form.name.trim()}>

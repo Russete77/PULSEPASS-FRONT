@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useNavegacaoAcessivel, criarResolvedorDeTitulo } from '@pulsepass/shared/navegacao';
 import { useAuth } from './context/AuthContext.jsx';
 import { Loading } from './components/States.jsx';
 
@@ -24,7 +25,26 @@ function Protected({ children }) {
   return children;
 }
 
+const TITULOS = criarResolvedorDeTitulo({
+  '/': 'Eventos',
+  '/eventos/:slug': 'Evento',
+  '/eventos/:slug/camarotes': 'Camarotes',
+  '/eventos/:slug/bar': 'Bar',
+  '/lista/:code': 'Lista de convidados',
+  '/entrar': 'Entrar',
+  '/redefinir-senha': 'Redefinir senha',
+  '/checkout/:orderId': 'Pagamento',
+  '/meus-ingressos': 'Meus ingressos',
+  '/meus-pedidos': 'Meus pedidos',
+  '/carteira': 'Carteira',
+  '/promoter': 'Promoter',
+  '/ingresso/:id': 'Meu ingresso',
+});
+
 export default function App() {
+  const { pathname } = useLocation();
+  useNavegacaoAcessivel(pathname, TITULOS, 'PulsePass');
+
   return (
     <Routes>
       <Route path="/" element={<Discover />} />

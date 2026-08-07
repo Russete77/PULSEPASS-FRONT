@@ -182,3 +182,36 @@ h1.ck-h1 { font-family: var(--pp-font-display); font-weight: 700; font-size: var
 .adm-bar .fill { height: 100%; border-radius: 99px; }
 .adm-toolbtn { padding: 10px 16px; border-radius: 12px; background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2); color: var(--pp-fg); font-size: var(--pp-fs-13); font-weight: 600; display: inline-flex; align-items: center; gap: 8px; }
 .adm-btn-pink { background: var(--pp-pink); color: #fff; border: none; box-shadow: 0 4px 16px rgba(255,61,136,0.35); padding: 10px 16px; border-radius: 12px; font-size: var(--pp-fs-13); font-weight: 700; display: inline-flex; align-items: center; gap: 8px; }
+
+/* ═══════════════════════════════════════════════════════
+   REVISÃO DE UX · CELULAR
+   Medido em 375px: dashboard e equipe rolavam a PÁGINA de lado, porque
+   tabela e grid de métricas empurravam o corpo. Rolagem horizontal do
+   documento inteiro é o pior tipo: some com a barra lateral, desalinha
+   tudo, e quem está na porta acha que a tela quebrou.
+   Regra: conteúdo largo rola DENTRO do próprio bloco.
+   ═══════════════════════════════════════════════════════ */
+
+/* A tabela rola dentro do card. O `overflow: hidden` inline que algumas
+   telas usam serve pro canto arredondado — aqui ele vira `auto` no eixo X
+   pra tabela poder correr sem levar a página junto. */
+.ck-card:has(> .ck-table),
+.ck-tablewrap {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+.ck-card:has(> .ck-table) > .ck-table { min-width: 520px; }
+
+@media (max-width: 720px) {
+  /* Quatro métricas lado a lado não cabem em 375px: viravam duas colunas
+     espremidas de 100px, com o valor em dinheiro quebrando em duas linhas. */
+  .ck-metrics { grid-template-columns: repeat(2, 1fr); }
+  /* O cardápio do PDV pedia 280px por card num viewport de 375 com padding. */
+  .ck-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 420px) {
+  .ck-metrics { grid-template-columns: 1fr; }
+}
+
+/* Trava de segurança: nada faz o documento rolar de lado. */
+html, body { overflow-x: hidden; }

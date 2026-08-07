@@ -228,8 +228,8 @@ export default function EventDetail() {
           {itemCount > 0 && (
             <>
               <div className="pp-field" style={{ marginTop: 16 }}>
-                <label className="pp-label">Cupom de desconto (opcional)</label>
-                <input
+                <label htmlFor="eventdetai-1" className="pp-label">Cupom de desconto (opcional)</label>
+                <input id="eventdetai-1"
                   className="pp-input"
                   value={coupon}
                   onChange={(e) => setCoupon(e.target.value.toUpperCase())}
@@ -364,7 +364,7 @@ function FilaDeEspera({ slug, tier }) {
 
   return (
     <form onSubmit={entrar} style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
-      <input className="pp-input" type="email" required placeholder="seu@email.com"
+      <input className="pp-input" type="email" autoComplete="email" inputMode="email" autoCapitalize="off" autoCorrect="off" spellCheck="false" required placeholder="seu@email.com"
         value={email} onChange={(e) => setEmail(e.target.value)} />
       <input className="pp-input" placeholder="Seu nome (opcional)"
         value={nome} onChange={(e) => setNome(e.target.value)} />

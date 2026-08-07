@@ -64,9 +64,9 @@ export default function CardForm({ amountCents, email, onChange }) {
   return (
     <div style={{ display: 'grid', gap: 12, marginTop: 12 }} onBlur={() => setTouched(true)}>
       <div className="pp-field">
-        <label className="pp-label">Número do cartão</label>
+        <label htmlFor="cardform-1" className="pp-label">Número do cartão</label>
         <div style={{ position: 'relative' }}>
-          <input
+          <input id="cardform-1"
             className="pp-input"
             inputMode="numeric"
             value={formatCardNumber(number)}
@@ -85,49 +85,49 @@ export default function CardForm({ amountCents, email, onChange }) {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
         <div className="pp-field">
-          <label className="pp-label">Validade</label>
-          <input className="pp-input" inputMode="numeric" value={expiry} onChange={(e) => onExpiry(e.target.value)} placeholder="MM/AA" />
+          <label htmlFor="cardform-2" className="pp-label">Validade</label>
+          <input id="cardform-2" className="pp-input" inputMode="numeric" value={expiry} onChange={(e) => onExpiry(e.target.value)} placeholder="MM/AA" />
           {err('expiry') && <small style={{ color: 'var(--pp-red)' }}>{validation.errors.expiry}</small>}
         </div>
         <div className="pp-field">
-          <label className="pp-label">CVV</label>
-          <input className="pp-input" inputMode="numeric" value={ccv} onChange={(e) => setCcv(onlyDigits(e.target.value).slice(0, 4))} placeholder="123" />
+          <label htmlFor="cardform-3" className="pp-label">CVV</label>
+          <input id="cardform-3" className="pp-input" inputMode="numeric" value={ccv} onChange={(e) => setCcv(onlyDigits(e.target.value).slice(0, 4))} placeholder="123" />
           {err('ccv') && <small style={{ color: 'var(--pp-red)' }}>{validation.errors.ccv}</small>}
         </div>
       </div>
 
       <div className="pp-field">
-        <label className="pp-label">Nome impresso no cartão</label>
-        <input className="pp-input" value={holderName} onChange={(e) => setHolderName(e.target.value)} placeholder="Como está no cartão" />
+        <label htmlFor="cardform-4" className="pp-label">Nome impresso no cartão</label>
+        <input id="cardform-4" className="pp-input" value={holderName} onChange={(e) => setHolderName(e.target.value)} placeholder="Como está no cartão" />
         {err('holderName') && <small style={{ color: 'var(--pp-red)' }}>{validation.errors.holderName}</small>}
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
         <div className="pp-field">
-          <label className="pp-label">CPF do titular</label>
-          <input className="pp-input" inputMode="numeric" value={cpf} onChange={(e) => setCpf(onlyDigits(e.target.value).slice(0, 11))} placeholder="Somente números" />
+          <label htmlFor="cardform-5" className="pp-label">CPF do titular</label>
+          <input id="cardform-5" className="pp-input" inputMode="numeric" value={cpf} onChange={(e) => setCpf(onlyDigits(e.target.value).slice(0, 11))} placeholder="Somente números" />
         </div>
         <div className="pp-field">
-          <label className="pp-label">CEP</label>
-          <input className="pp-input" inputMode="numeric" value={cep} onChange={(e) => setCep(onlyDigits(e.target.value).slice(0, 8))} placeholder="00000000" />
+          <label htmlFor="cardform-6" className="pp-label">CEP</label>
+          <input id="cardform-6" className="pp-input" inputMode="numeric" value={cep} onChange={(e) => setCep(onlyDigits(e.target.value).slice(0, 8))} placeholder="00000000" />
         </div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
         <div className="pp-field">
-          <label className="pp-label">Número (endereço)</label>
-          <input className="pp-input" value={addressNumber} onChange={(e) => setAddressNumber(e.target.value)} placeholder="123" />
+          <label htmlFor="cardform-7" className="pp-label">Número (endereço)</label>
+          <input id="cardform-7" className="pp-input" value={addressNumber} onChange={(e) => setAddressNumber(e.target.value)} placeholder="123" />
         </div>
         <div className="pp-field">
-          <label className="pp-label">Telefone (opcional)</label>
-          <input className="pp-input" inputMode="numeric" value={phone} onChange={(e) => setPhone(onlyDigits(e.target.value).slice(0, 11))} placeholder="DDD + número" />
+          <label htmlFor="cardform-8" className="pp-label">Telefone (opcional)</label>
+          <input id="cardform-8" className="pp-input" inputMode="numeric" value={phone} onChange={(e) => setPhone(onlyDigits(e.target.value).slice(0, 11))} placeholder="DDD + número" />
         </div>
       </div>
 
       {installmentOpts.length > 1 && (
         <div className="pp-field">
-          <label className="pp-label">Parcelas</label>
-          <select className="pp-input" value={installments} onChange={(e) => setInstallments(Number(e.target.value))}>
+          <label htmlFor="cardform-9" className="pp-label">Parcelas</label>
+          <select id="cardform-9" className="pp-input" value={installments} onChange={(e) => setInstallments(Number(e.target.value))}>
             {installmentOpts.map((n) => (
               <option key={n} value={n}>
                 {n}x de {brl(Math.round(amountCents / n))} {n === 1 ? '(à vista)' : 'sem juros'}

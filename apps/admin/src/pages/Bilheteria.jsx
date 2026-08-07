@@ -180,8 +180,8 @@ export default function Bilheteria() {
 
         {method === 'cash' && (
           <div className="ck-field" style={{ marginTop: 16 }}>
-            <label className="ck-label">Valor recebido (para calcular o troco)</label>
-            <input className="ck-input" inputMode="decimal" value={received}
+            <label htmlFor="bilheteria-1" className="ck-label">Valor recebido (para calcular o troco)</label>
+            <input id="bilheteria-1" className="ck-input" inputMode="decimal" value={received}
               onChange={(e) => setReceived(e.target.value)} placeholder="Ex.: 200,00"
               style={{ fontFamily: 'var(--pp-font-mono)', fontSize: 20 }} />
           </div>
@@ -189,12 +189,12 @@ export default function Bilheteria() {
 
         <div className="ck-row" style={{ marginTop: 16 }}>
           <div className="ck-field" style={{ margin: 0 }}>
-            <label className="ck-label">Nome do comprador (opcional)</label>
-            <input className="ck-input" value={buyerName} onChange={(e) => setBuyerName(e.target.value)} placeholder="Vai impresso no ingresso" />
+            <label htmlFor="bilheteria-2" className="ck-label">Nome do comprador (opcional)</label>
+            <input id="bilheteria-2" className="ck-input" autoComplete="name" value={buyerName} onChange={(e) => setBuyerName(e.target.value)} placeholder="Vai impresso no ingresso" />
           </div>
           <div className="ck-field" style={{ margin: 0 }}>
-            <label className="ck-label">E-mail (opcional)</label>
-            <input className="ck-input" type="email" value={buyerEmail} onChange={(e) => setBuyerEmail(e.target.value)} placeholder="Recebe o ingresso no app" />
+            <label htmlFor="bilheteria-3" className="ck-label">E-mail (opcional)</label>
+            <input id="bilheteria-3" className="ck-input" type="email" autoComplete="email" inputMode="email" autoCapitalize="off" autoCorrect="off" spellCheck="false" value={buyerEmail} onChange={(e) => setBuyerEmail(e.target.value)} placeholder="Recebe o ingresso no app" />
           </div>
         </div>
 

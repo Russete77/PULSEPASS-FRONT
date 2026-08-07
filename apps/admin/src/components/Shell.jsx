@@ -18,6 +18,10 @@ export function Shell({ children }) {
 
   return (
     <div className="ck-shell">
+      {/* Fica escondido até receber foco. Sem ele, quem navega por teclado
+          atravessa a barra lateral inteira em toda troca de tela — e o
+          dashboard ainda tem treze atalhos antes do conteúdo. */}
+      <a href="#conteudo" className="pp-skip">Pular para o conteúdo</a>
       <aside className="ck-side">
         <div className="ck-brand">
           <BrandWordmark size={30} tag="OS" tagline={isStaffOnly ? 'cockpit operação' : 'cockpit produtora'} />
@@ -56,7 +60,7 @@ export function Shell({ children }) {
             </button>
           </div>
         </header>
-        <main className="ck-content">{children}</main>
+        <main className="ck-content" id="conteudo">{children}</main>
       </div>
     </div>
   );

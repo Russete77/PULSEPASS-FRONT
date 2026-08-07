@@ -200,8 +200,8 @@ export default function Porta() {
       <div className="ck-card" style={{ maxWidth: 520, marginTop: 16 }}>
         <form onSubmit={(e) => { e.preventDefault(); submit(); }}>
           <div className="ck-field">
-            <label className="ck-label">Código do ingresso</label>
-            <input
+            <label htmlFor="porta-1" className="ck-label">Código do ingresso</label>
+            <input id="porta-1"
               className="ck-input"
               value={code}
               onChange={(e) => setCode(e.target.value.toUpperCase())}

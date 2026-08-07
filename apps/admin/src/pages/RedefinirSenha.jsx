@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ErrorBox } from '../components/Shell.jsx';
+import CampoSenha from '@pulsepass/shared/CampoSenha';
 import { useAuth } from '../context/AuthContext.jsx';
 
 export default function RedefinirSenha() {
@@ -35,8 +36,11 @@ export default function RedefinirSenha() {
           <ErrorBox>Link inválido ou expirado. Solicite um novo no login.</ErrorBox>
         ) : (
           <form onSubmit={submit} style={{ marginTop: 16 }}>
-            <div className="ck-field"><label className="ck-label">Nova senha</label>
-              <input className="ck-input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} /></div>
+            <CampoSenha
+              id="redefinirs-1" className="ck-input" classeRotulo="ck-label" classeCampo="ck-field"
+              rotulo="Nova senha" autoComplete="new-password" autoFocus
+              valor={password} aoMudar={(e) => setPassword(e.target.value)}
+            />
             {error && <ErrorBox>{error}</ErrorBox>}
             <button className="ck-btn ck-btn--primary" style={{ width: '100%', marginTop: 8 }} disabled={busy}>
               {busy ? 'Salvando…' : 'Salvar nova senha'}

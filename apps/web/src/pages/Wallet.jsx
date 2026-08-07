@@ -162,8 +162,8 @@ export function RechargeSheet({ onClose, onPaid, eventId = null }) {
               ))}
             </div>
             <div className="pp-field">
-              <label className="pp-label">Ou outro valor (R$)</label>
-              <input className="pp-input" type="number" min="5" step="1" value={custom} placeholder="0,00" onChange={(e) => setCustom(e.target.value)} />
+              <label htmlFor="wallet-1" className="pp-label">Ou outro valor (R$)</label>
+              <input id="wallet-1" className="pp-input" type="number" min="5" step="1" value={custom} placeholder="0,00" onChange={(e) => setCustom(e.target.value)} />
             </div>
             {error && <ErrorBox>{error}</ErrorBox>}
             <button className={`pp-btn pp-btn--primary pp-btn--block pp-btn--lg ${busy ? 'is-loading' : ''}`} disabled={busy} onClick={generate}>

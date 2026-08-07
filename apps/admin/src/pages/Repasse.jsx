@@ -169,11 +169,12 @@ export default function Repasse() {
             )}
 
             <div className="ck-field">
-              <label className="ck-label">
+              <label htmlFor={`wallet-${org.id}`} className="ck-label">
                 {repasse?.subconta ? 'Carteira (walletId)' : 'Ou informe o walletId de uma conta que você já tem'}
               </label>
               <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
                 <input
+                  id={`wallet-${org.id}`}
                   className="ck-input"
                   style={{ flex: 1, minWidth: 240, fontFamily: 'var(--pp-font-mono)' }}
                   value={draft[org.id] ?? ''}
@@ -243,37 +244,37 @@ function NovaContaAsaas({ orgId, orgName, onCancel, onDone, onError }) {
 
       <div className="ck-row">
         <div className="ck-field" style={{ margin: 0 }}>
-          <label className="ck-label">Razão social / nome</label>
-          <input className="ck-input" value={f.name} onChange={set('name')} required minLength={2} />
+          <label htmlFor="repasse-1" className="ck-label">Razão social / nome</label>
+          <input id="repasse-1" className="ck-input" name="organization" autoComplete="organization" value={f.name} onChange={set('name')} required minLength={2} />
         </div>
         <div className="ck-field" style={{ margin: 0 }}>
-          <label className="ck-label">CNPJ ou CPF</label>
-          <input className="ck-input" value={f.cpfCnpj} onChange={set('cpfCnpj')} required
+          <label htmlFor="repasse-2" className="ck-label">CNPJ ou CPF</label>
+          <input id="repasse-2" className="ck-input" inputMode="numeric" value={f.cpfCnpj} onChange={set('cpfCnpj')} required
             placeholder="somente números" />
         </div>
       </div>
 
       <div className="ck-row">
         <div className="ck-field" style={{ margin: 0 }}>
-          <label className="ck-label">E-mail da conta</label>
-          <input className="ck-input" type="email" value={f.email} onChange={set('email')} required />
+          <label htmlFor="repasse-3" className="ck-label">E-mail da conta</label>
+          <input id="repasse-3" className="ck-input" type="email" autoComplete="email" inputMode="email" autoCapitalize="off" autoCorrect="off" spellCheck="false" value={f.email} onChange={set('email')} required />
         </div>
         <div className="ck-field" style={{ margin: 0 }}>
-          <label className="ck-label">Celular</label>
-          <input className="ck-input" value={f.mobilePhone} onChange={set('mobilePhone')} required
+          <label htmlFor="repasse-4" className="ck-label">Celular</label>
+          <input id="repasse-4" className="ck-input" type="tel" autoComplete="tel" inputMode="tel" value={f.mobilePhone} onChange={set('mobilePhone')} required
             placeholder="11999998888" />
         </div>
       </div>
 
       <div className="ck-row">
         <div className="ck-field" style={{ margin: 0 }}>
-          <label className="ck-label">Faturamento mensal (R$)</label>
-          <input className="ck-input" type="number" min="1" step="0.01"
+          <label htmlFor="repasse-5" className="ck-label">Faturamento mensal (R$)</label>
+          <input id="repasse-5" className="ck-input" type="number" min="1" step="0.01"
             value={f.incomeValue} onChange={set('incomeValue')} required />
         </div>
         <div className="ck-field" style={{ margin: 0 }}>
-          <label className="ck-label">Tipo</label>
-          <select className="ck-select" value={f.companyType} onChange={set('companyType')}>
+          <label htmlFor="repasse-6" className="ck-label">Tipo</label>
+          <select id="repasse-6" className="ck-select" value={f.companyType} onChange={set('companyType')}>
             <option value="MEI">MEI</option>
             <option value="LIMITED">LTDA</option>
             <option value="INDIVIDUAL">Individual</option>
@@ -284,24 +285,24 @@ function NovaContaAsaas({ orgId, orgName, onCancel, onDone, onError }) {
 
       <div className="ck-row">
         <div className="ck-field" style={{ margin: 0 }}>
-          <label className="ck-label">CEP</label>
-          <input className="ck-input" value={f.postalCode} onChange={set('postalCode')} required
+          <label htmlFor="repasse-7" className="ck-label">CEP</label>
+          <input id="repasse-7" className="ck-input" autoComplete="postal-code" inputMode="numeric" value={f.postalCode} onChange={set('postalCode')} required
             placeholder="01001000" />
         </div>
         <div className="ck-field" style={{ margin: 0 }}>
-          <label className="ck-label">Bairro</label>
-          <input className="ck-input" value={f.province} onChange={set('province')} required />
+          <label htmlFor="repasse-8" className="ck-label">Bairro</label>
+          <input id="repasse-8" className="ck-input" autoComplete="address-level2" value={f.province} onChange={set('province')} required />
         </div>
       </div>
 
       <div className="ck-row">
         <div className="ck-field" style={{ margin: 0 }}>
-          <label className="ck-label">Endereço</label>
-          <input className="ck-input" value={f.address} onChange={set('address')} required />
+          <label htmlFor="repasse-9" className="ck-label">Endereço</label>
+          <input id="repasse-9" className="ck-input" autoComplete="street-address" value={f.address} onChange={set('address')} required />
         </div>
         <div className="ck-field" style={{ margin: 0 }}>
-          <label className="ck-label">Número</label>
-          <input className="ck-input" value={f.addressNumber} onChange={set('addressNumber')} required />
+          <label htmlFor="repasse-10" className="ck-label">Número</label>
+          <input id="repasse-10" className="ck-input" inputMode="numeric" value={f.addressNumber} onChange={set('addressNumber')} required />
         </div>
       </div>
 

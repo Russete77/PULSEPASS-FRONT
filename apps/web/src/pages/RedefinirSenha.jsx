@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Page } from '../components/Layout.jsx';
 import { ErrorBox } from '../components/States.jsx';
+import CampoSenha from '@pulsepass/shared/CampoSenha';
 import { useAuth } from '../context/AuthContext.jsx';
 
 /**
@@ -45,10 +46,12 @@ export default function RedefinirSenha() {
           <ErrorBox>Link inválido ou expirado. Solicite um novo na tela de login.</ErrorBox>
         ) : (
           <form onSubmit={submit} style={{ marginTop: 16 }}>
-            <div className="pp-field">
-              <label className="pp-label">Nova senha</label>
-              <input className="pp-input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
-            </div>
+            {/* Aqui ver o que se digita importa mais do que em qualquer lugar:
+                é uma senha nova, que a pessoa ainda não decorou. */}
+            <CampoSenha
+              id="redefinirs-1" rotulo="Nova senha" autoComplete="new-password" autoFocus
+              valor={password} aoMudar={(e) => setPassword(e.target.value)}
+            />
             {error && <ErrorBox>{error}</ErrorBox>}
             <button className="pp-btn pp-btn--primary pp-btn--block pp-btn--lg" disabled={busy} style={{ marginTop: 8 }}>
               {busy ? 'Salvando…' : 'Salvar nova senha'}

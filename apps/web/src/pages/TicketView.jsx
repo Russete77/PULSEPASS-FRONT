@@ -153,10 +153,10 @@ export default function TicketView() {
 
         {transferOpen && (
           <div className="pp-card pp-card--pad">
-            <label className="pp-label">E-mail de quem vai receber</label>
-            <input
+            <label htmlFor="ticketview-1" className="pp-label">E-mail de quem vai receber</label>
+            <input id="ticketview-1"
               className="pp-input"
-              type="email"
+              type="email" autoComplete="email" inputMode="email" autoCapitalize="off" autoCorrect="off" spellCheck="false"
               value={tEmail}
               onChange={(e) => setTEmail(e.target.value)}
               placeholder="amigo@email.com"

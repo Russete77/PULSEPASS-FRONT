@@ -1,10 +1,13 @@
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { BrandWordmark } from '@pulsepass/shared/Logo';
 import { useAuth } from '../context/AuthContext.jsx';
 
 export function TopBar() {
   const { user, signOut, authEnabled } = useAuth();
   const navigate = useNavigate();
+  // "Entrar" no topo enquanto a pessoa já está na tela de entrar é um botão
+  // que não leva a lugar nenhum — e ainda compete com o "Entrar" do formulário.
+  const naTelaDeEntrar = ['/entrar', '/redefinir-senha'].includes(useLocation().pathname);
 
   return (
     <header className="pp-topbar">
@@ -28,7 +31,7 @@ export function TopBar() {
               Sair
             </button>
           </>
-        ) : (
+        ) : !naTelaDeEntrar && (
           <Link
             to="/entrar"
             className="pp-btn pp-btn--primary pp-btn--sm"
@@ -54,8 +57,9 @@ export function Page({ children }) {
   return (
     <>
       <div className="pp-aurora-fixed" aria-hidden="true" />
+      <a href="#conteudo" className="pp-skip">Pular para o conteúdo</a>
       <TopBar />
-      <main className="pp-page">
+      <main className="pp-page" id="conteudo">
         <div className="pp-container">{children}</div>
       </main>
       <Footer />

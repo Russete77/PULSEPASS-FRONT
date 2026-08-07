@@ -13,6 +13,9 @@
     "./tokens.css": "./src/tokens.css",
     "./components.css": "./src/components.css",
     "./Logo": "./src/Logo.jsx",
-    "./Icon": "./src/Icon.jsx"
+    "./Icon": "./src/Icon.jsx",
+    "./Confirmar": "./src/Confirmar.jsx",
+    "./navegacao": "./src/useNavegacaoAcessivel.js",
+    "./CampoSenha": "./src/CampoSenha.jsx"
   }
 }

@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useNavegacaoAcessivel, criarResolvedorDeTitulo } from '@pulsepass/shared/navegacao';
 import { useAuth } from './context/AuthContext.jsx';
 import { Loading } from './components/Shell.jsx';
 
@@ -37,7 +38,43 @@ function Protected({ children }) {
   return children;
 }
 
+/**
+ * Título por rota. Na operação ao vivo a produtora tem porta, PDV, bilheteria
+ * e dashboard abertos ao mesmo tempo — o texto da aba é como ela acha cada um.
+ */
+const TITULOS = criarResolvedorDeTitulo({
+  '/entrar': 'Entrar',
+  '/redefinir-senha': 'Redefinir senha',
+  '/': 'Meus eventos',
+  '/novo': 'Criar evento',
+  '/eventos/:id': 'Dashboard',
+  '/eventos/:id/porta': '🚪 Porta',
+  '/eventos/:id/lista-porta': 'Lista na porta',
+  '/eventos/:id/fila-espera': 'Fila de espera',
+  '/eventos/:id/fiscal': 'Notas fiscais',
+  '/eventos/:id/auditoria': 'Auditoria',
+  '/eventos/:id/bilheteria': '🎟 Bilheteria',
+  '/eventos/:id/pdv': '🍹 PDV',
+  '/eventos/:id/cardapio': 'Cardápio',
+  '/eventos/:id/fechamento': 'Fechamento',
+  '/eventos/:id/camarotes': 'Camarotes',
+  '/eventos/:id/promoters': 'Promoters',
+  '/eventos/:id/cupons': 'Cupons',
+  '/eventos/:id/conciliacao': 'Financeiro',
+  '/eventos/:id/equipe': 'Equipe',
+  '/repasse': 'Repasse',
+  '/plataforma': 'Plataforma',
+  '/plataforma/orgs': 'Produtoras',
+  '/plataforma/fraude': 'Fraude',
+  '/plataforma/taxas': 'Taxas',
+  '/plataforma/financeiro': 'Financeiro da plataforma',
+  '/plataforma/audit': 'Auditoria da plataforma',
+});
+
 export default function App() {
+  const { pathname } = useLocation();
+  useNavegacaoAcessivel(pathname, TITULOS, 'PulsePass Cockpit');
+
   return (
     <Routes>
       <Route path="/entrar" element={<Login />} />

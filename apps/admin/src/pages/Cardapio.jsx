@@ -61,20 +61,20 @@ export default function Cardapio() {
       <form onSubmit={create} className="ck-card" style={{ maxWidth: 720 }}>
         <div className="ck-row">
           <div className="ck-field" style={{ margin: 0 }}>
-            <label className="ck-label">Nome</label>
-            <input className="ck-input" value={form.name} onChange={set('name')} required />
+            <label htmlFor="cardapio-1" className="ck-label">Nome</label>
+            <input id="cardapio-1" className="ck-input" value={form.name} onChange={set('name')} required />
           </div>
           <div className="ck-field" style={{ margin: 0 }}>
-            <label className="ck-label">Categoria</label>
-            <input className="ck-input" value={form.category} onChange={set('category')} placeholder="Geral" />
+            <label htmlFor="cardapio-2" className="ck-label">Categoria</label>
+            <input id="cardapio-2" className="ck-input" value={form.category} onChange={set('category')} placeholder="Geral" />
           </div>
           <div className="ck-field" style={{ margin: 0 }}>
-            <label className="ck-label">Preço (R$)</label>
-            <input className="ck-input" type="number" min="0" step="0.01" value={form.price_reais} onChange={set('price_reais')} required />
+            <label htmlFor="cardapio-3" className="ck-label">Preço (R$)</label>
+            <input id="cardapio-3" className="ck-input" type="number" min="0" step="0.01" value={form.price_reais} onChange={set('price_reais')} required />
           </div>
           <div className="ck-field" style={{ margin: 0 }}>
-            <label className="ck-label">Estoque</label>
-            <input className="ck-input" type="number" min="0" value={form.stock} onChange={set('stock')} placeholder="∞" />
+            <label htmlFor="cardapio-4" className="ck-label">Estoque</label>
+            <input id="cardapio-4" className="ck-input" type="number" min="0" value={form.stock} onChange={set('stock')} placeholder="∞" />
           </div>
         </div>
         <button className="ck-btn ck-btn--primary" style={{ marginTop: 12 }} disabled={saving || !form.name.trim()}>

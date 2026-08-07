@@ -520,3 +520,86 @@ select option, select optgroup, .pp-select option, .pp-select optgroup {
 .pp-ritmo > * + .pp-t-title { margin-top: var(--pp-s-10); }
 .pp-ritmo > .pp-t-section + *,
 .pp-ritmo > .pp-t-title + * { margin-top: var(--pp-s-3); }
+
+/* ═══════════════════════════════════════════════════════════
+   v4 · ACESSIBILIDADE E TOQUE
+   Revisão de UX encontrou: uma única regra de foco em todo o sistema
+   (quem navega por teclado ficava perdido) e alvos de 30–36px, abaixo
+   do mínimo confortável — justamente nos controles que o porteiro usa
+   com pressa, no escuro, com uma mão só.
+   ═══════════════════════════════════════════════════════════ */
+
+/* Foco visível em TUDO que recebe foco. Sem isto, quem usa teclado ou
+   leitor de tela não sabe onde está — e um caixa operando de teclado na
+   bilheteria fica às cegas. :focus-visible não incomoda quem usa mouse. */
+.pp-btn:focus-visible,
+.pp-input:focus-visible, .pp-select:focus-visible, .pp-textarea:focus-visible,
+.pp-chip:focus-visible, .pp-link:focus-visible,
+.pp-stepper button:focus-visible, .pp-modal__close:focus-visible,
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid var(--pp-pulse);
+  outline-offset: 2px;
+  border-radius: var(--pp-r-control);
+}
+
+/* Alvo de toque mínimo. O controle pode PARECER pequeno, mas a área que
+   responde ao dedo se estende por baixo — é o que evita o porteiro errar
+   o "+" três vezes com a fila andando. */
+.pp-stepper button,
+.pp-btn--sm, .ck-btn--sm,
+.pp-segmented > button,
+.pp-chip {
+  position: relative;
+}
+.pp-stepper button::after,
+.pp-btn--sm::after, .ck-btn--sm::after,
+.pp-segmented > button::after,
+.pp-chip::after {
+  content: '';
+  position: absolute;
+  /* Estica o alvo até 44px sem mexer no desenho. */
+  inset: 50% 50%;
+  width: 44px; height: 44px;
+  transform: translate(-50%, -50%);
+}
+/* Em ponteiro fino (mouse) a expansão não é necessária e atrapalharia
+   controles vizinhos muito juntos. */
+@media (pointer: fine) {
+  .pp-stepper button::after, .pp-btn--sm::after, .ck-btn--sm::after,
+  .pp-segmented > button::after, .pp-chip::after { content: none; }
+}
+
+/* Quem pediu menos movimento recebe menos movimento. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Pular para o conteúdo — invisível até receber foco pelo Tab. */
+.pp-skip {
+  position: fixed; top: var(--pp-s-3); left: var(--pp-s-3); z-index: 200;
+  padding: 10px 18px; border-radius: var(--pp-r-control);
+  background: var(--pp-pulse); color: var(--pp-pulse-ink);
+  font-weight: 700; font-size: var(--pp-fs-14); text-decoration: none;
+  transform: translateY(-200%);
+  transition: transform var(--pp-dur-2) var(--pp-ease);
+}
+.pp-skip:focus { transform: translateY(0); }
+
+/* O h1 recebe foco programático na troca de rota (ver useNavegacaoAcessivel).
+   Foco por script não casa com :focus-visible, então não desenha contorno —
+   esta regra só garante que nenhum navegador invente um. */
+h1[tabindex="-1"]:focus { outline: none; }
+
+/* Links do rodapé de autenticação. "Esqueci minha senha" media 18px de altura
+   tocável — quem erra a senha no celular já está irritado; errar o toque três
+   vezes em seguida é o que faz desistir de comprar. O texto não muda de
+   tamanho: só ganha área em volta. */
+.pp-authfoot .pp-link,
+.pp-authfoot button {
+  padding: 12px 4px;
+  min-height: 44px;
+}

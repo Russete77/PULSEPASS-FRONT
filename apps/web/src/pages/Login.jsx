@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Page } from '../components/Layout.jsx';
 import { ErrorBox } from '../components/States.jsx';
+import CampoSenha from '@pulsepass/shared/CampoSenha';
 import { useAuth } from '../context/AuthContext.jsx';
 
 export default function Login() {
-  const { signInWithPassword, signUp, resetPassword, signInWithProvider, authEnabled } = useAuth();
+  const { signInWithPassword, signUp, resetPassword, authEnabled } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const redirectTo = location.state?.from?.pathname ?? '/meus-ingressos';
@@ -51,11 +52,6 @@ export default function Login() {
     }
   }
 
-  async function social(provider) {
-    setError('');
-    const { error: err } = await signInWithProvider(provider);
-    if (err) setError(err.message);
-  }
 
   const titles = { login: 'Bem-vindo de volta', signup: 'Crie sua conta', forgot: 'Recuperar senha' };
   const cta = { login: 'Entrar', signup: 'Criar conta', forgot: 'Enviar link' };
@@ -83,29 +79,35 @@ export default function Login() {
           )}
           {info && <div className="pp-note pp-note--pulse" style={{ marginTop: 'var(--pp-s-4)', color: 'var(--pp-pulse)' }}>{info}</div>}
 
-          {mode !== 'forgot' && (
-            <div className="pp-cols-2" style={{ marginTop: 'var(--pp-s-4)' }}>
-              <button className="pp-btn pp-btn--glass" onClick={() => social('google')} disabled={!authEnabled}>Google</button>
-              <button className="pp-btn pp-btn--glass" onClick={() => social('apple')} disabled={!authEnabled}>Apple</button>
-            </div>
-          )}
-
           <form onSubmit={submit} className="pp-stack" style={{ marginTop: 'var(--pp-s-5)' }}>
+            {/* Aqui a maioria compra pelo celular, com pressa, muitas vezes na
+                fila. Cada campo declara o que é (autoComplete) e que teclado
+                pedir (inputMode) — é a diferença entre tocar uma vez e digitar
+                onze dígitos procurando os números num teclado de letras. */}
             {mode === 'signup' && (
               <>
-                <div className="pp-field"><label className="pp-label">Nome completo</label>
-                  <input className="pp-input" value={fullName} onChange={(e) => setFullName(e.target.value)} required /></div>
-                <div className="pp-field"><label className="pp-label">CPF</label>
-                  <input className="pp-input" value={cpf} onChange={(e) => setCpf(e.target.value)} placeholder="000.000.000-00" inputMode="numeric" /></div>
-                <div className="pp-field"><label className="pp-label">Telefone</label>
-                  <input className="pp-input" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="(11) 90000-0000" /></div>
+                <div className="pp-field"><label className="pp-label" htmlFor="ac-nome">Nome completo</label>
+                  <input id="ac-nome" name="name" autoComplete="name" className="pp-input"
+                    value={fullName} onChange={(e) => setFullName(e.target.value)} required /></div>
+                <div className="pp-field"><label className="pp-label" htmlFor="ac-cpf">CPF</label>
+                  <input id="ac-cpf" name="cpf" className="pp-input" value={cpf}
+                    onChange={(e) => setCpf(e.target.value)} placeholder="000.000.000-00" inputMode="numeric" /></div>
+                <div className="pp-field"><label className="pp-label" htmlFor="ac-fone">Telefone</label>
+                  <input id="ac-fone" name="tel" type="tel" autoComplete="tel" inputMode="tel"
+                    className="pp-input" value={phone}
+                    onChange={(e) => setPhone(e.target.value)} placeholder="(11) 90000-0000" /></div>
               </>
             )}
-            <div className="pp-field"><label className="pp-label">E-mail</label>
-              <input className="pp-input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required /></div>
+            <div className="pp-field"><label className="pp-label" htmlFor="ac-email">E-mail</label>
+              <input id="ac-email" name="email" type="email" autoComplete="email" inputMode="email" autoCapitalize="off" autoCorrect="off" spellCheck="false"
+                autoFocus className="pp-input"
+                value={email} onChange={(e) => setEmail(e.target.value)} required /></div>
             {mode !== 'forgot' && (
-              <div className="pp-field"><label className="pp-label">Senha</label>
-                <input className="pp-input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} /></div>
+              <CampoSenha
+                id="ac-senha"
+                autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
+                valor={password} aoMudar={(e) => setPassword(e.target.value)}
+              />
             )}
 
             {error && <ErrorBox>{error}</ErrorBox>}

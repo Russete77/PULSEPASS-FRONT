@@ -43,8 +43,6 @@ export function AuthProvider({ children }) {
       });
       return { error, needsConfirmation: !error && !data.session };
     },
-    signInWithProvider: (provider) =>
-      supabase.auth.signInWithOAuth({ provider, options: { redirectTo: window.location.origin } }),
     resetPassword: (email) =>
       supabase.auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/redefinir-senha` }),
     updatePassword: (password) => supabase.auth.updateUser({ password }),

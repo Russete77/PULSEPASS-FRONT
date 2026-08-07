@@ -99,26 +99,26 @@ export default function Promoters() {
       <form className="ck-card" style={{ maxWidth: 620 }} onSubmit={create}>
         <div className="ck-row">
           <div className="ck-field" style={{ margin: 0 }}>
-            <label className="ck-label">Nome do promoter</label>
-            <input className="ck-input" value={name} onChange={(e) => setName(e.target.value)} required minLength={2} />
+            <label htmlFor="promoters-1" className="ck-label">Nome do promoter</label>
+            <input id="promoters-1" className="ck-input" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} required minLength={2} />
           </div>
           <div className="ck-field" style={{ margin: 0 }}>
-            <label className="ck-label">Comissão por presença (R$)</label>
-            <input className="ck-input" type="number" min="0" step="0.01" value={commission} onChange={(e) => setCommission(e.target.value)} placeholder="0,00" />
+            <label htmlFor="promoters-2" className="ck-label">Comissão por presença (R$)</label>
+            <input id="promoters-2" className="ck-input" type="number" min="0" step="0.01" value={commission} onChange={(e) => setCommission(e.target.value)} placeholder="0,00" />
           </div>
           <div className="ck-field" style={{ margin: 0 }}>
-            <label className="ck-label">E-mail do promoter (opcional — habilita o portal)</label>
-            <input className="ck-input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="promoter@email.com" autoCapitalize="off" />
+            <label htmlFor="promoters-3" className="ck-label">E-mail do promoter (opcional — habilita o portal)</label>
+            <input id="promoters-3" className="ck-input" type="email" autoComplete="email" inputMode="email" autoCapitalize="off" autoCorrect="off" spellCheck="false" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="promoter@email.com" />
           </div>
           <div className="ck-field" style={{ margin: 0 }}>
-            <label className="ck-label">Meta de presenças (opcional)</label>
-            <input className="ck-input" type="number" min="0" value={goal} onChange={(e) => setGoal(e.target.value)} placeholder="—" />
+            <label htmlFor="promoters-4" className="ck-label">Meta de presenças (opcional)</label>
+            <input id="promoters-4" className="ck-input" type="number" min="0" value={goal} onChange={(e) => setGoal(e.target.value)} placeholder="—" />
           </div>
         </div>
         <div className="ck-row" style={{ marginTop: 10 }}>
           <div className="ck-field" style={{ margin: 0 }}>
-            <label className="ck-label">Tipo de lista</label>
-            <select className="ck-select" value={listType} onChange={(e) => setListType(e.target.value)}>
+            <label htmlFor="promoters-5" className="ck-label">Tipo de lista</label>
+            <select id="promoters-5" className="ck-select" value={listType} onChange={(e) => setListType(e.target.value)}>
               <option value="standard">Padrão</option>
               <option value="free_until">Grátis até (horário)</option>
               <option value="birthday">Aniversário</option>
@@ -127,8 +127,8 @@ export default function Promoters() {
           </div>
           {listType === 'free_until' && (
             <div className="ck-field" style={{ margin: 0 }}>
-              <label className="ck-label">Grátis até</label>
-              <input className="ck-input" type="datetime-local" value={freeUntil} onChange={(e) => setFreeUntil(e.target.value)} />
+              <label htmlFor="promoters-6" className="ck-label">Grátis até</label>
+              <input id="promoters-6" className="ck-input" type="datetime-local" value={freeUntil} onChange={(e) => setFreeUntil(e.target.value)} />
             </div>
           )}
         </div>

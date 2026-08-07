@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { ErrorBox } from '../components/Shell.jsx';
+import CampoSenha from '@pulsepass/shared/CampoSenha';
 
 export default function Login() {
-  const { signIn, signUp, resetPassword, signInWithProvider, authEnabled } = useAuth();
+  const { signIn, signUp, resetPassword, authEnabled } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const redirectTo = location.state?.from?.pathname ?? '/';
@@ -40,11 +41,6 @@ export default function Login() {
     } finally { setBusy(false); }
   }
 
-  async function social(provider) {
-    setError('');
-    const { error: err } = await signInWithProvider(provider);
-    if (err) setError(err.message);
-  }
 
   const titles = { login: 'Entrar', signup: 'Criar conta', forgot: 'Recuperar senha' };
 
@@ -57,23 +53,30 @@ export default function Login() {
         {!authEnabled && <ErrorBox>Configure VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY no .env</ErrorBox>}
         {info && <div className="ck-error" style={{ background: 'rgba(0,255,133,0.08)', borderColor: 'rgba(0,255,133,0.3)', color: 'var(--pp-pulse)' }}>{info}</div>}
 
-        {mode !== 'forgot' && (
-          <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
-            <button className="ck-btn ck-btn--glass" style={{ flex: 1 }} onClick={() => social('google')} disabled={!authEnabled}>Google</button>
-            <button className="ck-btn ck-btn--glass" style={{ flex: 1 }} onClick={() => social('apple')} disabled={!authEnabled}>Apple</button>
-          </div>
-        )}
-
+        {/* name + autoComplete não são enfeite: sem eles o gerenciador de senha
+            não oferece preencher nem se oferece pra salvar — e a produtora
+            digita e-mail e senha na mão toda vez que abre o cockpit. */}
         <form onSubmit={submit} style={{ marginTop: 16 }}>
           {mode === 'signup' && (
-            <div className="ck-field"><label className="ck-label">Nome</label>
-              <input className="ck-input" value={fullName} onChange={(e) => setFullName(e.target.value)} required /></div>
+            <div className="ck-field"><label className="ck-label" htmlFor="lg-nome">Nome</label>
+              <input id="lg-nome" name="name" autoComplete="name" className="ck-input"
+                value={fullName} onChange={(e) => setFullName(e.target.value)} required /></div>
           )}
-          <div className="ck-field"><label className="ck-label">E-mail</label>
-            <input className="ck-input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required /></div>
+          <div className="ck-field"><label className="ck-label" htmlFor="lg-email">E-mail</label>
+            {/* autoCapitalize/autoCorrect off: sem isso o iOS capitaliza a
+                primeira letra do e-mail e o login falha sem dizer por quê. */}
+            <input id="lg-email" name="email" type="email" autoComplete="email"
+              autoFocus inputMode="email" className="ck-input"
+              autoCapitalize="off" autoCorrect="off" spellCheck="false"
+              value={email} onChange={(e) => setEmail(e.target.value)} required /></div>
           {mode !== 'forgot' && (
-            <div className="ck-field"><label className="ck-label">Senha</label>
-              <input className="ck-input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} /></div>
+            /* current-password no login, new-password no cadastro: é o que faz
+               o navegador sugerir senha forte só onde faz sentido. */
+            <CampoSenha
+              id="lg-senha" className="ck-input" classeRotulo="ck-label" classeCampo="ck-field"
+              autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
+              valor={password} aoMudar={(e) => setPassword(e.target.value)}
+            />
           )}
           {error && <ErrorBox>{error}</ErrorBox>}
           <button className="ck-btn ck-btn--primary" style={{ width: '100%', marginTop: 8 }} disabled={busy || !authEnabled}>

@@ -74,16 +74,16 @@ export default function GuestSignup() {
           ) : (
             <form onSubmit={submit} className="pp-stack" style={{ marginTop: 'var(--pp-s-5)' }}>
               <div className="pp-field">
-                <label className="pp-label">Nome completo</label>
-                <input className="pp-input" value={form.name} onChange={set('name')} required minLength={2} />
+                <label htmlFor="guestsignu-1" className="pp-label">Nome completo</label>
+                <input id="guestsignu-1" className="pp-input" name="name" autoComplete="name" value={form.name} onChange={set('name')} required minLength={2} />
               </div>
               <div className="pp-field">
-                <label className="pp-label">E-mail</label>
-                <input className="pp-input" type="email" value={form.email} onChange={set('email')} />
+                <label htmlFor="guestsignu-2" className="pp-label">E-mail</label>
+                <input id="guestsignu-2" className="pp-input" type="email" autoComplete="email" inputMode="email" autoCapitalize="off" autoCorrect="off" spellCheck="false" value={form.email} onChange={set('email')} />
               </div>
               <div className="pp-field">
-                <label className="pp-label">Telefone / WhatsApp</label>
-                <input className="pp-input" value={form.phone} onChange={set('phone')} placeholder="(11) 90000-0000" />
+                <label htmlFor="guestsignu-3" className="pp-label">Telefone / WhatsApp</label>
+                <input id="guestsignu-3" className="pp-input" type="tel" autoComplete="tel" inputMode="tel" value={form.phone} onChange={set('phone')} placeholder="(11) 90000-0000" />
               </div>
               {error && <ErrorBox>{error}</ErrorBox>}
               <button className={`pp-btn pp-btn--primary pp-btn--block pp-btn--lg ${busy ? 'is-loading' : ''}`} disabled={busy || form.name.trim().length < 2}>

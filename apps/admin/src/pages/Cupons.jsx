@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Shell, Loading, ErrorBox, BackLink } from '../components/Shell.jsx';
 import { Icon } from '@pulsepass/shared/Icon';
+import Confirmar from '@pulsepass/shared/Confirmar';
 import { api } from '../lib/api.js';
 import { brl } from '../lib/format.js';
 
@@ -14,6 +15,7 @@ export default function Cupons() {
   const [error, setError] = useState('');
   const [form, setForm] = useState(EMPTY);
   const [saving, setSaving] = useState(false);
+  const [aExcluir, setAExcluir] = useState(null);   // cupom aguardando confirmação
 
   async function load() {
     try { setCoupons(await api.listCoupons(id)); setStatus('done'); }
@@ -50,9 +52,11 @@ export default function Cupons() {
     try { await api.setCouponActive(c.id, !c.active); await load(); }
     catch (e) { setError(e.message); }
   }
+  // O erro sobe para o diálogo, que fica aberto mostrando o motivo. Antes ia
+  // para o topo da página e sumia da vista de quem estava olhando a linha.
   async function remove(c) {
-    try { await api.deleteCoupon(c.id); await load(); }
-    catch (e) { setError(e.message); }
+    await api.deleteCoupon(c.id);
+    await load();
   }
 
   if (status === 'loading') return <Shell><Loading /></Shell>;
@@ -71,29 +75,29 @@ export default function Cupons() {
       <form onSubmit={create} className="ck-card" style={{ maxWidth: 680 }}>
         <div className="ck-row">
           <div className="ck-field">
-            <label className="ck-label">Código</label>
-            <input className="ck-input" value={form.code} onChange={set('code')} placeholder="VIP20" style={{ textTransform: 'uppercase' }} required minLength={3} />
+            <label htmlFor="cupons-1" className="ck-label">Código</label>
+            <input id="cupons-1" className="ck-input" value={form.code} onChange={set('code')} placeholder="VIP20" style={{ textTransform: 'uppercase' }} required minLength={3} />
           </div>
           <div className="ck-field">
-            <label className="ck-label">Tipo</label>
-            <select className="ck-select" value={form.kind} onChange={set('kind')}>
+            <label htmlFor="cupons-2" className="ck-label">Tipo</label>
+            <select id="cupons-2" className="ck-select" value={form.kind} onChange={set('kind')}>
               <option value="percent">Percentual (%)</option>
               <option value="fixed">Valor fixo (R$)</option>
             </select>
           </div>
           <div className="ck-field">
-            <label className="ck-label">{form.kind === 'percent' ? 'Valor (%)' : 'Valor (R$)'}</label>
-            <input className="ck-input" type="number" min="0" step={form.kind === 'percent' ? '1' : '0.01'} value={form.value} onChange={set('value')} required />
+            <label htmlFor="cupons-3" className="ck-label">{form.kind === 'percent' ? 'Valor (%)' : 'Valor (R$)'}</label>
+            <input id="cupons-3" className="ck-input" type="number" min="0" step={form.kind === 'percent' ? '1' : '0.01'} value={form.value} onChange={set('value')} required />
           </div>
         </div>
         <div className="ck-row">
           <div className="ck-field">
-            <label className="ck-label">Limite de usos (opcional)</label>
-            <input className="ck-input" type="number" min="1" value={form.max_uses} onChange={set('max_uses')} placeholder="ilimitado" />
+            <label htmlFor="cupons-4" className="ck-label">Limite de usos (opcional)</label>
+            <input id="cupons-4" className="ck-input" type="number" min="1" value={form.max_uses} onChange={set('max_uses')} placeholder="ilimitado" />
           </div>
           <div className="ck-field">
-            <label className="ck-label">Validade (opcional)</label>
-            <input className="ck-input" type="datetime-local" value={form.expires_at} onChange={set('expires_at')} />
+            <label htmlFor="cupons-5" className="ck-label">Validade (opcional)</label>
+            <input id="cupons-5" className="ck-input" type="datetime-local" value={form.expires_at} onChange={set('expires_at')} />
           </div>
         </div>
         <button className="ck-btn ck-btn--primary" disabled={saving}>{saving ? 'Criando…' : '+ Criar cupom'}</button>
@@ -115,7 +119,10 @@ export default function Cupons() {
                 <td>
                   <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
                     <button className="ck-btn ck-btn--glass" onClick={() => toggle(c)}>{c.active ? 'Desativar' : 'Ativar'}</button>
-                    <button className="ck-iconbtn" onClick={() => remove(c)} title="Excluir"><Icon name="close" size={15} /></button>
+                    <button className="ck-iconbtn" onClick={() => setAExcluir(c)}
+                      title={`Excluir cupom ${c.code}`} aria-label={`Excluir cupom ${c.code}`}>
+                      <Icon name="close" size={15} />
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -126,6 +133,22 @@ export default function Cupons() {
           </tbody>
         </table>
       </div>
+
+      {/* Cupom já divulgado que some sem aviso vira cliente na porta com um
+          código que não funciona mais. A confirmação nomeia o código e conta
+          quantas vezes já foi usado — é o dado que decide se pode apagar. */}
+      <Confirmar
+        aberto={!!aExcluir}
+        titulo={`Excluir o cupom ${aExcluir?.code ?? ''}?`}
+        descricao={
+          aExcluir?.used_count > 0
+            ? `Este cupom já foi usado ${aExcluir.used_count} vez(es). Quem ainda não comprou e recebeu o código vai encontrá-lo inválido. Os pedidos já feitos não mudam.`
+            : 'O código deixa de funcionar imediatamente. Não dá para desfazer.'
+        }
+        confirmar="Excluir cupom"
+        onConfirmar={() => remove(aExcluir)}
+        onFechar={() => setAExcluir(null)}
+      />
     </Shell>
   );
 }
