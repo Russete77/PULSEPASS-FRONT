@@ -168,14 +168,19 @@
   background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14);
   color: rgba(255,255,255,0.85); white-space: nowrap;
 }
-.pp-badge--pulse, .pp-badge--success, .pp-badge--valid, .pp-badge--published {
-  background: rgba(0,255,133,0.14); color: #4DFFA8; border-color: rgba(0,255,133,0.22);
+/* ── Etiqueta decorativa vs. etiqueta de ESTADO ──
+   A regra: cor só quando ela informa um estado que muda a decisão de quem
+   lê. "Ingressos / Lista / Bar cashless" não são estados — são as seções do
+   evento. Em verde, roxo e azul viravam um semáforo no topo da tela,
+   competindo com o botão de comprar. Agora são cinza com contorno. */
+.pp-badge--pulse, .pp-badge--violet, .pp-badge--cyan, .pp-badge--info {
+  background: rgba(255,255,255,0.06); color: var(--pp-fg-2);
+  border-color: var(--pp-edge-2);
 }
-.pp-badge--violet {
-  background: rgba(167,139,250,0.16); color: #C4B5FD; border-color: rgba(167,139,250,0.28);
-}
-.pp-badge--cyan, .pp-badge--info {
-  background: rgba(34,211,238,0.14); color: #67E8F9; border-color: rgba(34,211,238,0.24);
+/* Estado de verdade continua colorido: é o que precisa saltar. */
+.pp-badge--success, .pp-badge--valid, .pp-badge--published {
+  background: rgba(var(--pp-pulse-rgb),0.14); color: var(--pp-pulse-hi);
+  border-color: rgba(var(--pp-pulse-rgb),0.24);
 }
 .pp-badge--pink {
   background: rgba(255,61,136,0.14); color: #FF77AA; border-color: rgba(255,61,136,0.24);
@@ -283,7 +288,16 @@ select option, select optgroup, .pp-select option, .pp-select optgroup {
 .pp-stepper { display: inline-flex; align-items: center; gap: 10px; }
 .pp-stepper button { width: 30px; height: 30px; border-radius: 8px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); color: var(--pp-fg); font-size: var(--pp-fs-16); line-height: 1; display: grid; place-items: center; transition: background var(--pp-dur-1) var(--pp-ease), filter var(--pp-dur-1) var(--pp-ease); }
 .pp-stepper button:hover:not(:disabled) { background: rgba(255,255,255,0.14); }
-.pp-stepper button.plus, .pp-stepper button:last-of-type { background: var(--pp-pulse); border-color: transparent; color: var(--pp-pulse-ink); font-weight: 700; }
+/* O "+" NÃO é a ação principal da tela — quem compra é o botão de comprar.
+   Numa lista de lotes isso virava oito botões verdes disputando atenção com
+   o CTA, que é o que precisa ser achado. Neutro, com peso pra continuar
+   óbvio que é clicável. */
+.pp-stepper button.plus, .pp-stepper button:last-of-type {
+  background: rgba(255,255,255,0.14); border-color: var(--pp-edge-3);
+  color: var(--pp-fg); font-weight: 700;
+}
+.pp-stepper button.plus:hover:not(:disabled),
+.pp-stepper button:last-of-type:hover:not(:disabled) { background: rgba(255,255,255,0.22); }
 .pp-stepper button.plus:hover:not(:disabled), .pp-stepper button:last-of-type:hover:not(:disabled) { filter: brightness(1.08); background: var(--pp-pulse); }
 .pp-stepper button:disabled { opacity: 0.4; cursor: not-allowed; }
 .pp-stepper .qty { min-width: 22px; text-align: center; font-family: var(--pp-font-mono); font-variant-numeric: tabular-nums; font-weight: 600; font-size: var(--pp-fs-16); }

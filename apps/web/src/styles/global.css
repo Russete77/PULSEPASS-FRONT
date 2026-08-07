@@ -129,15 +129,20 @@ input, button, select, textarea { font-family: inherit; }
 /* ── Event detail ── */
 .pp-detail { display: grid; gap: var(--pp-s-8); grid-template-columns: 1fr; }
 @media (min-width: 900px) { .pp-detail { grid-template-columns: 1.6fr 1fr; align-items: start; } }
+/* Sem foto, o hero era um borrão verde-e-roxo: bonito, esquecível e igual ao
+   de qualquer app. Enquanto a produtora não sobe a capa, o lugar é ocupado por
+   uma trama fina de linhas sobre a base ameixa — lê como papel de cartaz, não
+   como wallpaper de gradiente, e não disputa com o nome do evento. */
 .pp-hero {
-  position: relative; aspect-ratio: 16 / 9; border-radius: var(--pp-r-xl); overflow: hidden;
+  position: relative; aspect-ratio: 16 / 9; border-radius: var(--pp-r-card); overflow: hidden;
   background:
-    radial-gradient(80% 80% at 30% 20%, #00FF85, transparent 60%),
-    radial-gradient(80% 80% at 80% 90%, #A78BFA, transparent 60%), #0a0a0c;
+    repeating-linear-gradient(115deg, rgba(255,255,255,0.05) 0 1px, transparent 1px 10px),
+    radial-gradient(130% 95% at 12% 0%, var(--pp-ink-700), transparent 62%),
+    var(--pp-ink-900);
   display: grid; place-items: end start; padding: var(--pp-s-6);
 }
 .pp-hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.pp-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 45%, rgba(6,7,10,0.9)); }
+.pp-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 38%, rgba(12,9,16,0.94)); }
 .pp-hero__in { position: relative; z-index: 1; }
 /* Nome do evento: o degrau de heroi. Peso 800 e tracking negativo dao a
    energia de cartaz — com o eixo optico da display, quanto maior, mais

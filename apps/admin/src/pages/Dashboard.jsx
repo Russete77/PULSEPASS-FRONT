@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Shell, Loading, ErrorBox, BackLink } from '../components/Shell.jsx';
+import CapaDoEvento from '../components/CapaDoEvento.jsx';
 import { api } from '../lib/api.js';
 import { brl, eventDate, dateTime } from '../lib/format.js';
 
@@ -71,7 +72,15 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="ck-metrics" style={{ marginTop: 8 }}>
+      <div style={{ marginTop: 20 }}>
+        <CapaDoEvento
+          eventId={id}
+          coverUrl={event.cover_url}
+          onChange={(url) => setEvent((e) => ({ ...e, cover_url: url }))}
+        />
+      </div>
+
+      <div className="ck-metrics" style={{ marginTop: 20 }}>
         <Metric lbl="Receita total" val={brl(m.total_revenue_cents)} accent />
         <Metric lbl="Ingressos vendidos" val={m.tickets_sold} />
         <Metric lbl="Check-ins" val={m.checked_in} />

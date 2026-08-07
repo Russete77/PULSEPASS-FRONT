@@ -43,6 +43,24 @@ export const api = {
   getEvent: (id) => request(`/admin/events/${id}`),
   setStatus: (id, status) => request(`/admin/events/${id}/status`, { method: 'PATCH', body: { status } }),
   dashboard: (id) => request(`/admin/events/${id}/dashboard`),
+
+  /**
+   * Envia a capa do evento.
+   * O arquivo vai DIRETO do navegador ao Storage com uma URL assinada — nao
+   * passa pela nossa API. Imagem de 5 MB subindo por la ocuparia processo que
+   * devia estar validando ingresso na porta.
+   */
+  uploadCover: async (id, file) => {
+    const { signed_url, path } = await request(`/admin/events/${id}/cover-upload`, {
+      method: 'POST', body: { content_type: file.type },
+    });
+    const envio = await fetch(signed_url, {
+      method: 'PUT', headers: { 'content-type': file.type }, body: file,
+    });
+    if (!envio.ok) throw new Error('Nao foi possivel enviar a imagem. Tente de novo.');
+    return request(`/admin/events/${id}/cover`, { method: 'POST', body: { path } });
+  },
+  removeCover: (id) => request(`/admin/events/${id}/cover`, { method: 'DELETE' }),
   reconciliation: (id) => request(`/admin/events/${id}/reconciliation`),
 
   checkIn: (id, input, direction) => request(`/admin/events/${id}/checkin`, {
