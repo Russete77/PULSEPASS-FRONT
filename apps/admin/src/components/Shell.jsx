@@ -34,6 +34,7 @@ export function Shell({ children }) {
               <NavLink to="/" end className="ck-navlink">Eventos</NavLink>
               <NavLink to="/novo" className="ck-navlink">Criar evento</NavLink>
               <NavLink to="/repasse" className="ck-navlink">Repasse</NavLink>
+              <NavLink to="/marca" className="ck-navlink">Marca</NavLink>
             </>
           )}
           {isAdmin && (

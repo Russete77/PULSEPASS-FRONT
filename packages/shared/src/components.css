@@ -624,3 +624,19 @@ h1[tabindex="-1"]:focus { outline: none; }
   background: rgba(255, 255, 255, 0.10); color: var(--pp-fg-3);
   border: 1px solid var(--pp-edge-2);
 }
+
+/* ── Faixa da produtora (white-label) ──
+   Fica ACIMA da capa, discreta. A marca da casa apresenta o evento; ela não
+   compete com ele. Quem compra precisa saber de quem é a festa sem que isso
+   roube o lugar do nome do evento. */
+.pp-marca {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--pp-s-4); flex-wrap: wrap;
+  padding-bottom: var(--pp-s-3);
+  border-bottom: 1px solid var(--pp-edge-1);
+}
+.pp-marca__logo { max-height: 32px; max-width: 190px; display: block; }
+.pp-marca__nome {
+  font-family: var(--pp-font-display); font-weight: 700;
+  font-size: var(--pp-fs-18); letter-spacing: -0.02em; color: var(--pp-pulse);
+}

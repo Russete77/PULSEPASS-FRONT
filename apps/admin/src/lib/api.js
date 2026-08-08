@@ -61,6 +61,23 @@ export const api = {
     return request(`/admin/events/${id}/cover`, { method: 'POST', body: { path } });
   },
   removeCover: (id) => request(`/admin/events/${id}/cover`, { method: 'DELETE' }),
+
+  // ── Marca da produtora (white-label) ──
+  getBranding: (orgId) => request(`/admin/organizations/${orgId}/branding`),
+  setBranding: (orgId, body) => request(`/admin/organizations/${orgId}/branding`, { method: 'PATCH', body }),
+  // Mesmo caminho da capa: a imagem vai DIRETO ao Storage, sem passar pela
+  // API. O backend só decide quem pode enviar e sob qual caminho.
+  uploadLogo: async (orgId, file) => {
+    const { signed_url, path } = await request(`/admin/organizations/${orgId}/logo-upload`, {
+      method: 'POST', body: { content_type: file.type },
+    });
+    const envio = await fetch(signed_url, {
+      method: 'PUT', headers: { 'content-type': file.type }, body: file,
+    });
+    if (!envio.ok) throw new Error('Nao foi possivel enviar o logo. Tente de novo.');
+    return request(`/admin/organizations/${orgId}/logo`, { method: 'POST', body: { path } });
+  },
+  removeLogo: (orgId) => request(`/admin/organizations/${orgId}/logo`, { method: 'DELETE' }),
   reconciliation: (id) => request(`/admin/events/${id}/reconciliation`),
 
   checkIn: (id, input, direction) => request(`/admin/events/${id}/checkin`, {

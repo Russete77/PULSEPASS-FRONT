@@ -25,6 +25,7 @@ import Cupons from './pages/Cupons.jsx';
 import Conciliacao from './pages/Conciliacao.jsx';
 import Equipe from './pages/Equipe.jsx';
 import Repasse from './pages/Repasse.jsx';
+import Marca from './pages/Marca.jsx';
 import ListaPorta from './pages/ListaPorta.jsx';
 import Platform from './pages/plataforma/Platform.jsx';
 import PlatformOrgs from './pages/plataforma/Orgs.jsx';
@@ -69,6 +70,7 @@ const TITULOS = criarResolvedorDeTitulo({
   '/eventos/:id/conciliacao': 'Financeiro',
   '/eventos/:id/equipe': 'Equipe',
   '/repasse': 'Repasse',
+  '/marca': 'Marca',
   '/plataforma': 'Plataforma',
   '/plataforma/orgs': 'Produtoras',
   '/plataforma/fraude': 'Fraude',
@@ -106,6 +108,7 @@ export default function App() {
       <Route path="/eventos/:id/conciliacao" element={<Protected><Conciliacao /></Protected>} />
       <Route path="/eventos/:id/equipe" element={<Protected><Equipe /></Protected>} />
       <Route path="/repasse" element={<Protected><Repasse /></Protected>} />
+      <Route path="/marca" element={<Protected><Marca /></Protected>} />
       <Route path="/plataforma" element={<Protected><Platform /></Protected>} />
       <Route path="/plataforma/orgs" element={<Protected><PlatformOrgs /></Protected>} />
       <Route path="/plataforma/fraude" element={<Protected><PlatformFraud /></Protected>} />

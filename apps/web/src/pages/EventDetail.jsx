@@ -109,8 +109,31 @@ export default function EventDetail() {
 
   return (
     <Page>
-      <div className="pp-detail">
+      {/* White-label: a cor da produtora vira o acento DESTA página, sem tocar
+          no resto do app. Fica no escopo de .pp-detail justamente para não
+          vazar para a barra de cima nem para o rodapé — que continuam sendo do
+          PulsePass, e é isso que o comprador precisa conseguir distinguir. */}
+      <div className="pp-detail"
+        style={event.marca?.cor ? { '--pp-pulse': event.marca.cor, '--pp-pulse-hi': event.marca.cor } : undefined}>
         <div className="pp-stack pp-stack-5 pp-reveal">
+          {event.marca && (
+            <div className="pp-marca">
+              {event.marca.logo_url
+                ? <img src={event.marca.logo_url} alt={event.marca.nome} className="pp-marca__logo" />
+                : <span className="pp-marca__nome">{event.marca.nome}</span>}
+              <div className="pp-cluster-2">
+                {event.marca.site && (
+                  <a href={event.marca.site} target="_blank" rel="noopener noreferrer nofollow"
+                    className="pp-link pp-link--muted">site</a>
+                )}
+                {event.marca.instagram && (
+                  <a href={`https://instagram.com/${event.marca.instagram}`}
+                    target="_blank" rel="noopener noreferrer nofollow"
+                    className="pp-link pp-link--muted">@{event.marca.instagram}</a>
+                )}
+              </div>
+            </div>
+          )}
           <div className="pp-hero">
             {event.cover_url && <img src={event.cover_url} alt={event.title} />}
             <div className="pp-hero__in">
