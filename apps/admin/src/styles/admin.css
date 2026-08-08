@@ -215,3 +215,201 @@ h1.ck-h1 { font-family: var(--pp-font-display); font-weight: 700; font-size: var
 
 /* Trava de segurança: nada faz o documento rolar de lado. */
 html, body { overflow-x: hidden; }
+
+/* ═══════════════════════════════════════════════════════
+   KDS — a tela da cozinha
+   Vive num monitor pendurado, visto de longe, por quem está com as duas
+   mãos ocupadas. Tudo aqui é maior do que seria numa tela de escritório:
+   o tempo de espera é o número que decide o ritmo do turno.
+   ═══════════════════════════════════════════════════════ */
+.ck-between { display: flex; align-items: center; justify-content: space-between; gap: var(--pp-s-3); }
+
+.ck-kds {
+  display: grid; gap: var(--pp-s-4); margin-top: var(--pp-s-5);
+  grid-template-columns: repeat(3, 1fr);
+  align-items: start;
+}
+@media (max-width: 900px) { .ck-kds { grid-template-columns: 1fr; } }
+
+.ck-kds__col {
+  background: var(--pp-glass-1); border: 1px solid var(--pp-edge-1);
+  border-radius: var(--pp-r-lg); padding: var(--pp-s-3);
+  display: flex; flex-direction: column; gap: var(--pp-s-3);
+}
+.ck-kds__head {
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: var(--pp-font-mono); font-size: var(--pp-fs-12);
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--pp-fg-3);
+  padding: 4px 6px 8px; border-bottom: 1px solid var(--pp-edge-1);
+}
+.ck-kds__vazio {
+  color: var(--pp-fg-5); font-size: var(--pp-fs-13); text-align: center;
+  padding: var(--pp-s-6) 0; margin: 0;
+}
+
+.ck-kds__card {
+  background: var(--pp-ink-850); border: 1px solid var(--pp-edge-2);
+  border-radius: var(--pp-r-card); padding: var(--pp-s-4);
+}
+.ck-kds__origem {
+  font-family: var(--pp-font-mono); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--pp-fg-3);
+}
+/* Mesa é o único caso em que ALGUÉM precisa levar o prato. Merece destaque
+   — nas outras origens o cliente vem buscar. */
+.ck-kds__origem--mesa { color: var(--pp-pulse); }
+.ck-kds__cliente { font-weight: 600; font-size: var(--pp-fs-15); margin-top: 2px; }
+
+/* O tempo é o maior elemento do card, de propósito. */
+.ck-kds__tempo {
+  font-family: var(--pp-font-display); font-weight: 700; font-size: 30px;
+  line-height: 1; font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.ck-kds__tempo span { font-size: 12px; font-weight: 500; margin-left: 2px; opacity: 0.7; }
+
+.ck-kds__itens { list-style: none; padding: 0; margin: var(--pp-s-3) 0 0; }
+.ck-kds__itens li {
+  font-size: var(--pp-fs-15); padding: 3px 0; color: var(--pp-fg);
+}
+.ck-kds__itens b { color: var(--pp-fg-2); margin-right: 4px; }
+/* Observação do cliente ("sem gelo") é o que mais gera prato devolvido.
+   Fica em âmbar para não passar batido na leitura rápida. */
+.ck-kds__obs { color: var(--pp-amber); font-style: normal; font-size: var(--pp-fs-13); }
+
+/* ── Abas simples (garçom) ── */
+.ck-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.ck-tabs .ck-tab {
+  height: 38px; padding: 0 16px; border-radius: var(--pp-r-control);
+  background: var(--pp-glass-1); border: 1px solid var(--pp-edge-1);
+  color: var(--pp-fg-3); font-size: var(--pp-fs-14); font-weight: 600;
+  font-family: var(--pp-font-body); cursor: pointer;
+  transition: background var(--pp-dur-2) var(--pp-ease), color var(--pp-dur-2) var(--pp-ease);
+}
+.ck-tabs .ck-tab:hover { color: var(--pp-fg); background: var(--pp-glass-2); }
+.ck-tabs .ck-tab.is-on {
+  background: var(--pp-pulse); border-color: transparent;
+  color: var(--pp-pulse-ink); font-weight: 700;
+}
+
+/* ── Mesa no salão ──
+   O garçom lê de longe, andando. O nome da mesa é o maior elemento e o
+   valor em aberto vem logo abaixo — são as duas informações que fazem ele
+   decidir para onde ir. */
+.ck-mesa {
+  display: block; width: 100%; text-align: left; cursor: pointer;
+  background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2);
+  border-radius: var(--pp-r-lg); padding: var(--pp-s-4);
+  transition: border-color var(--pp-dur-2) var(--pp-ease), background var(--pp-dur-2) var(--pp-ease);
+}
+.ck-mesa:hover { border-color: var(--pp-edge-4); background: var(--pp-glass-3); }
+/* Mesa com prato pronto esperando é a única que muda de cor: é uma
+   chamada de ação, não um status a mais. */
+.ck-mesa--pronta { border-color: rgba(255,184,0,0.45); background: rgba(255,184,0,0.07); }
+
+.ck-mesa__nome {
+  font-family: var(--pp-font-display); font-weight: 700;
+  font-size: var(--pp-fs-20); letter-spacing: -0.02em;
+}
+.ck-mesa__badge {
+  font-family: var(--pp-font-mono); font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--pp-amber); background: rgba(255,184,0,0.14);
+  border: 1px solid rgba(255,184,0,0.3);
+  padding: 3px 8px; border-radius: var(--pp-r-pill); white-space: nowrap;
+}
+.ck-mesa__area { color: var(--pp-fg-4); font-size: var(--pp-fs-12); margin-top: 2px; }
+.ck-mesa__valor {
+  font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-18);
+  font-variant-numeric: tabular-nums; margin-top: 10px;
+}
+.ck-mesa__itens {
+  color: var(--pp-fg-4); font-size: var(--pp-fs-12); margin-top: 6px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════════════════
+   TOTEM — autoatendimento
+   Operado de pé, sozinho, sem ninguém para explicar. Tudo maior do que em
+   qualquer outra tela: alvo mínimo de 64px e preço em corpo grande. Sem
+   barra lateral e sem links de propósito — totem que deixa navegar é totem
+   que alguém abandona numa tela qualquer.
+   ═══════════════════════════════════════════════════════ */
+.ck-totem {
+  min-height: 100dvh; background: var(--pp-ink-950); color: var(--pp-fg);
+  padding: var(--pp-s-8) var(--pp-s-6) 140px;
+  display: flex; flex-direction: column; gap: var(--pp-s-5);
+}
+.ck-totem__topo { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--pp-s-4); }
+.ck-totem h1 {
+  font-family: var(--pp-font-display); font-weight: 700;
+  font-size: clamp(30px, 5vw, 46px); letter-spacing: -0.03em; margin: 4px 0 0;
+}
+.ck-totem__sub { color: var(--pp-fg-3); font-size: var(--pp-fs-18); margin: 6px 0 0; }
+.ck-totem__vazio { color: var(--pp-fg-3); font-size: var(--pp-fs-18); }
+.ck-totem__cats .ck-tab { height: 52px; padding: 0 24px; font-size: var(--pp-fs-16); }
+
+.ck-totem__grade {
+  display: grid; gap: var(--pp-s-4);
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+}
+.ck-totem__item {
+  background: var(--pp-glass-2); border: 2px solid var(--pp-edge-2);
+  border-radius: var(--pp-r-lg); padding: var(--pp-s-5);
+  display: flex; flex-direction: column; gap: 6px; min-height: 168px;
+  transition: border-color var(--pp-dur-2) var(--pp-ease), background var(--pp-dur-2) var(--pp-ease);
+}
+/* Item escolhido muda a BORDA, não o fundo: com meia dúzia selecionados, um
+   fundo aceso em cada deixa a tela ilegível. */
+.ck-totem__item.is-on { border-color: var(--pp-pulse); background: rgba(var(--pp-pulse-rgb), 0.06); }
+.ck-totem__item.is-off { opacity: 0.45; }
+.ck-totem__nome { font-weight: 700; font-size: var(--pp-fs-20); line-height: 1.2; }
+.ck-totem__preco {
+  font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-24);
+  font-variant-numeric: tabular-nums; margin-top: auto;
+}
+.ck-totem__esgotado { color: var(--pp-fg-4); font-size: var(--pp-fs-14); }
+
+.ck-totem__passo { display: flex; align-items: center; gap: var(--pp-s-3); margin-top: 8px; }
+.ck-totem__passo button {
+  width: 64px; height: 64px; border-radius: var(--pp-r-control);
+  background: var(--pp-glass-3); border: 1px solid var(--pp-edge-3);
+  color: var(--pp-fg); font-size: 28px; line-height: 1; cursor: pointer;
+}
+.ck-totem__passo button:disabled { opacity: 0.3; cursor: not-allowed; }
+.ck-totem__passo button:last-child { background: var(--pp-pulse); color: var(--pp-pulse-ink); border-color: transparent; }
+.ck-totem__passo span {
+  min-width: 42px; text-align: center; font-family: var(--pp-font-mono);
+  font-size: var(--pp-fs-24); font-variant-numeric: tabular-nums;
+}
+
+.ck-totem__identificar { max-width: 560px; }
+.ck-totem__campo { height: 72px; font-size: var(--pp-fs-24); }
+.ck-totem__acao { height: 72px; width: 100%; font-size: var(--pp-fs-18); margin-top: var(--pp-s-4); }
+
+.ck-totem__barra {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+  display: flex; align-items: center; justify-content: space-between; gap: var(--pp-s-5);
+  padding: var(--pp-s-5) var(--pp-s-6);
+  background: rgba(12, 9, 16, 0.92); border-top: 1px solid var(--pp-edge-2);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+}
+.ck-totem__barra-lbl { color: var(--pp-fg-3); font-size: var(--pp-fs-14); }
+.ck-totem__barra-val {
+  font-family: var(--pp-font-display); font-weight: 700; font-size: 34px;
+  line-height: 1; font-variant-numeric: tabular-nums;
+}
+
+.ck-totem__recibo { text-align: center; margin: auto; max-width: 560px; }
+.ck-totem__ok {
+  width: 96px; height: 96px; border-radius: 50%; margin: 0 auto var(--pp-s-5);
+  display: grid; place-items: center;
+  background: rgba(var(--pp-pulse-rgb), 0.14); color: var(--pp-pulse);
+  border: 2px solid rgba(var(--pp-pulse-rgb), 0.4);
+}
+/* O código de retirada é a única coisa que a pessoa precisa levar daqui. */
+.ck-totem__codigo {
+  font-family: var(--pp-font-mono); font-weight: 700;
+  font-size: clamp(48px, 10vw, 84px); letter-spacing: 0.08em;
+  color: var(--pp-pulse); margin: var(--pp-s-4) 0;
+}
+.ck-totem__saldo { color: var(--pp-fg-3); margin-bottom: var(--pp-s-6); }

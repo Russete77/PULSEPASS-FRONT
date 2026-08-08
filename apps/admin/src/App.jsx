@@ -10,6 +10,9 @@ import EventWizard from './pages/EventWizard.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Porta from './pages/Porta.jsx';
 import PDV from './pages/PDV.jsx';
+import Cozinha from './pages/Cozinha.jsx';
+import Garcom from './pages/Garcom.jsx';
+import Totem from './pages/Totem.jsx';
 import Bilheteria from './pages/Bilheteria.jsx';
 import Auditoria from './pages/Auditoria.jsx';
 import Fiscal from './pages/Fiscal.jsx';
@@ -55,6 +58,9 @@ const TITULOS = criarResolvedorDeTitulo({
   '/eventos/:id/auditoria': 'Auditoria',
   '/eventos/:id/bilheteria': '🎟 Bilheteria',
   '/eventos/:id/pdv': '🍹 PDV',
+  '/eventos/:id/cozinha': '👨‍🍳 Cozinha',
+  '/eventos/:id/garcom': '🍽 Salão',
+  '/eventos/:id/totem': 'Totem',
   '/eventos/:id/cardapio': 'Cardápio',
   '/eventos/:id/fechamento': 'Fechamento',
   '/eventos/:id/camarotes': 'Camarotes',
@@ -89,6 +95,9 @@ export default function App() {
       <Route path="/eventos/:id/auditoria" element={<Protected><Auditoria /></Protected>} />
       <Route path="/eventos/:id/bilheteria" element={<Protected><Bilheteria /></Protected>} />
       <Route path="/eventos/:id/pdv" element={<Protected><PDV /></Protected>} />
+      <Route path="/eventos/:id/cozinha" element={<Protected><Cozinha /></Protected>} />
+      <Route path="/eventos/:id/garcom" element={<Protected><Garcom /></Protected>} />
+      <Route path="/eventos/:id/totem" element={<Protected><Totem /></Protected>} />
       <Route path="/eventos/:id/cardapio" element={<Protected><Cardapio /></Protected>} />
       <Route path="/eventos/:id/fechamento" element={<Protected><Fechamento /></Protected>} />
       <Route path="/eventos/:id/camarotes" element={<Protected><Camarotes /></Protected>} />

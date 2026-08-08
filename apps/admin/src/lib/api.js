@@ -88,6 +88,16 @@ export const api = {
 
   // Equipe (RBAC)
   listStaff: (id) => request(`/admin/events/${id}/staff`),
+
+  // ── Serviço de bar: cozinha, garçom, totem ──
+  kds: (id) => request(`/admin/events/${id}/kds`),
+  advanceBarOrder: (orderId, para, station) =>
+    request(`/admin/bar-orders/${orderId}/status`, {
+      method: 'PATCH', body: { para, ...(station ? { station } : {}) },
+    }),
+  waiterBoard: (id) => request(`/admin/events/${id}/waiter`),
+  placeWaiterOrder: (id, payload) =>
+    request(`/admin/events/${id}/waiter-orders`, { method: 'POST', body: payload }),
   addStaff: (id, email, role) => request(`/admin/events/${id}/staff`, { method: 'POST', body: { email, role } }),
   removeStaff: (id, staffId) => request(`/admin/events/${id}/staff/${staffId}`, { method: 'DELETE' }),
 
