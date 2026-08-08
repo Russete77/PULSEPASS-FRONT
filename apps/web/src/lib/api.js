@@ -23,6 +23,16 @@ export const api = {
   listCities: () => request('/events/cidades'),
   getEvent: (slug) => request(`/events/${slug}`),
 
+  // ── Assento marcado ──
+  // O mapa é público — quem ainda não tem conta precisa ver o que sobrou
+  // antes de decidir criar uma. O token vai junto quando existe (authHeader
+  // devolve {} sem sessão) só para o servidor marcar quais lugares são seus.
+  seatMap: (slug) => request(`/events/${slug}/assentos`, { auth: true }),
+  holdSeats: (slug, seatIds) =>
+    request(`/events/${slug}/assentos/reservar`, { method: 'POST', auth: true, body: { seat_ids: seatIds } }),
+  releaseSeats: (slug) =>
+    request(`/events/${slug}/assentos/soltar`, { method: 'POST', auth: true }),
+
   createOrder: (payload) =>
     request('/orders', { method: 'POST', body: payload, auth: true }),
   listOrders: () => request('/orders', { auth: true }),

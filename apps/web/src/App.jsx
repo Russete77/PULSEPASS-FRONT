@@ -12,6 +12,7 @@ import Wallet from './pages/Wallet.jsx';
 import OrderAhead from './pages/OrderAhead.jsx';
 import PromoterPortal from './pages/PromoterPortal.jsx';
 import CamarotesPublic from './pages/CamarotesPublic.jsx';
+import Assentos from './pages/Assentos.jsx';
 import TicketView from './pages/TicketView.jsx';
 import Login from './pages/Login.jsx';
 import GuestSignup from './pages/GuestSignup.jsx';
@@ -29,6 +30,7 @@ const TITULOS = criarResolvedorDeTitulo({
   '/': 'Eventos',
   '/eventos/:slug': 'Evento',
   '/eventos/:slug/camarotes': 'Camarotes',
+  '/eventos/:slug/assentos': 'Escolha seu lugar',
   '/eventos/:slug/bar': 'Bar',
   '/lista/:code': 'Lista de convidados',
   '/entrar': 'Entrar',
@@ -50,6 +52,7 @@ export default function App() {
       <Route path="/" element={<Discover />} />
       <Route path="/eventos/:slug" element={<EventDetail />} />
       <Route path="/eventos/:slug/camarotes" element={<CamarotesPublic />} />
+      <Route path="/eventos/:slug/assentos" element={<Assentos />} />
       <Route path="/eventos/:slug/bar" element={<Protected><OrderAhead /></Protected>} />
       <Route path="/lista/:code" element={<GuestSignup />} />
       <Route path="/entrar" element={<Login />} />
