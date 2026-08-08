@@ -603,3 +603,24 @@ h1[tabindex="-1"]:focus { outline: none; }
   padding: 12px 4px;
   min-height: 44px;
 }
+
+/* ── Selo de urgência no flyer ──
+   Só acende a partir de 70% vendido (o backend decide). Fica no canto
+   OPOSTO à data para não brigar com ela, e usa âmbar em vez do acento:
+   verde aqui competiria com o botão de comprar, que é o que deve puxar o
+   olho depois que a urgência já cumpriu o papel de parar a rolagem. */
+.pp-flyer__urg {
+  position: absolute; top: 10px; right: 10px; z-index: 2;
+  padding: 5px 10px; border-radius: var(--pp-r-pill);
+  font-family: var(--pp-font-mono); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+}
+.pp-flyer__urg--esgotando {
+  background: rgba(255, 184, 0, 0.18); color: var(--pp-amber);
+  border: 1px solid rgba(255, 184, 0, 0.34);
+}
+.pp-flyer__urg--esgotado {
+  background: rgba(255, 255, 255, 0.10); color: var(--pp-fg-3);
+  border: 1px solid var(--pp-edge-2);
+}

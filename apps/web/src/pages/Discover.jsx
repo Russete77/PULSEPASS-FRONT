@@ -1,9 +1,22 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Page } from '../components/Layout.jsx';
 import { Loading, Empty, ErrorBox } from '../components/States.jsx';
 import { api } from '../lib/api.js';
 import { Icon } from '../components/Icon.jsx';
+import { cidadeSalva, salvarCidade, detectarCidade, CIDADES_CONHECIDAS } from '../lib/localizacao.js';
+
+/**
+ * Vitrine.
+ *
+ * Antes era uma lista só, ordenada por data, com dois chips de cidade fixos.
+ * Isso responde "o que existe", que não é a pergunta de quem abre o app — a
+ * pergunta é "o que eu faço hoje, perto de mim".
+ *
+ * A tela agora responde nessa ordem: onde você está → o que é urgente → o que
+ * é hoje → o fim de semana → o resto. Cada trilha só aparece se tiver algo
+ * dentro; seção vazia com título é pior que seção ausente.
+ */
 
 const FLYER_GRADS = [
   'radial-gradient(80% 80% at 20% 20%, #22D3EE, transparent 60%), radial-gradient(80% 80% at 80% 80%, #A78BFA, transparent 60%), #0a0a0c',
@@ -14,139 +27,317 @@ const FLYER_GRADS = [
   'radial-gradient(90% 70% at 30% 10%, #FF3D88, transparent 60%), #0a0a0c',
 ];
 
+const CATEGORIAS = [
+  { id: 'festa', rotulo: 'Festas' },
+  { id: 'show', rotulo: 'Shows' },
+  { id: 'standup', rotulo: 'Stand-up' },
+  { id: 'teatro', rotulo: 'Teatro' },
+  { id: 'esporte', rotulo: 'Esporte' },
+  { id: 'gastronomia', rotulo: 'Gastronomia' },
+  { id: 'workshop', rotulo: 'Workshop' },
+];
+
 const bigDate = (iso) => {
   if (!iso) return '';
   const d = new Date(iso);
   const wd = d.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '').toUpperCase();
-  const day = d.getDate();
   const mo = d.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '').toUpperCase();
   const hr = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-  return `${wd} · ${day} ${mo} · ${hr}`;
+  return `${wd} · ${d.getDate()} ${mo} · ${hr}`;
 };
 const shortTag = (iso) => (iso ? new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).replace('.', '').toUpperCase() : '');
 const priceLabel = (cents) => (cents == null ? '' : cents === 0 ? 'Grátis' : `R$ ${Math.floor(cents / 100)}+`);
+
+/** "Sex · 22 nov" — a mesma linha da HomeScreen desenhada. */
+function hojeExtenso() {
+  const d = new Date();
+  const wd = d.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '');
+  const mo = d.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '');
+  return `${wd[0].toUpperCase()}${wd.slice(1)} · ${d.getDate()} ${mo}`;
+}
+
+// ── Faixas de tempo ──
+// Calculadas sobre o relógio local de quem está olhando, não em UTC: "hoje"
+// para quem abre o app às 23h precisa ser o dia dela, não o do servidor.
+const inicioDoDia = (offsetDias = 0) => {
+  const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + offsetDias);
+  return d.getTime();
+};
+
+function fatiarPorTempo(eventos) {
+  const agora = Date.now();
+  const fimDeHoje = inicioDoDia(1);
+  // Fim de semana = da próxima sexta 18h até a segunda 6h.
+  const hoje = new Date();
+  const diasAteSexta = (5 - hoje.getDay() + 7) % 7;
+  const sexta = new Date(); sexta.setHours(18, 0, 0, 0); sexta.setDate(sexta.getDate() + diasAteSexta);
+  const segunda = new Date(sexta); segunda.setDate(sexta.getDate() + 3); segunda.setHours(6, 0, 0, 0);
+
+  const dentro = (t, a, b) => t >= a && t < b;
+  const acontecendo = [], deHoje = [], deFimDeSemana = [], resto = [];
+
+  for (const ev of eventos) {
+    const t = Date.parse(ev.starts_at);
+    if (!Number.isFinite(t)) { resto.push(ev); continue; }
+    // "Acontece agora": começou nas últimas 6h. O backend já entrega esses
+    // eventos justamente para a festa não sumir da vitrine no meio dela.
+    if (t <= agora) acontecendo.push(ev);
+    else if (t < fimDeHoje) deHoje.push(ev);
+    else if (dentro(t, sexta.getTime(), segunda.getTime())) deFimDeSemana.push(ev);
+    else resto.push(ev);
+  }
+  return { acontecendo, deHoje, deFimDeSemana, resto };
+}
 
 function Flyer({ ev, i, rank }) {
   return (
     <Link to={`/eventos/${ev.slug}`} className="pp-flyer">
       <div className="pp-flyer__art" style={ev.cover_url ? undefined : { background: FLYER_GRADS[i % FLYER_GRADS.length] }}>
-        {ev.cover_url && <img src={ev.cover_url} alt={ev.title} />}
+        {ev.cover_url && <img src={ev.cover_url} alt="" loading="lazy" />}
         {rank ? <span className="pp-flyer__rank">{rank}</span> : <span className="pp-flyer__tag">{shortTag(ev.starts_at)}</span>}
+        {/* Urgência vem do backend (≥70% vendido). É o que faz decidir agora. */}
+        {ev.urgencia && (
+          <span className={`pp-flyer__urg pp-flyer__urg--${ev.urgencia}`}>
+            {ev.urgencia === 'esgotado' ? 'Esgotado' : `${ev.sold_pct}% vendido`}
+          </span>
+        )}
         <div className="pp-flyer__body">
           <div className="pp-flyer__title">{ev.title}</div>
-          <div className="pp-flyer__meta">{ev.city}/{ev.state}</div>
-          {ev.min_price_cents != null && <div className="pp-flyer__price">{ev.sold_out ? 'Esgotado' : priceLabel(ev.min_price_cents)}</div>}
+          <div className="pp-flyer__meta">
+            {ev.venue_name ? `${ev.venue_name} · ` : ''}{ev.city}/{ev.state}
+          </div>
+          {ev.min_price_cents != null && (
+            <div className="pp-flyer__price">{ev.sold_out ? 'Esgotado' : priceLabel(ev.min_price_cents)}</div>
+          )}
         </div>
       </div>
     </Link>
   );
 }
 
+/** Trilha só existe se tiver conteúdo — título sem nada embaixo é ruído. */
+function Trilha({ titulo, legenda, eventos, inicio = 0 }) {
+  if (!eventos.length) return null;
+  return (
+    <section style={{ marginTop: 'var(--pp-s-8)' }}>
+      <div className="pp-between" style={{ marginBottom: 'var(--pp-s-4)' }}>
+        <div>
+          <h2 className="pp-t-section" style={{ margin: 0 }}>{titulo}</h2>
+          {legenda && <div className="pp-meta" style={{ marginTop: 2 }}>{legenda}</div>}
+        </div>
+        <span className="pp-muted-2 pp-num" style={{ fontSize: 13 }}>{eventos.length}</span>
+      </div>
+      <div className="pp-grid-auto">
+        {eventos.map((ev, i) => <Flyer key={ev.id} ev={ev} i={inicio + i} />)}
+      </div>
+    </section>
+  );
+}
+
 export default function Discover() {
-  const [events, setEvents] = useState([]);
-  const [status, setStatus] = useState('loading');
-  const [error, setError] = useState('');
+  const [eventos, setEventos] = useState([]);
+  const [cidades, setCidades] = useState([]);
+  const [cidade, setCidade] = useState(cidadeSalva());
+  const [categoria, setCategoria] = useState(null);
   const [q, setQ] = useState('');
-  const [city, setCity] = useState('Todas');
+  const [status, setStatus] = useState('loading');
+  const [erro, setErro] = useState('');
+  const [trocandoCidade, setTrocandoCidade] = useState(false);
+  const [detectando, setDetectando] = useState(false);
 
-  async function load(query = '') {
-    setStatus('loading');
+  const carregar = useCallback(async (filtros) => {
+    setStatus('loading'); setErro('');
     try {
-      setEvents(await api.listEvents({ q: query }));
+      setEventos(await api.listEvents(filtros));
       setStatus('done');
-    } catch (e) { setError(e.message); setStatus('error'); }
-  }
-  useEffect(() => { load(); }, []);
+    } catch (e) { setErro(e.message); setStatus('error'); }
+  }, []);
 
-  const cities = useMemo(() => ['Todas', ...new Set(events.map((e) => e.city).filter(Boolean))], [events]);
-  const filtered = city === 'Todas' ? events : events.filter((e) => e.city === city);
-  const [featured, ...rest] = filtered;
-  const trending = rest.slice(0, 6);
-  const grid = rest;
+  // Descobrir a cidade uma vez, na primeira visita. Escolha manual anterior
+  // sempre ganha do GPS: quem trocou de propósito não quer ser corrigido.
+  useEffect(() => {
+    let vivo = true;
+    api.listCities().then((c) => vivo && setCidades(c)).catch(() => {});
+    if (cidadeSalva()) return () => { vivo = false; };
+    setDetectando(true);
+    detectarCidade().then((c) => {
+      if (!vivo) return;
+      setDetectando(false);
+      if (c) { setCidade(c); salvarCidade(c); }
+    });
+    return () => { vivo = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    carregar({ city: cidade?.city, category: categoria, q: q.trim() || undefined });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cidade?.city, categoria]);
+
+  const { acontecendo, deHoje, deFimDeSemana, resto } = useMemo(
+    () => fatiarPorTempo(eventos), [eventos],
+  );
+  // O destaque é o mais urgente, não o mais próximo no calendário: card de
+  // capa serve para converter, e o que converte é o que está acabando.
+  const destaque = useMemo(() => {
+    if (!eventos.length) return null;
+    const candidatos = eventos.filter((e) => !e.sold_out);
+    if (!candidatos.length) return eventos[0];
+    return [...candidatos].sort((a, b) => (b.sold_pct ?? 0) - (a.sold_pct ?? 0))[0];
+  }, [eventos]);
+
+  const semNada = status === 'done' && eventos.length === 0;
+
+  function escolherCidade(c) {
+    setCidade(c); salvarCidade(c); setTrocandoCidade(false);
+  }
+
+  async function usarMinhaLocalizacao() {
+    setDetectando(true);
+    const c = await detectarCidade();
+    setDetectando(false);
+    if (c) escolherCidade(c);
+    else setErro('Não conseguimos a sua localização. Escolha a cidade na lista.');
+  }
 
   return (
     <Page>
       <div className="pp-reveal">
-        <div className="pp-eyebrow">explore</div>
-        <div className="pp-cityhead">
-          <h1>O que vai rolar em <span className="city">{city === 'Todas' ? 'todo o Brasil' : city}</span></h1>
+        <div className="pp-between" style={{ alignItems: 'flex-start' }}>
+          <div>
+            <div className="pp-meta">{hojeExtenso()}</div>
+            <h1 style={{ margin: '4px 0 0' }}>
+              {cidade ? <>O que rola em <span className="pp-accent">{cidade.city}</span></> : 'O que vai rolar'}
+            </h1>
+          </div>
         </div>
-        <p className="sub">Ticketeria, lista e bar cashless num só lugar. Sinta o pulso do evento.</p>
 
-        <form className="pp-searchbar" onSubmit={(e) => { e.preventDefault(); load(q); }}>
+        {/* Cidade: a primeira decisão da tela, e por isso a primeira coisa
+            clicável. Antes era um chip perdido no meio dos filtros. */}
+        <div className="pp-cluster-2" style={{ marginTop: 'var(--pp-s-3)' }}>
+          <button className="pp-btn pp-btn--glass pp-btn--sm"
+            onClick={() => setTrocandoCidade((v) => !v)}
+            aria-expanded={trocandoCidade}>
+            <Icon name="pin" size={14} />
+            {detectando ? 'Localizando…' : cidade ? `${cidade.city}/${cidade.state}` : 'Todo o Brasil'}
+            <Icon name="chevronDown" size={13} />
+          </button>
+          {cidade && (
+            <button className="pp-link pp-link--muted" onClick={() => { setCidade(null); salvarCidade(null); }}>
+              ver o Brasil todo
+            </button>
+          )}
+        </div>
+
+        {trocandoCidade && (
+          <div className="pp-card" style={{ marginTop: 'var(--pp-s-3)', padding: 'var(--pp-s-4)' }}>
+            <button className="pp-btn pp-btn--ghost pp-btn--sm pp-btn--block" onClick={usarMinhaLocalizacao}>
+              <Icon name="pin" size={14} /> Usar minha localização
+            </button>
+            {/* Só cidades com evento no ar. Oferecer uma lista fixa de
+                capitais levaria a pessoa a um "nada por aqui". */}
+            <div className="pp-cluster-2" style={{ marginTop: 'var(--pp-s-4)' }}>
+              {(cidades.length ? cidades : CIDADES_CONHECIDAS.slice(0, 8)).map((c) => (
+                <button key={`${c.city}-${c.state}`}
+                  className={`pp-chip ${cidade?.city === c.city ? 'pp-chip--active' : ''}`}
+                  onClick={() => escolherCidade(c)}>
+                  {c.city}
+                  {c.eventos != null && <span className="pp-muted-2"> · {c.eventos}</span>}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <form className="pp-searchbar" style={{ marginTop: 'var(--pp-s-4)' }}
+          onSubmit={(e) => { e.preventDefault(); carregar({ city: cidade?.city, category: categoria, q: q.trim() || undefined }); }}>
           <div className="pp-inputwrap">
-            <Icon name="search" size={18} />
-            <input className="pp-input" placeholder="Buscar evento, artista, casa…" value={q} onChange={(e) => setQ(e.target.value)} />
+            <Icon name="search" size={16} />
+            <input className="pp-input" placeholder="Buscar evento, artista, casa…"
+              value={q} onChange={(e) => setQ(e.target.value)}
+              type="search" autoComplete="off" aria-label="Buscar evento, artista ou casa" />
           </div>
           <button className="pp-btn pp-btn--glass" type="submit">Buscar</button>
         </form>
 
-        {cities.length > 1 && (
-          <div className="pp-chiprow">
-            {cities.map((c) => (
-              <button key={c} className={`pp-chip ${city === c ? 'pp-chip--active' : ''}`} onClick={() => setCity(c)}>{c}</button>
-            ))}
-          </div>
-        )}
+        <div className="pp-chiprow" style={{ marginTop: 'var(--pp-s-4)' }}>
+          <button className={`pp-chip ${categoria === null ? 'pp-chip--active' : ''}`} onClick={() => setCategoria(null)}>
+            Tudo
+          </button>
+          {CATEGORIAS.map((c) => (
+            <button key={c.id} className={`pp-chip ${categoria === c.id ? 'pp-chip--active' : ''}`}
+              onClick={() => setCategoria(categoria === c.id ? null : c.id)}>
+              {c.rotulo}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {status === 'loading' && <Loading label="Buscando eventos…" />}
-      {status === 'error' && <ErrorBox>Não consegui carregar os eventos: {error}.</ErrorBox>}
-      {status === 'done' && filtered.length === 0 && (
+      {erro && <ErrorBox>{erro}</ErrorBox>}
+      {status === 'loading' && <Loading />}
+
+      {semNada && (
         <Empty>
           <div className="pp-empty__icon"><Icon name="music" size={30} /></div>
-          <div className="pp-empty__title">Nenhum evento por aqui ainda</div>
-          <p>Assim que uma produtora publicar, ele aparece bem aqui.</p>
+          <div className="pp-empty__title">
+            {categoria || q
+              ? 'Nada com esse filtro'
+              : cidade ? `Nada em ${cidade.city} por enquanto` : 'Nenhum evento publicado ainda'}
+          </div>
+          <p>
+            {categoria || q
+              ? 'Tente outra categoria ou limpe a busca.'
+              : cidade ? 'Veja o que está rolando no resto do país.' : 'Volte em breve.'}
+          </p>
+          <div className="pp-cluster-2" style={{ justifyContent: 'center', marginTop: 'var(--pp-s-4)' }}>
+            {(categoria || q) && (
+              <button className="pp-btn pp-btn--glass pp-btn--sm" onClick={() => { setCategoria(null); setQ(''); carregar({ city: cidade?.city }); }}>
+                Limpar filtros
+              </button>
+            )}
+            {cidade && (
+              <button className="pp-btn pp-btn--primary pp-btn--sm" onClick={() => { setCidade(null); salvarCidade(null); }}>
+                Ver o Brasil todo
+              </button>
+            )}
+          </div>
         </Empty>
       )}
 
-      {status === 'done' && featured && (
-        <Link to={`/eventos/${featured.slug}`} className="pp-featured pp-reveal">
+      {status === 'done' && destaque && (
+        <Link to={`/eventos/${destaque.slug}`} className="pp-featured pp-reveal" style={{ marginTop: 'var(--pp-s-6)' }}>
           <div className="pp-featured__art">
-            {featured.cover_url && <img src={featured.cover_url} alt={featured.title} />}
-            <span className="pp-featured__live">Vendas abertas</span>
+            {destaque.cover_url && <img src={destaque.cover_url} alt="" />}
+            <span className="pp-featured__live">
+              {destaque.urgencia === 'esgotando' ? `Esgotando · ${destaque.sold_pct}% vendido` : 'Vendas abertas'}
+            </span>
             <div className="pp-featured__info">
-              <div className="pp-featured__date">{bigDate(featured.starts_at)}</div>
-              <div className="pp-featured__title">{featured.title}</div>
+              <div className="pp-featured__date">{bigDate(destaque.starts_at)}</div>
+              <div className="pp-featured__title">{destaque.title}</div>
             </div>
           </div>
           <div className="pp-featured__foot">
-            <div>
-              <div className="pp-featured__venue">{featured.venue_name ? `${featured.venue_name} · ` : ''}{featured.city}/{featured.state}</div>
-              <div className="pp-featured__meta">{featured.min_price_cents != null ? `a partir de ${priceLabel(featured.min_price_cents)}` : 'Ingressos · Lista · Bar'}</div>
+            <div className="pp-grow">
+              <div className="pp-featured__venue">{destaque.venue_name ? `${destaque.venue_name} · ` : ''}{destaque.city}/{destaque.state}</div>
+              <div className="pp-featured__meta">
+                {destaque.min_price_cents != null ? `a partir de ${priceLabel(destaque.min_price_cents)}` : 'Ingressos · Lista · Bar'}
+              </div>
             </div>
             <span className="pp-btn pp-btn--primary pp-btn--sm">Comprar <Icon name="arrowRight" size={15} /></span>
           </div>
         </Link>
       )}
 
-      {status === 'done' && trending.length >= 3 && (
+      {status === 'done' && (
         <>
-          <div className="pp-section-head">
-            <div>
-              <div className="pp-eyebrow" style={{ color: 'var(--pp-pink)', display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span className="pp-pulse-dot" style={{ background: 'var(--pp-pink)' }} /> Bombando · 24h
-              </div>
-              <h2>+ comprados agora</h2>
-            </div>
-          </div>
-          <div className="pp-hscroll pp-reveal">
-            {trending.map((ev, i) => <Flyer key={ev.id} ev={ev} i={i} rank={`#${i + 1}`} />)}
-          </div>
-        </>
-      )}
-
-      {status === 'done' && grid.length > 0 && (
-        <>
-          <div className="pp-section-head">
-            <div>
-              <div className="pp-eyebrow">Programe-se</div>
-              <h2>Próximos eventos</h2>
-            </div>
-          </div>
-          <div className="pp-grid pp-reveal-group">
-            {grid.map((ev, i) => <Flyer key={ev.id} ev={ev} i={i} />)}
-          </div>
+          <Trilha titulo="Acontece agora" legenda="começou há pouco" eventos={acontecendo} />
+          <Trilha titulo="Hoje" eventos={deHoje} inicio={acontecendo.length} />
+          <Trilha titulo="Este fim de semana" eventos={deFimDeSemana} inicio={acontecendo.length + deHoje.length} />
+          <Trilha
+            titulo={cidade ? `Mais em ${cidade.city}` : 'Próximos'}
+            eventos={resto}
+            inicio={acontecendo.length + deHoje.length + deFimDeSemana.length}
+          />
         </>
       )}
     </Page>

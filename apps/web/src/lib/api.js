@@ -19,6 +19,8 @@ export const api = {
     ).toString();
     return request(`/events${qs ? `?${qs}` : ''}`);
   },
+  // Cidades com evento no ar — alimenta o seletor da vitrine.
+  listCities: () => request('/events/cidades'),
   getEvent: (slug) => request(`/events/${slug}`),
 
   createOrder: (payload) =>

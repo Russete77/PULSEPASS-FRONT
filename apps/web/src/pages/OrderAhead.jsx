@@ -153,7 +153,11 @@ export default function OrderAhead() {
       )}
 
       {recharge && (
-        <RechargeSheet onClose={() => setRecharge(false)} onPaid={() => { setRecharge(false); refreshBalance(); }} />
+        <RechargeSheet
+          faltando={Math.max(0, total - balance)}
+          onClose={() => setRecharge(false)}
+          onPaid={() => { setRecharge(false); refreshBalance(); }}
+        />
       )}
     </Page>
   );

@@ -103,8 +103,17 @@ async function sacar(reload, setError) {
   catch (e) { setError(e.message); }
 }
 
-export function RechargeSheet({ onClose, onPaid, eventId = null }) {
-  const [amount, setAmount] = useState(5000);
+/**
+ * @param {number} faltando  Quanto falta para fechar o pedido em aberto, em
+ *   centavos. Vindo preenchido, a recarga já abre nesse valor.
+ */
+export function RechargeSheet({ onClose, onPaid, eventId = null, faltando = 0 }) {
+  // Abrir sempre em R$ 50 ignorava o carrinho: com R$ 78 de itens e saldo
+  // zero, a pessoa recarregava 50, voltava, e ainda não dava — e a culpa
+  // parecia dela. Arredonda para cima no múltiplo de R$ 5 porque valor
+  // quebrado em Pix não ajuda ninguém.
+  const sugerido = faltando > 0 ? Math.ceil(faltando / 500) * 500 : 5000;
+  const [amount, setAmount] = useState(sugerido);
   const [custom, setCustom] = useState('');
   const [step, setStep] = useState('form'); // form | pix
   const [topup, setTopup] = useState(null);
@@ -154,13 +163,28 @@ export function RechargeSheet({ onClose, onPaid, eventId = null }) {
 
         {step === 'form' ? (
           <div className="pp-modal__body pp-stack pp-stack-4">
+            {faltando > 0 && (
+              <p style={{ margin: 0, fontSize: 14, color: 'var(--pp-fg-2)', lineHeight: 1.45 }}>
+                Faltam <strong style={{ color: 'var(--pp-fg)' }}>{brl(faltando)}</strong> para
+                fechar seu pedido. Já deixamos {brl(sugerido)} escolhido.
+              </p>
+            )}
             <div className="pp-amounts">
-              {PRESETS.map((v) => (
-                <button key={v} className={custom === '' && amount === v ? 'sel' : ''} onClick={() => { setAmount(v); setCustom(''); }}>
+              {/* O valor sugerido entra na lista quando não é um dos preços
+                  fixos — senão ele não teria como ser reescolhido depois que
+                  a pessoa clicasse em outro. */}
+              {[...new Set(PRESETS.concat(faltando > 0 ? [sugerido] : []))].sort((a, b) => a - b).map((v) => (
+                <button key={v} className={custom === '' && amount === v ? 'sel' : ''}
+                  onClick={() => { setAmount(v); setCustom(''); }}>
                   R$ {v / 100}
                 </button>
               ))}
             </div>
+            {faltando > 0 && cents < faltando && (
+              <p role="status" style={{ margin: 0, fontSize: 13, color: 'var(--pp-amber)' }}>
+                Com {brl(cents)} ainda faltam {brl(faltando - cents)} para o pedido.
+              </p>
+            )}
             <div className="pp-field">
               <label htmlFor="wallet-1" className="pp-label">Ou outro valor (R$)</label>
               <input id="wallet-1" className="pp-input" type="number" min="5" step="1" value={custom} placeholder="0,00" onChange={(e) => setCustom(e.target.value)} />
