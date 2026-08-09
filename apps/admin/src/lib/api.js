@@ -80,8 +80,10 @@ export const api = {
   removeLogo: (orgId) => request(`/admin/organizations/${orgId}/logo`, { method: 'DELETE' }),
   reconciliation: (id) => request(`/admin/events/${id}/reconciliation`),
 
-  checkIn: (id, input, direction) => request(`/admin/events/${id}/checkin`, {
-    method: 'POST', body: { input, ...(direction ? { direction } : {}) },
+  // gate = qual portaria validou. O schema e a RPC sempre aceitaram; o front
+  // é que nunca enviava — e sem isso o log de movimento não diz POR ONDE.
+  checkIn: (id, input, direction, gate) => request(`/admin/events/${id}/checkin`, {
+    method: 'POST', body: { input, ...(direction ? { direction } : {}), ...(gate ? { gate } : {}) },
   }),
   // Modo offline na porta
   manifest: (id) => request(`/admin/events/${id}/manifest`),
@@ -105,6 +107,8 @@ export const api = {
   listPromoters: (id) => request(`/admin/events/${id}/promoters`),
   promoterGuests: (promoterId) => request(`/admin/promoters/${promoterId}/guests`),
   eventGuests: (id) => request(`/admin/events/${id}/guests`),
+  // Resumo em PESSOAS (grupos +N): a métrica certa para dimensionar a porta.
+  guestsSummary: (id) => request(`/admin/events/${id}/guests/summary`),
   // people = quantas pessoas do convite estão entrando agora (grupo +N).
   checkinGuest: (guestId, people = 1) =>
     request(`/admin/guests/${guestId}/checkin`, { method: 'POST', body: { people } }),

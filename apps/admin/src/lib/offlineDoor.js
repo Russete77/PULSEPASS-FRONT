@@ -108,3 +108,28 @@ export async function manifestMeta() {
   const db = await openDb();
   return done(tx(db, STORE_META).get('manifest'));
 }
+
+/**
+ * Busca por NOME no manifesto já baixado — funciona offline, que é onde ela
+ * mais importa: a pessoa sem bateria no celular fala o nome, não o código.
+ * O manifesto indexa cada ingresso duas vezes (código e id:secret), então o
+ * resultado é deduplicado pelo id antes de devolver.
+ */
+export async function searchManifest(query) {
+  const q = String(query ?? '').trim().toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '');
+  if (q.length < 2) return [];
+  const db = await openDb();
+  const all = await done(tx(db, STORE_MANIFEST).getAll());
+  const vistos = new Set();
+  const achados = [];
+  for (const t of all) {
+    if (vistos.has(t.id)) continue;
+    const nome = String(t.holder ?? '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    if (!nome.includes(q)) continue;
+    vistos.add(t.id);
+    achados.push({ id: t.id, code: t.code, holder: t.holder, tier: t.tier, status: t.status });
+    if (achados.length >= 8) break; // porta é fila: 8 já é mais do que se lê
+  }
+  return achados;
+}

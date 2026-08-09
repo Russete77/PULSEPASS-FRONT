@@ -19,6 +19,7 @@ export default function Repasse() {
   const [draft, setDraft] = useState({});
   const [savedId, setSavedId] = useState('');
   const [abrindo, setAbrindo] = useState(null);   // orgId com o formulário aberto
+  const [atualizando, setAtualizando] = useState(''); // orgId consultando o Asaas
   const [error, setError] = useState('');
 
   const load = useCallback(async () => {
@@ -45,6 +46,17 @@ export default function Repasse() {
       setTimeout(() => setSavedId(''), 2000);
       load();
     } catch (e) { setError(e.message); }
+  }
+
+  // A aprovação acontece do lado do Asaas, sem webhook para nos avisar: quem
+  // enviou documento ontem abre esta tela hoje para saber se já pode receber.
+  // Sem o botão, a resposta só chegava recarregando a página em fé.
+  async function atualizarSubconta(orgId) {
+    setError(''); setAtualizando(orgId);
+    try {
+      await api.refreshAsaasSubaccount(orgId);
+      await load();
+    } catch (e) { setError(e.message); } finally { setAtualizando(''); }
   }
 
   if (status === 'loading') return <Shell><Loading /></Shell>;
@@ -140,6 +152,10 @@ export default function Repasse() {
                 <span style={{ fontFamily: 'var(--pp-font-mono)', fontSize: 12, color: 'var(--pp-fg-3)' }}>
                   {repasse.subconta.account_id}
                 </span>
+                <button className="ck-btn ck-btn--glass" style={{ padding: '6px 12px', fontSize: 12 }}
+                  onClick={() => atualizarSubconta(org.id)} disabled={atualizando === org.id}>
+                  {atualizando === org.id ? 'Consultando…' : <><Icon name="clock" size={13} /> Atualizar status</>}
+                </button>
               </div>
               {repasse.subconta.pendente_documentos && (
                 <p style={{ color: 'var(--pp-amber)', fontSize: 13, marginTop: 10 }}>

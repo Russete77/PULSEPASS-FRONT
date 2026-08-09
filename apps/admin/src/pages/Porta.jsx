@@ -4,7 +4,7 @@ import { Shell, ErrorBox, OpsBack } from '../components/Shell.jsx';
 import { Icon } from '@pulsepass/shared/Icon';
 import { api } from '../lib/api.js';
 import {
-  syncManifest, checkLocal, syncQueue, pendingCount, manifestMeta,
+  syncManifest, checkLocal, syncQueue, pendingCount, manifestMeta, searchManifest,
 } from '../lib/offlineDoor.js';
 import { startScanner, cameraSupported, secureContextOk, feedback } from '../lib/qrScanner.js';
 
@@ -36,6 +36,20 @@ export default function Porta() {
   const [manifest, setManifest] = useState(null);
   const [manifestBusy, setManifestBusy] = useState(false);
   const [occupancy, setOccupancy] = useState(null);
+
+  // Busca por nome no manifesto — para quem chega sem bateria e fala o nome.
+  const [busca, setBusca] = useState('');
+  const [achados, setAchados] = useState([]);
+
+  // Qual portaria é esta. Fica no aparelho (localStorage): o tablet da
+  // Portaria 2 configura uma vez e todo scan da noite sai carimbado.
+  const [gate, setGate] = useState(() => {
+    try { return localStorage.getItem(`pp-gate-${id}`) ?? ''; } catch { return ''; }
+  });
+  function saveGate(v) {
+    setGate(v);
+    try { localStorage.setItem(`pp-gate-${id}`, v); } catch { /* modo privado */ }
+  }
 
   // Câmera existe? (BarcodeDetector não é mais requisito — jsQR cobre iOS/Firefox.)
   const scanSupported = cameraSupported();
@@ -91,7 +105,7 @@ export default function Porta() {
     setError('');
     try {
       if (typeof navigator !== 'undefined' && !navigator.onLine) throw new Error('fetch:offline');
-      const r = await api.checkIn(id, input);
+      const r = await api.checkIn(id, input, undefined, gate.trim() || undefined);
       setResult(r);
       feedback(r.result === 'ok');
       setCode('');
@@ -187,6 +201,21 @@ export default function Porta() {
             {occupancy.left > 0 && <span style={{ color: 'var(--pp-fg-4)' }}>· {occupancy.left} saíram</span>}
           </span>
         )}
+        {/* Progresso da noite: quantos dos vendidos já entraram, quantos faltam.
+            É o que responde "vai chegar mais gente?" sem sair da tela. Os dados
+            já vinham da RPC de lotação — só não eram renderizados. */}
+        {occupancy?.tickets_sold > 0 && (
+          <span style={{ fontSize: 13, color: 'var(--pp-fg-3)' }}>
+            · check-ins{' '}
+            <strong style={{ fontFamily: 'var(--pp-font-mono)', color: 'var(--pp-fg)' }}>
+              {Math.min(100, Math.round(((occupancy.inside + occupancy.left) / occupancy.tickets_sold) * 100))}%
+            </strong>
+            {' '}· faltam{' '}
+            <strong style={{ fontFamily: 'var(--pp-font-mono)', color: 'var(--pp-fg)' }}>
+              {Math.max(0, occupancy.tickets_sold - occupancy.inside - occupancy.left)}
+            </strong>
+          </span>
+        )}
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
           <button type="button" className="ck-btn ck-btn--glass" onClick={downloadManifest} disabled={manifestBusy || !online}>
             {manifestBusy ? 'Baixando…' : 'Baixar manifesto'}
@@ -199,6 +228,13 @@ export default function Porta() {
 
       <div className="ck-card" style={{ maxWidth: 520, marginTop: 16 }}>
         <form onSubmit={(e) => { e.preventDefault(); submit(); }}>
+          {/* Qual portaria é esta: carimba cada movimento com o portão. Fica
+              gravado no aparelho — configura uma vez, vale a noite toda. */}
+          <div className="ck-field">
+            <label htmlFor="porta-gate" className="ck-label">Portaria (opcional)</label>
+            <input id="porta-gate" className="ck-input" value={gate} maxLength={40}
+              onChange={(e) => saveGate(e.target.value)} placeholder="ex: Portaria 1" />
+          </div>
           <div className="ck-field">
             <label htmlFor="porta-1" className="ck-label">Código do ingresso</label>
             <input id="porta-1"
@@ -258,6 +294,54 @@ export default function Porta() {
           </p>
         )}
       </div>
+
+      {/* Busca por NOME no manifesto baixado. Existe para a pessoa sem bateria
+          no celular: ela fala o nome, o porteiro valida pelo código. Funciona
+          offline por construção — a fonte é o IndexedDB, não a rede. */}
+      {manifest && (
+        <div className="ck-card" style={{ maxWidth: 520, marginTop: 16 }}>
+          <div className="ck-field" style={{ margin: 0 }}>
+            <label htmlFor="porta-busca" className="ck-label">Buscar por nome (no manifesto)</label>
+            <input id="porta-busca" className="ck-input" value={busca}
+              autoComplete="off"
+              onChange={async (e) => {
+                const v = e.target.value;
+                setBusca(v);
+                try { setAchados(await searchManifest(v)); } catch { setAchados([]); }
+              }}
+              placeholder="nome de quem comprou" />
+          </div>
+          {achados.length > 0 && (
+            <ul style={{ listStyle: 'none', margin: '12px 0 0', padding: 0 }}>
+              {achados.map((t) => (
+                <li key={t.id} style={{
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  gap: 10, padding: '8px 0', borderBottom: '1px solid var(--pp-edge-2)',
+                }}>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontWeight: 600 }}>{t.holder}</div>
+                    <div style={{ color: 'var(--pp-fg-4)', fontSize: 12 }}>
+                      <span className="pp-mono">{t.code}</span> · {t.tier}
+                      {t.status !== 'valid' && <span style={{ color: 'var(--pp-amber)' }}> · {t.status === 'used' ? 'já entrou' : t.status}</span>}
+                    </div>
+                  </div>
+                  {t.status === 'valid' && (
+                    <button className="ck-btn ck-btn--primary ck-btn--sm" disabled={busy}
+                      onClick={() => { setBusca(''); setAchados([]); submit(t.code); }}>
+                      Validar
+                    </button>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+          {busca.trim().length >= 2 && achados.length === 0 && (
+            <p style={{ color: 'var(--pp-fg-4)', fontSize: 13, marginTop: 10 }}>
+              Ninguém com esse nome no manifesto. Confira a grafia — ou o ingresso é de outro evento.
+            </p>
+          )}
+        </div>
+      )}
 
       {result && (
         <div
