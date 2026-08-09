@@ -19,12 +19,17 @@ export default function Equipe() {
   const [role, setRole] = useState('door');
   const [busy, setBusy] = useState(false);
   const [aRemover, setARemover] = useState(null);   // membro aguardando confirmação
+  const [catalogo, setCatalogo] = useState([]);    // as 13 permissões
+  const [abrindoPerms, setAbrindoPerms] = useState(null);
 
   async function load() {
     try { setStaff(await api.listStaff(id)); setStatus('done'); }
     catch (e) { setError(e.message); setStatus('error'); }
   }
   useEffect(() => { load(); /* eslint-disable-next-line */ }, [id]);
+  // O catálogo vem do servidor: repetir a lista aqui a faria divergir da que
+  // o banco aceita no primeiro dia em que alguém acrescentar uma permissão.
+  useEffect(() => { api.permissoesCatalogo().then(setCatalogo).catch(() => {}); }, []);
 
   async function add(e) {
     e.preventDefault();
@@ -79,8 +84,20 @@ export default function Equipe() {
             <tbody>
               {staff.map((s) => (
                 <tr key={s.id}>
-                  <td>{s.profiles?.full_name || s.profiles?.email}<br /><span style={{ color: 'var(--pp-fg-4)', fontSize: 12 }}>{s.profiles?.email}</span></td>
-                  <td>{ROLES.find((r) => r.value === s.role)?.label ?? s.role}</td>
+                  <td>
+                    {s.profiles?.full_name || s.profiles?.email}
+                    <br /><span style={{ color: 'var(--pp-fg-4)', fontSize: 12 }}>{s.profiles?.email}</span>
+                  </td>
+                  <td>
+                    {ROLES.find((r) => r.value === s.role)?.label ?? s.role}
+                    {/* Quantas permissões extras a pessoa tem além do papel.
+                        O papel dá o padrão; isto é o ajuste fino por cima. */}
+                    <button className="ck-permlink" onClick={() => setAbrindoPerms(s)}>
+                      {s.permissoes?.length
+                        ? `${s.permissoes.length} de ${catalogo.length} permissões`
+                        : 'só o papel padrão'}
+                    </button>
+                  </td>
                   {/* Ação destrutiva não pode ter a mesma cara de "Ativar" ou
                       "Editar": quem opera com pressa clica pela posição. */}
                   <td>
@@ -98,13 +115,23 @@ export default function Equipe() {
       {/* Tirar alguém da equipe DURANTE o evento derruba o acesso na hora: o
           porteiro para de validar ingresso no meio da fila. Por isso o
           diálogo diz o papel, e não só o nome. */}
+      {abrindoPerms && (
+        <Permissoes
+          eventId={id} membro={abrindoPerms} catalogo={catalogo}
+          onFechar={() => setAbrindoPerms(null)}
+          onSalvo={() => { setAbrindoPerms(null); load(); }}
+        />
+      )}
+
       <Confirmar
         aberto={!!aRemover}
         titulo="Remover da equipe?"
         descricao={
           `${aRemover?.profiles?.full_name || aRemover?.profiles?.email} perde o acesso de `
           + `"${ROLES.find((r) => r.value === aRemover?.role)?.label ?? aRemover?.role}" imediatamente. `
-          + 'Se o evento estiver rolando, a tela dessa pessoa para de funcionar na hora. '
+          + 'Se o evento estiver rolando, a tela dessa pessoa para de funcionar na hora — '
+          + 'toda chamada verifica a equipe no banco, então remover aqui já corta o acesso, '
+          + 'mesmo que ela continue com o app aberto. '
           + 'Você pode adicionar de volta depois.'
         }
         confirmar="Remover acesso"
@@ -112,5 +139,83 @@ export default function Equipe() {
         onFechar={() => setARemover(null)}
       />
     </Shell>
+  );
+}
+
+
+/** Rótulos legíveis. "boxoffice:refund" não diz nada a quem não escreveu o código. */
+const ROTULO = {
+  'door:checkin': 'Fazer check-in na porta',
+  'door:reentry': 'Autorizar reentrada',
+  'door:guests': 'Ver e marcar a lista de convidados',
+  'bar:pdv': 'Operar o PDV do bar',
+  'bar:kds': 'Ver a fila da cozinha',
+  'bar:waiter': 'Lançar pedido em mesa',
+  'bar:menu': 'Editar o cardápio',
+  'boxoffice:sell': 'Vender na bilheteria',
+  'boxoffice:refund': 'Estornar venda da bilheteria',
+  'tables:manage': 'Gerir camarotes e reservas',
+  'coupons:manage': 'Criar e desativar cupons',
+  'finance:view': 'Ver o financeiro do evento',
+  'finance:withdraw': 'Solicitar repasse',
+};
+
+/**
+ * Matriz de permissões.
+ *
+ * Existe porque o papel sozinho força escolhas ruins: para o gerente de bar
+ * ver o financeiro, era preciso promovê-lo a manager — e aí ele passava a
+ * poder despublicar o evento. Ou alguém empresta a conta da produtora, que é
+ * como o controle de acesso morre de verdade na noite do evento.
+ */
+function Permissoes({ eventId, membro, catalogo, onFechar, onSalvo }) {
+  const [marcadas, setMarcadas] = useState(membro.permissoes ?? []);
+  const [salvando, setSalvando] = useState(false);
+  const [erro, setErro] = useState('');
+
+  const alternar = (p) => setMarcadas((m) => (m.includes(p) ? m.filter((x) => x !== p) : [...m, p]));
+
+  async function salvar() {
+    setSalvando(true); setErro('');
+    try { await api.setStaffPermissoes(eventId, membro.id, marcadas); onSalvo(); }
+    catch (e) { setErro(e.message); } finally { setSalvando(false); }
+  }
+
+  return (
+    <div className="pp-overlay" onMouseDown={(e) => { if (e.target === e.currentTarget) onFechar(); }}>
+      <div className="pp-modal pp-modal--lg" role="dialog" aria-modal="true"
+        aria-label={`Permissões de ${membro.profiles?.full_name || membro.profiles?.email}`}>
+        <div className="pp-modal__head">
+          <h2 className="pp-modal__title">
+            Permissões · {membro.profiles?.full_name || membro.profiles?.email}
+          </h2>
+        </div>
+        <div className="pp-modal__body">
+          <p style={{ color: 'var(--pp-fg-3)', fontSize: 14, margin: '0 0 16px' }}>
+            O papel <b>{ROLES.find((r) => r.value === membro.role)?.label ?? membro.role}</b> já
+            dá o acesso padrão. Marque abaixo só o que essa pessoa precisa ALÉM disso.
+          </p>
+          <div className="ck-permgrid">
+            {catalogo.map((p) => (
+              <label key={p} className={`ck-perm ${marcadas.includes(p) ? 'is-on' : ''}`}>
+                <input type="checkbox" checked={marcadas.includes(p)} onChange={() => alternar(p)} />
+                <span>
+                  {ROTULO[p] ?? p}
+                  <em className="ck-perm__code">{p}</em>
+                </span>
+              </label>
+            ))}
+          </div>
+          {erro && <ErrorBox>{erro}</ErrorBox>}
+        </div>
+        <div className="pp-modal__foot">
+          <button className="pp-btn pp-btn--ghost" onClick={onFechar} disabled={salvando}>Cancelar</button>
+          <button className={`pp-btn pp-btn--primary ${salvando ? 'is-loading' : ''}`}
+            onClick={salvar} disabled={salvando}>
+            Salvar {marcadas.length > 0 ? `· ${marcadas.length}` : ''}
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }

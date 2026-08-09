@@ -452,3 +452,32 @@ html, body { overflow-x: hidden; }
   background: rgba(255, 59, 48, 0.10);
   border-color: rgba(255, 59, 48, 0.40); color: #FF6B61;
 }
+
+/* ── Matriz de permissões ── */
+.ck-permlink {
+  display: block; margin-top: 4px; padding: 0; background: none; border: 0;
+  color: var(--pp-fg-4); font-size: 12px; cursor: pointer; text-align: left;
+  font-family: var(--pp-font-body);
+}
+.ck-permlink:hover { color: var(--pp-pulse); text-decoration: underline; }
+
+.ck-permgrid { display: grid; gap: 8px; grid-template-columns: 1fr; }
+@media (min-width: 620px) { .ck-permgrid { grid-template-columns: 1fr 1fr; } }
+
+.ck-perm {
+  display: flex; align-items: flex-start; gap: 10px; cursor: pointer;
+  padding: 10px 12px; border-radius: var(--pp-r-card);
+  border: 1px solid var(--pp-edge-1); background: var(--pp-glass-1);
+  font-size: var(--pp-fs-14); line-height: 1.35;
+}
+.ck-perm:hover { border-color: var(--pp-edge-3); }
+/* Marcada muda a BORDA, não o fundo: com treze na tela, treze fundos acesos
+   deixariam a matriz ilegível. */
+.ck-perm.is-on { border-color: var(--pp-pulse); background: rgba(var(--pp-pulse-rgb), 0.06); }
+.ck-perm input { margin-top: 2px; flex-shrink: 0; width: 16px; height: 16px; }
+/* O código técnico fica visível mas discreto: quem audita precisa dele, quem
+   só está delegando acesso lê o rótulo em português. */
+.ck-perm__code {
+  display: block; font-family: var(--pp-font-mono); font-size: 10px;
+  color: var(--pp-fg-5); font-style: normal; margin-top: 2px;
+}

@@ -105,6 +105,9 @@ export const api = {
 
   // Equipe (RBAC)
   listStaff: (id) => request(`/admin/events/${id}/staff`),
+  permissoesCatalogo: () => request('/admin/permissoes'),
+  setStaffPermissoes: (id, staffId, permissoes) =>
+    request(`/admin/events/${id}/staff/${staffId}/permissoes`, { method: 'PATCH', body: { permissoes } }),
 
   // ── Serviço de bar: cozinha, garçom, totem ──
   kds: (id) => request(`/admin/events/${id}/kds`),
