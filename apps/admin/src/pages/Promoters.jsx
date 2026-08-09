@@ -20,6 +20,7 @@ export default function Promoters() {
   const [freeUntil, setFreeUntil] = useState('');
   const [creating, setCreating] = useState(false);
 
+  const [busca, setBusca] = useState('');
   const [openId, setOpenId] = useState(null);
   const [guests, setGuests] = useState({ promoter: null, guests: [] });
   const [copiedCode, setCopiedCode] = useState('');
@@ -137,11 +138,40 @@ export default function Promoters() {
         </button>
       </form>
 
+      {/* O total da noite: quanto as listas custam e quanto trazem. Sem essa
+          linha a produtora somava comissão de cabeça, promoter a promoter. */}
+      {promoters.length > 0 && (
+        <div className="ck-card" style={{ maxWidth: 620, marginTop: 24, display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+          {[
+            ['Cliques', promoters.reduce((s, p) => s + (p.clicks ?? 0), 0)],
+            ['Inscritos', promoters.reduce((s, p) => s + (p.confirmed ?? 0), 0)],
+            ['Presentes', promoters.reduce((s, p) => s + (p.checked_in ?? 0), 0)],
+            ['Comissão a pagar', brl(promoters.filter((p) => !p.commission_paid_at)
+              .reduce((s, p) => s + (p.commission_due_cents ?? 0), 0))],
+          ].map(([rotulo, valor]) => (
+            <div key={rotulo}>
+              <div className="ck-label">{rotulo}</div>
+              <div style={{ fontFamily: 'var(--pp-font-mono)', fontWeight: 700, fontSize: 'var(--pp-fs-18)', marginTop: 4 }}>{valor}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {promoters.length > 3 && (
+        <div className="ck-field" style={{ maxWidth: 320, marginTop: 16 }}>
+          <label htmlFor="promoters-busca" className="ck-label">Buscar promoter</label>
+          <input id="promoters-busca" className="ck-input" value={busca}
+            onChange={(e) => setBusca(e.target.value)} placeholder="nome…" />
+        </div>
+      )}
+
       <div style={{ marginTop: 24 }}>
         {promoters.length === 0 ? (
           <div className="ck-empty">Nenhum promoter ainda.</div>
         ) : (
-          [...promoters].sort((a, b) => b.checked_in - a.checked_in).map((p, i) => (
+          [...promoters].sort((a, b) => b.checked_in - a.checked_in)
+            .filter((p) => !busca.trim() || p.name.toLowerCase().includes(busca.trim().toLowerCase()))
+            .map((p, i) => (
             <div key={p.id} className="ck-card" style={{ marginBottom: 12 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
                 <div style={{ flex: 1, minWidth: 220 }}>
