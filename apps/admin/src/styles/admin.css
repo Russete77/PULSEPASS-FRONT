@@ -432,3 +432,23 @@ html, body { overflow-x: hidden; }
   background: rgba(var(--pp-pulse-rgb), 0.14); color: var(--pp-pulse);
   border-color: rgba(var(--pp-pulse-rgb), 0.32);
 }
+
+/* Veredito da conferência de caixa. Três pesos diferentes: bateu é
+   confirmação, sobrou é atenção, faltou é problema — e a cor precisa dizer
+   isso antes de a pessoa ler o número. */
+.ck-conferencia {
+  margin-top: 16px; padding: 14px 16px;
+  border-radius: var(--pp-r-card); border: 1px solid;
+}
+.ck-conferencia--bateu {
+  background: rgba(var(--pp-pulse-rgb), 0.08);
+  border-color: rgba(var(--pp-pulse-rgb), 0.34); color: var(--pp-pulse);
+}
+.ck-conferencia--sobrou {
+  background: rgba(255, 184, 0, 0.08);
+  border-color: rgba(255, 184, 0, 0.34); color: var(--pp-amber);
+}
+.ck-conferencia--faltou {
+  background: rgba(255, 59, 48, 0.10);
+  border-color: rgba(255, 59, 48, 0.40); color: #FF6B61;
+}

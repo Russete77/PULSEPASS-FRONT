@@ -108,6 +108,12 @@ export const api = {
 
   // ── Serviço de bar: cozinha, garçom, totem ──
   kds: (id) => request(`/admin/events/${id}/kds`),
+
+  // ── Turno de caixa ──
+  turnoAberto: (id) => request(`/admin/events/${id}/turno`),
+  abrirTurno: (id, body) => request(`/admin/events/${id}/turno`, { method: 'POST', body }),
+  listarTurnos: (id) => request(`/admin/events/${id}/turnos`),
+  fecharTurno: (turnoId, body) => request(`/admin/turnos/${turnoId}/fechar`, { method: 'POST', body }),
   advanceBarOrder: (orderId, para, station) =>
     request(`/admin/bar-orders/${orderId}/status`, {
       method: 'PATCH', body: { para, ...(station ? { station } : {}) },

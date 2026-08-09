@@ -5,7 +5,20 @@ import { Icon } from '@pulsepass/shared/Icon';
 import { api } from '../lib/api.js';
 import { brl } from '../lib/format.js';
 
-const EMPTY = { name: '', category: '', price_reais: '', stock: '' };
+const EMPTY = { name: '', category: '', price_reais: '', stock: '', cost_reais: '' };
+
+/** Margem em % e em reais. Sem custo informado, "—" — não se inventa lucro. */
+function margem(it) {
+  if (it.cost_cents == null || !it.price_cents) return <span style={{ color: 'var(--pp-fg-5)' }}>—</span>;
+  const lucro = it.price_cents - it.cost_cents;
+  const pct = Math.round((lucro / it.price_cents) * 100);
+  const cor = pct < 0 ? '#FF6B61' : pct < 30 ? 'var(--pp-amber)' : 'var(--pp-pulse)';
+  return (
+    <span style={{ color: cor, fontVariantNumeric: 'tabular-nums' }}>
+      {pct}%<span style={{ color: 'var(--pp-fg-4)', fontSize: 12 }}> · {brl(lucro)}</span>
+    </span>
+  );
+}
 
 export default function Cardapio() {
   const { id } = useParams();
@@ -31,6 +44,7 @@ export default function Cardapio() {
         name: form.name.trim(),
         category: form.category.trim() || undefined,
         price_cents: Math.round(Number(form.price_reais) * 100),
+        cost_cents: form.cost_reais !== '' ? Math.round(Number(form.cost_reais) * 100) : null,
         stock: form.stock !== '' ? Math.round(Number(form.stock)) : null,
       });
       setForm(EMPTY); load();
@@ -76,6 +90,14 @@ export default function Cardapio() {
             <label htmlFor="cardapio-4" className="ck-label">Estoque</label>
             <input id="cardapio-4" className="ck-input" type="number" min="0" value={form.stock} onChange={set('stock')} placeholder="∞" />
           </div>
+          <div className="ck-field">
+            <label className="ck-label" htmlFor="cardapio-custo">Custo (R$)</label>
+            {/* Opcional de propósito. Sem custo a margem some da tabela em vez
+                de o sistema fingir 100% de lucro — que é a mentira mais
+                confortável que um cardápio pode contar. */}
+            <input id="cardapio-custo" className="ck-input" type="number" min="0" step="0.01"
+              value={form.cost_reais} onChange={set('cost_reais')} placeholder="opcional" />
+          </div>
         </div>
         <button className="ck-btn ck-btn--primary" style={{ marginTop: 12 }} disabled={saving || !form.name.trim()}>
           {saving ? 'Adicionando…' : '+ Adicionar item'}
@@ -84,13 +106,18 @@ export default function Cardapio() {
 
       <div className="ck-card" style={{ padding: 0, overflow: 'hidden', marginTop: 20 }}>
         <table className="ck-table">
-          <thead><tr><th>Item</th><th>Categoria</th><th>Preço</th><th>Estoque</th><th>Disponível</th><th></th></tr></thead>
+          <thead><tr><th>Item</th><th>Categoria</th><th>Preço</th><th>Custo</th><th>Margem</th><th>Estoque</th><th>Disponível</th><th></th></tr></thead>
           <tbody>
             {items.map((it) => (
               <tr key={it.id}>
                 <td>{it.name}</td>
                 <td style={{ color: 'var(--pp-fg-3)' }}>{it.category}</td>
                 <td>{brl(it.price_cents)}</td>
+                <td style={{ color: 'var(--pp-fg-3)' }}>{it.cost_cents != null ? brl(it.cost_cents) : '—'}</td>
+                {/* A margem é o que decide o que promover: o chope de R$ 12
+                    pode dar menos lucro que a água de R$ 6, e sem esta coluna
+                    ninguém tem como saber. */}
+                <td>{margem(it)}</td>
                 <td>
                   <input
                     type="number" min="0" defaultValue={it.stock ?? ''} placeholder="∞"
@@ -113,7 +140,7 @@ export default function Cardapio() {
               </tr>
             ))}
             {items.length === 0 && (
-              <tr><td colSpan={6} style={{ color: 'var(--pp-fg-3)' }}>Nenhum item no cardápio.</td></tr>
+              <tr><td colSpan={8} style={{ color: 'var(--pp-fg-3)' }}>Nenhum item no cardápio.</td></tr>
             )}
           </tbody>
         </table>
