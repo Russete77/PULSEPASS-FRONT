@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { Page } from '../components/Layout.jsx';
 import { Loading, ErrorBox } from '../components/States.jsx';
 import CardForm from '../components/CardForm.jsx';
@@ -15,6 +15,9 @@ export default function EventDetail() {
   const { slug } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  // Assentos vindos do mapa. Chegam pelo state da navegação porque a reserva
+  // já está no servidor — aqui só se transporta a referência.
+  const assentos = useLocation().state?.assentos ?? null;
 
   const [event, setEvent] = useState(null);
   const [status, setStatus] = useState('loading');
@@ -89,6 +92,11 @@ export default function EventDetail() {
     setError('');
     try {
       const payload = { eventSlug: slug, items, paymentMethod: method };
+      // Assentos escolhidos no mapa, se a pessoa veio de lá. O servidor
+      // confere que a reserva de 8 minutos ainda está viva e é dela — e
+      // recusa com 409 se venceu, em vez de cobrar e dar a má notícia
+      // depois.
+      if (assentos?.length) payload.seat_ids = assentos;
       if (coupon.trim()) payload.couponCode = coupon.trim();
       if (method === 'card') {
         payload.card = cardPayload.card;
@@ -168,7 +176,36 @@ export default function EventDetail() {
             <p style={{ lineHeight: 1.6, color: 'var(--pp-fg-2)', margin: 0 }}>{event.description}</p>
           )}
 
+          {/* Quando há lugar marcado, a pessoa precisa VER que a compra vai
+              com assento — senão parece que a escolha no mapa se perdeu. */}
+          {assentos?.length > 0 && (
+            <div className="pp-card pp-card--pad" style={{
+              borderColor: 'rgba(var(--pp-pulse-rgb), 0.4)',
+              background: 'rgba(var(--pp-pulse-rgb), 0.06)',
+            }}>
+              <div className="pp-between">
+                <div>
+                  <strong>
+                    {assentos.length} {assentos.length === 1 ? 'lugar marcado' : 'lugares marcados'}
+                  </strong>
+                  <div className="pp-muted" style={{ fontSize: 13, marginTop: 2 }}>
+                    Reservados por poucos minutos. Conclua a compra para garantir.
+                  </div>
+                </div>
+                <Link to={`/eventos/${slug}/assentos`} className="pp-btn pp-btn--ghost pp-btn--sm">
+                  Trocar
+                </Link>
+              </div>
+            </div>
+          )}
+
           <div className="pp-cluster">
+            {/* Só oferece o mapa quando a casa tem lugar marcado — o backend
+                devolve setores vazios no resto, e um link para uma tela vazia
+                é pior que link nenhum. */}
+            <Link to={`/eventos/${slug}/assentos`} className="pp-btn pp-btn--glass">
+              <Icon name="sofa" size={17} /> Escolher lugar
+            </Link>
             <Link to={`/eventos/${slug}/bar`} className="pp-btn pp-btn--glass">
               <Icon name="wallet" size={17} /> Pedir no bar
             </Link>

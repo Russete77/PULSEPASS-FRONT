@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Page } from '../components/Layout.jsx';
 import { Loading, Empty, ErrorBox } from '../components/States.jsx';
@@ -9,27 +9,39 @@ import { brl } from '../lib/format.js';
 /**
  * Escolha de assento.
  *
- * A regra que sustenta a tela inteira é a reserva temporária: assim que a
- * pessoa toca numa poltrona, o servidor a segura por 8 minutos. Sem isso,
- * duas pessoas escolhem o mesmo lugar e uma descobre no pagamento — que é o
- * pior momento possível para dar essa notícia.
+ * Layout tirado da SeatMapScreen do design-system: palco no topo, fileiras
+ * CENTRALIZADAS (é o que faz o desenho parecer uma casa de espetáculo e não
+ * uma planilha), assento pequeno e denso, legenda no cabeçalho, e um painel
+ * com os lugares escolhidos que se pode desfazer um a um.
  *
- * A reserva VENCE de propósito. Prender o assento até alguém decidir pagar
- * daria a qualquer um o poder de esgotar a casa de graça.
+ * A regra que sustenta a tela é a reserva temporária: tocar numa poltrona a
+ * segura por 8 minutos no servidor. Sem isso duas pessoas escolhem o mesmo
+ * lugar e uma descobre no pagamento — o pior momento possível. E ela vence de
+ * propósito: prender assento até alguém decidir pagar daria a qualquer um o
+ * poder de esgotar a casa de graça.
  */
 
+/**
+ * Estado visual do assento.
+ *
+ * Os três estados se separam por LUMINÂNCIA, não por matiz. A primeira versão
+ * usava branco a 10% para livre e 4% para vendido: 1,17:1 de contraste, ou
+ * seja, indistinguíveis — e "quais posso comprar" é a única pergunta que a
+ * tela existe para responder.
+ *
+ * O desenho original dava um matiz por setor. Aqui só o SEU assento recebe
+ * cor; livre e vendido se distinguem por claro contra quase-invisível. Menos
+ * matiz na tela e mais contraste onde ele decide a compra.
+ */
 const CORES = {
-  free: { fundo: 'var(--pp-glass-3)', borda: 'var(--pp-edge-3)', texto: 'var(--pp-fg-2)' },
-  meu: { fundo: 'var(--pp-pulse)', borda: 'transparent', texto: 'var(--pp-pulse-ink)' },
-  held: { fundo: 'var(--pp-glass-1)', borda: 'var(--pp-edge-1)', texto: 'var(--pp-fg-5)' },
-  sold: { fundo: 'var(--pp-glass-1)', borda: 'var(--pp-edge-1)', texto: 'var(--pp-fg-5)' },
-  blocked: { fundo: 'transparent', borda: 'transparent', texto: 'transparent' },
+  free: { fundo: 'rgba(255,255,255,0.40)', borda: 'rgba(255,255,255,0.62)' },
+  meu: { fundo: 'var(--pp-pulse)', borda: 'var(--pp-pulse)' },
+  held: { fundo: 'rgba(255,255,255,0.03)', borda: 'rgba(255,255,255,0.08)' },
+  sold: { fundo: 'rgba(255,255,255,0.03)', borda: 'rgba(255,255,255,0.08)' },
+  blocked: { fundo: 'transparent', borda: 'transparent' },
 };
 
-function estadoDo(a) {
-  if (a.meu) return 'meu';
-  return a.status;
-}
+const estadoDo = (a) => (a.meu ? 'meu' : a.status);
 
 export default function Assentos() {
   const { slug } = useParams();
@@ -37,19 +49,18 @@ export default function Assentos() {
   const [mapa, setMapa] = useState(null);
   const [status, setStatus] = useState('loading');
   const [erro, setErro] = useState('');
-  const [escolhidos, setEscolhidos] = useState([]);   // ids
+  const [escolhidos, setEscolhidos] = useState([]);
   const [expiraEm, setExpiraEm] = useState(null);
   const [restam, setRestam] = useState(null);
-  const [reservando, setReservando] = useState(false);
+  const [ocupado, setOcupado] = useState(false);
   const relogio = useRef(null);
 
   const carregar = useCallback(async () => {
     try {
       const m = await api.seatMap(slug);
       setMapa(m);
-      // Reconcilia com o servidor: se a reserva venceu enquanto a aba estava
-      // em segundo plano, os assentos voltam a aparecer livres e a seleção
-      // local precisa acompanhar.
+      // Reconcilia com o servidor: se a reserva venceu com a aba em segundo
+      // plano, os lugares voltaram ao mapa e a seleção local tem que seguir.
       const meus = m.setores.flatMap((s) => s.fileiras.flatMap((f) => f.assentos)).filter((a) => a.meu);
       setEscolhidos(meus.map((a) => a.id));
       setStatus('done');
@@ -58,8 +69,6 @@ export default function Assentos() {
 
   useEffect(() => { carregar(); }, [carregar]);
 
-  // Contagem regressiva da reserva. Ao zerar, recarrega o mapa: os assentos
-  // já voltaram para todo mundo, e mostrar o contrário seria mentir.
   useEffect(() => {
     if (!expiraEm) { setRestam(null); return undefined; }
     relogio.current = setInterval(() => {
@@ -70,44 +79,47 @@ export default function Assentos() {
     return () => clearInterval(relogio.current);
   }, [expiraEm, carregar]);
 
-  // Solta o que estava segurando ao sair da tela. Sem isso, quem abre o mapa,
-  // escolhe e fecha a aba deixa a poltrona presa por 8 minutos à toa.
+  // Solta o que estava segurando ao sair. Sem isso, quem abre o mapa, escolhe
+  // e fecha a aba deixa a poltrona presa 8 minutos à toa.
   useEffect(() => () => { api.releaseSeats(slug).catch(() => {}); }, [slug]);
 
-  async function alternar(assento) {
-    if (assento.status !== 'free' && !assento.meu) return;
-    const novo = escolhidos.includes(assento.id)
-      ? escolhidos.filter((x) => x !== assento.id)
-      : [...escolhidos, assento.id];
+  const porId = useMemo(() => new Map(
+    mapa?.setores?.flatMap((s) => s.fileiras.flatMap(
+      (f) => f.assentos.map((a) => [a.id, { ...a, fileira: f.fileira, setor: s }]),
+    )) ?? [],
+  ), [mapa]);
 
+  async function sincronizar(novo) {
     setEscolhidos(novo);
     setErro('');
-
     if (novo.length === 0) {
       setExpiraEm(null);
       await api.releaseSeats(slug).catch(() => {});
       return carregar();
     }
-
-    setReservando(true);
+    setOcupado(true);
     try {
       const r = await api.holdSeats(slug, novo);
       setExpiraEm(r.expira_em);
       await carregar();
     } catch (e) {
       setErro(e.message);
-      await carregar();     // devolve a verdade do servidor
-    } finally { setReservando(false); }
+      await carregar();          // devolve a verdade do servidor
+    } finally { setOcupado(false); }
   }
+
+  const alternar = (a) => {
+    if (a.status !== 'free' && !a.meu) return;
+    sincronizar(escolhidos.includes(a.id)
+      ? escolhidos.filter((x) => x !== a.id)
+      : [...escolhidos, a.id]);
+  };
 
   if (status === 'loading') return <Page><Loading label="Abrindo o mapa da casa…" /></Page>;
   if (status === 'error') return <Page><ErrorBox>{erro}</ErrorBox></Page>;
 
   const semAssentos = !mapa?.setores?.length;
-  const porId = new Map(
-    mapa?.setores?.flatMap((s) => s.fileiras.flatMap((f) => f.assentos.map((a) => [a.id, { ...a, setor: s }]))) ?? [],
-  );
-  const total = escolhidos.reduce((soma, id) => soma + (porId.get(id)?.setor.preco_cents ?? 0), 0);
+  const total = escolhidos.reduce((s, id) => s + (porId.get(id)?.setor.preco_cents ?? 0), 0);
   const mm = restam != null ? String(Math.floor(restam / 60)).padStart(2, '0') : null;
   const ss = restam != null ? String(restam % 60).padStart(2, '0') : null;
 
@@ -117,106 +129,142 @@ export default function Assentos() {
         <Icon name="arrowLeft" size={16} /> Voltar ao evento
       </Link>
 
-      <div className="pp-eyebrow" style={{ marginTop: 'var(--pp-s-4)' }}>ingresso numerado</div>
-      <h1>Escolha seu lugar</h1>
-      {mapa?.evento?.casa && <p className="sub">{mapa.evento.casa}</p>}
-
-      {erro && <ErrorBox>{erro}</ErrorBox>}
-
       {semAssentos ? (
         <Empty>
           <div className="pp-empty__icon"><Icon name="sofa" size={30} /></div>
           <div className="pp-empty__title">Este evento não tem lugar marcado</div>
-          <p>A entrada é por ordem de chegada — compre o ingresso direto na página do evento.</p>
+          <p>A entrada é por ordem de chegada — o ingresso se compra direto na página do evento.</p>
           <Link to={`/eventos/${slug}`} className="pp-btn pp-btn--primary pp-btn--sm"
             style={{ marginTop: 'var(--pp-s-4)' }}>
             Ver ingressos
           </Link>
         </Empty>
       ) : (
-        <>
-          <div className="pp-palco">PALCO</div>
-
-          {mapa.setores.map((s) => (
-            <section key={s.nome} className="pp-setor">
-              <div className="pp-between" style={{ marginBottom: 'var(--pp-s-3)' }}>
-                <div>
-                  <div className="pp-setor__nome">{s.nome}</div>
-                  <div className="pp-meta">{s.livres} de {s.total} livres</div>
-                </div>
-                <div className="pp-money" style={{ fontSize: 20 }}>{brl(s.preco_cents)}</div>
+        <div className="pp-seatwrap">
+          {/* ── Mapa ── */}
+          <div className="pp-seatmap">
+            <header className="pp-seatmap__head">
+              <div>
+                <div className="pp-eyebrow">ingresso numerado</div>
+                <h1 style={{ margin: '4px 0 0' }}>
+                  Escolha seu lugar
+                  {mapa.evento.casa && <> · <span className="pp-accent">{mapa.evento.casa}</span></>}
+                </h1>
               </div>
-
-              <div className="pp-setor__grade">
-                {s.fileiras.map((f) => (
-                  <div key={f.fileira} className="pp-fileira">
-                    <span className="pp-fileira__nome">{f.fileira}</span>
-                    {f.assentos.map((a) => {
-                      const e = estadoDo(a);
-                      const c = CORES[e] ?? CORES.free;
-                      const ocupado = e === 'held' || e === 'sold';
-                      return (
-                        <button
-                          key={a.id}
-                          className="pp-assento"
-                          onClick={() => alternar(a)}
-                          disabled={ocupado || reservando}
-                          aria-pressed={e === 'meu'}
-                          aria-label={`Fileira ${f.fileira}, assento ${a.numero}${ocupado ? ', ocupado' : e === 'meu' ? ', escolhido por você' : ', livre'}`}
-                          title={`${f.fileira}${a.numero}`}
-                          style={{ background: c.fundo, borderColor: c.borda, color: c.texto }}
-                        >
-                          {a.numero}
-                        </button>
-                      );
-                    })}
-                  </div>
+              {/* Legenda no cabeçalho, como no desenho: cinza-claro contra
+                  cinza-escuro seria adivinhação sem ela. */}
+              <div className="pp-seatlegend">
+                {[['free', 'Disponível'], ['meu', 'Seu'], ['sold', 'Vendido']].map(([k, r]) => (
+                  <span key={k}>
+                    <i style={{ background: CORES[k].fundo, borderColor: CORES[k].borda }} />
+                    {r}
+                  </span>
                 ))}
               </div>
-            </section>
-          ))}
+            </header>
 
-          {/* Legenda: sem ela, cinza-claro e cinza-escuro viram adivinhação. */}
-          <div className="pp-cluster" style={{ marginTop: 'var(--pp-s-5)' }}>
-            {[['free', 'Livre'], ['meu', 'Seu'], ['sold', 'Ocupado']].map(([k, r]) => (
-              <span key={k} className="pp-cluster-2" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                <i style={{
-                  width: 14, height: 14, borderRadius: 4, display: 'inline-block',
-                  background: CORES[k].fundo, border: `1px solid ${CORES[k].borda}`,
-                }} />
-                <span className="pp-muted" style={{ fontSize: 13 }}>{r}</span>
-              </span>
+            <div className="pp-palco"><span>PALCO</span></div>
+
+            {mapa.setores.map((s) => (
+              <section key={s.nome} className="pp-setor">
+                {/* Preço junto do nome do setor: são a mesma decisão. */}
+                <div className="pp-setor__cab">
+                  {s.nome} · {brl(s.preco_cents)}
+                  <span className="pp-setor__livres">{s.livres} de {s.total} livres</span>
+                </div>
+
+                <div className="pp-setor__scroll">
+                  <div className="pp-setor__grade">
+                    {s.fileiras.map((f) => (
+                      <div key={f.fileira} className="pp-fileira">
+                        <span className="pp-fileira__nome">{f.fileira}</span>
+                        {f.assentos.map((a) => {
+                          const e = estadoDo(a);
+                          const c = CORES[e] ?? CORES.free;
+                          const travado = e === 'held' || e === 'sold' || e === 'blocked';
+                          return (
+                            <button key={a.id} className="pp-assento"
+                              onClick={() => alternar(a)}
+                              disabled={travado || ocupado}
+                              aria-pressed={e === 'meu'}
+                              aria-label={`Fileira ${f.fileira}, assento ${a.numero}, ${travado ? 'ocupado' : e === 'meu' ? 'escolhido por você' : 'livre'}`}
+                              title={`${f.fileira}${a.numero} · ${brl(s.preco_cents)}`}
+                              style={{ background: c.fundo, borderColor: c.borda }} />
+                          );
+                        })}
+                        <span className="pp-fileira__nome">{f.fileira}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </section>
             ))}
           </div>
-        </>
-      )}
 
-      {escolhidos.length > 0 && (
-        <div className="pp-barbar">
-          <div className="pp-barbar__in">
-            <div className="pp-grow">
-              <div className="lbl">
-                {escolhidos.length} {escolhidos.length === 1 ? 'assento' : 'assentos'}
-                {escolhidos.map((id) => {
-                  const a = porId.get(id);
-                  return a ? ` · ${a.setor.nome} ${a.numero}` : '';
-                }).join('')}
-              </div>
-              <div className="val">{brl(total)}</div>
-              {/* O relógio é a informação mais importante da barra. Some da
-                  vista e a pessoa perde o lugar sem entender por quê. */}
-              {mm && (
-                <div style={{ fontSize: 12, color: restam < 60 ? '#FF6B61' : 'var(--pp-amber)', marginTop: 2 }}>
-                  reservado por mais {mm}:{ss}
-                </div>
+          {/* ── Seleção ──
+              Painel à direita no desktop, folha fixa embaixo no celular. Cada
+              assento sai sozinho: quem escolheu quatro e errou um não pode ser
+              obrigado a recomeçar. */}
+          <aside className="pp-seatside">
+            <div className="pp-seatside__in">
+              <div className="pp-eyebrow">seus assentos · {escolhidos.length}</div>
+
+              {escolhidos.length === 0 ? (
+                <p className="pp-muted" style={{ fontSize: 14, marginTop: 10 }}>
+                  Toque numa poltrona livre para começar.
+                </p>
+              ) : (
+                <>
+                  <ul className="pp-seatlist">
+                    {escolhidos.map((id) => {
+                      const a = porId.get(id);
+                      if (!a) return null;
+                      return (
+                        <li key={id}>
+                          <span className="pp-grow">
+                            <b>{a.fileira}{a.numero}</b>
+                            <span className="pp-muted-2"> · {a.setor.nome}</span>
+                          </span>
+                          <span className="pp-num">{brl(a.setor.preco_cents)}</span>
+                          <button className="pp-seatlist__x"
+                            onClick={() => sincronizar(escolhidos.filter((x) => x !== id))}
+                            disabled={ocupado}
+                            aria-label={`Remover assento ${a.fileira}${a.numero}`}>
+                            <Icon name="close" size={13} />
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+
+                  {/* O relógio é a informação mais importante daqui. Some da
+                      vista e a pessoa perde o lugar sem entender por quê. */}
+                  {mm && (
+                    <div className="pp-seattimer" data-urgente={restam < 60 ? 'sim' : 'nao'}>
+                      <Icon name="clock" size={14} />
+                      assentos reservados por mais {mm}:{ss}
+                    </div>
+                  )}
+
+                  <div className="pp-between" style={{ marginTop: 'var(--pp-s-4)' }}>
+                    <span className="pp-muted">
+                      Total · {escolhidos.length} {escolhidos.length === 1 ? 'assento' : 'assentos'}
+                    </span>
+                    <span className="pp-money">{brl(total)}</span>
+                  </div>
+
+                  {erro && <ErrorBox>{erro}</ErrorBox>}
+
+                  <button className="pp-btn pp-btn--primary pp-btn--block pp-btn--lg"
+                    style={{ marginTop: 'var(--pp-s-4)' }}
+                    disabled={ocupado}
+                    onClick={() => navigate(`/eventos/${slug}`, { state: { assentos: escolhidos } })}>
+                    Continuar <Icon name="arrowRight" size={16} />
+                  </button>
+                </>
               )}
             </div>
-            <button className="pp-btn pp-btn--primary pp-btn--lg"
-              disabled={reservando}
-              onClick={() => navigate(`/eventos/${slug}`, { state: { assentos: escolhidos } })}>
-              Continuar <Icon name="arrowRight" size={16} />
-            </button>
-          </div>
+          </aside>
         </div>
       )}
     </Page>

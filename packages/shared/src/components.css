@@ -641,50 +641,124 @@ h1[tabindex="-1"]:focus { outline: none; }
   font-size: var(--pp-fs-18); letter-spacing: -0.02em; color: var(--pp-pulse);
 }
 
-/* ── Mapa de assentos ──
-   O palco fica no topo e a numeração cresce para baixo, como em qualquer
-   casa de espetáculo: a pessoa precisa se localizar sem legenda. */
-.pp-palco {
-  margin: var(--pp-s-6) auto var(--pp-s-5);
-  max-width: 420px; text-align: center;
-  padding: 10px; border-radius: 0 0 60px 60px;
-  background: linear-gradient(180deg, var(--pp-glass-4), transparent);
-  border-top: 2px solid var(--pp-edge-4);
-  font-family: var(--pp-font-mono); font-size: var(--pp-fs-12);
-  letter-spacing: 0.28em; color: var(--pp-fg-3);
+/* ═══════════════════════════════════════════════════════
+   MAPA DE ASSENTOS
+   Layout da SeatMapScreen do design-system. Duas escolhas carregam o
+   desenho: fileiras CENTRALIZADAS — é o que faz parecer uma casa de
+   espetáculo e não uma planilha — e assento pequeno, para caber uma
+   plateia inteira na tela sem pinçar para dar zoom.
+   ═══════════════════════════════════════════════════════ */
+.pp-seatwrap { display: grid; gap: var(--pp-s-6); margin-top: var(--pp-s-4); }
+@media (min-width: 940px) {
+  /* A seleção vira coluna fixa que acompanha a rolagem: escolher na parte
+     de baixo do mapa sem ver o total é escolher no escuro. */
+  .pp-seatwrap { grid-template-columns: 1fr 320px; align-items: start; }
+  .pp-seatside__in { position: sticky; top: var(--pp-s-6); }
 }
 
-.pp-setor { margin-top: var(--pp-s-6); }
-.pp-setor__nome {
-  font-family: var(--pp-font-display); font-weight: 700;
-  font-size: var(--pp-fs-18); letter-spacing: -0.02em;
+.pp-seatmap__head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: var(--pp-s-5); flex-wrap: wrap;
 }
-/* A grade rola DENTRO do próprio bloco. Uma plateia de 40 assentos por
-   fileira não cabe em 375px, e deixar a página inteira rolar de lado
-   desalinharia tudo o mais. */
-.pp-setor__grade { overflow-x: auto; padding-bottom: 6px; -webkit-overflow-scrolling: touch; }
-.pp-fileira { display: flex; align-items: center; gap: 5px; margin-bottom: 5px; width: max-content; }
+.pp-seatlegend { display: flex; gap: var(--pp-s-4); flex-wrap: wrap; }
+.pp-seatlegend span {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; color: var(--pp-fg-3);
+}
+.pp-seatlegend i {
+  width: 12px; height: 12px; border-radius: 3px;
+  border: 1px solid; display: inline-block;
+}
+
+/* Palco: 60% da largura, base arredondada, sem topo — a forma que todo
+   mundo reconhece sem precisar do rótulo. */
+.pp-palco {
+  margin: var(--pp-s-6) auto var(--pp-s-6);
+  width: min(60%, 420px); height: 38px;
+  border-radius: 0 0 40px 40px;
+  background: linear-gradient(180deg, var(--pp-glass-4), transparent);
+  border: 1px solid var(--pp-edge-3); border-top: none;
+  display: grid; place-items: center;
+}
+.pp-palco span {
+  font-family: var(--pp-font-mono); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.3em; color: var(--pp-fg-3);
+}
+
+.pp-setor { margin-bottom: var(--pp-s-7); text-align: center; }
+.pp-setor__cab {
+  font-family: var(--pp-font-mono); font-size: 10px; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--pp-fg-2); margin-bottom: var(--pp-s-3);
+}
+.pp-setor__livres { color: var(--pp-fg-4); margin-left: 8px; letter-spacing: 0.06em; }
+
+/* Rola DENTRO do bloco. Plateia de 28 por fileira não cabe em 375px, e
+   deixar a página rolar de lado desalinharia todo o resto. */
+.pp-setor__scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+.pp-setor__grade {
+  display: inline-flex; flex-direction: column; gap: 4px;
+  align-items: center; min-width: 100%;
+}
+.pp-fileira { display: flex; gap: 4px; align-items: center; }
 .pp-fileira__nome {
-  width: 26px; flex-shrink: 0; text-align: right; padding-right: 6px;
-  font-family: var(--pp-font-mono); font-size: 11px; color: var(--pp-fg-4);
+  width: 18px; flex-shrink: 0; text-align: center;
+  font-family: var(--pp-font-mono); font-size: 9px; color: var(--pp-fg-4);
 }
 
 .pp-assento {
-  width: 30px; height: 30px; flex-shrink: 0;
-  border-radius: 7px 7px 4px 4px;   /* encosto arredondado, base reta */
+  width: 17px; height: 17px; flex-shrink: 0; padding: 0;
+  border-radius: 4px 4px 2px 2px;      /* encosto arredondado, base reta */
   border: 1px solid; cursor: pointer;
-  font-family: var(--pp-font-mono); font-size: 10px; font-weight: 600;
-  display: grid; place-items: center; padding: 0;
   transition: transform var(--pp-dur-1) var(--pp-ease);
 }
-.pp-assento:hover:not(:disabled) { transform: translateY(-2px); }
+.pp-assento:hover:not(:disabled) { transform: scale(1.35); z-index: 2; }
 .pp-assento:disabled { cursor: not-allowed; }
-/* Alvo de toque: o quadrado desenhado tem 30px, mas o dedo alcança 40.
+/* Alvo de toque: o quadrado desenhado tem 17px, mas o dedo alcança 34.
    Sem isso ninguém escolhe poltrona no celular sem errar. */
 @media (pointer: coarse) {
   .pp-assento { position: relative; }
   .pp-assento::after {
     content: ''; position: absolute; inset: 50% 50%;
-    width: 40px; height: 40px; transform: translate(-50%, -50%);
+    width: 34px; height: 34px; transform: translate(-50%, -50%);
   }
+}
+
+/* ── Painel da seleção ── */
+.pp-seatside__in {
+  background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2);
+  border-radius: var(--pp-r-lg); padding: var(--pp-s-5);
+}
+.pp-seatlist { list-style: none; padding: 0; margin: var(--pp-s-3) 0 0; }
+.pp-seatlist li {
+  display: flex; align-items: center; gap: var(--pp-s-3);
+  padding: 9px 0; border-bottom: 1px solid var(--pp-edge-1);
+  font-size: var(--pp-fs-14);
+}
+.pp-seatlist__x {
+  width: 26px; height: 26px; flex-shrink: 0; border-radius: 6px;
+  background: transparent; border: 1px solid var(--pp-edge-2);
+  color: var(--pp-fg-3); display: grid; place-items: center; cursor: pointer;
+}
+.pp-seatlist__x:hover { color: #FF6B61; border-color: rgba(255,59,48,0.4); }
+
+.pp-seattimer {
+  display: flex; align-items: center; gap: 7px;
+  margin-top: var(--pp-s-4); font-size: 12px;
+  color: var(--pp-amber);
+}
+/* No último minuto muda de cor: é aviso, não decoração. */
+.pp-seattimer[data-urgente='sim'] { color: #FF6B61; }
+
+@media (max-width: 939px) {
+  /* No celular a seleção vira folha fixa embaixo — o total e o relógio não
+     podem depender de rolar até o fim da plateia. */
+  .pp-seatside__in {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+    border-radius: var(--pp-r-xl) var(--pp-r-xl) 0 0;
+    background: rgba(12, 9, 16, 0.94);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    max-height: 62dvh; overflow-y: auto;
+  }
+  .pp-seatwrap { padding-bottom: 200px; }
 }
