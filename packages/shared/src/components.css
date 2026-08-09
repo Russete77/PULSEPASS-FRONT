@@ -762,3 +762,48 @@ h1[tabindex="-1"]:focus { outline: none; }
   }
   .pp-seatwrap { padding-bottom: 200px; }
 }
+
+/* Saldo do bar no rodapé do ingresso. Linha inteira clicável: quem vê que
+   está zerado precisa de um caminho, não de um aviso. */
+.pp-ticketcash {
+  display: flex; align-items: center; gap: var(--pp-s-3);
+  margin-top: var(--pp-s-4); padding-top: var(--pp-s-4);
+  border-top: 1px dashed var(--pp-edge-2);
+  text-decoration: none; color: inherit;
+}
+.pp-ticketcash__v {
+  display: block; margin-top: 2px;
+  font-family: var(--pp-font-display); font-weight: 700;
+  font-size: var(--pp-fs-18); font-variant-numeric: tabular-nums;
+}
+
+/* ── Próximo ingresso (destaque na carteira) ──
+   Quem abre a carteira quase sempre está indo para um evento agora. Este
+   card responde isso em um toque, em vez de mandar procurar numa lista. */
+.pp-tktnext {
+  display: block; text-decoration: none; color: inherit;
+  border-radius: var(--pp-r-lg); overflow: hidden;
+  border: 1px solid var(--pp-edge-3); background: var(--pp-glass-2);
+  margin-top: var(--pp-s-5);
+}
+.pp-tktnext__art {
+  position: relative; aspect-ratio: 16 / 7; background: var(--pp-ink-900);
+}
+.pp-tktnext__art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* "Ao vivo" é o único selo em acento nesta tela: é o estado que muda o que
+   a pessoa faz a seguir. */
+.pp-tktnext__live {
+  position: absolute; top: 12px; left: 12px;
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 6px 12px; border-radius: var(--pp-r-pill);
+  background: rgba(var(--pp-pulse-rgb), 0.16); color: var(--pp-pulse);
+  border: 1px solid rgba(var(--pp-pulse-rgb), 0.4);
+  font-family: var(--pp-font-mono); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+}
+.pp-tktnext__body { padding: var(--pp-s-5); }
+.pp-tktnext__title {
+  font-family: var(--pp-font-display); font-weight: 700;
+  font-size: var(--pp-fs-24); letter-spacing: -0.025em; margin-top: 4px;
+}

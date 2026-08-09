@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Page } from '../components/Layout.jsx';
 import { Loading, ErrorBox } from '../components/States.jsx';
 import { api } from '../lib/api.js';
 import { DirectionsButton } from '../components/DirectionsSheet.jsx';
 import { Icon } from '../components/Icon.jsx';
+import { brl } from '../lib/format.js';
 
 const bigDate = (iso) => {
   if (!iso) return '';
@@ -28,6 +29,7 @@ export default function TicketView() {
   const [tBusy, setTBusy] = useState(false);
   const [qr, setQr] = useState(null); // { qr_data_url, exp, ttl_seconds } — QR rotativo
   const [nowTs, setNowTs] = useState(() => Date.now());
+  const [saldo, setSaldo] = useState(null);   // carteira do bar
 
   // QR ROTATIVO (anti-golpe): puxa um token curto e re-puxa a cada 15s.
   // Um print vira inútil em segundos porque o token expira (~30s).
@@ -62,6 +64,9 @@ export default function TicketView() {
       try {
         setTicket(await api.getTicket(id));
         setStatus('done');
+        // Best-effort: sem saldo a linha do cashless some, e o QR — que é o
+        // que resolve na porta — aparece do mesmo jeito.
+        api.getWallet().then((w) => setSaldo(w.balance_cents ?? 0)).catch(() => {});
       } catch (e) {
         setError(e.message);
         setStatus('error');
@@ -124,6 +129,10 @@ export default function TicketView() {
               </div>
             )}
 
+            {/* Setor / Código / Titular — os três campos que a portaria
+                confere. O titular estava faltando: sem ele, ingresso nominal
+                não se distingue de ingresso ao portador na hora do check-in,
+                que é justamente quando importa. */}
             <div className="pp-stub">
               <div>
                 <div className="pp-stub__k">Setor</div>
@@ -133,7 +142,31 @@ export default function TicketView() {
                 <div className="pp-stub__k">Código</div>
                 <div className="pp-stub__v pp-mono">{ticket.code}</div>
               </div>
+              {ticket.holder_name && (
+                <div style={{ gridColumn: '1 / -1' }}>
+                  <div className="pp-stub__k">Titular</div>
+                  <div className="pp-stub__v">{ticket.holder_name}</div>
+                </div>
+              )}
             </div>
+
+            {/* Saldo do bar no próprio ingresso.
+                Quem chega na festa com o ingresso aberto na mão descobre aqui
+                que a carteira está zerada — e recarrega ANTES da fila do bar,
+                não nela. */}
+            {valid && saldo != null && (
+              <Link to="/carteira" className="pp-ticketcash">
+                <span className="pp-grow">
+                  <span className="pp-stub__k">Cashless</span>
+                  <span className="pp-ticketcash__v">
+                    {saldo > 0 ? `${brl(saldo)} carregado` : 'Sem saldo no bar'}
+                  </span>
+                </span>
+                <span className="pp-btn pp-btn--glass pp-btn--sm">
+                  {saldo > 0 ? 'Ver carteira' : 'Recarregar'}
+                </span>
+              </Link>
+            )}
           </div>
         </div>
 
