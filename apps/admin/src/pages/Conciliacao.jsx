@@ -42,7 +42,11 @@ export default function Conciliacao() {
         <Row label="Receita bruta de ingressos" value={brl(r.tickets_gross_cents)} />
         <Row label="↳ taxa de serviço inclusa" value={brl(r.service_fees_cents)} sub />
         <Row label="↳ descontos (cupons) aplicados" value={`− ${brl(r.discounts_cents)}`} sub />
-        <Row label={`Reembolsos (${r.refunds_count})`} value={`− ${brl(r.refunds_cents)}`} />
+        {/* Sem o sinal de menos: o pedido estornado JÁ SAIU do bruto pago lá
+            em cima. Mostrar "− R$ X" aqui fazia a soma parecer errada — e a
+            versão anterior do backend caía nessa mesma armadilha, descontando
+            o estorno duas vezes. A linha é contexto, não parcela. */}
+        <Row label={`Reembolsos (${r.refunds_count}) — já fora do bruto`} value={brl(r.refunds_cents)} sub />
         <Row label="Vendas líquidas" value={brl(r.net_sales_cents)} strong />
         <Row label={`Taxa da plataforma (${r.platform_fee_percent}%)`} value={`− ${brl(r.platform_fee_cents)}`} />
         <Row label="Repasse líquido ao produtor" value={brl(r.producer_net_cents)} strong accent />

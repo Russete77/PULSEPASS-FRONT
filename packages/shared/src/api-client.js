@@ -15,8 +15,10 @@ export function createApiClient({ baseUrl, getToken }) {
     return token ? { Authorization: `Bearer ${token}` } : {};
   }
 
-  async function request(path, { method = 'GET', body, auth = false } = {}) {
-    const headers = { 'Content-Type': 'application/json' };
+  async function request(path, { method = 'GET', body, auth = false, headers: extra } = {}) {
+    // `headers` extras existem por causa do Idempotency-Key: sem ele, um
+    // timeout de rede + o operador tentando de novo é cobrança em dobro.
+    const headers = { 'Content-Type': 'application/json', ...(extra ?? {}) };
     if (auth) Object.assign(headers, await authHeader());
 
     const res = await fetch(`${baseUrl}${path}`, {

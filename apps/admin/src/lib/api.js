@@ -89,7 +89,15 @@ export const api = {
   checkInBatch: (id, scans) => request(`/admin/events/${id}/checkin-batch`, { method: 'POST', body: { scans } }),
   eventMenu: (id) => request(`/admin/events/${id}/menu`),
   walletLookup: (id, email) => request(`/admin/events/${id}/wallet-lookup?email=${encodeURIComponent(email)}`),
-  pdvCharge: (id, email, items) => request(`/admin/events/${id}/pdv-charge`, { method: 'POST', body: { email, items } }),
+  // A chave de idempotência é UMA por comanda: se a rede cair depois que o
+  // servidor cobrou, o retry com a mesma chave devolve o MESMO pedido em vez
+  // de debitar a carteira de novo. Quem gera e renova a chave é a tela.
+  pdvCharge: (id, email, items, idemKey, station) =>
+    request(`/admin/events/${id}/pdv-charge`, {
+      method: 'POST',
+      body: { email, items, ...(station ? { station } : {}) },
+      ...(idemKey ? { headers: { 'Idempotency-Key': idemKey } } : {}),
+    }),
 
   // promoters / guest list
   createPromoter: (id, name, commission_cents, email, goal_checkins, extra = {}) =>
