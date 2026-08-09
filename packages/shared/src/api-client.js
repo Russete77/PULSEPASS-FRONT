@@ -27,7 +27,15 @@ export function createApiClient({ baseUrl, getToken }) {
     const text = await res.text();
     const json = text ? JSON.parse(text) : {};
     if (!res.ok) throw new Error(json?.error?.message ?? `Erro ${res.status}`);
-    return json.data ?? json;
+
+    // Desembrulha pela PRESENÇA da chave, não pelo valor.
+    //
+    // Era `json.data ?? json`, e isso quebrava toda resposta legítima de
+    // `{"data": null}` — "não existe turno aberto", "nenhuma reserva", "sem
+    // marca cadastrada". O ?? caía no objeto inteiro, que é truthy, e a tela
+    // renderizava o ramo de "existe" com campos indefinidos: foi assim que o
+    // fechamento de caixa mostrou "Turno aberto desde Invalid Date".
+    return Object.prototype.hasOwnProperty.call(json, 'data') ? json.data : json;
   }
 
   return { request, authHeader, baseUrl };
