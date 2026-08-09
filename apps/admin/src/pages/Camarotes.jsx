@@ -6,7 +6,13 @@ import { api } from '../lib/api.js';
 import { brl } from '../lib/format.js';
 
 const EMPTY = { name: '', area: 'Camarote', capacity: '', min_reais: '' };
-const RES_LABEL = { requested: 'Solicitada', confirmed: 'Confirmada', rejected: 'Recusada', cancelled: 'Cancelada' };
+/** "há 2h47" — o número que decide qual mesa cobrar e qual liberar. */
+function ocupadaHa(iso) {
+  const min = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60000));
+  return min < 60 ? `${min}min` : `${Math.floor(min / 60)}h${String(min % 60).padStart(2, '0')}`;
+}
+
+const RES_LABEL = { requested: 'Solicitada', confirmed: 'Confirmada', seated: 'Na mesa', rejected: 'Recusada', cancelled: 'Liberada' };
 
 export default function Camarotes() {
   const { id } = useParams();
@@ -106,21 +112,50 @@ export default function Camarotes() {
           <tbody>
             {reservations.map((r) => (
               <tr key={r.id}>
-                <td>{r.name}<div style={{ color: 'var(--pp-fg-4)', fontSize: 12 }}>{r.contact}</div></td>
+                <td>
+                  {r.name}
+                  {/* A ocasião muda o atendimento: mesa de aniversário ganha
+                      o bolo na hora certa. Fica ao lado do nome, não escondida
+                      num campo de observação que ninguém abre no meio da
+                      noite. */}
+                  {r.ocasiao && <span className="ck-ocasiao">{r.ocasiao}</span>}
+                  <div style={{ color: 'var(--pp-fg-4)', fontSize: 12 }}>{r.contact}</div>
+                </td>
                 <td>{r.event_tables?.name ?? '—'}</td>
                 <td>{r.party_size ?? '—'}</td>
                 <td>
-                  <span className={`ck-badge ${r.status === 'confirmed' ? 'ck-badge--published' : r.status === 'rejected' ? 'ck-badge--draft' : ''}`}>
+                  <span className={`ck-badge ${
+                    r.status === 'seated' ? 'ck-badge--live'
+                      : r.status === 'confirmed' ? 'ck-badge--published'
+                        : r.status === 'rejected' ? 'ck-badge--draft' : ''}`}>
                     {RES_LABEL[r.status] ?? r.status}
                   </span>
+                  {/* "Confirmada" e "chegou" são perguntas diferentes.
+                      Confirmada e vazia às 2h é mesa que pode ser liberada;
+                      ocupada há três horas é mesa que já consumiu. */}
+                  {r.seated_at && (
+                    <div className="ck-ocupada">há {ocupadaHa(r.seated_at)}</div>
+                  )}
                 </td>
                 <td style={{ textAlign: 'right' }}>
-                  {r.status === 'requested' && (
-                    <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-                      <button className="ck-btn ck-btn--primary" onClick={() => setRes(r, 'confirmed')}>Confirmar</button>
-                      <button className="ck-btn ck-btn--glass" onClick={() => setRes(r, 'rejected')}>Recusar</button>
-                    </div>
-                  )}
+                  <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+                    {r.status === 'requested' && (
+                      <>
+                        <button className="ck-btn ck-btn--primary ck-btn--sm" onClick={() => setRes(r, 'confirmed')}>Confirmar</button>
+                        <button className="ck-btn ck-btn--glass ck-btn--sm" onClick={() => setRes(r, 'rejected')}>Recusar</button>
+                      </>
+                    )}
+                    {r.status === 'confirmed' && (
+                      <button className="ck-btn ck-btn--primary ck-btn--sm" onClick={() => setRes(r, 'seated')}>
+                        Chegou
+                      </button>
+                    )}
+                    {r.status === 'seated' && (
+                      <button className="ck-btn ck-btn--glass ck-btn--sm" onClick={() => setRes(r, 'cancelled')}>
+                        Liberar mesa
+                      </button>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}

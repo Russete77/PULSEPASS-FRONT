@@ -413,3 +413,22 @@ html, body { overflow-x: hidden; }
   color: var(--pp-pulse); margin: var(--pp-s-4) 0;
 }
 .ck-totem__saldo { color: var(--pp-fg-3); margin-bottom: var(--pp-s-6); }
+
+/* Ocasião da mesa (aniversário, formatura). Ao lado do nome, porque muda o
+   atendimento — e informação que muda atendimento não pode estar escondida
+   num campo de observação que ninguém abre no meio da noite. */
+.ck-ocasiao {
+  display: inline-block; margin-left: 8px; padding: 2px 8px;
+  border-radius: var(--pp-r-pill); font-size: 11px; font-weight: 600;
+  background: rgba(255,184,0,0.14); color: var(--pp-amber);
+  border: 1px solid rgba(255,184,0,0.3);
+}
+/* Tempo de ocupação: o número que decide qual mesa cobrar e qual liberar. */
+.ck-ocupada {
+  font-family: var(--pp-font-mono); font-size: 11px;
+  color: var(--pp-fg-4); margin-top: 3px;
+}
+.ck-badge--live {
+  background: rgba(var(--pp-pulse-rgb), 0.14); color: var(--pp-pulse);
+  border-color: rgba(var(--pp-pulse-rgb), 0.32);
+}
