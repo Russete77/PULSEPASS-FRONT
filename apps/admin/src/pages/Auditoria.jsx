@@ -15,6 +15,11 @@ import { brl, dateTime } from '../lib/format.js';
  *
  * Os casos vêm primeiro de propósito: exigem decisão humana, a trilha é só
  * consulta.
+ *
+ * Layout segue o mockup AdmAuditScreen do design system (stream de log em
+ * fonte mono + chips de filtro + faixa destacada pra decisão pendente),
+ * mas só com colunas que o banco realmente tem: sem role, sem hash, sem
+ * status ok/fail — audit_log não guarda nada disso.
  */
 const ACAO = {
   'box_office.sale': 'Venda na bilheteria',
@@ -33,22 +38,34 @@ const TIPO_CASO = {
   consumed_then_refunded: 'Consumiu no bar e estornou a recarga',
 };
 
+/* Chips de domínio — cada um vira um prefixo real do filtro `action` do
+   backend (ilike 'prefixo%'). Só listamos domínios que de fato geram
+   registro hoje; chip que nunca acha nada é pior que chip nenhum. */
+const DOMINIOS = [
+  { k: '', label: 'Todos' },
+  { k: 'box_office', label: 'Bilheteria' },
+  { k: 'order', label: 'Reembolsos' },
+  { k: 'staff', label: 'Equipe' },
+  { k: 'event', label: 'Evento' },
+];
+
 export default function Auditoria() {
   const { id } = useParams();
   const [state, setState] = useState({ status: 'loading' });
   const [soDinheiro, setSoDinheiro] = useState(false);
+  const [dominio, setDominio] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(null);
 
   const load = useCallback(async () => {
     try {
       const [trilha, fraude] = await Promise.all([
-        api.eventAudit(id, { money: soDinheiro }),
+        api.eventAudit(id, { money: soDinheiro, action: dominio || undefined }),
         api.eventFraudCases(id),
       ]);
       setState({ status: 'ok', trilha, fraude });
     } catch (e) { setState({ status: 'error', message: e.message }); }
-  }, [id, soDinheiro]);
+  }, [id, soDinheiro, dominio]);
   useEffect(() => { load(); }, [load]);
 
   async function resolver(caso) {
@@ -68,18 +85,31 @@ export default function Auditoria() {
   return (
     <Shell>
       <BackLink to={`/eventos/${id}`} label="Dashboard" />
-      <div className="ck-eyebrow">confiança · auditoria</div>
-      <h1 className="ck-h1">Auditoria do evento</h1>
-      <p className="ck-sub">
-        Registro de quem fez o quê. Não pode ser alterado nem apagado — nem por nós.
-      </p>
+
+      {/* Cabeçalho no layout do mockup: título à esquerda, selo de contexto à
+          direita. O selo substitui o "4.2M eventos · 30d" do design — aqui o
+          número honesto é quantos registros a consulta atual devolveu. */}
+      <div className="ck-between" style={{ alignItems: 'flex-end', flexWrap: 'wrap', gap: 12 }}>
+        <div>
+          <div className="ck-eyebrow">confiança · auditoria</div>
+          <h1 className="ck-h1">Auditoria do evento</h1>
+          <p className="ck-sub" style={{ marginBottom: 0 }}>
+            Registro de quem fez o quê. Não pode ser alterado nem apagado — nem por nós.
+          </p>
+        </div>
+        <span className="pp-badge" title="Total retornado pela consulta atual">
+          {trilha.entries.length} registro(s) · imutável
+        </span>
+      </div>
 
       {error && <ErrorBox>{error}</ErrorBox>}
 
-      {/* Casos primeiro: exigem decisão da casa. */}
+      {/* Casos primeiro: exigem decisão da casa. Faixa destacada como a de
+          "ação aguardando aprovação" do mockup — ícone, contexto e o botão
+          de decidir na mesma linha. */}
       {abertos.length > 0 && (
         <div className="ck-card" style={{
-          maxWidth: 820, borderColor: 'rgba(255,59,48,0.4)', background: 'rgba(255,59,48,0.06)',
+          marginTop: 20, borderColor: 'rgba(255,59,48,0.4)', background: 'rgba(255,59,48,0.06)',
         }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
             <strong style={{ fontSize: 'var(--pp-fs-18)' }}>
@@ -115,43 +145,93 @@ export default function Auditoria() {
         </div>
       )}
 
-      <div style={{ display: 'flex', gap: 10, alignItems: 'center', margin: '20px 0 12px', flexWrap: 'wrap' }}>
-        <button className={`ck-btn ck-btn--sm ${soDinheiro ? 'ck-btn--primary' : 'ck-btn--glass'}`}
+      {/* Filtros em chips, como no mockup. Todos batem em parâmetro REAL do
+          backend (prefixo de action + amount_cents not null) — nada é
+          filtrado só no cliente pra não mentir sobre o total. */}
+      <div role="group" aria-label="Filtrar registros"
+        style={{ display: 'flex', gap: 8, alignItems: 'center', margin: '20px 0 12px', flexWrap: 'wrap' }}>
+        {DOMINIOS.map((d) => (
+          <button key={d.k} type="button"
+            className={`pp-chip ${dominio === d.k ? 'pp-chip--active' : ''}`}
+            aria-pressed={dominio === d.k}
+            onClick={() => setDominio(d.k)}>
+            {d.label}
+          </button>
+        ))}
+        <button type="button"
+          className={`pp-chip ${soDinheiro ? 'pp-chip--active' : ''}`}
+          aria-pressed={soDinheiro}
           onClick={() => setSoDinheiro((v) => !v)}>
           <Icon name="dollar" size={14} /> Só o que moveu dinheiro
         </button>
-        <span style={{ color: 'var(--pp-fg-4)', fontSize: 13 }}>
-          {trilha.entries.length} registro(s)
-        </span>
       </div>
 
       {trilha.entries.length === 0 ? (
-        <div className="ck-empty" style={{ maxWidth: 820 }}>Nenhuma ação registrada ainda.</div>
+        <div className="ck-empty">
+          <p style={{ margin: '0 0 12px' }}>
+            {(dominio || soDinheiro)
+              ? 'Nenhum registro com esses filtros.'
+              : 'Nenhuma ação registrada ainda.'}
+          </p>
+          {(dominio || soDinheiro) && (
+            <button className="ck-btn ck-btn--glass ck-btn--sm"
+              onClick={() => { setDominio(''); setSoDinheiro(false); }}>
+              Limpar filtros
+            </button>
+          )}
+        </div>
       ) : (
-        <div className="ck-card" style={{ maxWidth: 900, padding: 0, overflow: 'hidden' }}>
-          {trilha.entries.map((e, i) => (
-            <div key={e.id} style={{
-              display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', padding: '12px 18px',
-              borderBottom: i < trilha.entries.length - 1 ? '1px solid var(--pp-edge-1)' : 'none',
-            }}>
-              <span style={{ color: 'var(--pp-fg-4)', fontSize: 12, minWidth: 132, fontFamily: 'var(--pp-font-mono)' }}>
-                {dateTime(e.at)}
-              </span>
-              <div style={{ flex: 1, minWidth: 200 }}>
-                <div style={{ fontWeight: 600 }}>{rotulo(e.action)}</div>
-                <div style={{ color: 'var(--pp-fg-4)', fontSize: 12, marginTop: 2 }}>
-                  {e.actor_email ?? 'sistema'}{e.actor_ip ? ` · ${e.actor_ip}` : ''}
-                  {/* Antes → depois é o que responde "o que mudou". */}
-                  {e.before && e.after && (
-                    <> · {resumo(e.before)} → {resumo(e.after)}</>
-                  )}
-                </div>
-              </div>
-              {e.amount_cents != null && (
-                <span style={{ fontFamily: 'var(--pp-font-mono)' }}>{brl(e.amount_cents)}</span>
-              )}
-            </div>
-          ))}
+        /* Stream de log do mockup: colunas fixas, timestamp e valor em mono.
+           Sem coluna de role/hash/status — o banco não tem esses campos. */
+        <div className="ck-card" style={{ padding: 0 }}>
+          <table className="ck-table">
+            <thead>
+              <tr>
+                <th>Quando</th>
+                <th>Quem</th>
+                <th>Ação</th>
+                <th>Detalhe</th>
+                <th className="num">Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              {trilha.entries.map((e) => (
+                <tr key={e.id}>
+                  <td style={{
+                    fontFamily: 'var(--pp-font-mono)', fontSize: 12,
+                    color: 'var(--pp-fg-3)', whiteSpace: 'nowrap',
+                  }}>
+                    {dateTime(e.at)}
+                  </td>
+                  <td>
+                    <div style={{ fontWeight: 600 }}>{e.actor_email ?? 'sistema'}</div>
+                    {e.actor_ip && (
+                      <div style={{ color: 'var(--pp-fg-4)', fontSize: 11, fontFamily: 'var(--pp-font-mono)' }}>
+                        {e.actor_ip}
+                      </div>
+                    )}
+                  </td>
+                  <td>
+                    <div style={{ fontWeight: 600 }}>{rotulo(e.action)}</div>
+                    {/* O código cru embaixo mantém o clima de log do mockup e
+                        serve de referência exata pra quem for investigar. */}
+                    <div style={{ color: 'var(--pp-fg-4)', fontSize: 11, fontFamily: 'var(--pp-font-mono)' }}>
+                      {e.action}
+                    </div>
+                  </td>
+                  <td style={{ color: 'var(--pp-fg-3)', fontSize: 13 }}>
+                    {/* Antes → depois é o que responde "o que mudou". */}
+                    {e.before && e.after
+                      ? <>{resumo(e.before)} → {resumo(e.after)}</>
+                      : (e.note ?? '—')}
+                  </td>
+                  <td className="num" style={{ fontFamily: 'var(--pp-font-mono)' }}>
+                    {e.amount_cents != null ? brl(e.amount_cents) : '—'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </Shell>
