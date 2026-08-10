@@ -31,12 +31,52 @@ export default function Conciliacao() {
   if (status === 'loading') return <Shell><Loading /></Shell>;
   if (status === 'error') return <Shell><ErrorBox>{error}</ErrorBox></Shell>;
 
+  // O contador recebe este relatório, não a tela: CSV com as mesmas linhas.
+  function exportarCsv() {
+    const linhas = [
+      ['metrica', 'valor_cents'],
+      ['receita_bruta_ingressos', r.tickets_gross_cents],
+      ['taxa_servico_inclusa', r.service_fees_cents],
+      ['descontos_cupons', r.discounts_cents],
+      ['reembolsos_qtd', r.refunds_count],
+      ['reembolsos', r.refunds_cents],
+      ['vendas_liquidas', r.net_sales_cents],
+      [`taxa_plataforma_${r.platform_fee_percent}pct`, r.platform_fee_cents],
+      ['repasse_liquido_produtor', r.producer_net_cents],
+      ['receita_bar_cashless', r.bar_gross_cents],
+    ];
+    const csv = linhas.map((l) => l.join(';')).join('\n');
+    const url = URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' }));
+    const a = Object.assign(document.createElement('a'), { href: url, download: 'conciliacao.csv' });
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <Shell>
       <BackLink to={`/eventos/${id}`} label="Dashboard" />
       <div className="ck-eyebrow">financeiro · conciliação</div>
-      <h1 className="ck-h1">Conciliação do evento</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 8 }}>
+        <h1 className="ck-h1">Conciliação do evento</h1>
+        <button className="ck-btn ck-btn--glass ck-btn--sm" onClick={exportarCsv}>Exportar CSV</button>
+      </div>
       <p className="ck-sub">{r.orders_paid} pedidos pagos · taxa da plataforma {r.platform_fee_percent}%</p>
+
+      {/* Os quatro números que respondem "como foi a noite" antes da conta
+          detalhada — mesma faixa de KPIs de Cardápio e Fechamento. */}
+      <div className="ck-grid" style={{ maxWidth: 560, marginBottom: 16 }}>
+        {[
+          ['Bruto de ingressos', brl(r.tickets_gross_cents), 'var(--pp-pulse)'],
+          ['Taxa da plataforma', `− ${brl(r.platform_fee_cents)}`, 'var(--pp-amber)'],
+          ['Repasse ao produtor', brl(r.producer_net_cents), 'var(--pp-pulse)'],
+          ['Bar (cashless)', brl(r.bar_gross_cents), 'var(--pp-fg-3)'],
+        ].map(([rotulo, valor, cor]) => (
+          <div key={rotulo} className="ck-card" style={{ borderTop: `2px solid ${cor}`, padding: '12px 16px' }}>
+            <div className="ck-label">{rotulo}</div>
+            <div style={{ fontFamily: 'var(--pp-font-mono)', fontWeight: 700, fontSize: 'var(--pp-fs-18)', marginTop: 4 }}>{valor}</div>
+          </div>
+        ))}
+      </div>
 
       <div className="ck-card" style={{ maxWidth: 560 }}>
         <Row label="Receita bruta de ingressos" value={brl(r.tickets_gross_cents)} />

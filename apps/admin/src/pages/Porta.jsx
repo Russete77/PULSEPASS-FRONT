@@ -41,6 +41,11 @@ export default function Porta() {
   const [busca, setBusca] = useState('');
   const [achados, setAchados] = useState([]);
 
+  // Últimos check-ins da noite. Cada scan apagava o anterior da tela, e o
+  // porteiro não tinha como conferir "quem foi o último que passou" quando
+  // alguém contestava. Memória local da sessão — não é a trilha de auditoria.
+  const [historico, setHistorico] = useState([]);
+
   // Qual portaria é esta. Fica no aparelho (localStorage): o tablet da
   // Portaria 2 configura uma vez e todo scan da noite sai carimbado.
   const [gate, setGate] = useState(() => {
@@ -109,6 +114,7 @@ export default function Porta() {
       setResult(r);
       feedback(r.result === 'ok');
       setCode('');
+      setHistorico((h) => [{ ...r, at: Date.now() }, ...h].slice(0, 7));
       refreshOccupancy();
     } catch (e) {
       // Sem rede → valida contra o manifesto offline e enfileira.
@@ -118,6 +124,7 @@ export default function Porta() {
           setResult(r);
           feedback(r.result === 'ok');
           setCode('');
+          setHistorico((h) => [{ ...r, at: Date.now() }, ...h].slice(0, 7));
           await refreshOfflineState();
         } catch (le) {
           setError('Offline e sem manifesto baixado: ' + le.message);
@@ -371,6 +378,35 @@ export default function Porta() {
               Check-in anterior: {new Date(result.checked_in_at).toLocaleString('pt-BR')}
             </p>
           )}
+        </div>
+      )}
+
+      {/* Log dos últimos scans desta sessão — quando alguém contesta na fila,
+          a resposta está aqui, não na memória do porteiro. */}
+      {historico.length > 1 && (
+        <div className="ck-card" style={{ maxWidth: 520, marginTop: 16 }}>
+          <div className="ck-label">Últimos check-ins</div>
+          <ul style={{ listStyle: 'none', margin: '10px 0 0', padding: 0 }}>
+            {historico.map((h, i) => (
+              <li key={`${h.at}-${i}`} style={{
+                display: 'flex', justifyContent: 'space-between', gap: 10,
+                padding: '6px 0', borderBottom: '1px solid var(--pp-edge-2)', fontSize: 13,
+              }}>
+                <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <span style={{
+                    color: h.result === 'ok' ? 'var(--pp-pulse)'
+                      : h.result === 'already_used' ? 'var(--pp-amber)' : '#FF6B61',
+                    marginRight: 8,
+                  }}>●</span>
+                  {h.holder ?? h.code ?? h.message}
+                  {h.offline && <span style={{ color: 'var(--pp-amber)' }}> · offline</span>}
+                </span>
+                <span style={{ color: 'var(--pp-fg-4)', fontFamily: 'var(--pp-font-mono)', whiteSpace: 'nowrap' }}>
+                  {new Date(h.at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                </span>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
     </Shell>

@@ -27,6 +27,7 @@ export default function Fechamento() {
   const [turno, setTurno] = useState(null);      // turno aberto de quem opera
   const [fundo, setFundo] = useState('');
   const [contado, setContado] = useState('');
+  const [notas, setNotas] = useState('');
   const [praca, setPraca] = useState('');
   const [ocupado, setOcupado] = useState(false);
   const [conferencia, setConferencia] = useState(null);
@@ -59,10 +60,14 @@ export default function Fechamento() {
   async function fechar() {
     setOcupado(true); setError('');
     try {
+      // A nota vai junto do fechamento: a RPC sempre aceitou `notas`, e a
+      // tabela de turnos já a renderiza — só ninguém nunca enviava. É onde a
+      // justificativa de "sobrou/faltou" fica registrada por quem contou.
       setConferencia(await api.fecharTurno(turno.id, {
         contado_cents: Math.round(Number(contado || 0) * 100),
+        ...(notas.trim() ? { notas: notas.trim() } : {}),
       }));
-      setContado('');
+      setContado(''); setNotas('');
       await carregar();
     } catch (e) { setError(e.message); } finally { setOcupado(false); }
   }
@@ -141,6 +146,12 @@ export default function Fechamento() {
                   disabled={ocupado || contado === ''} onClick={fechar}>
                   Fechar e conferir
                 </button>
+              </div>
+              <div className="ck-field" style={{ marginTop: 10 }}>
+                <label className="ck-label" htmlFor="fech-notas">Observação (opcional — vira registro do turno)</label>
+                <input id="fech-notas" className="ck-input" value={notas} maxLength={200}
+                  onChange={(e) => setNotas(e.target.value)}
+                  placeholder="ex: troco emprestado do bar VIP às 23h" />
               </div>
             </>
           ) : (

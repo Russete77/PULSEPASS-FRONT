@@ -12,8 +12,8 @@ import { eventDate } from '../lib/format.js';
  * Layout segue o mockup GuestSignupScreen do design system: chip flutuante
  * do promoter no topo, herói tipográfico com o nome do evento em destaque e
  * o formulário num cartão de vidro com confirmação visual campo a campo.
- * Sem arte de fundo falsa: o evento não tem imagem de capa no banco, então
- * o herói é tipografia — que é o que o mockup realmente vende.
+ * A capa do evento (cover_url — obrigatória para publicar, ver identity)
+ * entra como fundo do herói, atenuada para a tipografia continuar legível.
  */
 export default function GuestSignup() {
   const { code } = useParams();
@@ -95,8 +95,23 @@ export default function GuestSignup() {
         </div>
 
         {/* Herói tipográfico: data em eyebrow, nome do evento no degrau de
-            cartaz, local embaixo — a ordem do mockup. */}
-        <div style={{ textAlign: 'center', padding: 'var(--pp-s-7) 0 0' }}>
+            cartaz, local embaixo — a ordem do mockup. A capa do evento entra
+            como fundo atenuado; sem capa, o herói continua só tipográfico. */}
+        <div style={{
+          textAlign: 'center', padding: 'var(--pp-s-7) 0 0', position: 'relative',
+        }}>
+          {list.event?.cover_url && (
+            <div aria-hidden="true" style={{
+              position: 'absolute', inset: '-12px -24px', zIndex: -1,
+              backgroundImage: `url(${list.event.cover_url})`,
+              backgroundSize: 'cover', backgroundPosition: 'center',
+              borderRadius: 'var(--pp-r-lg)', opacity: 0.22,
+              // O degradê deixa a base do herói escura de novo, para o local
+              // e o cartão logo abaixo não brigarem com a imagem.
+              maskImage: 'linear-gradient(to bottom, black 30%, transparent 95%)',
+              WebkitMaskImage: 'linear-gradient(to bottom, black 30%, transparent 95%)',
+            }} />
+          )}
           <div className="pp-eyebrow" style={{ color: 'var(--pp-pulse)' }}>
             {eventDate(list.event?.starts_at)}
           </div>

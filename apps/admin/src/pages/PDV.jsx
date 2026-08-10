@@ -44,6 +44,8 @@ export default function PDV() {
     [cart, menu],
   );
   const count = Object.values(cart).reduce((a, b) => a + b, 0);
+  const categorias = useMemo(() => [...new Set(menu.map((it) => it.category).filter(Boolean))], [menu]);
+  const [categoria, setCategoria] = useState('');
 
   async function abrirTurno(e) {
     e.preventDefault();
@@ -186,8 +188,21 @@ export default function PDV() {
       )}
 
       <h2 style={{ fontSize: 'var(--pp-fs-18)', marginTop: 28, marginBottom: 12 }}>Cardápio</h2>
+
+      {/* Com cardápio grande o operador rolava a lista inteira no meio da
+          fila. A categoria já vinha em cada item; faltava virar filtro. */}
+      {categorias.length > 1 && (
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
+          <button className={`pp-chip ${categoria === '' ? 'pp-chip--active' : ''}`} onClick={() => setCategoria('')}>Tudo</button>
+          {categorias.map((c) => (
+            <button key={c} className={`pp-chip ${categoria === c ? 'pp-chip--active' : ''}`}
+              onClick={() => setCategoria(categoria === c ? '' : c)}>{c}</button>
+          ))}
+        </div>
+      )}
+
       <div className="ck-grid" style={{ opacity: customer && turno ? 1 : 0.5, pointerEvents: customer && turno ? 'auto' : 'none' }}>
-        {menu.map((it) => {
+        {menu.filter((it) => !categoria || it.category === categoria).map((it) => {
           const esgotado = it.stock != null && it.stock <= 0;
           const baixo = it.stock != null && it.stock > 0 && it.stock <= 10;
           const noLimite = it.stock != null && (cart[it.id] ?? 0) >= it.stock;
@@ -238,7 +253,21 @@ export default function PDV() {
 
       {customer && turno && count > 0 && (
         <div className="ck-card" style={{ maxWidth: 520, marginTop: 20, position: 'sticky', bottom: 16 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 700, fontSize: 'var(--pp-fs-18)' }}>
+          {/* A comanda linha a linha: o operador confere O QUE está cobrando,
+              não só o total — é a diferença entre corrigir antes e estornar
+              depois. Item filtrado pela categoria continua aparecendo aqui. */}
+          <ul style={{ listStyle: 'none', margin: '0 0 10px', padding: 0 }}>
+            {menu.filter((it) => cart[it.id] > 0).map((it) => (
+              <li key={it.id} style={{
+                display: 'flex', justifyContent: 'space-between', gap: 10,
+                padding: '4px 0', fontSize: 14, color: 'var(--pp-fg-2)',
+              }}>
+                <span>{cart[it.id]}× {it.name}</span>
+                <span style={{ fontFamily: 'var(--pp-font-mono)' }}>{brl(cart[it.id] * it.price_cents)}</span>
+              </li>
+            ))}
+          </ul>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 700, fontSize: 'var(--pp-fs-18)', borderTop: '1px solid var(--pp-edge-2)', paddingTop: 10 }}>
             <span>Total ({count})</span><span>{brl(total)}</span>
           </div>
           {insufficient && <ErrorBox>Saldo insuficiente do cliente.</ErrorBox>}
