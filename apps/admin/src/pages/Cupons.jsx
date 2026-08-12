@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Shell, Loading, ErrorBox, BackLink } from '../components/Shell.jsx';
 import { Icon } from '@pulsepass/shared/Icon';
 import Confirmar from '@pulsepass/shared/Confirmar';
@@ -7,6 +7,9 @@ import { api } from '../lib/api.js';
 import { brl } from '../lib/format.js';
 
 const EMPTY = { code: '', kind: 'percent', value: '', max_uses: '', expires_at: '' };
+
+/* Rotação de cor por cupom, como no mockup — mas saindo dos tokens. */
+const TONES = ['var(--pp-pulse)', 'var(--pp-violet)', 'var(--pp-cyan)', 'var(--pp-amber)'];
 
 export default function Cupons() {
   const { id } = useParams();
@@ -62,18 +65,23 @@ export default function Cupons() {
   if (status === 'loading') return <Shell><Loading /></Shell>;
 
   const fmtValue = (c) => (c.kind === 'percent' ? `${c.value}%` : brl(c.value));
+  const ativos = coupons.filter((c) => c.active).length;
 
   return (
     <Shell>
       <BackLink to={`/eventos/${id}`} label="Dashboard" />
-      <div className="ck-eyebrow">cupons · desconto</div>
-      <h1 className="ck-h1">Cupons de desconto</h1>
+      <div className="ck-eyebrow">marketing · cupons</div>
+      <h1 className="ck-h1">Cupons · <span className="pp-accent">conversão</span></h1>
       <p className="ck-sub">Percentual ou valor fixo, com limite de usos e validade opcionais.</p>
 
       {error && <ErrorBox>{error}</ErrorBox>}
 
-      <form onSubmit={create} className="ck-card" style={{ maxWidth: 680 }}>
-        <div className="ck-row">
+      {/* Painel largo (cupons) — a coluna de campanhas/push do mockup não
+          existe no backend, então não entra. */}
+      <form onSubmit={create} className="ck-panel" style={{ maxWidth: 720 }}>
+        <div className="ck-panel__title">Novo cupom</div>
+        <p className="ck-panel__sub" style={{ marginBottom: 'var(--pp-s-4)' }}>o código sobe pra caixa alta sozinho</p>
+        <div className="ck-row" style={{ gridTemplateColumns: '1fr 1fr 1fr' }}>
           <div className="ck-field">
             <label htmlFor="cupons-1" className="ck-label">Código</label>
             <input id="cupons-1" className="ck-input" value={form.code} onChange={set('code')} placeholder="VIP20" style={{ textTransform: 'uppercase' }} required minLength={3} />
@@ -100,39 +108,80 @@ export default function Cupons() {
             <input id="cupons-5" className="ck-input" type="datetime-local" value={form.expires_at} onChange={set('expires_at')} />
           </div>
         </div>
-        <button className="ck-btn ck-btn--primary" disabled={saving}>{saving ? 'Criando…' : '+ Criar cupom'}</button>
+        <button className="ck-btn ck-btn--primary" disabled={saving}>
+          <Icon name="plus" size={16} /> {saving ? 'Criando…' : 'Criar cupom'}
+        </button>
       </form>
 
-      <div className="ck-card" style={{ padding: 0, overflow: 'hidden', marginTop: 20 }}>
-        <table className="ck-table">
-          <thead>
-            <tr><th>Código</th><th>Desconto</th><th>Usos</th><th>Validade</th><th>Status</th><th></th></tr>
-          </thead>
-          <tbody>
-            {coupons.map((c) => (
-              <tr key={c.id}>
-                <td style={{ fontFamily: 'var(--pp-font-mono)' }}>{c.code}</td>
-                <td>{fmtValue(c)}</td>
-                <td>{c.used_count}{c.max_uses != null ? ` / ${c.max_uses}` : ''}</td>
-                <td>{c.expires_at ? new Date(c.expires_at).toLocaleDateString('pt-BR') : '—'}</td>
-                <td><span className={`ck-badge ${c.active ? 'ck-badge--published' : 'ck-badge--draft'}`}>{c.active ? 'ativo' : 'inativo'}</span></td>
-                <td>
-                  <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-                    <button className="ck-btn ck-btn--glass" onClick={() => toggle(c)}>{c.active ? 'Desativar' : 'Ativar'}</button>
-                    <button className="ck-iconbtn" onClick={() => setAExcluir(c)}
-                      title={`Excluir cupom ${c.code}`} aria-label={`Excluir cupom ${c.code}`}>
-                      <Icon name="close" size={15} />
-                    </button>
+      <section aria-label="Cupons do evento" style={{ maxWidth: 720, marginTop: 'var(--pp-s-5)' }}>
+        <div className="pp-between" style={{ marginBottom: 'var(--pp-s-3)' }}>
+          <span className="ck-panel__title">Cupons · {coupons.length}</span>
+          {coupons.length > 0 && (
+            <span className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)' }}>{ativos} ativo{ativos === 1 ? '' : 's'}</span>
+          )}
+        </div>
+
+        {coupons.length === 0 && (
+          <div className="pp-empty">
+            <div className="pp-empty__icon"><Icon name="tag" size={28} /></div>
+            <div className="pp-empty__title">Nenhum cupom ainda</div>
+            <p>Crie o primeiro no formulário acima — o código vira link de divulgação na hora.</p>
+          </div>
+        )}
+
+        <div className="pp-stack pp-stack-3">
+          {coupons.map((c, i) => {
+            const tone = TONES[i % TONES.length];
+            const pctUso = c.max_uses != null && c.max_uses > 0
+              ? Math.min(100, (c.used_count / c.max_uses) * 100)
+              : null;
+            return (
+              <article key={c.id} className={`ck-cupom ${c.active ? '' : 'ck-cupom--off'}`} style={{ '--k': tone }}>
+                <span className="ck-cupom__code">{c.code}</span>
+
+                <div className="ck-cupom__info">
+                  <div style={{ fontWeight: 600, fontSize: 'var(--pp-fs-14)' }}>
+                    {fmtValue(c)} de desconto
                   </div>
-                </td>
-              </tr>
-            ))}
-            {coupons.length === 0 && (
-              <tr><td colSpan={6} style={{ color: 'var(--pp-fg-3)' }}>Nenhum cupom ainda.</td></tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+                  <div className="pp-muted pp-mono" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 4 }}>
+                    {c.expires_at
+                      ? `até ${new Date(c.expires_at).toLocaleDateString('pt-BR')}`
+                      : 'sem expiração'}
+                    {' · '}
+                    <span className={`ck-badge ${c.active ? 'ck-badge--published' : 'ck-badge--draft'}`} style={{ fontSize: 9 }}>
+                      {c.active ? 'ativo' : 'inativo'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Uso real: barra só quando existe limite; sem limite mostra
+                    a contagem crua em vez de inventar denominador. */}
+                <div className="ck-cupom__uso">
+                  <div className="pp-between" style={{ fontSize: 'var(--pp-fs-12)', marginBottom: 4 }}>
+                    <span className="pp-mono pp-muted">{c.used_count} uso{c.used_count === 1 ? '' : 's'}</span>
+                    <span className="pp-mono pp-muted-2">{c.max_uses != null ? c.max_uses : '∞'}</span>
+                  </div>
+                  {pctUso != null && (
+                    <div className="ck-bar">
+                      <div className="track"><div className="fill" style={{ width: `${pctUso}%` }} /></div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="pp-row" style={{ gap: 8 }}>
+                  <button className="ck-btn ck-btn--glass ck-btn--sm" onClick={() => toggle(c)}>
+                    {c.active ? 'Desativar' : 'Ativar'}
+                  </button>
+                  <button className="ck-iconbtn" onClick={() => setAExcluir(c)}
+                    title={`Excluir cupom ${c.code}`} aria-label={`Excluir cupom ${c.code}`}>
+                    <Icon name="close" size={15} />
+                  </button>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </section>
 
       {/* Cupom já divulgado que some sem aviso vira cliente na porta com um
           código que não funciona mais. A confirmação nomeia o código e conta

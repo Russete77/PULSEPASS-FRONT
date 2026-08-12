@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { Shell, Loading, ErrorBox, BackLink } from '../components/Shell.jsx';
+import { Icon } from '@pulsepass/shared/Icon';
 import Confirmar from '@pulsepass/shared/Confirmar';
 import { api } from '../lib/api.js';
 
@@ -9,6 +10,26 @@ const ROLES = [
   { value: 'door', label: 'Porta (check-in)' },
   { value: 'bar', label: 'Bar / PDV' },
 ];
+const ROLE_CURTO = { manager: 'Gerente', door: 'Porta', bar: 'Bar' };
+
+/** Rótulos legíveis. "boxoffice:refund" não diz nada a quem não escreveu o código. */
+const ROTULO = {
+  'door:checkin': 'Fazer check-in na porta',
+  'door:reentry': 'Autorizar reentrada',
+  'door:guests': 'Ver e marcar a lista de convidados',
+  'bar:pdv': 'Operar o PDV do bar',
+  'bar:kds': 'Ver a fila da cozinha',
+  'bar:waiter': 'Lançar pedido em mesa',
+  'bar:menu': 'Editar o cardápio',
+  'boxoffice:sell': 'Vender na bilheteria',
+  'boxoffice:refund': 'Estornar venda da bilheteria',
+  'tables:manage': 'Gerir camarotes e reservas',
+  'coupons:manage': 'Criar e desativar cupons',
+  'finance:view': 'Ver o financeiro do evento',
+  'finance:withdraw': 'Solicitar repasse',
+};
+
+const inicialDe = (m) => (m?.profiles?.full_name || m?.profiles?.email || '?').trim()[0]?.toUpperCase() ?? '?';
 
 export default function Equipe() {
   const { id } = useParams();
@@ -20,7 +41,7 @@ export default function Equipe() {
   const [busy, setBusy] = useState(false);
   const [aRemover, setARemover] = useState(null);   // membro aguardando confirmação
   const [catalogo, setCatalogo] = useState([]);    // as 13 permissões
-  const [abrindoPerms, setAbrindoPerms] = useState(null);
+  const [abertoId, setAbertoId] = useState(null);  // membro selecionado no detalhe
 
   async function load() {
     try { setStaff(await api.listStaff(id)); setStatus('done'); }
@@ -30,6 +51,13 @@ export default function Equipe() {
   // O catálogo vem do servidor: repetir a lista aqui a faria divergir da que
   // o banco aceita no primeiro dia em que alguém acrescentar uma permissão.
   useEffect(() => { api.permissoesCatalogo().then(setCatalogo).catch(() => {}); }, []);
+
+  // Sem seleção (ou seleção removida), o detalhe mostra o primeiro da lista —
+  // é o comportamento do mockup: a tela nunca fica com o painel vazio à toa.
+  const selecionado = useMemo(
+    () => staff.find((s) => s.id === abertoId) ?? staff[0] ?? null,
+    [staff, abertoId],
+  );
 
   async function add(e) {
     e.preventDefault();
@@ -44,6 +72,7 @@ export default function Equipe() {
 
   async function remove(staffId) {
     await api.removeStaff(id, staffId);
+    if (abertoId === staffId) setAbertoId(null);
     await load();
   }
 
@@ -52,11 +81,12 @@ export default function Equipe() {
   return (
     <Shell>
       <BackLink to={`/eventos/${id}`} label="Dashboard" />
-      <div className="ck-eyebrow">evento · equipe</div>
-      <h1 className="ck-h1">Equipe do evento</h1>
+      <div className="ck-eyebrow">evento · equipe {staff.length > 0 && `· ${staff.length} pessoa${staff.length === 1 ? '' : 's'}`}</div>
+      <h1 className="ck-h1">Quem opera <span className="pp-accent">com você</span></h1>
       <p className="ck-sub">Delegue acesso por papel: gerente, porta ou bar. O dono sempre tem acesso total.</p>
 
-      <div className="ck-card" style={{ maxWidth: 560 }}>
+      {/* Convite: a ação principal da tela, acima da lista como no mockup. */}
+      <div className="ck-panel" style={{ maxWidth: 720 }}>
         <form onSubmit={add} style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'flex-end' }}>
           <div className="ck-field" style={{ flex: '1 1 220px', margin: 0 }}>
             <label htmlFor="equipe-1" className="ck-label">E-mail (já cadastrado no PulsePass)</label>
@@ -69,60 +99,60 @@ export default function Equipe() {
             </select>
           </div>
           <button className="ck-btn ck-btn--primary" disabled={busy || !email.trim()}>
-            {busy ? 'Adicionando…' : 'Adicionar'}
+            <Icon name="plus" size={16} /> {busy ? 'Adicionando…' : 'Convidar'}
           </button>
         </form>
         {error && <ErrorBox>{error}</ErrorBox>}
       </div>
 
-      <div className="ck-card" style={{ maxWidth: 560, marginTop: 16 }}>
-        {staff.length === 0 ? (
-          <p style={{ color: 'var(--pp-fg-3)' }}>Ninguém na equipe ainda. Só o dono opera o evento.</p>
-        ) : (
-          <table className="ck-table">
-            <thead><tr><th>Pessoa</th><th>Papel</th><th></th></tr></thead>
-            <tbody>
-              {staff.map((s) => (
-                <tr key={s.id}>
-                  <td>
+      {staff.length === 0 ? (
+        <div className="pp-empty" style={{ marginTop: 'var(--pp-s-5)' }}>
+          <div className="pp-empty__icon"><Icon name="users" size={28} /></div>
+          <div className="pp-empty__title">Ninguém na equipe ainda</div>
+          <p>Só o dono opera o evento. Convide a primeira pessoa no formulário acima.</p>
+        </div>
+      ) : (
+        /* Lista + detalhe, a divisão do TeamStaffScreen. */
+        <div className="ck-team" style={{ marginTop: 'var(--pp-s-5)' }}>
+          <nav className="ck-panel" style={{ padding: 0, overflow: 'hidden' }} aria-label="Membros da equipe">
+            {staff.map((s) => (
+              <button
+                key={s.id} type="button"
+                className={`ck-member ${selecionado?.id === s.id ? 'is-on' : ''}`}
+                aria-current={selecionado?.id === s.id}
+                onClick={() => setAbertoId(s.id)}
+              >
+                <span className="ck-avatar" aria-hidden="true">{inicialDe(s)}</span>
+                <span className="pp-grow" style={{ minWidth: 0 }}>
+                  <span className="pp-truncate" style={{ display: 'block', fontWeight: 600, fontSize: 'var(--pp-fs-14)' }}>
                     {s.profiles?.full_name || s.profiles?.email}
-                    <br /><span style={{ color: 'var(--pp-fg-4)', fontSize: 12 }}>{s.profiles?.email}</span>
-                  </td>
-                  <td>
-                    {ROLES.find((r) => r.value === s.role)?.label ?? s.role}
-                    {/* Quantas permissões extras a pessoa tem além do papel.
-                        O papel dá o padrão; isto é o ajuste fino por cima. */}
-                    <button className="ck-permlink" onClick={() => setAbrindoPerms(s)}>
-                      {s.permissoes?.length
-                        ? `${s.permissoes.length} de ${catalogo.length} permissões`
-                        : 'só o papel padrão'}
-                    </button>
-                  </td>
-                  {/* Ação destrutiva não pode ter a mesma cara de "Ativar" ou
-                      "Editar": quem opera com pressa clica pela posição. */}
-                  <td>
-                    <button className="ck-btn ck-btn--danger-soft" onClick={() => setARemover(s)}>
-                      Remover
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+                  </span>
+                  <span className="pp-muted" style={{ display: 'block', fontSize: 'var(--pp-fs-12)', marginTop: 2 }}>
+                    {ROLE_CURTO[s.role] ?? s.role}
+                    {s.permissoes?.length ? ` · +${s.permissoes.length} permiss${s.permissoes.length === 1 ? 'ão' : 'ões'}` : ''}
+                  </span>
+                </span>
+                <Icon name="chevronRight" size={14} aria-hidden="true" />
+              </button>
+            ))}
+          </nav>
+
+          {selecionado && (
+            <DetalheMembro
+              key={selecionado.id}
+              eventId={id}
+              membro={selecionado}
+              catalogo={catalogo}
+              onSalvo={load}
+              onRemover={() => setARemover(selecionado)}
+            />
+          )}
+        </div>
+      )}
 
       {/* Tirar alguém da equipe DURANTE o evento derruba o acesso na hora: o
           porteiro para de validar ingresso no meio da fila. Por isso o
           diálogo diz o papel, e não só o nome. */}
-      {abrindoPerms && (
-        <Permissoes
-          eventId={id} membro={abrindoPerms} catalogo={catalogo}
-          onFechar={() => setAbrindoPerms(null)}
-          onSalvo={() => { setAbrindoPerms(null); load(); }}
-        />
-      )}
-
       <Confirmar
         aberto={!!aRemover}
         titulo="Remover da equipe?"
@@ -142,80 +172,87 @@ export default function Equipe() {
   );
 }
 
-
-/** Rótulos legíveis. "boxoffice:refund" não diz nada a quem não escreveu o código. */
-const ROTULO = {
-  'door:checkin': 'Fazer check-in na porta',
-  'door:reentry': 'Autorizar reentrada',
-  'door:guests': 'Ver e marcar a lista de convidados',
-  'bar:pdv': 'Operar o PDV do bar',
-  'bar:kds': 'Ver a fila da cozinha',
-  'bar:waiter': 'Lançar pedido em mesa',
-  'bar:menu': 'Editar o cardápio',
-  'boxoffice:sell': 'Vender na bilheteria',
-  'boxoffice:refund': 'Estornar venda da bilheteria',
-  'tables:manage': 'Gerir camarotes e reservas',
-  'coupons:manage': 'Criar e desativar cupons',
-  'finance:view': 'Ver o financeiro do evento',
-  'finance:withdraw': 'Solicitar repasse',
-};
-
 /**
- * Matriz de permissões.
+ * Detalhe do membro: perfil + matriz de permissões INLINE (antes era modal).
  *
- * Existe porque o papel sozinho força escolhas ruins: para o gerente de bar
- * ver o financeiro, era preciso promovê-lo a manager — e aí ele passava a
- * poder despublicar o evento. Ou alguém empresta a conta da produtora, que é
- * como o controle de acesso morre de verdade na noite do evento.
+ * A matriz existe porque o papel sozinho força escolhas ruins: para o gerente
+ * de bar ver o financeiro, era preciso promovê-lo a manager — e aí ele passava
+ * a poder despublicar o evento.
  */
-function Permissoes({ eventId, membro, catalogo, onFechar, onSalvo }) {
+function DetalheMembro({ eventId, membro, catalogo, onSalvo, onRemover }) {
   const [marcadas, setMarcadas] = useState(membro.permissoes ?? []);
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState('');
 
   const alternar = (p) => setMarcadas((m) => (m.includes(p) ? m.filter((x) => x !== p) : [...m, p]));
+  // Dirty = há diferença entre o rascunho e o que está salvo no servidor.
+  const originais = membro.permissoes ?? [];
+  const mudou = marcadas.length !== originais.length || marcadas.some((p) => !originais.includes(p));
 
   async function salvar() {
     setSalvando(true); setErro('');
-    try { await api.setStaffPermissoes(eventId, membro.id, marcadas); onSalvo(); }
+    try { await api.setStaffPermissoes(eventId, membro.id, marcadas); await onSalvo(); }
     catch (e) { setErro(e.message); } finally { setSalvando(false); }
   }
 
+  const nome = membro.profiles?.full_name || membro.profiles?.email;
+
   return (
-    <div className="pp-overlay" onMouseDown={(e) => { if (e.target === e.currentTarget) onFechar(); }}>
-      <div className="pp-modal pp-modal--lg" role="dialog" aria-modal="true"
-        aria-label={`Permissões de ${membro.profiles?.full_name || membro.profiles?.email}`}>
-        <div className="pp-modal__head">
-          <h2 className="pp-modal__title">
-            Permissões · {membro.profiles?.full_name || membro.profiles?.email}
-          </h2>
-        </div>
-        <div className="pp-modal__body">
-          <p style={{ color: 'var(--pp-fg-3)', fontSize: 14, margin: '0 0 16px' }}>
-            O papel <b>{ROLES.find((r) => r.value === membro.role)?.label ?? membro.role}</b> já
-            dá o acesso padrão. Marque abaixo só o que essa pessoa precisa ALÉM disso.
-          </p>
-          <div className="ck-permgrid">
-            {catalogo.map((p) => (
-              <label key={p} className={`ck-perm ${marcadas.includes(p) ? 'is-on' : ''}`}>
-                <input type="checkbox" checked={marcadas.includes(p)} onChange={() => alternar(p)} />
-                <span>
-                  {ROTULO[p] ?? p}
-                  <em className="ck-perm__code">{p}</em>
-                </span>
-              </label>
-            ))}
+    <section className="pp-stack pp-stack-4" aria-label={`Detalhe de ${nome}`}>
+      {/* Perfil — cabeçalho do detalhe no desenho do mockup. Sem "online",
+          "2FA" ou "última atividade": o backend não devolve nada disso. */}
+      <div className="ck-panel pp-row" style={{ gap: 16, flexWrap: 'wrap' }}>
+        <span className="ck-avatar ck-avatar--lg" aria-hidden="true">{inicialDe(membro)}</span>
+        <div className="pp-grow" style={{ minWidth: 180 }}>
+          <div style={{ fontFamily: 'var(--pp-font-display)', fontWeight: 700, fontSize: 'var(--pp-fs-20)', letterSpacing: '-0.02em' }}>{nome}</div>
+          <div className="pp-mono pp-muted" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 3 }}>{membro.profiles?.email}</div>
+          <div style={{ marginTop: 8 }}>
+            <span className="ck-badge">{ROLES.find((r) => r.value === membro.role)?.label ?? membro.role}</span>
           </div>
-          {erro && <ErrorBox>{erro}</ErrorBox>}
         </div>
-        <div className="pp-modal__foot">
-          <button className="pp-btn pp-btn--ghost" onClick={onFechar} disabled={salvando}>Cancelar</button>
-          <button className={`pp-btn pp-btn--primary ${salvando ? 'is-loading' : ''}`}
-            onClick={salvar} disabled={salvando}>
-            Salvar {marcadas.length > 0 ? `· ${marcadas.length}` : ''}
+        {/* Ação destrutiva não pode ter a mesma cara de "Salvar": quem opera
+            com pressa clica pela posição. */}
+        <button className="ck-btn ck-btn--danger ck-btn--sm" onClick={onRemover}>Remover</button>
+      </div>
+
+      {/* Matriz granular */}
+      <div className="ck-panel">
+        <div className="pp-between">
+          <div className="ck-panel__title">Permissões · matriz granular</div>
+          <span className="pp-mono pp-muted" style={{ fontSize: 'var(--pp-fs-12)' }}>
+            {marcadas.length} de {catalogo.length} ativas
+          </span>
+        </div>
+        <p className="pp-muted" style={{ fontSize: 'var(--pp-fs-13)', margin: '4px 0 var(--pp-s-4)' }}>
+          O papel <b>{ROLES.find((r) => r.value === membro.role)?.label ?? membro.role}</b> já
+          dá o acesso padrão. Marque só o que essa pessoa precisa ALÉM disso.
+        </p>
+
+        <div className="ck-permgrid">
+          {catalogo.map((p) => (
+            <label key={p} className={`ck-perm ${marcadas.includes(p) ? 'is-on' : ''}`}>
+              <input type="checkbox" checked={marcadas.includes(p)} onChange={() => alternar(p)} />
+              <span>
+                {ROTULO[p] ?? p}
+                <em className="ck-perm__code">{p}</em>
+              </span>
+            </label>
+          ))}
+        </div>
+
+        {erro && <ErrorBox>{erro}</ErrorBox>}
+
+        <div className="pp-row" style={{ marginTop: 'var(--pp-s-4)', justifyContent: 'flex-end' }}>
+          {mudou && (
+            <button className="ck-btn ck-btn--ghost ck-btn--sm" onClick={() => setMarcadas(originais)} disabled={salvando}>
+              Descartar
+            </button>
+          )}
+          <button className="ck-btn ck-btn--primary" onClick={salvar} disabled={salvando || !mudou}>
+            {salvando ? 'Salvando…' : `Salvar${marcadas.length > 0 ? ` · ${marcadas.length}` : ''}`}
           </button>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

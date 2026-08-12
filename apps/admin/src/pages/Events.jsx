@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Shell, Loading, ErrorBox } from '../components/Shell.jsx';
+import { Icon } from '@pulsepass/shared/Icon';
 import { api } from '../lib/api.js';
 import { eventDate } from '../lib/format.js';
 
@@ -17,12 +18,18 @@ const STATIONS = {
   manager: [{ to: '', label: 'Abrir painel' }],
 };
 
+const STATUS_LABEL = {
+  published: 'Publicado', draft: 'Rascunho', paused: 'Pausado', ended: 'Encerrado', cancelled: 'Cancelado',
+};
+const badgeDe = (s) => (s === 'published' ? 'ck-badge--published' : s === 'draft' ? 'ck-badge--draft' : s === 'paused' ? 'ck-badge--warning' : '');
+
 export default function Events() {
   const navigate = useNavigate();
   const [me, setMe] = useState(null);
   const [events, setEvents] = useState([]);
   const [status, setStatus] = useState('loading');
   const [error, setError] = useState('');
+  const [filtro, setFiltro] = useState('todos');
 
   // onboarding de organização
   const [orgName, setOrgName] = useState('');
@@ -59,6 +66,18 @@ export default function Events() {
       setCreating(false);
     }
   }
+
+  // Contagens por status: derivadas do que a listagem devolve de verdade.
+  // A listagem NÃO traz vendas/receita por evento, então o card não desenha
+  // barra de ocupação nem GMV — só o que existe: título, data, praça, status.
+  const porStatus = useMemo(() => {
+    const c = { todos: events.length };
+    for (const ev of events) c[ev.status] = (c[ev.status] ?? 0) + 1;
+    return c;
+  }, [events]);
+
+  const visiveis = filtro === 'todos' ? events : events.filter((e) => e.status === filtro);
+  const proximo = events.find((e) => e.status === 'published');
 
   if (status === 'loading') return <Shell><Loading /></Shell>;
 
@@ -121,34 +140,91 @@ export default function Events() {
 
   return (
     <Shell>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 12 }}>
+      {/* Cabeçalho no desenho do MultiEventScreen: eyebrow com a contagem,
+          título com assinatura serifada e a ação principal à direita. */}
+      <div className="pp-between pp-wrap" style={{ alignItems: 'flex-end' }}>
         <div>
-          <div className="ck-eyebrow">{me?.organizations[0]?.name}</div>
-          <h1 className="ck-h1">Eventos</h1>
+          <div className="ck-eyebrow">{me?.organizations[0]?.name} · {events.length} evento{events.length === 1 ? '' : 's'}</div>
+          <h1 className="ck-h1">Seus eventos da <span className="pp-accent">temporada</span></h1>
         </div>
-        <button className="ck-btn ck-btn--primary" onClick={() => navigate('/novo')}>+ Criar evento</button>
+        <button className="ck-btn ck-btn--primary" onClick={() => navigate('/novo')}>
+          <Icon name="plus" size={16} /> Criar evento
+        </button>
       </div>
 
       {error && <ErrorBox>{error}</ErrorBox>}
 
       {events.length === 0 ? (
-        <div className="ck-empty">Nenhum evento ainda. Crie o primeiro.</div>
-      ) : (
-        <div className="ck-grid" style={{ marginTop: 24 }}>
-          {events.map((ev) => (
-            <Link key={ev.id} to={`/eventos/${ev.id}`} className="ck-card ck-event">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
-                <strong style={{ fontSize: 'var(--pp-fs-18)', fontFamily: 'var(--pp-font-display)' }}>{ev.title}</strong>
-                <span className={`ck-badge ${ev.status === 'published' ? 'ck-badge--published' : 'ck-badge--draft'}`}>
-                  {ev.status === 'published' ? 'Publicado' : ev.status}
-                </span>
-              </div>
-              <p style={{ color: 'var(--pp-fg-3)', fontSize: 13, marginTop: 10 }}>
-                {eventDate(ev.starts_at)} · {ev.city}/{ev.state}
-              </p>
-            </Link>
-          ))}
+        <div className="pp-empty" style={{ marginTop: 24 }}>
+          <div className="pp-empty__icon"><Icon name="calendar" size={30} /></div>
+          <div className="pp-empty__title">Nenhum evento ainda</div>
+          <p>A vitrine começa no primeiro evento publicado.</p>
+          <button className="ck-btn ck-btn--primary" style={{ marginTop: 16 }} onClick={() => navigate('/novo')}>
+            Criar o primeiro evento
+          </button>
         </div>
+      ) : (
+        <>
+          {/* Resumo: só contagens reais (a listagem não devolve receita). */}
+          <div className="ck-kpis" style={{ marginTop: 20, gridTemplateColumns: 'repeat(3, 1fr)' }}>
+            <div className="ck-kpi" style={{ '--k': 'var(--pp-pulse)' }}>
+              <div className="lbl">No ar</div>
+              <div className="val">{porStatus.published ?? 0}</div>
+              <div className="d">{proximo ? `próximo: ${eventDate(proximo.starts_at)}` : 'nenhum publicado'}</div>
+            </div>
+            <div className="ck-kpi" style={{ '--k': 'var(--pp-amber)' }}>
+              <div className="lbl">Rascunhos</div>
+              <div className="val">{porStatus.draft ?? 0}</div>
+              <div className="d">ainda fora da vitrine</div>
+            </div>
+            <div className="ck-kpi" style={{ '--k': 'var(--pp-violet)' }}>
+              <div className="lbl">Total</div>
+              <div className="val">{events.length}</div>
+              <div className="d">todos os status</div>
+            </div>
+          </div>
+
+          {/* Filtro por status — as pílulas do mockup, com contagens reais. */}
+          <div className="ck-tabs" role="tablist" aria-label="Filtrar eventos por status" style={{ marginTop: 'var(--pp-s-5)' }}>
+            {['todos', 'published', 'draft', 'paused', 'ended', 'cancelled']
+              .filter((s) => s === 'todos' || porStatus[s])
+              .map((s) => (
+                <button
+                  key={s} role="tab" aria-selected={filtro === s}
+                  className={`ck-tab ${filtro === s ? 'is-on' : ''}`}
+                  onClick={() => setFiltro(s)}
+                >
+                  {s === 'todos' ? 'Todos' : STATUS_LABEL[s] ?? s} · {porStatus[s] ?? 0}
+                </button>
+              ))}
+          </div>
+
+          <div className="ck-grid" style={{ marginTop: 'var(--pp-s-4)' }}>
+            {visiveis.map((ev) => (
+              <Link
+                key={ev.id} to={`/eventos/${ev.id}`}
+                className={`ck-card ck-event ck-evcard ${ev.status === 'published' ? 'ck-evcard--live' : ''} ${ev.status === 'draft' ? 'ck-evcard--draft' : ''}`}
+                style={{ padding: 0 }}
+              >
+                {/* "Capa" estrutural: a listagem não devolve imagem, então o
+                    topo é atmosfera de token com o título — nada de foto falsa. */}
+                <div className="ck-evcard__capa">
+                  <span className={`ck-badge ck-evcard__status ${badgeDe(ev.status)}`}>
+                    {STATUS_LABEL[ev.status] ?? ev.status}
+                  </span>
+                  <div className="ck-evcard__title">{ev.title}</div>
+                </div>
+                <div className="ck-evcard__body">
+                  <span className="pp-meta">{eventDate(ev.starts_at)} · {ev.city}/{ev.state}</span>
+                  <Icon name="chevronRight" size={16} aria-hidden="true" />
+                </div>
+              </Link>
+            ))}
+            {visiveis.length === 0 && (
+              <p className="pp-muted" style={{ gridColumn: '1 / -1' }}>Nenhum evento com esse status.</p>
+            )}
+          </div>
+        </>
       )}
     </Shell>
   );

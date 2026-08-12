@@ -5,10 +5,35 @@ import CapaDoEvento from '../components/CapaDoEvento.jsx';
 import { api } from '../lib/api.js';
 import { brl, eventDate, dateTime } from '../lib/format.js';
 
+/* Cores por lote seguem a rotação do design-system, mas saem dos TOKENS. */
+const TIER_TONES = ['var(--pp-pulse)', 'var(--pp-violet)', 'var(--pp-cyan)', 'var(--pp-pink)', 'var(--pp-amber)'];
+
+const STATIONS = [
+  { to: '/porta', label: 'Porta' },
+  { to: '/bilheteria', label: 'Bilheteria' },
+  { to: '/pdv', label: 'PDV' },
+  { to: '/cozinha', label: 'Cozinha' },
+  { to: '/garcom', label: 'Salão' },
+  { to: '/totem', label: 'Totem' },
+  { to: '/cardapio', label: 'Cardápio' },
+  { to: '/fechamento', label: 'Fechamento' },
+  { to: '/fila-espera', label: 'Fila de espera' },
+  { to: '/fiscal', label: 'Notas fiscais' },
+  { to: '/auditoria', label: 'Auditoria' },
+  { to: '/promoters', label: 'Promoters' },
+  { to: '/cupons', label: 'Cupons' },
+  { to: '/camarotes', label: 'Camarotes' },
+  { to: '/conciliacao', label: 'Financeiro' },
+  { to: '/equipe', label: 'Equipe' },
+];
+
 export default function Dashboard() {
   const { id } = useParams();
   const [event, setEvent] = useState(null);
   const [dash, setDash] = useState(null);
+  // Lotação vem de outro endpoint (porta). Falhou/negou? A seção some — nunca
+  // se inventa número de ocupação.
+  const [occ, setOcc] = useState(null);
   const [status, setStatus] = useState('loading');
   const [error, setError] = useState('');
   const pollRef = useRef(null);
@@ -18,6 +43,7 @@ export default function Dashboard() {
     setEvent(ev);
     setDash(d);
     setStatus('done');
+    api.occupancy(id).then(setOcc).catch(() => {});
   }
 
   useEffect(() => {
@@ -43,48 +69,42 @@ export default function Dashboard() {
   // Só bloqueia a TRANSIÇÃO para publicado: evento já no ar não é derrubado
   // por falta de capa, e rascunho continua livre.
   const publicarBloqueado = event.status !== 'published' && !event.cover_url;
+  // % do público que já entrou — o delta real que o mockup pedia no KPI.
+  const pctCheckin = m.tickets_sold > 0 ? Math.round((m.checked_in / m.tickets_sold) * 100) : 0;
 
   return (
     <Shell>
       <BackLink to="/" label="Eventos" />
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 12 }}>
+
+      {/* Cabeçalho: título à esquerda, ação principal à direita (mockup) */}
+      <div className="pp-between pp-wrap" style={{ alignItems: 'flex-end' }}>
         <div>
           <div className="ck-eyebrow">
             dashboard ao vivo · <span className={`ck-badge ${event.status === 'published' ? 'ck-badge--published' : 'ck-badge--draft'}`}>{event.status}</span>
           </div>
           <h1 className="ck-h1">{event.title}</h1>
-          <p className="ck-sub">{eventDate(event.starts_at)} · {event.city}/{event.state}</p>
+          <p className="ck-sub" style={{ marginBottom: 0 }}>{eventDate(event.starts_at)} · {event.city}/{event.state}</p>
         </div>
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-          <Link to={`/eventos/${id}/porta`} className="ck-btn ck-btn--glass">Porta</Link>
-          <Link to={`/eventos/${id}/bilheteria`} className="ck-btn ck-btn--glass">Bilheteria</Link>
-          <Link to={`/eventos/${id}/pdv`} className="ck-btn ck-btn--glass">PDV</Link>
-          <Link to={`/eventos/${id}/cozinha`} className="ck-btn ck-btn--glass">Cozinha</Link>
-          <Link to={`/eventos/${id}/garcom`} className="ck-btn ck-btn--glass">Salão</Link>
-          <Link to={`/eventos/${id}/totem`} className="ck-btn ck-btn--glass">Totem</Link>
-          <Link to={`/eventos/${id}/cardapio`} className="ck-btn ck-btn--glass">Cardápio</Link>
-          <Link to={`/eventos/${id}/fechamento`} className="ck-btn ck-btn--glass">Fechamento</Link>
-          <Link to={`/eventos/${id}/fila-espera`} className="ck-btn ck-btn--glass">Fila de espera</Link>
-          <Link to={`/eventos/${id}/fiscal`} className="ck-btn ck-btn--glass">Notas fiscais</Link>
-          <Link to={`/eventos/${id}/auditoria`} className="ck-btn ck-btn--glass">Auditoria</Link>
-          <Link to={`/eventos/${id}/promoters`} className="ck-btn ck-btn--glass">Promoters</Link>
-          <Link to={`/eventos/${id}/cupons`} className="ck-btn ck-btn--glass">Cupons</Link>
-          <Link to={`/eventos/${id}/camarotes`} className="ck-btn ck-btn--glass">Camarotes</Link>
-          <Link to={`/eventos/${id}/conciliacao`} className="ck-btn ck-btn--glass">Financeiro</Link>
-          <Link to={`/eventos/${id}/equipe`} className="ck-btn ck-btn--glass">Equipe</Link>
-          {/* Publicar sem capa é bloqueado no servidor. Aqui o botão explica
-              o porquê ANTES do clique, em vez de deixar a produtora esbarrar
-              num erro depois de tentar. */}
-          <button
-            className="ck-btn ck-btn--primary"
-            onClick={togglePublish}
-            disabled={publicarBloqueado}
-            title={publicarBloqueado ? 'Adicione a capa do evento para publicar' : undefined}
-          >
-            {event.status === 'published' ? 'Pausar vendas' : 'Publicar'}
-          </button>
-        </div>
+        {/* Publicar sem capa é bloqueado no servidor. Aqui o botão explica
+            o porquê ANTES do clique, em vez de deixar a produtora esbarrar
+            num erro depois de tentar. */}
+        <button
+          className="ck-btn ck-btn--primary"
+          onClick={togglePublish}
+          disabled={publicarBloqueado}
+          title={publicarBloqueado ? 'Adicione a capa do evento para publicar' : undefined}
+        >
+          {event.status === 'published' ? 'Pausar vendas' : 'Publicar'}
+        </button>
       </div>
+
+      {/* Estações da operação: os atalhos que o mockup coloca na navegação
+          lateral. Aqui viram trilho de chips logo abaixo do título. */}
+      <nav aria-label="Estações do evento" className="ck-tabs" style={{ marginTop: 'var(--pp-s-4)' }}>
+        {STATIONS.map((s) => (
+          <Link key={s.to} to={`/eventos/${id}${s.to}`} className="ck-tab">{s.label}</Link>
+        ))}
+      </nav>
 
       {publicarBloqueado && (
         <div className="ck-card" style={{
@@ -99,6 +119,118 @@ export default function Dashboard() {
         </div>
       )}
 
+      {/* KPIs com fio de cor no topo — números 100% reais do event_dashboard.
+          Sem sparkline: não existe série temporal no backend. */}
+      <div className="ck-kpis" style={{ marginTop: 20 }}>
+        <div className="ck-kpi" style={{ '--k': 'var(--pp-pulse)' }}>
+          <div className="lbl">Receita total</div>
+          <div className="val" style={{ color: 'var(--pp-pulse)' }}>{brl(m.total_revenue_cents)}</div>
+          <div className="d">{m.orders_paid} pedidos pagos</div>
+        </div>
+        <div className="ck-kpi" style={{ '--k': 'var(--pp-violet)' }}>
+          <div className="lbl">Ingressos vendidos</div>
+          <div className="val">{m.tickets_sold}</div>
+          <div className="d">{brl(m.ticket_revenue_cents)} em ingressos</div>
+        </div>
+        <div className="ck-kpi" style={{ '--k': 'var(--pp-cyan)' }}>
+          <div className="lbl">Check-ins</div>
+          <div className="val">{m.checked_in}</div>
+          <div className="d">{pctCheckin}% do público já entrou</div>
+        </div>
+        <div className="ck-kpi" style={{ '--k': 'var(--pp-pink)' }}>
+          <div className="lbl">Receita bar</div>
+          <div className="val">{brl(m.bar_revenue_cents)}</div>
+          <div className="d">cashless + PDV</div>
+        </div>
+      </div>
+
+      {/* Painel largo (vendas por lote) + coluna lateral (ocupação + feed),
+          a mesma divisão do mockup. */}
+      <div className="ck-duo" style={{ marginTop: 'var(--pp-s-4)' }}>
+        <section className="ck-panel" aria-label="Vendas por lote">
+          <div className="pp-between">
+            <div>
+              <div className="ck-panel__title">Vendas por lote</div>
+              <p className="ck-panel__sub">quantos saíram de cada lote, em tempo real</p>
+            </div>
+            <span className="pp-price" style={{ fontSize: 'var(--pp-fs-20)' }}>{brl(m.ticket_revenue_cents)}</span>
+          </div>
+
+          <div className="pp-stack pp-stack-3" style={{ marginTop: 'var(--pp-s-5)' }}>
+            {dash.tiers.length === 0 && <p className="pp-muted">Sem lotes. Crie um lote para começar a vender.</p>}
+            {dash.tiers.map((t, i) => {
+              const tone = TIER_TONES[i % TIER_TONES.length];
+              const pct = t.quantity_total > 0 ? Math.min(100, (t.quantity_sold / t.quantity_total) * 100) : 0;
+              return (
+                <div key={t.id}>
+                  <div className="pp-between" style={{ marginBottom: 6 }}>
+                    <span className="pp-row" style={{ gap: 8 }}>
+                      <span aria-hidden="true" style={{ width: 8, height: 8, borderRadius: 2, background: tone, flexShrink: 0 }} />
+                      <span style={{ fontWeight: 600, fontSize: 'var(--pp-fs-14)' }}>{t.name}</span>
+                      <span className={`ck-badge ${t.status === 'on_sale' ? 'ck-badge--published' : ''}`} style={{ fontSize: 9 }}>{t.status}</span>
+                    </span>
+                    <span className="pp-mono pp-num pp-muted" style={{ fontSize: 'var(--pp-fs-12)' }}>
+                      {t.quantity_sold}/{t.quantity_total} · {brl(t.price_cents)}
+                    </span>
+                  </div>
+                  <div className="ck-bar" style={{ '--k': tone }}>
+                    <div className="track"><div className="fill" style={{ width: `${Math.max(pct, t.quantity_sold > 0 ? 3 : 0)}%` }} /></div>
+                    <span className="pp-mono pp-num pp-muted-2" style={{ width: 38, textAlign: 'right', fontSize: 'var(--pp-fs-12)' }}>{Math.round(pct)}%</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        <div className="pp-stack pp-stack-4">
+          {/* Ocupação ao vivo: quem está DENTRO agora. Só aparece quando o
+              endpoint da porta respondeu — número de lotação não se inventa. */}
+          {occ && (
+            <section className="ck-panel" aria-label="Ocupação ao vivo">
+              <div className="pp-between">
+                <div className="ck-eyebrow">Ocupação ao vivo</div>
+                <span className="pp-pulse-dot" aria-hidden="true" />
+              </div>
+              <div className="pp-between" style={{ marginTop: 'var(--pp-s-4)', alignItems: 'baseline' }}>
+                <span style={{ fontFamily: 'var(--pp-font-display)', fontWeight: 700, fontSize: 'var(--pp-fs-28)', fontVariantNumeric: 'tabular-nums' }}>{occ.inside}</span>
+                <span className="pp-mono pp-muted" style={{ fontSize: 'var(--pp-fs-12)' }}>de {occ.tickets_sold} ingressos</span>
+              </div>
+              <div className="ck-bar" style={{ marginTop: 8, '--k': 'var(--pp-pulse)' }}>
+                <div className="track">
+                  <div className="fill" style={{ width: `${occ.tickets_sold > 0 ? Math.min(100, (occ.inside / occ.tickets_sold) * 100) : 0}%` }} />
+                </div>
+              </div>
+              <div className="pp-between" style={{ marginTop: 'var(--pp-s-3)' }}>
+                <span className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)' }}>{occ.total_entries} entradas no total</span>
+                <span className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)' }}>{occ.left} saíram</span>
+              </div>
+            </section>
+          )}
+
+          <section className="ck-panel" aria-label="Pedidos recentes pagos">
+            <div className="ck-eyebrow" style={{ marginBottom: 'var(--pp-s-3)' }}>Pedidos recentes · pagos</div>
+            {dash.recent_orders.length === 0 && (
+              <p className="pp-muted" style={{ margin: 0 }}>
+                Nenhuma venda paga ainda. {event.status !== 'published' ? 'Publique o evento para abrir as vendas.' : 'Divulgue o link do evento.'}
+              </p>
+            )}
+            <div className="ck-feed">
+              {dash.recent_orders.map((o) => (
+                <div key={o.id} className="ck-feed__row">
+                  <span className="ck-feed__ic" aria-hidden="true">R$</span>
+                  <div className="pp-grow">
+                    <div className="pp-mono" style={{ fontSize: 'var(--pp-fs-12)' }}>{o.id.slice(0, 8)}</div>
+                    <div className="pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)' }}>{dateTime(o.created_at)}</div>
+                  </div>
+                  <span className="pp-price" style={{ fontSize: 'var(--pp-fs-14)' }}>{brl(o.total_cents)}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+      </div>
+
       <div style={{ marginTop: 20 }}>
         <CapaDoEvento
           eventId={id}
@@ -107,67 +239,9 @@ export default function Dashboard() {
         />
       </div>
 
-      <div className="ck-metrics" style={{ marginTop: 20 }}>
-        <Metric lbl="Receita total" val={brl(m.total_revenue_cents)} accent />
-        <Metric lbl="Ingressos vendidos" val={m.tickets_sold} />
-        <Metric lbl="Check-ins" val={m.checked_in} />
-        <Metric lbl="Receita bar" val={brl(m.bar_revenue_cents)} />
-      </div>
-
-      <h2 style={{ fontSize: 'var(--pp-fs-18)', marginTop: 32, marginBottom: 12 }}>Lotes</h2>
-      <div className="ck-card" style={{ padding: 0, overflow: 'hidden' }}>
-        <table className="ck-table">
-          <thead>
-            <tr><th>Lote</th><th>Preço</th><th>Vendidos</th><th>Disponível</th><th>Status</th></tr>
-          </thead>
-          <tbody>
-            {dash.tiers.map((t) => (
-              <tr key={t.id}>
-                <td>{t.name}</td>
-                <td>{brl(t.price_cents)}</td>
-                <td>{t.quantity_sold}</td>
-                <td>{Math.max(0, t.quantity_total - t.quantity_sold)} / {t.quantity_total}</td>
-                <td><span className="ck-badge">{t.status}</span></td>
-              </tr>
-            ))}
-            {dash.tiers.length === 0 && (
-              <tr><td colSpan={5} style={{ color: 'var(--pp-fg-3)' }}>Sem lotes.</td></tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      <h2 style={{ fontSize: 'var(--pp-fs-18)', marginTop: 32, marginBottom: 12 }}>Pedidos recentes (pagos)</h2>
-      <div className="ck-card" style={{ padding: 0, overflow: 'hidden' }}>
-        <table className="ck-table">
-          <thead><tr><th>Pedido</th><th>Valor</th><th>Quando</th></tr></thead>
-          <tbody>
-            {dash.recent_orders.map((o) => (
-              <tr key={o.id}>
-                <td style={{ fontFamily: 'var(--pp-font-mono)', fontSize: 12 }}>{o.id.slice(0, 8)}</td>
-                <td>{brl(o.total_cents)}</td>
-                <td>{dateTime(o.created_at)}</td>
-              </tr>
-            ))}
-            {dash.recent_orders.length === 0 && (
-              <tr><td colSpan={3} style={{ color: 'var(--pp-fg-3)' }}>Nenhuma venda paga ainda.</td></tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
       <p className="ck-live" style={{ marginTop: 16 }}>
         <span className="pp-pulse-dot" /> atualizando a cada 5s
       </p>
     </Shell>
-  );
-}
-
-function Metric({ lbl, val, accent }) {
-  return (
-    <div className="ck-card ck-metric">
-      <div className="lbl">{lbl}</div>
-      <div className="val" style={accent ? { color: 'var(--pp-pulse)' } : undefined}>{val}</div>
-    </div>
   );
 }

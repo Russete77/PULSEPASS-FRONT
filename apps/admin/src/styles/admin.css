@@ -453,6 +453,149 @@ html, body { overflow-x: hidden; }
   border-color: rgba(255, 59, 48, 0.40); color: #FF6B61;
 }
 
+/* ═══════════════════════════════════════════════════════
+   PORT DO DESIGN-SYSTEM · Dashboard, Eventos, Cupons,
+   Equipe, Taxas e Login.
+   Só ESTRUTURA veio dos mockups; toda cor/tipo/raio sai dos
+   tokens --pp-* (v4). Nenhum hex do design-system entra aqui.
+   ═══════════════════════════════════════════════════════ */
+
+/* ── KPI do cockpit ──
+   O fio de cor no topo diz o assunto do número antes de a pessoa ler o
+   rótulo (estrutura do ProducerDashboard). --k é definido inline por card. */
+.ck-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--pp-s-4); }
+@media (max-width: 980px) { .ck-kpis { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 420px) { .ck-kpis { grid-template-columns: 1fr; } }
+.ck-kpi {
+  position: relative; overflow: hidden;
+  padding: var(--pp-s-5); background: var(--pp-glass-2);
+  border: 1px solid var(--pp-edge-2); border-radius: var(--pp-r-lg);
+  box-shadow: var(--pp-shine), var(--pp-shadow-1);
+}
+.ck-kpi::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--k, var(--pp-pulse)); opacity: 0.7; }
+.ck-kpi .lbl { font-size: var(--pp-fs-12); color: var(--pp-fg-3); font-family: var(--pp-font-mono); text-transform: uppercase; letter-spacing: 0.08em; }
+.ck-kpi .val { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-28); margin-top: 8px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.ck-kpi .d { margin-top: 4px; font-size: var(--pp-fs-12); color: var(--pp-fg-3); }
+
+/* Painel com título (o "card de seção" dos mockups de iPad) */
+.ck-panel { padding: var(--pp-s-5); background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2); border-radius: var(--pp-r-lg); box-shadow: var(--pp-shine), var(--pp-shadow-1); }
+.ck-panel__title { font-family: var(--pp-font-display); font-weight: 600; font-size: var(--pp-fs-18); letter-spacing: -0.015em; }
+.ck-panel__sub { color: var(--pp-fg-3); font-size: var(--pp-fs-12); margin: 2px 0 0; }
+
+/* Grid principal: painel largo + coluna lateral (chart + side do mockup) */
+.ck-duo { display: grid; grid-template-columns: 1.5fr 1fr; gap: var(--pp-s-4); align-items: start; }
+@media (max-width: 1020px) { .ck-duo { grid-template-columns: 1fr; } }
+
+/* Barra de progresso genérica (ocupação, lote, uso de cupom) */
+.ck-bar { display: flex; align-items: center; gap: 10px; }
+.ck-bar .track { flex: 1; height: 6px; border-radius: 99px; background: var(--pp-glass-1); overflow: hidden; }
+.ck-bar .fill { height: 100%; border-radius: 99px; background: var(--k, var(--pp-pulse)); }
+
+/* Feed de atividade (eventos recentes do mockup) */
+.ck-feed { display: flex; flex-direction: column; }
+.ck-feed__row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--pp-edge-1); }
+.ck-feed__row:last-child { border-bottom: none; }
+.ck-feed__ic {
+  width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0;
+  display: grid; place-items: center; font-size: 11px; font-weight: 700;
+  font-family: var(--pp-font-mono);
+  background: rgba(var(--pp-pulse-rgb), 0.10); border: 1px solid rgba(var(--pp-pulse-rgb), 0.28);
+  color: var(--pp-pulse);
+}
+
+/* ── Card de evento (vitrine da produtora · MultiEventScreen) ──
+   A "capa" é atmosfera em gradiente de token — a listagem não devolve
+   imagem, então nenhuma capa falsa é desenhada, só o palco do título. */
+.ck-evcard { display: flex; flex-direction: column; padding: 0; overflow: hidden; }
+.ck-evcard__capa {
+  position: relative; min-height: 96px;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: var(--pp-s-4);
+  background:
+    radial-gradient(120% 130% at 18% 0%, rgba(var(--pp-pulse-rgb), 0.14), transparent 60%),
+    radial-gradient(110% 120% at 90% 100%, rgba(167, 139, 250, 0.12), transparent 60%),
+    var(--pp-ink-850);
+  border-bottom: 1px solid var(--pp-edge-1);
+}
+.ck-evcard--live { border-color: rgba(var(--pp-pulse-rgb), 0.35); }
+.ck-evcard--draft { opacity: 0.72; }
+.ck-evcard__status { position: absolute; top: 10px; left: 10px; }
+.ck-evcard__title {
+  font-family: var(--pp-font-display); font-weight: 700;
+  font-size: var(--pp-fs-18); letter-spacing: -0.015em; line-height: 1.15;
+  margin-top: 26px;
+}
+.ck-evcard__body { padding: var(--pp-s-4); display: flex; align-items: center; justify-content: space-between; gap: var(--pp-s-3); }
+
+/* ── Cupom como bilhete (MarketingScreen) ──
+   O código em caixa tracejada é o objeto que a pessoa divulga; a barra de
+   uso diz quando ele vai virar abóbora. */
+.ck-cupom {
+  display: flex; align-items: center; gap: var(--pp-s-4); flex-wrap: wrap;
+  padding: var(--pp-s-4); border-radius: var(--pp-r-card);
+  background: var(--pp-glass-1); border: 1px solid var(--pp-edge-2);
+}
+.ck-cupom--off { opacity: 0.55; }
+.ck-cupom__code {
+  padding: 10px 14px; border-radius: var(--pp-r-md);
+  background: var(--pp-ink-900); border: 1px dashed var(--pp-edge-4);
+  font-family: var(--pp-font-mono); font-weight: 700; font-size: var(--pp-fs-15);
+  letter-spacing: 0.1em; color: var(--k, var(--pp-pulse));
+  min-width: 108px; text-align: center;
+}
+.ck-cupom__info { flex: 1; min-width: 180px; }
+.ck-cupom__uso { width: 150px; }
+@media (max-width: 640px) { .ck-cupom__uso { width: 100%; } }
+
+/* ── Equipe: lista + detalhe (TeamStaffScreen) ── */
+.ck-team { display: grid; grid-template-columns: 320px 1fr; gap: var(--pp-s-4); align-items: start; }
+@media (max-width: 900px) { .ck-team { grid-template-columns: 1fr; } }
+.ck-member {
+  display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
+  padding: 12px 14px; background: transparent; border: 0; cursor: pointer;
+  border-left: 3px solid transparent; border-bottom: 1px solid var(--pp-edge-1);
+  color: var(--pp-fg); font-family: var(--pp-font-body);
+}
+.ck-member:hover { background: var(--pp-glass-1); }
+.ck-member.is-on { background: rgba(var(--pp-pulse-rgb), 0.06); border-left-color: var(--pp-pulse); }
+.ck-member:last-child { border-bottom: none; }
+.ck-avatar {
+  width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+  display: grid; place-items: center; font-weight: 700; font-size: var(--pp-fs-14);
+  font-family: var(--pp-font-display);
+  background: rgba(var(--pp-pulse-rgb), 0.14); border: 1px solid rgba(var(--pp-pulse-rgb), 0.3);
+  color: var(--pp-pulse);
+}
+.ck-avatar--lg { width: 56px; height: 56px; font-size: var(--pp-fs-22); }
+
+/* ── Login do cockpit (estrutura do MultiRoleLoginScreen) ── */
+.ck-login {
+  min-height: 100dvh; position: relative;
+  display: grid; place-items: center; padding: var(--pp-s-5);
+}
+.ck-login__box { width: 100%; max-width: 430px; }
+.ck-login__brand { display: flex; flex-direction: column; align-items: center; gap: var(--pp-s-4); margin-bottom: var(--pp-s-6); text-align: center; }
+.ck-login__title {
+  font-family: var(--pp-font-display); font-weight: 700;
+  font-size: var(--pp-fs-28); line-height: 1.05; letter-spacing: -0.025em;
+  margin: 6px 0 0; text-align: center; text-wrap: balance;
+}
+
+/* ── Taxas (AdmTaxesScreen · identidade PulseADM) ──
+   O % gigante em mono é a estrutura do pricing card do mockup. */
+.adm-fee { position: relative; overflow: hidden; padding: var(--pp-s-5); border-radius: 18px; background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2); }
+.adm-fee::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--k, var(--pp-amber)); opacity: 0.8; }
+.adm-fee__pct {
+  font-family: var(--pp-font-mono); font-weight: 700;
+  font-size: var(--pp-fs-36, 36px); letter-spacing: -0.03em;
+  color: var(--k, var(--pp-amber)); margin-top: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.adm-fee__foot { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--pp-edge-1); display: flex; justify-content: space-between; font-size: var(--pp-fs-12); color: var(--pp-fg-3); }
+.adm-orgfee { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 14px 0; border-bottom: 1px solid var(--pp-edge-1); }
+.adm-orgfee:last-of-type { border-bottom: none; }
+.adm-orgfee__pct { font-family: var(--pp-font-mono); font-weight: 700; font-size: var(--pp-fs-18); font-variant-numeric: tabular-nums; min-width: 64px; text-align: right; }
+
 /* ── Matriz de permissões ── */
 .ck-permlink {
   display: block; margin-top: 4px; padding: 0; background: none; border: 0;

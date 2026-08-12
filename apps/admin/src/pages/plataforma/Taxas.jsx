@@ -48,71 +48,118 @@ export default function PlatformTaxas() {
   if (state.status === 'error') return <AdmShell><ErrorBox>{state.message}</ErrorBox></AdmShell>;
 
   const { data } = state;
+  const noPadrao = data.organizations.filter((o) => o.usa_padrao).length;
+  const negociadas = data.organizations.length - noPadrao;
 
   return (
-    <AdmShell>
-      <div className="ck-eyebrow">plataforma · receita</div>
-      <h1 className="ck-h1">Taxas</h1>
-      <p className="ck-sub">
-        A taxa incide sobre o valor <strong>líquido</strong> da venda — o provedor
-        desconta a taxa dele antes da divisão.
-      </p>
-
-      {error && <ErrorBox>{error}</ErrorBox>}
-
-      <div className="ck-card" style={{ maxWidth: 560 }}>
-        <div className="ck-label">Taxa padrão da plataforma</div>
-        <p style={{ color: 'var(--pp-fg-4)', fontSize: 12, marginBottom: 12 }}>
-          Vale para toda produtora sem taxa negociada.
-        </p>
-        <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-          <input className="ck-input" type="number" min="0" max="100" step="0.01"
-            value={padrao} onChange={(e) => setPadrao(e.target.value)} style={{ maxWidth: 130 }} />
-          <span style={{ fontSize: 20, fontFamily: 'var(--pp-font-mono)' }}>%</span>
-          <button className="ck-btn ck-btn--primary" onClick={salvarPadrao}
-            disabled={salvando === 'padrao' || toBps(padrao) === data.default_fee_bps}>
-            {salvando === 'padrao' ? 'Salvando…' : 'Salvar padrão'}
-          </button>
+    <AdmShell where="Taxas e split · alterações valem para as próximas vendas">
+      <div className="pp-stack pp-stack-5 pp-reveal">
+        <div>
+          <div className="adm-eyebrow" style={{ color: 'var(--pp-amber)' }}>Taxas &amp; receita</div>
+          <div className="adm-h1">Como a PulsePass <span className="accent" style={{ color: 'var(--pp-amber)' }}>monetiza</span></div>
+          <p className="pp-muted" style={{ margin: '4px 0 0', maxWidth: 620 }}>
+            A taxa incide sobre o valor <strong>líquido</strong> da venda — o provedor
+            desconta a taxa dele antes da divisão.
+          </p>
         </div>
-      </div>
 
-      <div className="ck-card" style={{ maxWidth: 760, marginTop: 16, padding: 0, overflow: 'hidden' }}>
-        <div className="ck-label" style={{ padding: '16px 18px 8px' }}>Taxa por produtora</div>
-        {data.organizations.length === 0 && <div className="ck-empty">Nenhuma produtora ainda.</div>}
-        {data.organizations.map((o, i) => (
-          <div key={o.id} style={{
-            display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap',
-            padding: '14px 18px',
-            borderBottom: i < data.organizations.length - 1 ? '1px solid var(--pp-edge-1)' : 'none',
-          }}>
-            <div style={{ flex: 1, minWidth: 180 }}>
-              <strong>{o.name}</strong>
-              <div style={{ color: 'var(--pp-fg-4)', fontSize: 12, marginTop: 2 }}>
-                {o.usa_padrao ? `usa o padrão (${data.default_fee_percent}%)` : `negociada: ${o.fee_percent}%`}
-                {/* Sem carteira não há split: a venda inteira fica na conta da
-                    plataforma e o repasse vira transferência manual. */}
-                {!o.repasse_automatico && (
-                  <span style={{ color: 'var(--pp-amber)' }}> · sem carteira Asaas: repasse manual</span>
-                )}
+        {error && <ErrorBox>{error}</ErrorBox>}
+
+        {/* Cards no desenho dos pricing tiers do mockup — mas só com o que
+            existe de verdade: o padrão da plataforma e as exceções. */}
+        <div className="pp-cols-2" style={{ gridTemplateColumns: '1.2fr 1fr', alignItems: 'stretch' }}>
+          <div className="adm-fee" style={{ '--k': 'var(--pp-amber)' }}>
+            <div className="pp-between" style={{ alignItems: 'flex-start' }}>
+              <div>
+                <div style={{ fontFamily: 'var(--pp-font-display)', fontWeight: 700, fontSize: 'var(--pp-fs-18)' }}>Taxa padrão</div>
+                <div className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 3 }}>vale para toda produtora sem taxa negociada</div>
               </div>
             </div>
-            <input className="ck-input" type="number" min="0" max="100" step="0.01"
-              placeholder={data.default_fee_percent}
-              value={rascunho[o.id] ?? toPct(o.fee_bps)}
-              onChange={(e) => setRascunho((r) => ({ ...r, [o.id]: e.target.value }))}
-              style={{ maxWidth: 110 }} />
-            <span style={{ fontFamily: 'var(--pp-font-mono)' }}>%</span>
-            <button className="ck-btn ck-btn--glass ck-btn--sm" onClick={() => salvarOrg(o)}
-              disabled={salvando === o.id || rascunho[o.id] === undefined}>
-              {salvando === o.id ? '…' : 'Aplicar'}
-            </button>
+            <div className="adm-fee__pct">{data.default_fee_percent}%</div>
+            {/* Edição inline, como o painel "Editando" do mockup. */}
+            <div className="pp-row" style={{ marginTop: 14, flexWrap: 'wrap' }}>
+              <label htmlFor="taxa-padrao" className="ck-label" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }}>
+                Nova taxa padrão em porcentagem
+              </label>
+              <input id="taxa-padrao" className="ck-input" type="number" min="0" max="100" step="0.01"
+                value={padrao} onChange={(e) => setPadrao(e.target.value)} style={{ maxWidth: 120 }} />
+              <span className="pp-mono" style={{ fontSize: 'var(--pp-fs-18)' }}>%</span>
+              <button className="ck-btn ck-btn--primary ck-btn--sm" onClick={salvarPadrao}
+                disabled={salvando === 'padrao' || toBps(padrao) === data.default_fee_bps}>
+                {salvando === 'padrao' ? 'Salvando…' : 'Aplicar novo padrão'}
+              </button>
+            </div>
+            <div className="adm-fee__foot">
+              <span>produtoras no padrão</span>
+              <span className="pp-mono" style={{ fontWeight: 700, color: 'var(--pp-fg)' }}>{noPadrao}</span>
+            </div>
           </div>
-        ))}
-        <p style={{ color: 'var(--pp-fg-4)', fontSize: 12, padding: '12px 18px' }}>
-          Deixe o campo vazio e aplique para a produtora voltar ao padrão.
-          Toda alteração fica registrada na trilha de auditoria, e vendas já
-          realizadas mantêm a taxa que valia no momento da compra.
-        </p>
+
+          <div className="adm-fee" style={{ '--k': 'var(--pp-violet)' }}>
+            <div style={{ fontFamily: 'var(--pp-font-display)', fontWeight: 700, fontSize: 'var(--pp-fs-18)' }}>Negociadas</div>
+            <div className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 3 }}>exceções contratuais por produtora</div>
+            <div className="adm-fee__pct" style={{ color: 'var(--pp-violet)' }}>{negociadas}</div>
+            <p className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)', margin: '6px 0 0', lineHeight: 1.5 }}>
+              Vendas já realizadas mantêm a taxa que valia no momento da compra,
+              e toda alteração fica registrada na trilha de auditoria.
+            </p>
+          </div>
+        </div>
+
+        {/* Taxa por produtora — o painel de edição do mockup, linha a linha. */}
+        <div className="adm-panel">
+          <div className="pp-between">
+            <div>
+              <div style={{ fontFamily: 'var(--pp-font-display)', fontWeight: 600, fontSize: 'var(--pp-fs-18)' }}>Taxa por produtora</div>
+              <p className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)', margin: '2px 0 0' }}>
+                deixe o campo vazio e aplique para a produtora voltar ao padrão
+              </p>
+            </div>
+            <span className="pp-mono pp-muted" style={{ fontSize: 'var(--pp-fs-12)' }}>{data.organizations.length} orgs</span>
+          </div>
+
+          {data.organizations.length === 0 && (
+            <p className="pp-muted" style={{ marginTop: 'var(--pp-s-4)' }}>Nenhuma produtora ainda.</p>
+          )}
+
+          <div style={{ marginTop: 'var(--pp-s-3)' }}>
+            {data.organizations.map((o) => (
+              <div key={o.id} className="adm-orgfee">
+                <div className="pp-grow" style={{ minWidth: 180 }}>
+                  <strong>{o.name}</strong>
+                  <div style={{ color: 'var(--pp-fg-4)', fontSize: 12, marginTop: 2 }}>
+                    <span className="ck-badge" style={{ fontSize: 9, marginRight: 6 }}>
+                      {o.usa_padrao ? 'padrão' : 'negociada'}
+                    </span>
+                    {o.usa_padrao ? `usa o padrão (${data.default_fee_percent}%)` : `negociada: ${o.fee_percent}%`}
+                    {/* Sem carteira não há split: a venda inteira fica na conta da
+                        plataforma e o repasse vira transferência manual. */}
+                    {!o.repasse_automatico && (
+                      <span style={{ color: 'var(--pp-amber)' }}> · sem carteira Asaas: repasse manual</span>
+                    )}
+                  </div>
+                </div>
+                {/* O número que vale hoje, no peso do mockup. */}
+                <span className="adm-orgfee__pct" style={{ color: o.usa_padrao ? 'var(--pp-fg-3)' : 'var(--pp-amber)' }}>
+                  {o.usa_padrao ? data.default_fee_percent : o.fee_percent}%
+                </span>
+                <label htmlFor={`fee-${o.id}`} style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }}>
+                  Nova taxa de {o.name} em porcentagem
+                </label>
+                <input id={`fee-${o.id}`} className="ck-input" type="number" min="0" max="100" step="0.01"
+                  placeholder={data.default_fee_percent}
+                  value={rascunho[o.id] ?? toPct(o.fee_bps)}
+                  onChange={(e) => setRascunho((r) => ({ ...r, [o.id]: e.target.value }))}
+                  style={{ maxWidth: 104 }} />
+                <span className="pp-mono">%</span>
+                <button className="ck-btn ck-btn--glass ck-btn--sm" onClick={() => salvarOrg(o)}
+                  disabled={salvando === o.id || rascunho[o.id] === undefined}>
+                  {salvando === o.id ? '…' : 'Aplicar'}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </AdmShell>
   );
