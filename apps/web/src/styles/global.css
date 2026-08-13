@@ -179,7 +179,9 @@ input, button, select, textarea { font-family: inherit; }
 .pp-steps .bar.on { background: var(--pp-pulse); }
 .pp-checkout h1 { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-28); line-height: 1; letter-spacing: -0.025em; margin: 8px 0 0; }
 .pp-checkout h1 .accent { font-family: var(--pp-font-serif); font-style: italic; font-weight: 400; color: var(--pp-pulse); font-size: var(--pp-fs-24); }
-.pp-countdown { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; background: rgba(255,184,0,0.10); border: 1px solid rgba(255,184,0,0.25); font-family: var(--pp-font-mono); font-size: var(--pp-fs-13); font-weight: 600; color: #FFD15C; }
+/* Relógio da cobrança Pix. A cor sai do token âmbar (era um hex solto) —
+   é aviso, não erro: ainda dá tempo de pagar. */
+.pp-countdown { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; background: rgba(255,184,0,0.10); border: 1px solid rgba(255,184,0,0.25); font-family: var(--pp-font-mono); font-size: var(--pp-fs-13); font-weight: 600; color: var(--pp-amber); }
 
 .pp-qrcard { padding: 18px; border-radius: 28px; background: var(--pp-white); box-shadow: 0 20px 60px rgba(0,255,133,0.2), 0 0 0 1px rgba(255,255,255,0.2); display: inline-grid; place-items: center; position: relative; }
 .pp-qrcard img { width: 220px; height: 220px; display: block; image-rendering: pixelated; }
@@ -219,7 +221,16 @@ input, button, select, textarea { font-family: inherit; }
 /* ── Ticket list card (carteira de ingressos) ── */
 .pp-tktlist { display: flex; flex-direction: column; gap: var(--pp-s-3); max-width: 620px; }
 .pp-tkt { display: flex; align-items: center; gap: 14px; padding: 14px; }
-.pp-tkt__thumb { width: 54px; height: 54px; border-radius: 14px; flex-shrink: 0; background: radial-gradient(var(--pp-pulse), transparent), var(--pp-violet); border: 1px solid rgba(255,255,255,0.1); display: grid; place-items: center; font-family: var(--pp-font-display); font-weight: 700; color: rgba(255,255,255,0.85); }
+.pp-tkt__thumb { width: 48px; height: 60px; border-radius: 10px; flex-shrink: 0; overflow: hidden; background: radial-gradient(var(--pp-pulse), transparent), var(--pp-violet); border: 1px solid rgba(255,255,255,0.1); display: grid; place-items: center; font-family: var(--pp-font-display); font-weight: 700; color: rgba(255,255,255,0.85); }
+.pp-tkt__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* Bloco de data (spec MyTicketsScreen): dia grande + mês em mono. É o que a
+   pessoa procura primeiro numa lista com quatro noites marcadas. */
+.pp-tkt__day { width: 54px; padding: 8px 0; border-radius: 12px; flex-shrink: 0; text-align: center; background: var(--pp-glass-1); border: 1px solid var(--pp-edge-1); }
+.pp-tkt__day .d { display: block; font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-20); line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.pp-tkt__day .m { display: block; font-family: var(--pp-font-mono); font-size: 9px; font-weight: 600; letter-spacing: 0.1em; color: var(--pp-pulse); margin-top: 3px; }
+/* No telefone estreito a capa sai antes do texto: data + nome + setor é o
+   mínimo que precisa caber sem quebrar. */
+@media (max-width: 430px) { .pp-tkt__thumb { display: none; } }
 .pp-tkt__date { font-family: var(--pp-font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--pp-pulse); }
 .pp-tkt__title { font-family: var(--pp-font-display); font-weight: 600; font-size: var(--pp-fs-16); letter-spacing: -0.01em; margin-top: 2px; }
 .pp-tkt__tier { font-size: var(--pp-fs-13); color: var(--pp-fg-3); margin-top: 2px; }

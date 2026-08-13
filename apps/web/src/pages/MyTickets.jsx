@@ -26,6 +26,11 @@ const bigDate = (iso) => {
   return `${wd} · ${d.getDate()} ${mo} · ${hr}`;
 };
 
+/** Dia e mês separados — alimentam o bloco de data da linha da lista. */
+const diaDoMes = (iso) => (iso ? String(new Date(iso).getDate()).padStart(2, '0') : '--');
+const mesCurto = (iso) => (iso ? new Date(iso).toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '').toUpperCase() : '');
+const horaCurta = (iso) => (iso ? new Date(iso).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '');
+
 const STATUS_LABEL = { valid: 'Válido', used: 'Utilizado', cancelled: 'Cancelado', transferred: 'Transferido' };
 const STATUS_CLS = { valid: 'pp-badge--pulse pp-badge--dot', used: 'pp-badge--neutral', cancelled: 'pp-badge--red', transferred: 'pp-badge--violet' };
 
@@ -43,17 +48,47 @@ function estaRolando(iso) {
 }
 const ehFuturo = (iso) => iso && Date.parse(iso) > Date.now();
 
+/**
+ * A linha que fica ACIMA do card em destaque no desenho ("Hoje · começa em
+ * 3h22"). É contagem regressiva de verdade, calculada sobre events.starts_at:
+ * é a diferença entre "tenho tempo" e "preciso sair agora", e era exatamente
+ * o que a tela não dizia.
+ */
+function rotuloDestaque(iso) {
+  const t = Date.parse(iso ?? '');
+  if (!Number.isFinite(t)) return null;
+  const diff = t - Date.now();
+  if (diff <= 0) return 'acontecendo agora';
+
+  const min = Math.floor(diff / 60000);
+  const h = Math.floor(min / 60);
+  const hoje = new Date().toDateString() === new Date(t).toDateString();
+  if (min < 60) return `${hoje ? 'Hoje' : 'Amanhã'} · começa em ${min} min`;
+  if (h < 24 && hoje) return `Hoje · começa em ${h}h${String(min % 60).padStart(2, '0')}`;
+  const dias = Math.ceil(diff / 86400000);
+  return `Faltam ${dias} ${dias === 1 ? 'dia' : 'dias'}`;
+}
+
 export default function MyTickets() {
   const [tickets, setTickets] = useState([]);
   const [status, setStatus] = useState('loading');
   const [error, setError] = useState('');
   const [aba, setAba] = useState('proximos');
+  const [agora, setAgora] = useState(() => Date.now());
 
   useEffect(() => {
     (async () => {
       try { setTickets(await api.myTickets()); setStatus('done'); }
       catch (e) { setError(e.message); setStatus('error'); }
     })();
+  }, []);
+
+  // Meio minuto é o suficiente para a contagem regressiva não mentir e para o
+  // ingresso virar "ao vivo" sozinho, sem a pessoa precisar recarregar a
+  // página na porta da casa.
+  useEffect(() => {
+    const t = setInterval(() => setAgora(Date.now()), 30000);
+    return () => clearInterval(t);
   }, []);
 
   const { destaque, proximos, passados } = useMemo(() => {
@@ -70,19 +105,27 @@ export default function MyTickets() {
       proximos: futuros.slice(1),
       passados: tickets.filter((t) => !futuros.includes(t)),
     };
-  }, [tickets]);
+    // `agora` entra na dependência para o ingresso migrar de "próximo" para
+    // "passado" com o tempo passando, e não só no F5.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tickets, agora]);
 
   const lista = aba === 'proximos' ? proximos : passados;
   const noites = destaque ? proximos.length + 1 : 0;
+  const aoVivo = destaque && estaRolando(destaque.events?.starts_at);
 
   return (
     <Page>
       <div className="pp-reveal">
         <div className="pp-eyebrow">sua carteira</div>
+        {/* O número em serifada itálica, como no desenho: é ele que dá o tom
+            de "você tem programa marcado", não a palavra "ingressos". */}
         <h1>
-          {noites > 0
-            ? `${noites} ${noites === 1 ? 'noite pela frente' : 'noites pela frente'}`
-            : 'Meus ingressos'}
+          {noites > 0 ? (
+            <>
+              <span className="pp-accent">{noites} {noites === 1 ? 'noite' : 'noites'}</span> pela frente
+            </>
+          ) : 'Meus ingressos'}
         </h1>
       </div>
 
@@ -100,27 +143,33 @@ export default function MyTickets() {
       {/* Destaque: o ingresso que a pessoa vai usar a seguir. Card grande,
           com o QR a um toque — não é uma linha de lista. */}
       {status === 'done' && destaque && (
-        <Link to={`/ingresso/${destaque.id}`} className="pp-tktnext pp-reveal">
-          <div className="pp-tktnext__art">
-            {destaque.events?.cover_url && <img src={destaque.events.cover_url} alt="" />}
-            {estaRolando(destaque.events?.starts_at) && (
-              <span className="pp-tktnext__live">
-                <span className="pp-pulse-dot" /> Ao vivo · QR pronto
-              </span>
-            )}
+        <>
+          <div className="pp-eyebrow" style={{ marginTop: 'var(--pp-s-6)', display: 'flex', alignItems: 'center', gap: 6 }}>
+            {aoVivo && <span className="pp-pulse-dot" />}
+            {rotuloDestaque(destaque.events?.starts_at) ?? 'próximo ingresso'}
           </div>
-          <div className="pp-tktnext__body">
-            <div className="pp-meta">{bigDate(destaque.events?.starts_at)}</div>
-            <div className="pp-tktnext__title">{destaque.events?.title}</div>
-            <div className="pp-muted" style={{ fontSize: 13, marginTop: 2 }}>
-              {destaque.events?.venue_name ? `${destaque.events.venue_name} · ` : ''}
-              {destaque.ticket_tiers?.name}
+          <Link to={`/ingresso/${destaque.id}`} className="pp-tktnext pp-reveal" style={{ marginTop: 'var(--pp-s-3)' }}>
+            <div className="pp-tktnext__art">
+              {destaque.events?.cover_url && <img src={destaque.events.cover_url} alt="" />}
+              {aoVivo && (
+                <span className="pp-tktnext__live">
+                  <span className="pp-pulse-dot" /> Ao vivo · QR pronto
+                </span>
+              )}
             </div>
-            <span className="pp-btn pp-btn--primary pp-btn--block" style={{ marginTop: 'var(--pp-s-4)' }}>
-              Abrir ingresso <Icon name="arrowRight" size={16} />
-            </span>
-          </div>
-        </Link>
+            <div className="pp-tktnext__body">
+              <div className="pp-meta">{bigDate(destaque.events?.starts_at)}</div>
+              <div className="pp-tktnext__title">{destaque.events?.title}</div>
+              <div className="pp-muted" style={{ fontSize: 13, marginTop: 2 }}>
+                {destaque.events?.venue_name ? `${destaque.events.venue_name} · ` : ''}
+                {destaque.ticket_tiers?.name}
+              </div>
+              <span className="pp-btn pp-btn--primary pp-btn--block" style={{ marginTop: 'var(--pp-s-4)' }}>
+                Abrir ingresso <Icon name="arrowRight" size={16} />
+              </span>
+            </div>
+          </Link>
+        </>
       )}
 
       {status === 'done' && tickets.length > 0 && (proximos.length > 0 || passados.length > 0) && (
@@ -142,8 +191,23 @@ export default function MyTickets() {
             <div className="pp-tktlist pp-reveal-group">
               {lista.map((t) => (
                 <Link key={t.id} to={`/ingresso/${t.id}`} className="pp-card pp-card--interactive pp-tkt">
-                  <div className="pp-tkt__thumb">{t.events?.title?.slice(0, 2).toUpperCase()}</div>
-                  <div className="pp-grow">
+                  {/* Bloco de data do desenho. Com dois ingressos do mesmo
+                      evento ou quatro festas no mês, é o dia — não o nome —
+                      que diz qual é qual num relance. */}
+                  <div className="pp-tkt__day" aria-hidden="true">
+                    <span className="d">{diaDoMes(t.events?.starts_at)}</span>
+                    <span className="m">{mesCurto(t.events?.starts_at)}</span>
+                  </div>
+                  {/* A capa só aparece quando o evento TEM capa; sem ela, o
+                      bloco de data já cumpre o papel de âncora visual. As
+                      iniciais do título que ficavam aqui eram um desenho
+                      inventado que não ajudava a reconhecer nada. */}
+                  {t.events?.cover_url && (
+                    <div className="pp-tkt__thumb">
+                      <img src={t.events.cover_url} alt="" loading="lazy" />
+                    </div>
+                  )}
+                  <div className="pp-grow" style={{ minWidth: 0 }}>
                     <div className="pp-tkt__date">{bigDate(t.events?.starts_at)}</div>
                     <div className="pp-tkt__title">{t.events?.title}</div>
                     {/* Casa + setor na mesma linha, como no desenho: é assim
@@ -152,6 +216,14 @@ export default function MyTickets() {
                     <div className="pp-tkt__tier">
                       {t.events?.venue_name ? `${t.events.venue_name} · ` : ''}{t.ticket_tiers?.name}
                     </div>
+                    {/* Check-in é a prova de que o ingresso foi usado — e por
+                        quem, quando duas pessoas dividiram o pedido. Vinha do
+                        servidor (checked_in_at) e não aparecia em lugar nenhum. */}
+                    {t.checked_in_at && (
+                      <div className="pp-muted-2" style={{ fontSize: 12, marginTop: 3 }}>
+                        Entrada às {horaCurta(t.checked_in_at)}
+                      </div>
+                    )}
                   </div>
                   <span className={`pp-badge ${STATUS_CLS[t.status] ?? 'pp-badge--neutral'}`}>
                     {STATUS_LABEL[t.status] ?? t.status}
