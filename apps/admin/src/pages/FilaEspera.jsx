@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { Shell, Loading, ErrorBox, BackLink } from '../components/Shell.jsx';
 import { Icon } from '@pulsepass/shared/Icon';
 import { api } from '../lib/api.js';
@@ -11,24 +11,59 @@ import { dateTime } from '../lib/format.js';
  * Serve pra produtora enxergar demanda reprimida: quantas pessoas quiseram
  * comprar depois do lote esgotar. É a informação que decide se vale abrir um
  * lote extra ou trocar de casa no próximo evento.
+ *
+ * Layout do design system (painel + coluna): a lista é o corpo, e ao lado
+ * fica a leitura que a produtora realmente usa — QUAL lote tem gente esperando.
+ * Essa quebra por lote sai dos próprios registros da fila, não é estimativa.
  */
 const ESTADO = {
-  waiting: { label: 'aguardando', cor: 'var(--pp-fg-3)' },
-  invited: { label: 'convidado', cor: 'var(--pp-pulse)' },
-  converted: { label: 'comprou', cor: 'var(--pp-pulse)' },
-  expired: { label: 'convite venceu', cor: 'var(--pp-amber)' },
-  cancelled: { label: 'cancelado', cor: 'var(--pp-fg-4)' },
+  waiting: { label: 'aguardando', cor: 'var(--pp-fg-3)', badge: 'ck-badge' },
+  invited: { label: 'convidado', cor: 'var(--pp-cyan)', badge: 'ck-badge ck-badge--published' },
+  converted: { label: 'comprou', cor: 'var(--pp-pulse)', badge: 'ck-badge ck-badge--published' },
+  expired: { label: 'convite venceu', cor: 'var(--pp-amber)', badge: 'ck-badge ck-badge--draft' },
+  cancelled: { label: 'cancelado', cor: 'var(--pp-fg-4)', badge: 'ck-badge' },
 };
+
+/** Filtros: só o que o backend devolve em `status`. */
+const FILTROS = [
+  { chave: 'todos', label: 'Todos' },
+  { chave: 'waiting', label: 'Aguardando' },
+  { chave: 'invited', label: 'Convidados' },
+  { chave: 'converted', label: 'Compraram' },
+];
+
+const TONS = ['var(--pp-pulse)', 'var(--pp-violet)', 'var(--pp-cyan)', 'var(--pp-amber)', 'var(--pp-pink)'];
 
 export default function FilaEspera() {
   const { id } = useParams();
   const [state, setState] = useState({ status: 'loading' });
+  const [filtro, setFiltro] = useState('todos');
 
   const load = useCallback(async () => {
     try { setState({ status: 'ok', data: await api.eventWaitlist(id) }); }
     catch (e) { setState({ status: 'error', message: e.message }); }
   }, [id]);
   useEffect(() => { load(); }, [load]);
+
+  const entries = state.data?.entries ?? [];
+
+  // Demanda por lote: quem ainda espera, agrupado pelo lote que esgotou.
+  // Sai de `ticket_tiers(name)` que vem junto de cada registro — nada é
+  // inventado aqui, é contagem dos mesmos dados da lista.
+  const porLote = useMemo(() => {
+    const mapa = new Map();
+    for (const e of entries) {
+      if (e.status !== 'waiting') continue;
+      const nome = e.ticket_tiers?.name ?? 'lote removido';
+      const atual = mapa.get(nome) ?? { pessoas: 0, ingressos: 0 };
+      atual.pessoas += 1;
+      atual.ingressos += e.quantity ?? 1;
+      mapa.set(nome, atual);
+    }
+    return [...mapa.entries()]
+      .map(([nome, v]) => ({ nome, ...v }))
+      .sort((a, b) => b.ingressos - a.ingressos);
+  }, [entries]);
 
   if (state.status === 'loading') return <Shell><Loading /></Shell>;
   if (state.status === 'error') {
@@ -37,66 +72,169 @@ export default function FilaEspera() {
 
   const { data } = state;
   const agora = Date.now();
+  // Vencidos/cancelados não vêm somados do backend, mas estão na lista —
+  // contar aqui é ler o mesmo dado, não estimar.
+  const vencidos = entries.filter((e) => e.status === 'expired').length;
+  const ingressosNaFila = entries
+    .filter((e) => e.status === 'waiting')
+    .reduce((s, e) => s + (e.quantity ?? 1), 0);
+
+  const visiveis = filtro === 'todos' ? entries : entries.filter((e) => e.status === filtro);
+  const maiorLote = porLote[0]?.ingressos || 1;
 
   return (
     <Shell>
       <BackLink to={`/eventos/${id}`} label="Dashboard" />
       <div className="ck-eyebrow">vendas · demanda reprimida</div>
-      <h1 className="ck-h1">Fila de espera</h1>
+      <h1 className="ck-h1">Fila de espera · <span className="pp-accent">quem ficou de fora.</span></h1>
       <p className="ck-sub">
         Quem tentou comprar depois do lote esgotar. Quando um pedido é reembolsado
-        ou expira, os primeiros da fila são convidados automaticamente.
+        ou expira, os primeiros da fila são convidados automaticamente — com prazo,
+        pra vaga não travar em quem não vai comprar.
       </p>
 
-      <div className="ck-card" style={{ maxWidth: 640, display: 'flex', gap: 28, flexWrap: 'wrap' }}>
-        {[
-          ['Aguardando', data.waiting],
-          ['Convidados', data.invited],
-          ['Compraram', data.converted],
-        ].map(([rotulo, valor]) => (
-          <div key={rotulo}>
-            <div className="ck-label">{rotulo}</div>
-            <div style={{ fontFamily: 'var(--pp-font-mono)', fontSize: 26, fontWeight: 700 }}>{valor}</div>
+      {/* Fio de cor no topo de cada KPI: mesma leitura do painel do design
+          system. Todos os números saem do endpoint da fila. */}
+      <div className="ck-kpis" style={{ gridTemplateColumns: `repeat(${vencidos > 0 ? 4 : 3}, 1fr)` }}>
+        <div className="ck-kpi" style={{ '--k': 'var(--pp-amber)' }}>
+          <div className="lbl">Aguardando</div>
+          <div className="val">{data.waiting}</div>
+          <div className="d">{ingressosNaFila} ingresso{ingressosNaFila === 1 ? '' : 's'} pedidos</div>
+        </div>
+        <div className="ck-kpi" style={{ '--k': 'var(--pp-cyan)' }}>
+          <div className="lbl">Convidados</div>
+          <div className="val">{data.invited}</div>
+          <div className="d">convite com prazo de 1h</div>
+        </div>
+        <div className="ck-kpi" style={{ '--k': 'var(--pp-pulse)' }}>
+          <div className="lbl">Compraram</div>
+          <div className="val" style={{ color: data.converted > 0 ? 'var(--pp-pulse)' : undefined }}>{data.converted}</div>
+          <div className="d">vieram da fila</div>
+        </div>
+        {vencidos > 0 && (
+          <div className="ck-kpi" style={{ '--k': 'var(--pp-fg-4)' }}>
+            <div className="lbl">Convite venceu</div>
+            <div className="val">{vencidos}</div>
+            <div className="d">a vez passou pro próximo</div>
           </div>
-        ))}
+        )}
       </div>
 
-      {data.entries.length === 0 ? (
-        <div className="ck-empty" style={{ maxWidth: 640, marginTop: 16 }}>
-          Ninguém na fila ainda. A opção aparece para o cliente quando um lote esgota.
+      {entries.length === 0 ? (
+        <div className="pp-empty" style={{ maxWidth: 640 }}>
+          <div className="pp-empty__icon"><Icon name="users" size={28} /></div>
+          <div className="pp-empty__title">Ninguém na fila ainda</div>
+          <p style={{ margin: '0 0 var(--pp-s-4)' }}>
+            A opção de entrar na fila só aparece pro cliente quando um lote esgota.
+            Se ainda há ingresso à venda, é sinal de que a demanda está sendo atendida.
+          </p>
+          <Link to={`/eventos/${id}`} className="ck-btn ck-btn--glass ck-btn--sm">
+            <Icon name="ticket" size={15} /> Ver lotes do evento
+          </Link>
         </div>
       ) : (
-        <div className="ck-card" style={{ maxWidth: 760, marginTop: 16, padding: 0, overflow: 'hidden' }}>
-          {data.entries.map((e, i) => {
-            const st = ESTADO[e.status] ?? { label: e.status, cor: 'var(--pp-fg-3)' };
-            // Convite tem prazo: passado o prazo, a vez passa pro próximo.
-            const vencendo = e.status === 'invited' && e.invite_expires_at
-              && new Date(e.invite_expires_at).getTime() - agora < 15 * 60_000;
-            return (
-              <div key={e.id} style={{
-                display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', padding: '13px 18px',
-                borderBottom: i < data.entries.length - 1 ? '1px solid var(--pp-edge-1)' : 'none',
-              }}>
-                <span style={{
-                  fontFamily: 'var(--pp-font-mono)', color: 'var(--pp-fg-4)', minWidth: 28,
-                }}>{i + 1}º</span>
-                <div style={{ flex: 1, minWidth: 180 }}>
-                  <div style={{ fontWeight: 600 }}>{e.name || e.email}</div>
-                  <div style={{ color: 'var(--pp-fg-4)', fontSize: 12, marginTop: 2 }}>
-                    {e.ticket_tiers?.name ?? 'lote'}
-                    {e.quantity > 1 && ` · ${e.quantity} ingressos`}
-                    {' · entrou em '}{dateTime(e.created_at)}
-                  </div>
-                </div>
-                <span style={{ color: st.cor, fontSize: 13 }}>{st.label}</span>
-                {vencendo && (
-                  <span style={{ color: 'var(--pp-amber)', fontSize: 12 }}>
-                    <Icon name="clock" size={12} /> vence em breve
-                  </span>
-                )}
+        <div className="ck-duo" style={{ marginTop: 'var(--pp-s-5)' }}>
+          <section className="ck-panel" aria-label="Pessoas na fila de espera" style={{ padding: 0, overflow: 'hidden' }}>
+            <div className="pp-between" style={{ padding: 'var(--pp-s-5) var(--pp-s-5) var(--pp-s-4)', flexWrap: 'wrap' }}>
+              <div>
+                <div className="ck-panel__title">Na fila · {entries.length}</div>
+                <p className="ck-panel__sub">ordem de chegada — o primeiro é o primeiro a ser convidado</p>
               </div>
-            );
-          })}
+              {/* Filtro por estado: com fila grande, "quem já foi convidado"
+                  é a pergunta que a produtora faz o dia inteiro. */}
+              <div className="ck-tabs" role="group" aria-label="Filtrar por situação">
+                {FILTROS.map((f) => (
+                  <button
+                    key={f.chave}
+                    type="button"
+                    className={`ck-tab ${filtro === f.chave ? 'is-on' : ''}`}
+                    aria-pressed={filtro === f.chave}
+                    onClick={() => setFiltro(f.chave)}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {visiveis.length === 0 ? (
+              <p className="ck-empty" style={{ padding: 'var(--pp-s-8) var(--pp-s-5)' }}>
+                Ninguém nesta situação agora.
+              </p>
+            ) : visiveis.map((e, i) => {
+              const st = ESTADO[e.status] ?? { label: e.status, cor: 'var(--pp-fg-3)', badge: 'ck-badge' };
+              // Convite tem prazo: passado o prazo, a vez passa pro próximo.
+              const restaMs = e.status === 'invited' && e.invite_expires_at
+                ? new Date(e.invite_expires_at).getTime() - agora
+                : null;
+              const vencendo = restaMs != null && restaMs > 0 && restaMs < 15 * 60_000;
+              return (
+                <div
+                  key={e.id}
+                  className="pp-row"
+                  style={{
+                    flexWrap: 'wrap', padding: '13px var(--pp-s-5)',
+                    borderTop: '1px solid var(--pp-edge-1)',
+                    background: vencendo ? 'rgba(255,184,0,0.05)' : undefined,
+                  }}
+                >
+                  {/* A posição vem do banco (position), não do índice da tela:
+                      filtro aplicado não pode renumerar a fila de ninguém. */}
+                  <span className="pp-mono pp-num pp-muted-2" style={{ minWidth: 30 }} aria-label={`Posição ${e.position ?? i + 1}`}>
+                    {e.position ?? i + 1}º
+                  </span>
+                  <div style={{ flex: 1, minWidth: 180 }}>
+                    <div style={{ fontWeight: 600, fontSize: 'var(--pp-fs-14)' }}>{e.name || e.email}</div>
+                    <div className="pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 2 }}>
+                      {e.ticket_tiers?.name ?? 'lote'}
+                      {e.quantity > 1 && ` · ${e.quantity} ingressos`}
+                      {' · entrou em '}{dateTime(e.created_at)}
+                    </div>
+                  </div>
+                  <span className={st.badge} style={{ color: st.cor }}>{st.label}</span>
+                  {vencendo && (
+                    <span className="pp-row pp-mono" style={{ gap: 5, color: 'var(--pp-amber)', fontSize: 'var(--pp-fs-12)' }}>
+                      <Icon name="clock" size={12} /> vence em {Math.max(1, Math.round(restaMs / 60_000))} min
+                    </span>
+                  )}
+                </div>
+              );
+            })}
+          </section>
+
+          {/* Coluna de leitura: qual lote tem gente esperando. É o que responde
+              "vale abrir lote extra?" — e só aparece se houver quem esperando. */}
+          {porLote.length > 0 && (
+            <aside className="ck-panel" aria-label="Demanda reprimida por lote">
+              <div className="ck-eyebrow">Demanda por lote</div>
+              <p className="ck-panel__sub" style={{ marginBottom: 'var(--pp-s-4)' }}>
+                ingressos pedidos por quem ainda aguarda
+              </p>
+              <div className="pp-stack pp-stack-3">
+                {porLote.map((l, i) => {
+                  const tom = TONS[i % TONS.length];
+                  const pct = Math.max(4, (l.ingressos / maiorLote) * 100);
+                  return (
+                    <div key={l.nome}>
+                      <div className="pp-between" style={{ marginBottom: 6 }}>
+                        <span className="pp-truncate" style={{ fontSize: 'var(--pp-fs-13)', fontWeight: 600 }}>{l.nome}</span>
+                        <span className="pp-mono pp-num pp-muted" style={{ fontSize: 'var(--pp-fs-12)' }}>
+                          {l.ingressos} ing · {l.pessoas} pess
+                        </span>
+                      </div>
+                      <div className="ck-bar" style={{ '--k': tom }}>
+                        <div className="track"><div className="fill" style={{ width: `${pct}%` }} /></div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 'var(--pp-s-4)' }}>
+                Lote com fila cheia é lote que podia ter vendido mais. Abrir um lote
+                extra dispara convite automático pra quem está esperando nele.
+              </p>
+            </aside>
+          )}
         </div>
       )}
     </Shell>
