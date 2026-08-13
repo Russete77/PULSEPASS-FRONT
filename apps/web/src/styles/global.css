@@ -242,6 +242,63 @@ input, button, select, textarea { font-family: inherit; }
 .pp-progress { height: 6px; background: var(--pp-edge-2); border-radius: 99px; overflow: hidden; }
 .pp-progress > i { display: block; height: 100%; background: var(--pp-pulse); border-radius: 99px; transition: width var(--pp-dur-3) var(--pp-ease); }
 
+/* ── Portal do promoter (estrutura da PromoterScreen) ──
+   KPIs em cards pequenos + share card do link pessoal como herói. Só a
+   estrutura veio do mockup: o gradiente violeta com glow virou glass com
+   borda violeta discreta, dentro dos tokens v4. */
+.pp-promo-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+@media (max-width: 560px) { .pp-promo-kpis { grid-template-columns: repeat(2, 1fr); } }
+.pp-promo-kpi {
+  padding: 12px; border-radius: var(--pp-r-card);
+  background: var(--pp-glass-1); border: 1px solid var(--pp-edge-1);
+  min-width: 0;
+}
+.pp-promo-kpi .v {
+  font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-18);
+  letter-spacing: -0.02em; font-variant-numeric: tabular-nums;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.pp-promo-kpi .v.accent { color: var(--pp-pulse); }
+.pp-promo-kpi .l {
+  font-family: var(--pp-font-mono); font-size: 10px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--pp-fg-3); margin-top: 3px;
+}
+
+.pp-share {
+  padding: var(--pp-s-5); border-radius: var(--pp-r-card);
+  background: rgba(167, 139, 250, 0.07);
+  border: 1px solid rgba(167, 139, 250, 0.3);
+  box-shadow: var(--pp-shine);
+}
+.pp-share__link {
+  font-family: var(--pp-font-mono); font-weight: 600; font-size: var(--pp-fs-16);
+  margin-top: 8px; word-break: break-all;
+}
+.pp-share__link b { color: var(--pp-violet); font-weight: 700; }
+.pp-share__hint { font-size: var(--pp-fs-13); color: var(--pp-fg-2); margin: 8px 0 0; }
+.pp-share__acoes { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+.pp-share__acoes > * { flex: 1; min-width: 110px; }
+
+/* Convidado na lista do promoter — avatar de inicial + estado à direita. */
+.pp-guest {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; border-radius: var(--pp-r-card);
+  background: var(--pp-glass-1); border: 1px solid var(--pp-edge-1);
+}
+.pp-guest__avatar {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  display: grid; place-items: center;
+  font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-14);
+  background: rgba(var(--pp-pulse-rgb), 0.12); border: 1px solid rgba(var(--pp-pulse-rgb), 0.3);
+  color: var(--pp-pulse);
+}
+.pp-guest__nome { display: block; font-size: var(--pp-fs-14); font-weight: 600; }
+.pp-guest__extra { display: block; font-size: var(--pp-fs-12); color: var(--pp-fg-3); margin-top: 1px; }
+.pp-guest__hora {
+  display: block; font-family: var(--pp-font-mono); font-size: 10px;
+  color: var(--pp-fg-4); margin-top: 4px;
+}
+
 /* ── Success state (check em círculo) ── */
 .pp-success { text-align: center; padding: var(--pp-s-6) 0; }
 .pp-success__icon { display: inline-grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: rgba(0,255,133,0.12); border: 1px solid rgba(0,255,133,0.35); color: var(--pp-pulse); margin-bottom: var(--pp-s-4); }

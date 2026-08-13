@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Shell, Loading, ErrorBox, OpsBack } from '../components/Shell.jsx';
 import { Icon } from '@pulsepass/shared/Icon';
@@ -8,9 +8,18 @@ import { brl } from '../lib/format.js';
 /**
  * Tela do garçom.
  *
- * Trabalha por MESA, não por pedido: quem está no salão pensa "a quatro pediu
- * mais duas", nunca "o pedido 8f2c precisa avançar". Por isso a lista é de
- * mesas, e o que cada uma tem em aberto aparece dentro dela.
+ * Layout da WaiterScreen do design system: KPIs do salão no topo, filtro em
+ * pílulas e as mesas em LINHAS — o chip da mesa à esquerda, o que ela tem no
+ * meio e o valor em aberto à direita, que são as três coisas que fazem o
+ * garçom decidir para onde ir. O lançamento de pedido segue a
+ * WaiterOrderScreen: categorias em strip, cardápio em linhas com stepper e o
+ * resumo da comanda fixo embaixo, com o total da mesa ao lado do que está
+ * sendo adicionado.
+ *
+ * O que o mockup mostra e o backend não tem, ficou de fora:
+ *  · "chamando garçom" — não existe chamada de mesa no produto;
+ *  · gorjeta e "N pessoas" na mesa — não há esses campos;
+ *  · tempo de ocupação — pedidos têm hora, mesa não tem "aberta desde".
  *
  * O dinheiro sai da carteira do cliente, pelo mesmo caminho do PDV — o garçom
  * não recebe nada em mãos. Ele precisa identificar de quem é a comanda antes
@@ -52,10 +61,11 @@ export default function Garcom() {
       <OpsBack to={`/eventos/${id}`} label="Dashboard" />
 
       <div className="ck-eyebrow">salão · garçom</div>
-      <h1 className="ck-h1">Mesas</h1>
+      <h1 className="ck-h1">Suas mesas · {mesas.length}</h1>
 
-      {/* O total do salão em aberto: é o que o garçom precisa saber para
-          cobrar antes de alguém ir embora. */}
+      {/* Os três números da noite, como no mockup (só os que existem):
+          o total em aberto é o que precisa ser cobrado antes de alguém ir
+          embora; os prontos são a próxima caminhada. */}
       <div className="ck-metrics" style={{ marginTop: 16 }}>
         <div className="ck-card ck-metric">
           <div className="lbl">Em aberto no salão</div>
@@ -67,7 +77,7 @@ export default function Garcom() {
         </div>
         <div className="ck-card ck-metric">
           <div className="lbl">Prontos para levar</div>
-          <div className="val" style={{ color: prontas.length ? 'var(--pp-amber)' : undefined }}>{prontas.length}</div>
+          <div className="val" style={{ color: prontas.length ? 'var(--pp-violet)' : undefined }}>{prontas.length}</div>
         </div>
       </div>
 
@@ -98,19 +108,32 @@ export default function Garcom() {
           {aba === 'prontas' ? 'Nada pronto para levar agora.' : 'Nenhuma mesa com consumo em aberto.'}
         </p>
       ) : (
-        <div className="ck-grid" style={{ marginTop: 18 }}>
+        <div className="ck-mesas" style={{ marginTop: 18 }}>
           {visiveis.map((m) => (
-            <button key={m.id} className={`ck-mesa ${m.prontos ? 'ck-mesa--pronta' : ''}`}
-              onClick={() => setMesaAberta(m)}>
-              <div className="ck-between">
-                <span className="ck-mesa__nome">{m.nome}</span>
-                {m.prontos > 0 && <span className="ck-mesa__badge">{m.prontos} pronto{m.prontos > 1 ? 's' : ''}</span>}
-              </div>
-              {m.area && <div className="ck-mesa__area">{m.area}</div>}
-              <div className="ck-mesa__valor">{m.consumo_cents ? brl(m.consumo_cents) : '—'}</div>
-              {m.itens.length > 0 && (
-                <div className="ck-mesa__itens">{m.itens.slice(0, 3).join(' · ')}{m.itens.length > 3 ? ` +${m.itens.length - 3}` : ''}</div>
-              )}
+            <button key={m.id}
+              className={`ck-mesa ${m.prontos ? 'ck-mesa--pronta' : m.pedidos_abertos ? 'ck-mesa--ocupada' : ''}`}
+              onClick={() => setMesaAberta(m)}
+              aria-label={`Lançar pedido na ${m.nome}`}>
+              <span className="ck-mesa__chip" aria-hidden="true">{m.nome}</span>
+              <span className="ck-mesa__meio">
+                <span className="ck-mesa__nome">
+                  {m.nome}
+                  {m.area && <span className="ck-mesa__area"> · {m.area}</span>}
+                </span>
+                {m.itens.length > 0 && (
+                  <span className="ck-mesa__itens">
+                    {m.pedidos_abertos} pedido{m.pedidos_abertos > 1 ? 's' : ''} · {m.itens.slice(0, 3).join(' · ')}
+                    {m.itens.length > 3 ? ` +${m.itens.length - 3}` : ''}
+                  </span>
+                )}
+                {m.prontos > 0 && (
+                  <span className="ck-mesa__badge">{m.prontos} pronto{m.prontos > 1 ? 's' : ''} · entregar</span>
+                )}
+              </span>
+              <span className="ck-mesa__fim">
+                <span className="ck-mesa__valor">{m.consumo_cents ? brl(m.consumo_cents) : '—'}</span>
+                <Icon name="chevronRight" size={18} />
+              </span>
             </button>
           ))}
         </div>
@@ -132,7 +155,7 @@ export default function Garcom() {
 }
 
 /**
- * Lançar pedido numa mesa.
+ * Lançar pedido numa mesa (estrutura da WaiterOrderScreen).
  *
  * A comanda precisa de dono: o débito sai da carteira de alguém. Sem isso o
  * garçom estaria dando produto sem cobrar — que é exatamente o buraco que o
@@ -142,9 +165,16 @@ function LancarPedido({ eventId, mesa, menu, onFechar, onLancado }) {
   const [email, setEmail] = useState('');
   const [cliente, setCliente] = useState(null);
   const [buscando, setBuscando] = useState(false);
+  const [categoria, setCategoria] = useState('Tudo');
   const [carrinho, setCarrinho] = useState({});
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState('');
+
+  const categorias = useMemo(
+    () => ['Tudo', ...new Set(menu.map((i) => i.category).filter(Boolean))],
+    [menu],
+  );
+  const visiveis = categoria === 'Tudo' ? menu : menu.filter((i) => i.category === categoria);
 
   const total = menu.reduce((s, it) => s + (carrinho[it.id] ?? 0) * it.price_cents, 0);
   const qtd = Object.values(carrinho).reduce((s, n) => s + n, 0);
@@ -184,7 +214,14 @@ function LancarPedido({ eventId, mesa, menu, onFechar, onLancado }) {
     <div className="pp-overlay" onMouseDown={(e) => { if (e.target === e.currentTarget) onFechar(); }}>
       <div className="pp-modal pp-modal--lg" role="dialog" aria-modal="true" aria-label={`Pedido na ${mesa.nome}`}>
         <div className="pp-modal__head">
-          <h2 className="pp-modal__title">{mesa.nome}{mesa.area ? ` · ${mesa.area}` : ''}</h2>
+          <div>
+            <h2 className="pp-modal__title">{mesa.nome}{mesa.area ? ` · ${mesa.area}` : ''}</h2>
+            {mesa.pedidos_abertos > 0 && (
+              <div className="pp-mono" style={{ fontSize: 11, color: 'var(--pp-fg-4)', marginTop: 2 }}>
+                comanda aberta · {mesa.pedidos_abertos} pedido{mesa.pedidos_abertos > 1 ? 's' : ''}
+              </div>
+            )}
+          </div>
           <button className="pp-modal__close" onClick={onFechar} aria-label="Fechar">
             <Icon name="close" size={16} />
           </button>
@@ -207,7 +244,7 @@ function LancarPedido({ eventId, mesa, menu, onFechar, onLancado }) {
             </form>
           ) : (
             <>
-              <div className="ck-card" style={{ marginBottom: 14 }}>
+              <div className="ck-card" style={{ marginBottom: 14, padding: 'var(--pp-s-4)' }}>
                 <div className="ck-between">
                   <div>
                     <div className="ck-label" style={{ margin: 0 }}>Comanda de</div>
@@ -222,23 +259,39 @@ function LancarPedido({ eventId, mesa, menu, onFechar, onLancado }) {
 
               {menu.length === 0 ? (
                 <p style={{ color: 'var(--pp-fg-3)' }}>Cardápio vazio — nada para lançar.</p>
-              ) : menu.map((it) => (
-                <div key={it.id} className="ck-between" style={{ padding: '8px 0', borderBottom: '1px solid var(--pp-edge-1)' }}>
-                  <div>
-                    <div style={{ fontWeight: 600 }}>{it.name}</div>
-                    <div className="pp-mono" style={{ fontSize: 13, color: 'var(--pp-fg-3)' }}>{brl(it.price_cents)}</div>
-                  </div>
-                  <div className="pp-stepper">
-                    <button onClick={() => passo(it, -1)} disabled={!carrinho[it.id]}
-                      aria-label={`Tirar um ${it.name}`}>−</button>
-                    <span className="qty" aria-live="polite" aria-label={`${carrinho[it.id] ?? 0} ${it.name}`}>
-                      {carrinho[it.id] ?? 0}
-                    </span>
-                    <button className="plus" onClick={() => passo(it, +1)}
-                      aria-label={`Adicionar um ${it.name}`}>+</button>
-                  </div>
-                </div>
-              ))}
+              ) : (
+                <>
+                  {/* Strip de categorias, como no mockup — com 40 itens no
+                      cardápio, achar "Doses" rolando a lista inteira é lento
+                      com a mesa esperando. */}
+                  {categorias.length > 1 && (
+                    <div className="ck-tabs" style={{ marginBottom: 12 }}>
+                      {categorias.map((c) => (
+                        <button key={c} type="button" className={`ck-tab ${categoria === c ? 'is-on' : ''}`}
+                          onClick={() => setCategoria(c)}>{c}</button>
+                      ))}
+                    </div>
+                  )}
+
+                  {visiveis.map((it) => (
+                    <div key={it.id} className={`ck-gcm__item ${carrinho[it.id] ? 'is-on' : ''}`}>
+                      <div className="pp-grow">
+                        <div style={{ fontWeight: 600 }}>{it.name}</div>
+                        <div className="pp-mono" style={{ fontSize: 13, color: 'var(--pp-fg-3)', marginTop: 2 }}>{brl(it.price_cents)}</div>
+                      </div>
+                      <div className="pp-stepper">
+                        <button onClick={() => passo(it, -1)} disabled={!carrinho[it.id]}
+                          aria-label={`Tirar um ${it.name}`}>−</button>
+                        <span className="qty" aria-live="polite" aria-label={`${carrinho[it.id] ?? 0} ${it.name}`}>
+                          {carrinho[it.id] ?? 0}
+                        </span>
+                        <button className="plus" onClick={() => passo(it, +1)}
+                          aria-label={`Adicionar um ${it.name}`}>+</button>
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
 
               {erro && <ErrorBox>{erro}</ErrorBox>}
               {semSaldo && (
@@ -251,12 +304,31 @@ function LancarPedido({ eventId, mesa, menu, onFechar, onLancado }) {
         </div>
 
         {cliente && (
-          <div className="pp-modal__foot">
-            <button className="pp-btn pp-btn--ghost" onClick={onFechar}>Cancelar</button>
-            <button className={`pp-btn pp-btn--primary ${enviando ? 'is-loading' : ''}`}
-              disabled={enviando || qtd === 0 || semSaldo} onClick={lancar}>
-              Lançar {qtd > 0 ? `${qtd} · ${brl(total)}` : ''}
-            </button>
+          <div className="pp-modal__foot" style={{ display: 'block' }}>
+            {/* Resumo da comanda (estrutura da WaiterOrderScreen): o que está
+                sendo ADICIONADO separado do que a mesa já deve — são decisões
+                diferentes ("confirmo o pedido?" vs "cobro a mesa?"). */}
+            <div className="ck-between" style={{ marginBottom: 12 }}>
+              <div>
+                <div className="ck-label" style={{ margin: 0 }}>Adicionando · {qtd} {qtd === 1 ? 'item' : 'itens'}</div>
+                <div className="pp-money" style={{ fontSize: 'var(--pp-fs-24)', marginTop: 2 }}>{brl(total)}</div>
+              </div>
+              {mesa.consumo_cents > 0 && (
+                <div style={{ textAlign: 'right' }}>
+                  <div className="ck-label" style={{ margin: 0 }}>Comanda da mesa</div>
+                  <div className="pp-mono" style={{ fontWeight: 600, marginTop: 2 }}>
+                    {brl(mesa.consumo_cents + total)}
+                  </div>
+                </div>
+              )}
+            </div>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button className="pp-btn pp-btn--ghost" onClick={onFechar}>Cancelar</button>
+              <button className={`pp-btn pp-btn--primary ${enviando ? 'is-loading' : ''}`} style={{ flex: 1 }}
+                disabled={enviando || qtd === 0 || semSaldo} onClick={lancar}>
+                Enviar pra cozinha & bar
+              </button>
+            </div>
           </div>
         )}
       </div>

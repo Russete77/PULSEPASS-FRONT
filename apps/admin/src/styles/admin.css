@@ -224,33 +224,49 @@ html, body { overflow-x: hidden; }
    ═══════════════════════════════════════════════════════ */
 .ck-between { display: flex; align-items: center; justify-content: space-between; gap: var(--pp-s-3); }
 
+/* Grade única ordenada por chegada (estrutura da KDSScreen): o card inteiro
+   é tingido pelo estado — de longe, a cozinha lê a cor antes do texto. */
 .ck-kds {
   display: grid; gap: var(--pp-s-4); margin-top: var(--pp-s-5);
-  grid-template-columns: repeat(3, 1fr);
-  align-items: start;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  align-items: stretch;
 }
-@media (max-width: 900px) { .ck-kds { grid-template-columns: 1fr; } }
 
-.ck-kds__col {
+/* Barra de status no topo (fila · espera média · relógio). */
+.ck-kds__topo {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--pp-s-4); flex-wrap: wrap;
+  padding: var(--pp-s-3) var(--pp-s-4);
+  border-radius: var(--pp-r-lg);
   background: var(--pp-glass-1); border: 1px solid var(--pp-edge-1);
-  border-radius: var(--pp-r-lg); padding: var(--pp-s-3);
-  display: flex; flex-direction: column; gap: var(--pp-s-3);
 }
-.ck-kds__head {
-  display: flex; justify-content: space-between; align-items: center;
-  font-family: var(--pp-font-mono); font-size: var(--pp-fs-12);
-  letter-spacing: 0.1em; text-transform: uppercase; color: var(--pp-fg-3);
-  padding: 4px 6px 8px; border-bottom: 1px solid var(--pp-edge-1);
-}
-.ck-kds__vazio {
-  color: var(--pp-fg-5); font-size: var(--pp-fs-13); text-align: center;
-  padding: var(--pp-s-6) 0; margin: 0;
+.ck-kds__relogio {
+  font-family: var(--pp-font-mono); font-weight: 700; font-size: var(--pp-fs-18);
+  padding: 4px 10px; border-radius: var(--pp-r-control);
+  background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2);
+  font-variant-numeric: tabular-nums;
 }
 
 .ck-kds__card {
-  background: var(--pp-ink-850); border: 1px solid var(--pp-edge-2);
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column;
+  background: var(--pp-ink-850); border: 1.5px solid var(--pp-edge-2);
   border-radius: var(--pp-r-card); padding: var(--pp-s-4);
 }
+/* O fio no topo repete a cor do estado — é o que se enxerga a três metros. */
+.ck-kds__stripe { position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--pp-fg-4); }
+.ck-kds__card--fila { border-color: rgba(var(--pp-pulse-rgb), 0.4); background: rgba(var(--pp-pulse-rgb), 0.05); }
+.ck-kds__card--fila .ck-kds__stripe { background: var(--pp-pulse); }
+.ck-kds__card--preparo { border-color: rgba(255, 184, 0, 0.4); background: rgba(255, 184, 0, 0.05); }
+.ck-kds__card--preparo .ck-kds__stripe { background: var(--pp-amber); }
+.ck-kds__card--pronto { border-color: rgba(167, 139, 250, 0.4); background: rgba(167, 139, 250, 0.06); }
+.ck-kds__card--pronto .ck-kds__stripe { background: var(--pp-violet); }
+
+.ck-kds__etapa {
+  font-family: var(--pp-font-mono); font-size: 9px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--pp-fg-4); margin-top: 2px;
+}
+.ck-kds__acao { width: 100%; }
 .ck-kds__origem {
   font-family: var(--pp-font-mono); font-size: 11px; font-weight: 600;
   letter-spacing: 0.06em; text-transform: uppercase; color: var(--pp-fg-3);
@@ -267,14 +283,18 @@ html, body { overflow-x: hidden; }
 }
 .ck-kds__tempo span { font-size: 12px; font-weight: 500; margin-left: 2px; opacity: 0.7; }
 
-.ck-kds__itens { list-style: none; padding: 0; margin: var(--pp-s-3) 0 0; }
+/* Cada item numa caixa escura (estrutura do mockup): sobre o card tingido,
+   é a caixa que devolve contraste ao texto do prato. */
+.ck-kds__itens { list-style: none; padding: 0; margin: var(--pp-s-3) 0 0; display: flex; flex-direction: column; gap: 6px; }
 .ck-kds__itens li {
-  font-size: var(--pp-fs-15); padding: 3px 0; color: var(--pp-fg);
+  font-size: var(--pp-fs-15); color: var(--pp-fg);
+  padding: 7px 10px; border-radius: var(--pp-r-control);
+  background: rgba(0, 0, 0, 0.3);
 }
-.ck-kds__itens b { color: var(--pp-fg-2); margin-right: 4px; }
+.ck-kds__itens b { color: var(--pp-fg-2); margin-right: 4px; font-family: var(--pp-font-mono); }
 /* Observação do cliente ("sem gelo") é o que mais gera prato devolvido.
    Fica em âmbar para não passar batido na leitura rápida. */
-.ck-kds__obs { color: var(--pp-amber); font-style: normal; font-size: var(--pp-fs-13); }
+.ck-kds__obs { display: block; color: var(--pp-amber); font-style: normal; font-size: var(--pp-fs-13); margin-top: 2px; }
 
 /* ── Abas simples (garçom) ── */
 .ck-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
@@ -291,40 +311,71 @@ html, body { overflow-x: hidden; }
   color: var(--pp-pulse-ink); font-weight: 700;
 }
 
-/* ── Mesa no salão ──
-   O garçom lê de longe, andando. O nome da mesa é o maior elemento e o
-   valor em aberto vem logo abaixo — são as duas informações que fazem ele
-   decidir para onde ir. */
+/* ── Mesa no salão (estrutura da WaiterScreen) ──
+   Linhas, não grade: o chip da mesa à esquerda, o que ela tem no meio e o
+   valor em aberto à direita — as três coisas que decidem para onde o garçom
+   vai. Ele lê andando, de cima pra baixo, como uma lista de tarefas. */
+.ck-mesas { display: flex; flex-direction: column; gap: var(--pp-s-3); max-width: 760px; }
 .ck-mesa {
-  display: block; width: 100%; text-align: left; cursor: pointer;
-  background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2);
+  display: flex; align-items: center; gap: var(--pp-s-4);
+  width: 100%; text-align: left; cursor: pointer;
+  background: var(--pp-glass-2); border: 1.5px solid var(--pp-edge-2);
   border-radius: var(--pp-r-lg); padding: var(--pp-s-4);
+  color: var(--pp-fg); font-family: var(--pp-font-body);
   transition: border-color var(--pp-dur-2) var(--pp-ease), background var(--pp-dur-2) var(--pp-ease);
 }
 .ck-mesa:hover { border-color: var(--pp-edge-4); background: var(--pp-glass-3); }
-/* Mesa com prato pronto esperando é a única que muda de cor: é uma
-   chamada de ação, não um status a mais. */
-.ck-mesa--pronta { border-color: rgba(255,184,0,0.45); background: rgba(255,184,0,0.07); }
+/* Mesa com consumo aberto ganha o fio verde; com prato pronto esperando,
+   vira violeta — a mesma cor do "pronto" no KDS, pra ler como UMA coisa. */
+.ck-mesa--ocupada { border-color: rgba(var(--pp-pulse-rgb), 0.3); }
+.ck-mesa--pronta { border-color: rgba(167, 139, 250, 0.5); background: rgba(167, 139, 250, 0.06); }
 
+.ck-mesa__chip {
+  width: 56px; height: 56px; flex-shrink: 0;
+  display: grid; place-items: center;
+  border-radius: var(--pp-r-card);
+  background: var(--pp-glass-2); border: 1px solid var(--pp-edge-3);
+  font-family: var(--pp-font-mono); font-weight: 700; font-size: var(--pp-fs-13);
+  overflow: hidden; padding: 2px; text-align: center; line-height: 1.1;
+}
+.ck-mesa--ocupada .ck-mesa__chip { background: rgba(var(--pp-pulse-rgb), 0.12); border-color: rgba(var(--pp-pulse-rgb), 0.4); color: var(--pp-pulse); }
+.ck-mesa--pronta .ck-mesa__chip { background: rgba(167, 139, 250, 0.14); border-color: rgba(167, 139, 250, 0.5); color: var(--pp-violet); }
+
+.ck-mesa__meio { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
 .ck-mesa__nome {
   font-family: var(--pp-font-display); font-weight: 700;
-  font-size: var(--pp-fs-20); letter-spacing: -0.02em;
+  font-size: var(--pp-fs-16); letter-spacing: -0.015em;
+}
+.ck-mesa__area { color: var(--pp-fg-4); font-family: var(--pp-font-body); font-weight: 400; font-size: var(--pp-fs-13); }
+.ck-mesa__itens {
+  color: var(--pp-fg-4); font-size: var(--pp-fs-12); font-family: var(--pp-font-mono);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .ck-mesa__badge {
+  align-self: flex-start;
   font-family: var(--pp-font-mono); font-size: 11px; font-weight: 600;
   text-transform: uppercase; letter-spacing: 0.05em;
-  color: var(--pp-amber); background: rgba(255,184,0,0.14);
-  border: 1px solid rgba(255,184,0,0.3);
+  color: var(--pp-violet); background: rgba(167, 139, 250, 0.14);
+  border: 1px solid rgba(167, 139, 250, 0.35);
   padding: 3px 8px; border-radius: var(--pp-r-pill); white-space: nowrap;
 }
-.ck-mesa__area { color: var(--pp-fg-4); font-size: var(--pp-fs-12); margin-top: 2px; }
+.ck-mesa__fim { display: flex; align-items: center; gap: 8px; flex-shrink: 0; color: var(--pp-fg-4); }
 .ck-mesa__valor {
   font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-18);
-  font-variant-numeric: tabular-nums; margin-top: 10px;
+  font-variant-numeric: tabular-nums; color: var(--pp-fg);
 }
-.ck-mesa__itens {
-  color: var(--pp-fg-4); font-size: var(--pp-fs-12); margin-top: 6px;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+
+/* Item do cardápio no modal do garçom: linha com stepper; escolhido muda a
+   borda (mesma regra dos lotes na bilheteria). */
+.ck-gcm__item {
+  display: flex; align-items: center; gap: var(--pp-s-3);
+  padding: 8px 10px; margin: 0 -10px;
+  border-radius: var(--pp-r-card);
+  border: 1px solid transparent; border-bottom: 1px solid var(--pp-edge-1);
+}
+.ck-gcm__item.is-on {
+  border-color: rgba(var(--pp-pulse-rgb), 0.35);
+  background: rgba(var(--pp-pulse-rgb), 0.05);
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -336,9 +387,44 @@ html, body { overflow-x: hidden; }
    ═══════════════════════════════════════════════════════ */
 .ck-totem {
   min-height: 100dvh; background: var(--pp-ink-950); color: var(--pp-fg);
-  padding: var(--pp-s-8) var(--pp-s-6) 140px;
+  padding: var(--pp-s-8) var(--pp-s-6);
   display: flex; flex-direction: column; gap: var(--pp-s-5);
 }
+/* Split da TotemScreen: produtos + carrinho lateral sempre visível. */
+.ck-totem--split {
+  display: grid; grid-template-columns: 1fr 380px;
+  gap: var(--pp-s-6); align-items: start;
+}
+@media (max-width: 980px) {
+  /* Em tela estreita o carrinho desce pra baixo do cardápio — o totem de
+     verdade roda em tablet deitado, isto é só pra tela não quebrar. */
+  .ck-totem--split { grid-template-columns: 1fr; }
+}
+.ck-totem__produtos { display: flex; flex-direction: column; gap: var(--pp-s-5); min-width: 0; }
+.ck-totem__carrinho {
+  position: sticky; top: var(--pp-s-6);
+  display: flex; flex-direction: column;
+  padding: var(--pp-s-5); border-radius: var(--pp-r-lg);
+  background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2);
+  box-shadow: var(--pp-shine), var(--pp-shadow-1);
+  min-height: 60dvh;
+}
+@media (max-width: 980px) { .ck-totem__carrinho { position: static; min-height: 0; } }
+.ck-totem__cartitulo {
+  font-family: var(--pp-font-display); font-weight: 700;
+  font-size: var(--pp-fs-24); letter-spacing: -0.02em; margin: 0 0 var(--pp-s-4);
+}
+.ck-totem__caritens { flex: 1; display: flex; flex-direction: column; gap: var(--pp-s-3); }
+.ck-totem__caritem {
+  display: flex; align-items: center; gap: var(--pp-s-3);
+  padding: var(--pp-s-3) var(--pp-s-4); border-radius: var(--pp-r-card);
+  background: var(--pp-glass-1); border: 1px solid var(--pp-edge-1);
+}
+/* No carrinho o passo é menor que no card antigo (52px): continua alvo
+   confortável de dedo e cabem mais itens na coluna. */
+.ck-totem__caritem .ck-totem__passo { margin-top: 0; }
+.ck-totem__caritem .ck-totem__passo button { width: 52px; height: 52px; font-size: 22px; }
+.ck-totem__carpe { margin-top: var(--pp-s-5); padding-top: var(--pp-s-4); border-top: 1px solid var(--pp-edge-2); }
 .ck-totem__topo { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--pp-s-4); }
 .ck-totem h1 {
   font-family: var(--pp-font-display); font-weight: 700;
@@ -355,8 +441,25 @@ html, body { overflow-x: hidden; }
 .ck-totem__item {
   background: var(--pp-glass-2); border: 2px solid var(--pp-edge-2);
   border-radius: var(--pp-r-lg); padding: var(--pp-s-5);
-  display: flex; flex-direction: column; gap: 6px; min-height: 168px;
+  display: flex; flex-direction: column; gap: 6px; min-height: 140px;
+  position: relative; overflow: hidden;
   transition: border-color var(--pp-dur-2) var(--pp-ease), background var(--pp-dur-2) var(--pp-ease);
+}
+/* Fio de cor da categoria no topo do card (estrutura da TotemScreen). */
+.ck-totem__fio { position: absolute; top: 0; left: 0; right: 0; height: 4px; opacity: 0.6; }
+/* O "+" do card: alvo de 64px, como pede tela operada de pé. */
+.ck-totem__mais {
+  width: 64px; height: 64px; flex-shrink: 0; border-radius: var(--pp-r-control);
+  background: var(--pp-glass-3); border: 1px solid var(--pp-edge-3);
+  color: var(--pp-fg); font-size: 30px; line-height: 1; font-weight: 700;
+}
+.ck-totem__mais:hover { background: var(--pp-pulse); color: var(--pp-pulse-ink); }
+.ck-totem__badgeqtd {
+  display: inline-grid; place-items: center; margin-left: 10px;
+  min-width: 30px; height: 30px; padding: 0 8px; border-radius: var(--pp-r-pill);
+  background: var(--pp-pulse); color: var(--pp-pulse-ink);
+  font-family: var(--pp-font-mono); font-size: var(--pp-fs-15); font-weight: 700;
+  vertical-align: middle;
 }
 /* Item escolhido muda a BORDA, não o fundo: com meia dúzia selecionados, um
    fundo aceso em cada deixa a tela ilegível. */
@@ -595,6 +698,169 @@ html, body { overflow-x: hidden; }
 .adm-orgfee { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 14px 0; border-bottom: 1px solid var(--pp-edge-1); }
 .adm-orgfee:last-of-type { border-bottom: none; }
 .adm-orgfee__pct { font-family: var(--pp-font-mono); font-weight: 700; font-size: var(--pp-fs-18); font-variant-numeric: tabular-nums; min-width: 64px; text-align: right; }
+
+/* ── Bilheteria (BoxOfficeScreen) ──
+   Seleção à esquerda, comanda fixa à direita. Estrutura do mockup; nada dos
+   gradientes com glow do desenho — botão principal é acento chapado (v4). */
+.ck-split { display: grid; grid-template-columns: 1fr 340px; gap: var(--pp-s-5); align-items: start; }
+@media (max-width: 980px) { .ck-split { grid-template-columns: 1fr; } }
+
+.ck-bo-lotes { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: var(--pp-s-3); }
+.ck-bo-lote {
+  padding: var(--pp-s-4); border-radius: var(--pp-r-card);
+  background: var(--pp-glass-1); border: 1.5px solid var(--pp-edge-2);
+  transition: border-color var(--pp-dur-2) var(--pp-ease), background var(--pp-dur-2) var(--pp-ease);
+}
+/* Lote na comanda muda a BORDA, não o fundo — com três selecionados, três
+   fundos acesos deixariam a grade ilegível. */
+.ck-bo-lote.is-on { border-color: var(--pp-pulse); background: rgba(var(--pp-pulse-rgb), 0.05); }
+.ck-bo-lote.is-off { opacity: 0.5; }
+.ck-bo-lote__nome { font-weight: 700; font-size: var(--pp-fs-14); }
+.ck-bo-lote__preco {
+  font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-24);
+  letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin-top: 6px;
+}
+.ck-bo-lote__resta { font-size: var(--pp-fs-12); color: var(--pp-fg-4); margin-top: 2px; font-family: var(--pp-font-mono); }
+
+/* Forma de pagamento em cards com rádio (estrutura do mockup). */
+.ck-pays { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--pp-s-3); }
+.ck-pay {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+  padding: var(--pp-s-4); border-radius: var(--pp-r-card); text-align: left;
+  background: var(--pp-glass-1); border: 1.5px solid var(--pp-edge-2);
+  color: var(--pp-fg); font-family: var(--pp-font-body); position: relative;
+  transition: border-color var(--pp-dur-2) var(--pp-ease);
+}
+.ck-pay.is-on { border-color: var(--pp-pulse); background: rgba(var(--pp-pulse-rgb), 0.05); }
+.ck-pay__radio {
+  position: absolute; top: 14px; right: 14px;
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 1.5px solid var(--pp-edge-4); box-sizing: border-box;
+}
+.ck-pay.is-on .ck-pay__radio { border: 5px solid var(--pp-pulse); }
+.ck-pay__l { font-weight: 700; font-size: var(--pp-fs-14); }
+.ck-pay__d { font-size: var(--pp-fs-12); color: var(--pp-fg-4); }
+
+/* Comanda: acompanha a rolagem — o total nunca sai de vista. */
+.ck-bo-comanda__in {
+  position: sticky; top: 84px;
+  padding: var(--pp-s-5); border-radius: var(--pp-r-lg);
+  background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2);
+  box-shadow: var(--pp-shine), var(--pp-shadow-1);
+}
+@media (max-width: 980px) { .ck-bo-comanda__in { position: static; } }
+.ck-bo-caixa {
+  display: flex; gap: var(--pp-s-4); flex-wrap: wrap;
+  padding-bottom: var(--pp-s-3); border-bottom: 1px dashed var(--pp-edge-2);
+}
+.ck-bo-caixa .lbl { font-family: var(--pp-font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--pp-fg-4); }
+.ck-bo-caixa .val { font-family: var(--pp-font-mono); font-weight: 700; font-size: var(--pp-fs-15); font-variant-numeric: tabular-nums; margin-top: 2px; }
+.ck-bo-itens { padding: var(--pp-s-2) 0; }
+.ck-bo-total { padding-top: var(--pp-s-3); border-top: 1px dashed var(--pp-edge-2); }
+
+/* ── Wizard de criação de evento (EventWizardScreen) ──
+   Trilha de passos na lateral + conteúdo + barra de ação embaixo. Só a
+   ESTRUTURA veio do mockup: cor, raio e tipo saem dos tokens v4 (a barra de
+   progresso do desenho tinha gradiente com glow; aqui é acento chapado). */
+.ck-wiz { display: grid; grid-template-columns: 280px 1fr; gap: var(--pp-s-8); align-items: start; }
+@media (max-width: 900px) { .ck-wiz { grid-template-columns: 1fr; gap: var(--pp-s-5); } }
+
+.ck-wiz__side {
+  position: sticky; top: 84px;
+  padding: var(--pp-s-5); border-radius: var(--pp-r-lg);
+  background: var(--pp-glass-1); border: 1px solid var(--pp-edge-1);
+}
+@media (max-width: 900px) { .ck-wiz__side { position: static; } }
+.ck-wiz__brand { margin-bottom: var(--pp-s-4); }
+.ck-wiz__title {
+  font-family: var(--pp-font-display); font-weight: 700;
+  font-size: var(--pp-fs-18); letter-spacing: -0.02em; margin-bottom: 2px;
+}
+.ck-wiz__progress {
+  height: 4px; border-radius: 99px; background: var(--pp-glass-2);
+  overflow: hidden; margin-bottom: var(--pp-s-5);
+}
+.ck-wiz__progress i {
+  display: block; height: 100%; border-radius: 99px;
+  background: var(--pp-pulse);
+  transition: width var(--pp-dur-3) var(--pp-ease);
+}
+
+.ck-wiz__steps { list-style: none; margin: 0; padding: 0; }
+.ck-wiz__step { position: relative; }
+/* O fio que liga um passo ao próximo — vira acento quando o passo foi feito. */
+.ck-wiz__step:not(:last-child)::after {
+  content: ''; position: absolute; left: 13px; top: 38px; bottom: -2px;
+  width: 1.5px; background: var(--pp-edge-2);
+}
+.ck-wiz__step.is-done:not(:last-child)::after { background: rgba(var(--pp-pulse-rgb), 0.5); }
+.ck-wiz__step > button {
+  display: flex; gap: 12px; align-items: flex-start; width: 100%;
+  padding: 10px 0; background: none; border: 0; text-align: left;
+  color: inherit; font-family: var(--pp-font-body);
+}
+.ck-wiz__step > button:disabled { cursor: default; }
+.ck-wiz__dot {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  display: grid; place-items: center; font-size: 12px; font-weight: 700;
+  font-family: var(--pp-font-mono); position: relative; z-index: 1;
+  background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2);
+  color: var(--pp-fg-4);
+}
+.ck-wiz__step.is-on .ck-wiz__dot {
+  background: rgba(var(--pp-pulse-rgb), 0.12);
+  border: 1.5px solid var(--pp-pulse); color: var(--pp-pulse);
+}
+.ck-wiz__step.is-done .ck-wiz__dot {
+  background: var(--pp-pulse); border-color: transparent; color: var(--pp-pulse-ink);
+}
+.ck-wiz__n { display: block; font-size: var(--pp-fs-14); font-weight: 600; color: var(--pp-fg-4); }
+.ck-wiz__step.is-on .ck-wiz__n { color: var(--pp-pulse); }
+.ck-wiz__step.is-done .ck-wiz__n { color: var(--pp-fg); }
+.ck-wiz__d { display: block; font-size: var(--pp-fs-12); color: var(--pp-fg-4); margin-top: 2px; }
+
+.ck-wiz__main { min-width: 0; }
+.ck-wiz__foot {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--pp-s-3); flex-wrap: wrap;
+  margin-top: var(--pp-s-6); padding-top: var(--pp-s-5);
+  border-top: 1px solid var(--pp-edge-1);
+  max-width: 760px;
+}
+
+/* Lote como card com fio de cor lateral (estrutura da lista de lotes). */
+.ck-lote {
+  display: flex; gap: var(--pp-s-4);
+  padding: var(--pp-s-4); border-radius: var(--pp-r-card);
+  background: var(--pp-glass-1); border: 1px solid var(--pp-edge-2);
+}
+.ck-lote__fio {
+  width: 5px; border-radius: 3px; flex-shrink: 0; align-self: stretch;
+  background: var(--pp-pulse); opacity: 0.7;
+}
+.ck-lote__corpo { flex: 1; min-width: 0; }
+.ck-lote__add {
+  height: 54px; border-radius: var(--pp-r-card);
+  border: 1px dashed var(--pp-edge-4); background: var(--pp-glass-1);
+  color: var(--pp-fg-2); font-size: var(--pp-fs-14); font-weight: 600;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: var(--pp-font-body);
+}
+.ck-lote__add:hover { background: var(--pp-glass-2); color: var(--pp-fg); }
+
+/* Resumo do passo final. */
+.ck-wiz__resumo { margin: var(--pp-s-3) 0 0; }
+.ck-wiz__resumo > div {
+  display: flex; gap: var(--pp-s-4); padding: 10px 0;
+  border-bottom: 1px solid var(--pp-edge-1); font-size: var(--pp-fs-14);
+}
+.ck-wiz__resumo > div:last-child { border-bottom: none; }
+.ck-wiz__resumo dt {
+  width: 130px; flex-shrink: 0; color: var(--pp-fg-3);
+  font-family: var(--pp-font-mono); font-size: var(--pp-fs-12);
+  text-transform: uppercase; letter-spacing: 0.06em; padding-top: 2px;
+}
+.ck-wiz__resumo dd { margin: 0; min-width: 0; }
 
 /* ── Matriz de permissões ── */
 .ck-permlink {
