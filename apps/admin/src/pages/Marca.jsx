@@ -228,7 +228,7 @@ export default function Marca() {
               </div>
               <button style={{
                 width: '100%', height: 46, borderRadius: 'var(--pp-r-control)',
-                background: cor, color: '#06070A', border: 0,
+                background: cor, color: 'var(--pp-ink-950)', border: 0,
                 fontWeight: 700, fontSize: 15, cursor: 'default',
               }}>
                 Comprar ingresso

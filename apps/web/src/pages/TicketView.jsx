@@ -220,7 +220,7 @@ function QrPlaceholder() {
       aria-label="QR do ingresso"
       style={{
         width: 200, height: 200, borderRadius: 8,
-        background: 'repeating-conic-gradient(#06070A 0% 25%, #fff 0% 50%) 0 / 16px 16px',
+        background: 'repeating-conic-gradient(var(--pp-ink-950) 0% 25%, #fff 0% 50%) 0 / 16px 16px',
       }}
     />
   );

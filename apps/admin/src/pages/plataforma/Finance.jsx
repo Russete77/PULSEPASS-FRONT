@@ -19,7 +19,7 @@ export default function Finance() {
           </div>
 
           <div className="adm-kpis" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
-            <div className="adm-kpi" style={{ '--k': '#00FF85' }}><div className="l">GMV total</div><div className="v">{brl(fin.gmv_cents)}</div></div>
+            <div className="adm-kpi" style={{ '--k': 'var(--pp-pulse)' }}><div className="l">GMV total</div><div className="v">{brl(fin.gmv_cents)}</div></div>
             <div className="adm-kpi" style={{ '--k': '#FF3D88' }}><div className="l">Receita plataforma</div><div className="v">{brl(fin.revenue_cents)}</div><div className="d">taxas de serviço</div></div>
             <div className="adm-kpi" style={{ '--k': '#A78BFA' }}><div className="l">Take rate</div><div className="v">{fin.take_rate_pct}%</div></div>
             <div className="adm-kpi" style={{ '--k': '#22D3EE' }}><div className="l">Repasse aos produtores</div><div className="v">{brl(fin.net_to_producers_cents)}</div></div>

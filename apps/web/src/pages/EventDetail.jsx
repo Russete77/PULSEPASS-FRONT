@@ -11,6 +11,19 @@ import { brl, eventDate } from '../lib/format.js';
 
 const emptySel = { full: 0, half: 0 };
 
+// Rótulo em pt-BR da categoria que vem do banco (events.category). O mockup
+// mostra três etiquetas no topo do herói — aqui só entra a que existe de
+// verdade; "+18" e "Cashless" não têm campo correspondente no evento.
+const CATEGORIA_ROTULO = {
+  festa: 'Festa', show: 'Show', standup: 'Stand-up', teatro: 'Teatro',
+  esporte: 'Esporte', gastronomia: 'Gastronomia', workshop: 'Workshop',
+};
+
+// A partir de quantos ingressos restantes o lote passa a mostrar o estoque.
+// "12 restantes" apressa a decisão; "428 restantes" é ruído — e gasta o
+// recurso justamente para quando ele importa.
+const ESTOQUE_BAIXO = 20;
+
 export default function EventDetail() {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -148,10 +161,17 @@ export default function EventDetail() {
               <h1 className="pp-hero__title">{event.title}</h1>
             </div>
           </div>
+          {/* As etiquetas do herói agora dizem a verdade sobre ESTE evento.
+              Antes eram fixas — "Lista" e "Bar cashless" apareciam em todo
+              evento, inclusive nos que não têm nem lista nem bar, e prometer
+              cashless para quem vai pagar em dinheiro na porta cria briga no
+              balcão. O detalhe público devolve `category` e os lotes; não
+              devolve lista nem cardápio, então essas duas saíram. */}
           <div className="pp-feature-chips">
-            <span className="pp-badge pp-badge--pulse">Ingressos</span>
-            <span className="pp-badge pp-badge--violet">Lista</span>
-            <span className="pp-badge pp-badge--cyan">Bar cashless</span>
+            {CATEGORIA_ROTULO[event.category] && (
+              <span className="pp-badge pp-badge--violet">{CATEGORIA_ROTULO[event.category]}</span>
+            )}
+            {event.tiers.length > 0 && <span className="pp-badge pp-badge--pulse">Ingressos</span>}
           </div>
 
           <div className="pp-card pp-card--pad">
@@ -231,9 +251,15 @@ export default function EventDetail() {
             const combined = s.full + s.half;
             const st = t.sale_state ?? (t.available <= 0 ? 'sold_out' : 'on_sale');
             const locked = st !== 'on_sale';
+            // Escassez só quando é verdade: abaixo do limite, o número real
+            // ajuda a decidir. Acima, "restam 428" é ruído — e usar urgência
+            // onde ela não existe queima a credibilidade do aviso que importa.
             const note = st === 'upcoming' ? `Vendas a partir de ${eventDate(t.sales_start)}`
               : st === 'ended' ? 'Vendas encerradas'
-                : st === 'sold_out' ? 'Esgotado' : '';
+                : st === 'sold_out' ? 'Esgotado'
+                  : t.available > 0 && t.available <= ESTOQUE_BAIXO
+                    ? `Restam ${t.available} ${t.available === 1 ? 'ingresso' : 'ingressos'}`
+                    : '';
             return (
               <div key={t.id} style={{ borderBottom: '1px solid var(--pp-edge-2)', paddingBottom: 10, marginBottom: 10 }}>
                 <TierRow

@@ -6,7 +6,7 @@ import { api } from '../../lib/api.js';
 import { brl, dateTime } from '../../lib/format.js';
 
 const KIND = {
-  payment: { icon: 'check', color: '#00FF85', label: 'Pagamento' },
+  payment: { icon: 'check', color: 'var(--pp-pulse)', label: 'Pagamento' },
   refund: { icon: 'refresh', color: '#FF3D88', label: 'Reembolso' },
   event: { icon: 'calendar', color: '#22D3EE', label: 'Evento' },
   org: { icon: 'users', color: '#A78BFA', label: 'Org' },

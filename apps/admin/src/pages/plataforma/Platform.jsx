@@ -4,7 +4,7 @@ import { Loading, ErrorBox } from '../../components/Shell.jsx';
 import { api } from '../../lib/api.js';
 import { brl } from '../../lib/format.js';
 
-const CITY_COLORS = ['#00FF85', '#A78BFA', '#22D3EE', '#FF3D88', '#FFB800', 'rgba(255,255,255,0.3)'];
+const CITY_COLORS = ['var(--pp-pulse)', '#A78BFA', '#22D3EE', '#FF3D88', '#FFB800', 'rgba(255,255,255,0.3)'];
 
 export default function Platform() {
   const [stats, setStats] = useState(null);
@@ -24,11 +24,11 @@ export default function Platform() {
           </div>
 
           <div className="adm-kpis">
-            <Kpi l="GMV total" v={brl(stats.gmv_total_cents)} d={`${stats.orders_count} transações`} c="#00FF85" />
+            <Kpi l="GMV total" v={brl(stats.gmv_total_cents)} d={`${stats.orders_count} transações`} c="var(--pp-pulse)" />
             <Kpi l="GMV 24h" v={brl(stats.gmv_24h_cents)} d="ingressos + bar" c="#FF3D88" />
             <Kpi l="Organizações" v={stats.orgs_count} d="ativas na plataforma" c="#A78BFA" />
             <Kpi l="Eventos ao vivo" v={stats.events_live} d={`de ${stats.events_total} totais`} c="#22D3EE" />
-            <Kpi l="Ingressos emitidos" v={stats.tickets_count} d={stats.drift_count === 0 ? 'ledger íntegro' : `${stats.drift_count} divergências`} c={stats.drift_count === 0 ? '#00FF85' : '#FFB800'} />
+            <Kpi l="Ingressos emitidos" v={stats.tickets_count} d={stats.drift_count === 0 ? 'ledger íntegro' : `${stats.drift_count} divergências`} c={stats.drift_count === 0 ? 'var(--pp-pulse)' : '#FFB800'} />
           </div>
 
           <div className="pp-cols-2" style={{ gridTemplateColumns: '1.4fr 1fr', alignItems: 'start' }}>

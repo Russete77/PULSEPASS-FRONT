@@ -29,7 +29,7 @@ export default function Orgs() {
           </div>
 
           <div className="adm-kpis" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
-            <div className="adm-kpi" style={{ '--k': '#00FF85' }}><div className="l">Orgs ativas</div><div className="v">{orgs.length}</div></div>
+            <div className="adm-kpi" style={{ '--k': 'var(--pp-pulse)' }}><div className="l">Orgs ativas</div><div className="v">{orgs.length}</div></div>
             <div className="adm-kpi" style={{ '--k': '#A78BFA' }}><div className="l">GMV agregado</div><div className="v">{brl(gmvTotal)}</div></div>
             <div className="adm-kpi" style={{ '--k': '#22D3EE' }}><div className="l">Com vendas</div><div className="v">{orgs.filter((o) => o.gmv_cents > 0).length}</div></div>
           </div>

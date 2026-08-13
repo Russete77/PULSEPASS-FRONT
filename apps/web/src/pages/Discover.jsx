@@ -18,13 +18,18 @@ import { cidadeSalva, salvarCidade, detectarCidade, CIDADES_CONHECIDAS } from '.
  * dentro; seção vazia com título é pior que seção ausente.
  */
 
+// Capa provisória de evento sem cover_url. Os quatro desenhos vêm do Flyer do
+// design system, mas as COREs saem dos tokens v4 — o mockup ainda carrega o
+// verde fluorescente antigo (#00FF85) e o preto azulado (#06070A), que foram
+// justamente o que a v4 aposentou. Hex cravado aqui reintroduziria a paleta
+// velha por uma porta lateral e ela ia desalinhar de tudo à volta.
 const FLYER_GRADS = [
-  'radial-gradient(80% 80% at 20% 20%, #22D3EE, transparent 60%), radial-gradient(80% 80% at 80% 80%, #A78BFA, transparent 60%), #0a0a0c',
-  'linear-gradient(135deg, #FF3D88 0%, #FFB800 100%)',
-  'radial-gradient(circle at 50% 100%, #00FF85, transparent 70%), linear-gradient(180deg, #0a0a0c, rgba(167,139,250,0.25))',
-  'radial-gradient(120% 60% at 50% 0%, #A78BFA, transparent 60%), #0a0a0c',
-  'radial-gradient(80% 80% at 70% 20%, #00FF85, transparent 60%), radial-gradient(80% 80% at 20% 90%, #22D3EE, transparent 60%), #0a0a0c',
-  'radial-gradient(90% 70% at 30% 10%, #FF3D88, transparent 60%), #0a0a0c',
+  'radial-gradient(80% 80% at 20% 20%, var(--pp-cyan), transparent 60%), radial-gradient(80% 80% at 80% 80%, var(--pp-violet), transparent 60%), var(--pp-ink-950)',
+  'linear-gradient(135deg, var(--pp-pink) 0%, var(--pp-amber) 100%)',
+  'radial-gradient(circle at 50% 100%, var(--pp-pulse), transparent 70%), linear-gradient(180deg, var(--pp-ink-950), var(--pp-ink-700))',
+  'radial-gradient(120% 60% at 50% 0%, var(--pp-violet), transparent 60%), var(--pp-ink-950)',
+  'radial-gradient(80% 80% at 70% 20%, var(--pp-pulse), transparent 60%), radial-gradient(80% 80% at 20% 90%, var(--pp-cyan), transparent 60%), var(--pp-ink-950)',
+  'radial-gradient(90% 70% at 30% 10%, var(--pp-pink), transparent 60%), var(--pp-ink-950)',
 ];
 
 const CATEGORIAS = [
@@ -120,14 +125,21 @@ function Trilha({ titulo, legenda, eventos, inicio = 0 }) {
   if (!eventos.length) return null;
   return (
     <section style={{ marginTop: 'var(--pp-s-8)' }}>
-      <div className="pp-between" style={{ marginBottom: 'var(--pp-s-4)' }}>
+      {/* Eyebrow ACIMA do título, como na HomeScreen: a etiqueta em mono
+          caixa-alta é o degrau que separa uma trilha da outra quando três
+          delas se sucedem na mesma rolagem. Embaixo do título ela virava
+          legenda e o olho perdia o corte entre as seções. */}
+      <div className="pp-between" style={{ marginBottom: 'var(--pp-s-4)', alignItems: 'flex-end' }}>
         <div>
-          <h2 className="pp-t-section" style={{ margin: 0 }}>{titulo}</h2>
-          {legenda && <div className="pp-meta" style={{ marginTop: 2 }}>{legenda}</div>}
+          {legenda && <div className="pp-eyebrow">{legenda}</div>}
+          <h2 className="pp-t-section" style={{ margin: legenda ? '2px 0 0' : 0 }}>{titulo}</h2>
         </div>
         <span className="pp-muted-2 pp-num" style={{ fontSize: 13 }}>{eventos.length}</span>
       </div>
-      <div className="pp-grid-auto">
+      {/* pp-grid e não pp-grid-auto: o desenho é de DUAS colunas no telefone.
+          O auto-fill de 240px colapsa para uma coluna em 375px e a vitrine
+          vira uma lista vertical de cartazes gigantes. */}
+      <div className="pp-grid">
         {eventos.map((ev, i) => <Flyer key={ev.id} ev={ev} i={inicio + i} />)}
       </div>
     </section>

@@ -189,7 +189,7 @@ input, button, select, textarea { font-family: inherit; }
 .pp-pixcode code { flex: 1; min-width: 0; font-family: var(--pp-font-mono); font-size: var(--pp-fs-12); color: rgba(255,255,255,0.75); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .pp-ordersum { display: flex; align-items: center; gap: 12px; padding: 16px; border-radius: 18px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); }
-.pp-ordersum__thumb { width: 48px; height: 48px; border-radius: 10px; flex-shrink: 0; background: radial-gradient(#00FF85, transparent), #A78BFA; }
+.pp-ordersum__thumb { width: 48px; height: 48px; border-radius: 10px; flex-shrink: 0; background: radial-gradient(var(--pp-pulse), transparent), var(--pp-violet); }
 .pp-ordersum__price { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-money); letter-spacing: -0.03em; color: var(--pp-fg); font-variant-numeric: tabular-nums; }
 
 /* ══ TICKET QR (spec TicketScreen) — moldura cônica rotativa ══ */
@@ -199,7 +199,7 @@ input, button, select, textarea { font-family: inherit; }
 .pp-ticketcard__top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .pp-ticketcard__date { font-family: var(--pp-font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--pp-pulse); }
 .pp-ticketcard__title { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-20); line-height: 1.05; letter-spacing: -0.02em; margin-top: 6px; }
-.pp-ticketcard__thumb { width: 56px; height: 56px; border-radius: 14px; flex-shrink: 0; background: radial-gradient(#00FF85, transparent), #A78BFA; border: 1px solid rgba(255,255,255,0.1); }
+.pp-ticketcard__thumb { width: 56px; height: 56px; border-radius: 14px; flex-shrink: 0; background: radial-gradient(var(--pp-pulse), transparent), var(--pp-violet); border: 1px solid rgba(255,255,255,0.1); }
 .pp-perf { position: relative; margin: 16px -20px; height: 1px; }
 .pp-perf::before { content: ''; position: absolute; inset: 0; border-top: 1.5px dashed rgba(255,255,255,0.15); }
 .pp-perf__notch { position: absolute; top: -10px; width: 20px; height: 20px; border-radius: 50%; background: var(--pp-ink-950); }
@@ -219,7 +219,7 @@ input, button, select, textarea { font-family: inherit; }
 /* ── Ticket list card (carteira de ingressos) ── */
 .pp-tktlist { display: flex; flex-direction: column; gap: var(--pp-s-3); max-width: 620px; }
 .pp-tkt { display: flex; align-items: center; gap: 14px; padding: 14px; }
-.pp-tkt__thumb { width: 54px; height: 54px; border-radius: 14px; flex-shrink: 0; background: radial-gradient(#00FF85, transparent), #A78BFA; border: 1px solid rgba(255,255,255,0.1); display: grid; place-items: center; font-family: var(--pp-font-display); font-weight: 700; color: rgba(255,255,255,0.85); }
+.pp-tkt__thumb { width: 54px; height: 54px; border-radius: 14px; flex-shrink: 0; background: radial-gradient(var(--pp-pulse), transparent), var(--pp-violet); border: 1px solid rgba(255,255,255,0.1); display: grid; place-items: center; font-family: var(--pp-font-display); font-weight: 700; color: rgba(255,255,255,0.85); }
 .pp-tkt__date { font-family: var(--pp-font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--pp-pulse); }
 .pp-tkt__title { font-family: var(--pp-font-display); font-weight: 600; font-size: var(--pp-fs-16); letter-spacing: -0.01em; margin-top: 2px; }
 .pp-tkt__tier { font-size: var(--pp-fs-13); color: var(--pp-fg-3); margin-top: 2px; }
@@ -228,7 +228,7 @@ input, button, select, textarea { font-family: inherit; }
 /* ── Order list card ── */
 .pp-orderlist { display: flex; flex-direction: column; gap: var(--pp-s-3); max-width: 640px; }
 .pp-order { display: flex; align-items: center; gap: 14px; padding: 14px; }
-.pp-order__thumb { width: 48px; height: 48px; border-radius: 12px; flex-shrink: 0; background: radial-gradient(#00FF85, transparent), #A78BFA; border: 1px solid rgba(255,255,255,0.1); display: grid; place-items: center; font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-14); color: rgba(255,255,255,0.85); }
+.pp-order__thumb { width: 48px; height: 48px; border-radius: 12px; flex-shrink: 0; background: radial-gradient(var(--pp-pulse), transparent), var(--pp-violet); border: 1px solid rgba(255,255,255,0.1); display: grid; place-items: center; font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-14); color: rgba(255,255,255,0.85); }
 .pp-order__title { font-family: var(--pp-font-display); font-weight: 600; font-size: var(--pp-fs-16); }
 .pp-order__date { font-size: var(--pp-fs-12); color: var(--pp-fg-3); margin-top: 2px; }
 .pp-order__right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
