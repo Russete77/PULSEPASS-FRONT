@@ -23,6 +23,7 @@ import Fechamento from './pages/Fechamento.jsx';
 import Camarotes from './pages/Camarotes.jsx';
 import Promoters from './pages/Promoters.jsx';
 import Cupons from './pages/Cupons.jsx';
+import Marketing from './pages/Marketing.jsx';
 import Conciliacao from './pages/Conciliacao.jsx';
 import Equipe from './pages/Equipe.jsx';
 import Repasse from './pages/Repasse.jsx';
@@ -71,6 +72,7 @@ const TITULOS = criarResolvedorDeTitulo({
   '/eventos/:id/camarotes': 'Camarotes',
   '/eventos/:id/promoters': 'Promoters',
   '/eventos/:id/cupons': 'Cupons',
+  '/eventos/:id/marketing': 'Marketing',
   '/eventos/:id/conciliacao': 'Financeiro',
   '/eventos/:id/equipe': 'Equipe',
   '/repasse': 'Repasse',
@@ -112,6 +114,7 @@ export default function App() {
       <Route path="/eventos/:id/camarotes" element={<Protected><Camarotes /></Protected>} />
       <Route path="/eventos/:id/promoters" element={<Protected><Promoters /></Protected>} />
       <Route path="/eventos/:id/cupons" element={<Protected><Cupons /></Protected>} />
+      <Route path="/eventos/:id/marketing" element={<Protected><Marketing /></Protected>} />
       <Route path="/eventos/:id/conciliacao" element={<Protected><Conciliacao /></Protected>} />
       <Route path="/eventos/:id/equipe" element={<Protected><Equipe /></Protected>} />
       <Route path="/repasse" element={<Protected><Repasse /></Protected>} />

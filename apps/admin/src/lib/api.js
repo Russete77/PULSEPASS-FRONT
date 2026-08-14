@@ -186,6 +186,12 @@ export const api = {
   // Cupons de desconto (Sympla)
   listCoupons: (id) => request(`/admin/events/${id}/coupons`),
   createCoupon: (id, body) => request(`/admin/events/${id}/coupons`, { method: 'POST', body }),
+
+  // Campanhas de e-mail — tamanho do segmento é consultado, nunca estimado.
+  marketingSegments: (id) => request(`/admin/events/${id}/marketing/segments`),
+  listCampaigns: (id) => request(`/admin/events/${id}/marketing/campaigns`),
+  createCampaign: (id, body) => request(`/admin/events/${id}/marketing/campaigns`, { method: 'POST', body }),
+  sendCampaign: (campaignId) => request(`/admin/marketing/campaigns/${campaignId}/send`, { method: 'POST' }),
   setCouponActive: (couponId, active) => request(`/admin/coupons/${couponId}`, { method: 'PATCH', body: { active } }),
   deleteCoupon: (couponId) => request(`/admin/coupons/${couponId}`, { method: 'DELETE' }),
 

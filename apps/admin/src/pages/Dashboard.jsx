@@ -25,6 +25,7 @@ const STATIONS = [
   { to: '/auditoria', label: 'Auditoria' },
   { to: '/promoters', label: 'Promoters' },
   { to: '/cupons', label: 'Cupons' },
+  { to: '/marketing', label: 'Marketing' },
   { to: '/camarotes', label: 'Camarotes' },
   { to: '/conciliacao', label: 'Financeiro' },
   { to: '/equipe', label: 'Equipe' },
