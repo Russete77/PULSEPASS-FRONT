@@ -4,12 +4,17 @@ import { Page } from '../components/Layout.jsx';
 import { ErrorBox } from '../components/States.jsx';
 import CampoSenha from '@pulsepass/shared/CampoSenha';
 import { useAuth } from '../context/AuthContext.jsx';
+import { onboardingVisto } from '../lib/onboarding.js';
 
 export default function Login() {
   const { signInWithPassword, signUp, resetPassword, authEnabled } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const redirectTo = location.state?.from?.pathname ?? '/meus-ingressos';
+  // Quem chegou aqui empurrado por uma tela protegida (o checkout, o bar, o
+  // ingresso) tem um destino em mente. Só quem veio criar conta por conta
+  // própria pode ser levado ao tour — e mesmo esse, uma vez só.
+  const temDestino = Boolean(location.state?.from);
 
   const [mode, setMode] = useState('login'); // login | signup | forgot
   const [fullName, setFullName] = useState('');
@@ -43,7 +48,7 @@ export default function Login() {
         const { error: err, needsConfirmation } = await signUp(email, password, { fullName, cpf, phone });
         if (err) throw err;
         if (needsConfirmation) setInfo('Conta criada! Confirme seu e-mail para entrar.');
-        else navigate(redirectTo, { replace: true });
+        else navigate(!temDestino && !onboardingVisto() ? '/bem-vindo' : redirectTo, { replace: true });
       }
     } catch (err) {
       setError(err.message ?? 'Falha na autenticação');

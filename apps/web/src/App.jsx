@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useNavegacaoAcessivel, criarResolvedorDeTitulo } from '@pulsepass/shared/navegacao';
 import { useAuth } from './context/AuthContext.jsx';
+import { onboardingVisto } from './lib/onboarding.js';
 import { Loading } from './components/States.jsx';
 
 import Discover from './pages/Discover.jsx';
@@ -19,6 +20,7 @@ import Assentos from './pages/Assentos.jsx';
 import TicketView from './pages/TicketView.jsx';
 import Perfil from './pages/Perfil.jsx';
 import Login from './pages/Login.jsx';
+import Bemvindo from './pages/Bemvindo.jsx';
 import GuestSignup from './pages/GuestSignup.jsx';
 import RedefinirSenha from './pages/RedefinirSenha.jsx';
 
@@ -30,8 +32,22 @@ function Protected({ children }) {
   return children;
 }
 
+/**
+ * Primeiro acesso — só na vitrine.
+ *
+ * O tour intercepta "/" e mais nada. Quem chega por link de evento, por link
+ * de lista de promoter ou já no meio de um checkout entra direto no que veio
+ * fazer: tutorial entre a pessoa e a compra é venda perdida. A vitrine é a
+ * única URL de quem chegou sem destino — é lá que apresentar o app cabe.
+ */
+function PrimeiraVisita({ children }) {
+  if (!onboardingVisto()) return <Navigate to="/bem-vindo" replace />;
+  return children;
+}
+
 const TITULOS = criarResolvedorDeTitulo({
   '/': 'Eventos',
+  '/bem-vindo': 'Bem-vindo',
   '/busca': 'Busca',
   '/eventos/:slug': 'Evento',
   '/casa/:slug': 'A casa',
@@ -57,7 +73,8 @@ export default function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<Discover />} />
+      <Route path="/" element={<PrimeiraVisita><Discover /></PrimeiraVisita>} />
+      <Route path="/bem-vindo" element={<Bemvindo />} />
       {/* Pública como a vitrine: o catálogo não exige login, e obrigar a
           entrar para procurar mataria a busca vinda de fora. */}
       <Route path="/busca" element={<Busca />} />
