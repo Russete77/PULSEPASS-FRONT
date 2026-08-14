@@ -54,7 +54,10 @@ export default function Checkout() {
     setStatus('done');
     if (data.status === 'paid') {
       clearInterval(pollRef.current);
-      navigate('/meus-ingressos', { replace: true });
+      // Confirmado vai para a tela de sucesso, não direto para a lista: era
+      // aqui que a compra terminava sem ninguém nunca ler "deu certo".
+      // `replace` continua: voltar para um Pix já pago não leva a lugar nenhum.
+      navigate(`/pedido/${orderId}/confirmado`, { replace: true });
     }
     return data;
   }

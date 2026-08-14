@@ -22,6 +22,8 @@ export const api = {
   // Cidades com evento no ar — alimenta o seletor da vitrine.
   listCities: () => request('/events/cidades'),
   getEvent: (slug) => request(`/events/${slug}`),
+  // Página pública da produtora: marca + agenda publicada dela.
+  getCasa: (slug) => request(`/casas/${slug}`),
 
   // ── Assento marcado ──
   // O mapa é público — quem ainda não tem conta precisa ver o que sobrou
@@ -63,6 +65,13 @@ export const api = {
   getEventMenu: (slug) => request(`/events/${slug}/menu`),
   createBarOrder: (body) => request('/bar-orders', { method: 'POST', body, auth: true }),
   listBarOrders: () => request('/bar-orders', { auth: true }),
+
+  // Perfil de quem está logado.
+  // Mora sob /admin por acidente histórico — o router é o do cockpit da
+  // produtora, mas esta rota específica só passa por requireAuth (nenhum papel
+  // exigido) e é o ÚNICO ponto da API que devolve o profile do usuário.
+  // Resposta: { profile: { id, full_name, role, email }, organizations, assignments }.
+  me: () => request('/admin/me', { auth: true }),
 
   // Portal do promoter (self-service)
   promoterMe: () => request('/promoter/me', { auth: true }),

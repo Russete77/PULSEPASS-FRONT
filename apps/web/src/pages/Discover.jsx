@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Page } from '../components/Layout.jsx';
 import { Loading, Empty, ErrorBox } from '../components/States.jsx';
 import { api } from '../lib/api.js';
 import { Icon } from '../components/Icon.jsx';
 import { cidadeSalva, salvarCidade, detectarCidade, CIDADES_CONHECIDAS } from '../lib/localizacao.js';
+import { CATEGORIAS, FLYER_GRADS } from '../lib/catalogo.js';
 
 /**
  * Vitrine.
@@ -17,30 +18,6 @@ import { cidadeSalva, salvarCidade, detectarCidade, CIDADES_CONHECIDAS } from '.
  * é hoje → o fim de semana → o resto. Cada trilha só aparece se tiver algo
  * dentro; seção vazia com título é pior que seção ausente.
  */
-
-// Capa provisória de evento sem cover_url. Os quatro desenhos vêm do Flyer do
-// design system, mas as COREs saem dos tokens v4 — o mockup ainda carrega o
-// verde fluorescente antigo (#00FF85) e o preto azulado (#06070A), que foram
-// justamente o que a v4 aposentou. Hex cravado aqui reintroduziria a paleta
-// velha por uma porta lateral e ela ia desalinhar de tudo à volta.
-const FLYER_GRADS = [
-  'radial-gradient(80% 80% at 20% 20%, var(--pp-cyan), transparent 60%), radial-gradient(80% 80% at 80% 80%, var(--pp-violet), transparent 60%), var(--pp-ink-950)',
-  'linear-gradient(135deg, var(--pp-pink) 0%, var(--pp-amber) 100%)',
-  'radial-gradient(circle at 50% 100%, var(--pp-pulse), transparent 70%), linear-gradient(180deg, var(--pp-ink-950), var(--pp-ink-700))',
-  'radial-gradient(120% 60% at 50% 0%, var(--pp-violet), transparent 60%), var(--pp-ink-950)',
-  'radial-gradient(80% 80% at 70% 20%, var(--pp-pulse), transparent 60%), radial-gradient(80% 80% at 20% 90%, var(--pp-cyan), transparent 60%), var(--pp-ink-950)',
-  'radial-gradient(90% 70% at 30% 10%, var(--pp-pink), transparent 60%), var(--pp-ink-950)',
-];
-
-const CATEGORIAS = [
-  { id: 'festa', rotulo: 'Festas' },
-  { id: 'show', rotulo: 'Shows' },
-  { id: 'standup', rotulo: 'Stand-up' },
-  { id: 'teatro', rotulo: 'Teatro' },
-  { id: 'esporte', rotulo: 'Esporte' },
-  { id: 'gastronomia', rotulo: 'Gastronomia' },
-  { id: 'workshop', rotulo: 'Workshop' },
-];
 
 const bigDate = (iso) => {
   if (!iso) return '';
@@ -147,6 +124,7 @@ function Trilha({ titulo, legenda, eventos, inicio = 0 }) {
 }
 
 export default function Discover() {
+  const navigate = useNavigate();
   const [eventos, setEventos] = useState([]);
   const [cidades, setCidades] = useState([]);
   const [cidade, setCidade] = useState(cidadeSalva());
@@ -181,8 +159,10 @@ export default function Discover() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // A vitrine navega por cidade e categoria. O termo digitado não filtra mais
+  // aqui: ele leva para /busca, que é a tela que existe para isso.
   useEffect(() => {
-    carregar({ city: cidade?.city, category: categoria, q: q.trim() || undefined });
+    carregar({ city: cidade?.city, category: categoria });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cidade?.city, categoria]);
 
@@ -226,7 +206,7 @@ export default function Discover() {
 
         {/* Cidade: a primeira decisão da tela, e por isso a primeira coisa
             clicável. Antes era um chip perdido no meio dos filtros. */}
-        <div className="pp-cluster-2" style={{ marginTop: 'var(--pp-s-3)' }}>
+        <div className="pp-cluster pp-cluster-2" style={{ marginTop: 'var(--pp-s-3)' }}>
           <button className="pp-btn pp-btn--glass pp-btn--sm"
             onClick={() => setTrocandoCidade((v) => !v)}
             aria-expanded={trocandoCidade}>
@@ -248,7 +228,7 @@ export default function Discover() {
             </button>
             {/* Só cidades com evento no ar. Oferecer uma lista fixa de
                 capitais levaria a pessoa a um "nada por aqui". */}
-            <div className="pp-cluster-2" style={{ marginTop: 'var(--pp-s-4)' }}>
+            <div className="pp-cluster pp-cluster-2" style={{ marginTop: 'var(--pp-s-4)' }}>
               {(cidades.length ? cidades : CIDADES_CONHECIDAS.slice(0, 8)).map((c) => (
                 <button key={`${c.city}-${c.state}`}
                   className={`pp-chip ${cidade?.city === c.city ? 'pp-chip--active' : ''}`}
@@ -261,8 +241,19 @@ export default function Discover() {
           </div>
         )}
 
-        <form className="pp-searchbar" style={{ marginTop: 'var(--pp-s-4)' }}
-          onSubmit={(e) => { e.preventDefault(); carregar({ city: cidade?.city, category: categoria, q: q.trim() || undefined }); }}>
+        {/* O campo aqui é a PORTA da busca, não a busca. Quem digita um nome
+            quer uma lista de resultados, e não a vitrine reordenada por trás
+            do card de destaque e das trilhas de tempo — por isso o submit
+            entrega o termo (e os filtros já escolhidos) para /busca. */}
+        <form className="pp-searchbar" style={{ marginTop: 'var(--pp-s-4)' }} role="search"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const p = new URLSearchParams();
+            if (q.trim()) p.set('q', q.trim());
+            if (cidade?.city) p.set('city', cidade.city);
+            if (categoria) p.set('category', categoria);
+            navigate(`/busca${p.toString() ? `?${p}` : ''}`);
+          }}>
           <div className="pp-inputwrap">
             <Icon name="search" size={16} />
             <input className="pp-input" placeholder="Buscar evento, artista, casa…"
@@ -292,19 +283,19 @@ export default function Discover() {
         <Empty>
           <div className="pp-empty__icon"><Icon name="music" size={30} /></div>
           <div className="pp-empty__title">
-            {categoria || q
-              ? 'Nada com esse filtro'
+            {categoria
+              ? 'Nada nessa categoria'
               : cidade ? `Nada em ${cidade.city} por enquanto` : 'Nenhum evento publicado ainda'}
           </div>
           <p>
-            {categoria || q
-              ? 'Tente outra categoria ou limpe a busca.'
+            {categoria
+              ? 'Tente outra categoria ou procure pelo nome.'
               : cidade ? 'Veja o que está rolando no resto do país.' : 'Volte em breve.'}
           </p>
-          <div className="pp-cluster-2" style={{ justifyContent: 'center', marginTop: 'var(--pp-s-4)' }}>
-            {(categoria || q) && (
-              <button className="pp-btn pp-btn--glass pp-btn--sm" onClick={() => { setCategoria(null); setQ(''); carregar({ city: cidade?.city }); }}>
-                Limpar filtros
+          <div className="pp-cluster pp-cluster-2" style={{ justifyContent: 'center', marginTop: 'var(--pp-s-4)' }}>
+            {categoria && (
+              <button className="pp-btn pp-btn--glass pp-btn--sm" onClick={() => setCategoria(null)}>
+                Limpar categoria
               </button>
             )}
             {cidade && (

@@ -21,6 +21,8 @@ export function TopBar() {
             <NavLink to="/carteira" className="pp-navlink">Carteira</NavLink>
             <NavLink to="/meus-pedidos" className="pp-navlink">Pedidos</NavLink>
             <NavLink to="/promoter" className="pp-navlink">Promoter</NavLink>
+            {/* Sem esta entrada a tela de perfil só existiria por URL digitada. */}
+            <NavLink to="/perfil" className="pp-navlink">Perfil</NavLink>
             <button
               className="pp-btn pp-btn--glass pp-btn--sm"
               onClick={async () => {

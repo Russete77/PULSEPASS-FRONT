@@ -4,8 +4,10 @@ import { useAuth } from './context/AuthContext.jsx';
 import { Loading } from './components/States.jsx';
 
 import Discover from './pages/Discover.jsx';
+import Busca from './pages/Busca.jsx';
 import EventDetail from './pages/EventDetail.jsx';
 import Checkout from './pages/Checkout.jsx';
+import PedidoConfirmado from './pages/PedidoConfirmado.jsx';
 import MyTickets from './pages/MyTickets.jsx';
 import MyOrders from './pages/MyOrders.jsx';
 import Wallet from './pages/Wallet.jsx';
@@ -14,6 +16,7 @@ import PromoterPortal from './pages/PromoterPortal.jsx';
 import CamarotesPublic from './pages/CamarotesPublic.jsx';
 import Assentos from './pages/Assentos.jsx';
 import TicketView from './pages/TicketView.jsx';
+import Perfil from './pages/Perfil.jsx';
 import Login from './pages/Login.jsx';
 import GuestSignup from './pages/GuestSignup.jsx';
 import RedefinirSenha from './pages/RedefinirSenha.jsx';
@@ -28,6 +31,7 @@ function Protected({ children }) {
 
 const TITULOS = criarResolvedorDeTitulo({
   '/': 'Eventos',
+  '/busca': 'Busca',
   '/eventos/:slug': 'Evento',
   '/eventos/:slug/camarotes': 'Camarotes',
   '/eventos/:slug/assentos': 'Escolha seu lugar',
@@ -36,9 +40,11 @@ const TITULOS = criarResolvedorDeTitulo({
   '/entrar': 'Entrar',
   '/redefinir-senha': 'Redefinir senha',
   '/checkout/:orderId': 'Pagamento',
+  '/pedido/:orderId/confirmado': 'Pedido confirmado',
   '/meus-ingressos': 'Meus ingressos',
   '/meus-pedidos': 'Meus pedidos',
   '/carteira': 'Carteira',
+  '/perfil': 'Meu perfil',
   '/promoter': 'Promoter',
   '/ingresso/:id': 'Meu ingresso',
 });
@@ -50,6 +56,9 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Discover />} />
+      {/* Pública como a vitrine: o catálogo não exige login, e obrigar a
+          entrar para procurar mataria a busca vinda de fora. */}
+      <Route path="/busca" element={<Busca />} />
       <Route path="/eventos/:slug" element={<EventDetail />} />
       <Route path="/eventos/:slug/camarotes" element={<CamarotesPublic />} />
       <Route path="/eventos/:slug/assentos" element={<Assentos />} />
@@ -58,9 +67,11 @@ export default function App() {
       <Route path="/entrar" element={<Login />} />
       <Route path="/redefinir-senha" element={<RedefinirSenha />} />
       <Route path="/checkout/:orderId" element={<Protected><Checkout /></Protected>} />
+      <Route path="/pedido/:orderId/confirmado" element={<Protected><PedidoConfirmado /></Protected>} />
       <Route path="/meus-ingressos" element={<Protected><MyTickets /></Protected>} />
       <Route path="/meus-pedidos" element={<Protected><MyOrders /></Protected>} />
       <Route path="/carteira" element={<Protected><Wallet /></Protected>} />
+      <Route path="/perfil" element={<Protected><Perfil /></Protected>} />
       <Route path="/promoter" element={<Protected><PromoterPortal /></Protected>} />
       <Route path="/ingresso/:id" element={<Protected><TicketView /></Protected>} />
       <Route path="*" element={<Navigate to="/" replace />} />
