@@ -1,10 +1,33 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Shell, Loading, ErrorBox, BackLink } from '../components/Shell.jsx';
 import { api } from '../lib/api.js';
 import { brl } from '../lib/format.js';
 
 const WEB = import.meta.env.VITE_PUBLIC_WEB_URL ?? 'http://localhost:5173';
+
+/**
+ * Critérios de ordenação do ranking. Cada um lê um campo que event_promoters
+ * já devolve — não há receita nem crescimento por promoter no banco, então
+ * esses dois simplesmente não existem aqui.
+ *
+ * A pergunta muda conforme a hora: antes da festa importa quem INSCREVEU, na
+ * porta importa quem TROUXE, no acerto importa quanto cada um vai custar, e a
+ * conversão é a que revela o promoter de lista inflada — muito nome, pouca
+ * presença.
+ */
+const ORDENS = [
+  { k: 'presencas', label: 'Presenças', valor: (p) => p.checked_in ?? 0 },
+  { k: 'inscritos', label: 'Inscritos', valor: (p) => p.confirmed ?? 0 },
+  { k: 'comissao', label: 'Comissão', valor: (p) => p.commission_due_cents ?? 0 },
+  {
+    k: 'conversao',
+    label: 'Conversão',
+    // Sem clique não existe taxa: 0/0 não é 0%, é "não dá pra saber". Quem não
+    // teve clique vai pro fim da fila em vez de fingir 0% e parecer o pior.
+    valor: (p) => (p.clicks > 0 ? (p.confirmed ?? 0) / p.clicks : -1),
+  },
+];
 
 export default function Promoters() {
   const { id } = useParams();
@@ -21,6 +44,7 @@ export default function Promoters() {
   const [creating, setCreating] = useState(false);
 
   const [busca, setBusca] = useState('');
+  const [ordem, setOrdem] = useState('presencas');
   const [openId, setOpenId] = useState(null);
   const [guests, setGuests] = useState({ promoter: null, guests: [] });
   const [copiedCode, setCopiedCode] = useState('');
@@ -85,6 +109,20 @@ export default function Promoters() {
     setCopiedCode(code);
     setTimeout(() => setCopiedCode(''), 1800);
   }
+
+  /* Ordena PRIMEIRO, numera depois, filtra por último: assim a posição é a do
+     ranking inteiro e não muda quando alguém digita na busca — o 7º lugar
+     continua sendo o 7º lugar mesmo quando é o único na tela. */
+  const ranking = useMemo(() => {
+    const criterio = ORDENS.find((o) => o.k === ordem) ?? ORDENS[0];
+    return [...promoters]
+      .sort((a, b) => criterio.valor(b) - criterio.valor(a))
+      .map((p, i) => ({ ...p, posicao: i + 1 }));
+  }, [promoters, ordem]);
+
+  const visiveis = ranking.filter(
+    (p) => !busca.trim() || p.name.toLowerCase().includes(busca.trim().toLowerCase()),
+  );
 
   if (status === 'loading') return <Shell><Loading /></Shell>;
 
@@ -157,6 +195,24 @@ export default function Promoters() {
         </div>
       )}
 
+      {/* Ordenar o ranking: a lista é a mesma, a pergunta é que muda. Só
+          critérios com dado real de event_promoters — sem receita nem
+          crescimento, que o banco não tem por promoter. */}
+      {promoters.length > 1 && (
+        <div role="group" aria-label="Ordenar ranking de promoters"
+          style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', marginTop: 20 }}>
+          <span className="ck-label" style={{ marginRight: 2 }}>Ordenar por</span>
+          {ORDENS.map((o) => (
+            <button key={o.k} type="button"
+              className={`pp-chip ${ordem === o.k ? 'pp-chip--active' : ''}`}
+              aria-pressed={ordem === o.k}
+              onClick={() => setOrdem(o.k)}>
+              {o.label}
+            </button>
+          ))}
+        </div>
+      )}
+
       {promoters.length > 3 && (
         <div className="ck-field" style={{ maxWidth: 320, marginTop: 16 }}>
           <label htmlFor="promoters-busca" className="ck-label">Buscar promoter</label>
@@ -169,14 +225,17 @@ export default function Promoters() {
         {promoters.length === 0 ? (
           <div className="ck-empty">Nenhum promoter ainda.</div>
         ) : (
-          [...promoters].sort((a, b) => b.checked_in - a.checked_in)
-            .filter((p) => !busca.trim() || p.name.toLowerCase().includes(busca.trim().toLowerCase()))
-            .map((p, i) => (
+          visiveis.map((p) => (
             <div key={p.id} className="ck-card" style={{ marginBottom: 12 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
                 <div style={{ flex: 1, minWidth: 220 }}>
                   <strong style={{ fontSize: 'var(--pp-fs-18)' }}>
-                    {(p.checked_in > 0 && ['🥇', '🥈', '🥉'][i]) ? `${['🥇', '🥈', '🥉'][i]} ` : `${i + 1}. `}{p.name}
+                    {/* Medalha só na ordem por presenças: é o pódio da noite.
+                        Nas outras ordens vira número, senão o ouro passaria a
+                        significar "quem custa mais comissão". */}
+                    {(ordem === 'presencas' && p.checked_in > 0 && ['🥇', '🥈', '🥉'][p.posicao - 1])
+                      ? `${['🥇', '🥈', '🥉'][p.posicao - 1]} `
+                      : `${p.posicao}. `}{p.name}
                   </strong>
                   <div style={{ color: 'var(--pp-fg-3)', fontSize: 13, marginTop: 4 }}>
                     {p.clicks ?? 0} cliques → {p.confirmed} inscritos → {p.checked_in} presentes

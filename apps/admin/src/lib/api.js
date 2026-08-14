@@ -157,6 +157,11 @@ export const api = {
   deleteTable: (tableId) => request(`/admin/tables/${tableId}`, { method: 'DELETE' }),
   listReservations: (id) => request(`/admin/events/${id}/reservations`),
   setReservation: (reservationId, status) => request(`/admin/reservations/${reservationId}`, { method: 'PATCH', body: { status } }),
+  // Reserva lançada pela casa (telefone/WhatsApp). Usa a MESMA rota pública
+  // da reserva pelo app: nasce como 'requested' e passa pela confirmação,
+  // igual à do cliente. Rota alternativa só pra casa seria um segundo caminho
+  // de escrita na mesma tabela, com as regras fatalmente divergindo.
+  reservarMesa: (tableId, body) => request(`/tables/${tableId}/reserve`, { method: 'POST', body }),
   ledgerCheck: (id) => request(`/admin/events/${id}/ledger-check`),
 
   // Fila de espera do evento (quem aguarda e quem ja foi convidado)

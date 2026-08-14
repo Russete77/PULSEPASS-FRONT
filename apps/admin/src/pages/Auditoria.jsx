@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Shell, Loading, ErrorBox, BackLink } from '../components/Shell.jsx';
 import { Icon } from '@pulsepass/shared/Icon';
@@ -20,6 +20,13 @@ import { brl, dateTime } from '../lib/format.js';
  * fonte mono + chips de filtro + faixa destacada pra decisão pendente),
  * mas só com colunas que o banco realmente tem: sem role, sem hash, sem
  * status ok/fail — audit_log não guarda nada disso.
+ *
+ * Sobre filtrar: o backend PAGINA (limite de 200, teto de 500, sempre do mais
+ * recente pro mais antigo). Por isso os chips viram parâmetro de consulta de
+ * verdade, e o campo de texto — que só sabe olhar o que já chegou — é rotulado
+ * como "filtrar nesta página". Chamar de "busca" faria alguém concluir que um
+ * registro não existe quando ele só não está nesta página; numa tela de
+ * auditoria essa conclusão errada é o pior defeito possível.
  */
 const ACAO = {
   'box_office.sale': 'Venda na bilheteria',
@@ -49,11 +56,32 @@ const DOMINIOS = [
   { k: 'event', label: 'Evento' },
 ];
 
+/* Colunas do CSV — exatamente as que audit_log tem e o endpoint devolve
+   (audit/repo.js findEntries). Ficam de fora event_id e organization_id:
+   são constantes numa exportação de UM evento, então só somariam ruído.
+   Nada aqui é derivado nem embelezado: o CSV precisa poder ser confrontado
+   com o banco linha a linha, senão não serve de prova. */
+const CSV_COLS = [
+  ['at', (e) => e.at],
+  ['action', (e) => e.action],
+  ['actor_email', (e) => e.actor_email ?? ''],
+  ['actor_id', (e) => e.actor_id ?? ''],
+  ['actor_ip', (e) => e.actor_ip ?? ''],
+  ['entity', (e) => e.entity ?? ''],
+  ['entity_id', (e) => e.entity_id ?? ''],
+  ['amount_cents', (e) => e.amount_cents ?? ''],
+  ['before', (e) => (e.before ? JSON.stringify(e.before) : '')],
+  ['after', (e) => (e.after ? JSON.stringify(e.after) : '')],
+  ['note', (e) => e.note ?? ''],
+  ['id', (e) => e.id],
+];
+
 export default function Auditoria() {
   const { id } = useParams();
   const [state, setState] = useState({ status: 'loading' });
   const [soDinheiro, setSoDinheiro] = useState(false);
   const [dominio, setDominio] = useState('');
+  const [q, setQ] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(null);
 
@@ -67,6 +95,47 @@ export default function Auditoria() {
     } catch (e) { setState({ status: 'error', message: e.message }); }
   }, [id, soDinheiro, dominio]);
   useEffect(() => { load(); }, [load]);
+
+  /* Filtro de texto sobre o que JÁ está na tela. Roda antes do early return
+     porque hook não pode ficar atrás de `if`. Olha os campos que uma pessoa
+     usaria pra procurar: quem, de onde, o que e a anotação. */
+  const carregadas = state.trilha?.entries ?? [];
+  const visiveis = useMemo(() => {
+    const s = q.trim().toLowerCase();
+    if (!s) return carregadas;
+    return carregadas.filter((e) => (
+      (e.actor_email ?? '').toLowerCase().includes(s)
+      || (e.actor_ip ?? '').includes(s)
+      || e.action.toLowerCase().includes(s)
+      || rotulo(e.action).toLowerCase().includes(s)
+      || (e.entity ?? '').toLowerCase().includes(s)
+      || (e.entity_id ?? '').toLowerCase().includes(s)
+      || (e.note ?? '').toLowerCase().includes(s)
+    ));
+  }, [carregadas, q]);
+
+  /* Exporta o que está na tela — mesmo padrão do CSV da lista de porta:
+     gerado no cliente, sem endpoint novo. O arquivo leva os filtros no nome
+     porque é assim que ele chega no e-mail do contador ou do advogado: sem o
+     contexto no nome, um recorte de "só dinheiro" vira "a auditoria toda". */
+  function exportarCsv() {
+    const linhas = [
+      CSV_COLS.map(([nome]) => nome),
+      ...visiveis.map((e) => CSV_COLS.map(([, ler]) => ler(e))),
+    ];
+    const csv = linhas
+      .map((l) => l.map((c) => `"${String(c ?? '').replaceAll('"', '""')}"`).join(';'))
+      .join('\n');
+    // BOM na frente: sem ele o Excel em pt-BR come os acentos.
+    const url = URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' }));
+    const sufixo = [dominio, soDinheiro ? 'dinheiro' : '', q.trim() ? 'filtrado' : '']
+      .filter(Boolean).join('-');
+    const a = Object.assign(document.createElement('a'), {
+      href: url, download: `auditoria-${id}${sufixo ? `-${sufixo}` : ''}.csv`,
+    });
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 
   async function resolver(caso) {
     setBusy(caso.id); setError('');
@@ -97,9 +166,19 @@ export default function Auditoria() {
             Registro de quem fez o quê. Não pode ser alterado nem apagado — nem por nós.
           </p>
         </div>
-        <span className="pp-badge" title="Total retornado pela consulta atual">
-          {trilha.entries.length} registro(s) · imutável
-        </span>
+        {/* Selo + exportar do lado direito do título. O CSV existe porque a
+            trilha só vira prova quando sai daqui: contador, advogado e sócio
+            não entram no admin — recebem um arquivo. */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <span className="pp-badge" title="Total retornado pela consulta atual">
+            {trilha.entries.length} registro(s) · imutável
+          </span>
+          <button type="button" className="ck-btn ck-btn--glass ck-btn--sm"
+            onClick={exportarCsv} disabled={visiveis.length === 0}
+            title="Baixa em CSV exatamente os registros listados abaixo, com os filtros aplicados">
+            <Icon name="download" size={14} /> Exportar CSV ({visiveis.length})
+          </button>
+        </div>
       </div>
 
       {error && <ErrorBox>{error}</ErrorBox>}
@@ -146,9 +225,9 @@ export default function Auditoria() {
       )}
 
       {/* Filtros em chips, como no mockup. Todos batem em parâmetro REAL do
-          backend (prefixo de action + amount_cents not null) — nada é
-          filtrado só no cliente pra não mentir sobre o total. */}
-      <div role="group" aria-label="Filtrar registros"
+          backend (prefixo de action + amount_cents not null): é o backend que
+          refaz a consulta, então o resultado é o total de verdade. */}
+      <div role="group" aria-label="Filtrar registros no servidor"
         style={{ display: 'flex', gap: 8, alignItems: 'center', margin: '20px 0 12px', flexWrap: 'wrap' }}>
         {DOMINIOS.map((d) => (
           <button key={d.k} type="button"
@@ -166,16 +245,43 @@ export default function Auditoria() {
         </button>
       </div>
 
-      {trilha.entries.length === 0 ? (
+      {/* Campo de texto: peneira o que JÁ está carregado. O rótulo e a ajuda
+          dizem isso na cara — quem procura um nome e não acha precisa saber
+          que a resposta é "não está nesta página", não "não existe". */}
+      {carregadas.length > 0 && (
+        <div className="ck-field" style={{ maxWidth: 420, marginBottom: 12 }}>
+          <label htmlFor="auditoria-filtro" className="ck-label">
+            Filtrar nesta página
+          </label>
+          <div className="pp-inputwrap">
+            <Icon name="search" size={16} />
+            <input id="auditoria-filtro" type="search" className="ck-input"
+              style={{ width: '100%', paddingLeft: 46 }}
+              value={q} onChange={(e) => setQ(e.target.value)}
+              placeholder="e-mail, IP, ação, entidade…"
+              aria-describedby="auditoria-filtro-ajuda" />
+          </div>
+          <p id="auditoria-filtro-ajuda"
+            style={{ color: 'var(--pp-fg-4)', fontSize: 12, margin: '6px 0 0' }}>
+            Peneira só os {carregadas.length} registro(s) carregados (os mais
+            recentes). Para varrer o histórico inteiro, use os chips acima —
+            esses vão ao servidor.
+          </p>
+        </div>
+      )}
+
+      {visiveis.length === 0 ? (
         <div className="ck-empty">
           <p style={{ margin: '0 0 12px' }}>
-            {(dominio || soDinheiro)
-              ? 'Nenhum registro com esses filtros.'
-              : 'Nenhuma ação registrada ainda.'}
+            {q.trim()
+              ? `Nenhum dos ${carregadas.length} registro(s) desta página bate com “${q.trim()}”. Pode existir em registros mais antigos — filtre pelo domínio para o servidor buscar de novo.`
+              : (dominio || soDinheiro)
+                ? 'Nenhum registro com esses filtros.'
+                : 'Nenhuma ação registrada ainda.'}
           </p>
-          {(dominio || soDinheiro) && (
+          {(dominio || soDinheiro || q.trim()) && (
             <button className="ck-btn ck-btn--glass ck-btn--sm"
-              onClick={() => { setDominio(''); setSoDinheiro(false); }}>
+              onClick={() => { setDominio(''); setSoDinheiro(false); setQ(''); }}>
               Limpar filtros
             </button>
           )}
@@ -195,7 +301,7 @@ export default function Auditoria() {
               </tr>
             </thead>
             <tbody>
-              {trilha.entries.map((e) => (
+              {visiveis.map((e) => (
                 <tr key={e.id}>
                   <td style={{
                     fontFamily: 'var(--pp-font-mono)', fontSize: 12,

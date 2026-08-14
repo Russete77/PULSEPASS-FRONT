@@ -37,10 +37,14 @@ export default function Camarotes() {
   const [tables, setTables] = useState([]);
   const [reservations, setReservations] = useState([]);
   const [board, setBoard] = useState([]); // consumo aberto por mesa (garçom)
+  const [mesaAberta, setMesaAberta] = useState(null); // painel de itens expandido
   const [status, setStatus] = useState('loading');
   const [error, setError] = useState('');
   const [form, setForm] = useState(EMPTY);
   const [saving, setSaving] = useState(false);
+  // Reserva lançada pela casa: id da mesa alvo + os campos que a rota aceita.
+  const [reservando, setReservando] = useState(null);
+  const [reserva, setReserva] = useState({ name: '', contact: '', party_size: '' });
 
   const load = useCallback(() => {
     Promise.all([
@@ -56,6 +60,32 @@ export default function Camarotes() {
   useEffect(() => { load(); }, [load]);
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
+
+  /**
+   * Reserva por telefone/WhatsApp — o caso mais comum da casa, que até agora
+   * só entrava pela página pública. Nasce como solicitação e cai na mesma
+   * fila de aprovação da reserva feita pelo cliente: a casa confirma logo em
+   * seguida, e a mesa nunca fica reservada sem alguém ter decidido isso.
+   */
+  async function lancarReserva(e) {
+    e.preventDefault(); setSaving(true); setError('');
+    try {
+      await api.reservarMesa(reservando, {
+        name: reserva.name.trim(),
+        contact: reserva.contact.trim() || undefined,
+        party_size: reserva.party_size !== '' ? Math.round(Number(reserva.party_size)) : undefined,
+      });
+      setReservando(null); setReserva({ name: '', contact: '', party_size: '' });
+      load();
+    } catch (err) {
+      // A rota exige evento publicado. Em rascunho ela responde "camarote
+      // indisponível", que no cockpit soa como defeito da mesa — o texto
+      // abaixo diz o que realmente falta fazer.
+      setError(/indispon/i.test(err.message)
+        ? 'Publique o evento antes de lançar reservas — a rota de reserva só aceita evento no ar.'
+        : err.message);
+    } finally { setSaving(false); }
+  }
 
   async function create(e) {
     e.preventDefault(); setSaving(true); setError('');
@@ -128,6 +158,42 @@ export default function Camarotes() {
 
       {error && <ErrorBox>{error}</ErrorBox>}
 
+      {/* Reserva lançada pela casa, aberta a partir do cartão da mesa. */}
+      {reservando && (
+        <form onSubmit={lancarReserva} className="ck-card" style={{ maxWidth: 720, marginTop: 16 }}>
+          <div className="ck-between" style={{ marginBottom: 10 }}>
+            <strong>Reservar {tables.find((t) => t.id === reservando)?.name}</strong>
+            <button type="button" className="ck-iconbtn" onClick={() => { setReservando(null); setError(''); }}
+              aria-label="Cancelar reserva">
+              <Icon name="close" size={13} />
+            </button>
+          </div>
+          <div className="ck-row">
+            <div className="ck-field" style={{ margin: 0, flex: '1 1 220px' }}>
+              <label className="ck-label" htmlFor="res-nome">Nome de quem reservou</label>
+              <input id="res-nome" className="ck-input" required minLength={2} autoComplete="name"
+                value={reserva.name} onChange={(e) => setReserva((r) => ({ ...r, name: e.target.value }))} />
+            </div>
+            <div className="ck-field" style={{ margin: 0, flex: '1 1 180px' }}>
+              <label className="ck-label" htmlFor="res-contato">Contato (telefone/WhatsApp)</label>
+              <input id="res-contato" className="ck-input" type="tel" autoComplete="tel"
+                value={reserva.contact} onChange={(e) => setReserva((r) => ({ ...r, contact: e.target.value }))} />
+            </div>
+            <div className="ck-field" style={{ margin: 0, width: 120 }}>
+              <label className="ck-label" htmlFor="res-pessoas">Pessoas</label>
+              <input id="res-pessoas" className="ck-input" type="number" min="1" inputMode="numeric"
+                value={reserva.party_size} onChange={(e) => setReserva((r) => ({ ...r, party_size: e.target.value }))} />
+            </div>
+          </div>
+          <p className="ck-sub" style={{ margin: '8px 0 10px', fontSize: 13 }}>
+            Entra como solicitação e aparece na fila abaixo — confirme para ocupar a mesa.
+          </p>
+          <button className={`ck-btn ck-btn--primary ${saving ? 'is-loading' : ''}`} disabled={saving}>
+            {saving ? 'Lançando…' : 'Lançar reserva'}
+          </button>
+        </form>
+      )}
+
       {/* A "planta": cada mesa é um cartão colorido pelo estado. */}
       {tables.length === 0 ? (
         <div className="ck-empty" style={{ marginTop: 20 }}>
@@ -156,10 +222,22 @@ export default function Camarotes() {
                       {t.area}{t.capacity ? ` · ${t.capacity}p` : ''}
                     </div>
                   </div>
-                  <button className="ck-iconbtn" style={{ width: 32, height: 32 }}
-                    onClick={() => removeTable(t)} title={`Excluir ${t.name}`} aria-label={`Excluir ${t.name}`}>
-                    <Icon name="close" size={13} />
-                  </button>
+                  <div style={{ display: 'flex', gap: 4 }}>
+                    {/* Reservar só faz sentido em mesa livre — oferecer o
+                        botão numa mesa ocupada convida ao erro de reservar
+                        por cima de quem já está sentado. */}
+                    {estadoDe(t) === 'livre' && (
+                      <button className="ck-iconbtn" style={{ width: 32, height: 32 }}
+                        onClick={() => { setReservando(t.id); setError(''); }}
+                        title={`Reservar ${t.name}`} aria-label={`Reservar ${t.name}`}>
+                        <Icon name="plus" size={13} />
+                      </button>
+                    )}
+                    <button className="ck-iconbtn" style={{ width: 32, height: 32 }}
+                      onClick={() => removeTable(t)} title={`Excluir ${t.name}`} aria-label={`Excluir ${t.name}`}>
+                      <Icon name="close" size={13} />
+                    </button>
+                  </div>
                 </div>
                 <div style={{ marginTop: 'auto' }}>
                   {info ? (
@@ -179,11 +257,51 @@ export default function Camarotes() {
                       ainda não retirados) — é o número que diz se a mesa
                       "já se pagou". */}
                   {consumo?.consumo_cents > 0 && (
-                    <div style={{ fontSize: 12, fontFamily: 'var(--pp-font-mono)', color: 'var(--pp-pulse)', marginTop: 4 }}>
+                    <button
+                      onClick={() => setMesaAberta(mesaAberta === t.id ? null : t.id)}
+                      aria-expanded={mesaAberta === t.id}
+                      title={`Ver o que a ${t.name} consumiu`}
+                      style={{
+                        appearance: 'none', background: 'none', border: 0, padding: 0, marginTop: 4,
+                        font: 'inherit', fontSize: 12, fontFamily: 'var(--pp-font-mono)',
+                        color: 'var(--pp-pulse)', cursor: 'pointer', textAlign: 'left',
+                        textDecoration: 'underline', textUnderlineOffset: 3,
+                      }}>
                       {brl(consumo.consumo_cents)} em aberto
-                    </div>
+                    </button>
                   )}
                 </div>
+
+                {/* Painel da mesa: o quadro do garçom já devolve os ITENS,
+                    não só o total — a tela usava metade do que recebia. Quem
+                    está no salão precisa disso para responder "o que já veio?"
+                    sem abrir o app do garçom. O valor por pessoa sai da
+                    reserva; sem party_size ele some, em vez de dividir por 1
+                    e afirmar que a mesa inteira é de uma pessoa só. */}
+                {mesaAberta === t.id && consumo && (
+                  <div style={{
+                    borderTop: '1px solid var(--pp-edge-2)', paddingTop: 8, marginTop: 2,
+                  }}>
+                    {consumo.itens?.length > 0 ? (
+                      <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: 2 }}>
+                        {consumo.itens.map((linha, i) => (
+                          <li key={`${t.id}-item-${i}`} style={{ fontSize: 12, color: 'var(--pp-fg-2)' }}>{linha}</li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <div style={{ fontSize: 12, color: 'var(--pp-fg-4)' }}>Sem itens detalhados.</div>
+                    )}
+                    {info?.reserva?.party_size > 1 && (
+                      <div style={{
+                        fontSize: 11, fontFamily: 'var(--pp-font-mono)', color: 'var(--pp-fg-4)', marginTop: 6,
+                      }}>
+                        {brl(Math.round(consumo.consumo_cents / info.reserva.party_size))} por pessoa
+                        {' '}({info.reserva.party_size})
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 <span style={{
                   position: 'absolute', top: 14, right: 52,
                   fontSize: 10, fontFamily: 'var(--pp-font-mono)', letterSpacing: '0.06em',

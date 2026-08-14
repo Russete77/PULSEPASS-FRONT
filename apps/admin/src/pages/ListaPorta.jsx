@@ -7,6 +7,17 @@ import { api } from '../lib/api.js';
 // Rótulo honesto do tipo de LISTA (propriedade da lista, não da pessoa).
 const TIPO_LISTA = { vip: 'VIP', birthday: 'Aniversário', free_until: 'Free até' };
 
+// Só a hora: na porta a data é sempre hoje, e o dia inteiro na linha rouba
+// espaço do nome, que é o que o porteiro precisa ler primeiro. Inscrição de
+// outro dia ganha o dia curto para não fingir que foi agora há pouco.
+const horaCurta = (iso) => {
+  const d = new Date(iso);
+  const hoje = new Date();
+  const mesmoDia = d.toDateString() === hoje.toDateString();
+  return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+    + (mesmoDia ? '' : ` (${d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })})`);
+};
+
 export default function ListaPorta() {
   const { id } = useParams();
   const [guests, setGuests] = useState([]);
@@ -129,6 +140,34 @@ export default function ListaPorta() {
         </div>
       )}
 
+      {/* Filtrou por um promoter: o desempenho DELE em destaque. É a resposta
+          de "vale continuar pagando essa lista?" — e é a conversa que a casa
+          tem com o promoter na saída, então o número precisa estar à mão. */}
+      {lista && (() => {
+        const l = listas.find((x) => x.nome === lista);
+        if (!l) return null;
+        const pct = l.total > 0 ? Math.round((l.dentro / l.total) * 100) : 0;
+        return (
+          <div className="ck-card" style={{ maxWidth: 680, marginBottom: 'var(--pp-s-5)', padding: '12px 18px' }}>
+            <div className="pp-between" style={{ gap: 12, flexWrap: 'wrap' }}>
+              <div>
+                <div className="ck-label">Lista de {l.nome}</div>
+                {TIPO_LISTA[l.tipo] && <span className="ck-badge" style={{ fontSize: 11 }}>{TIPO_LISTA[l.tipo]}</span>}
+              </div>
+              <div style={{ display: 'flex', gap: 20, fontFamily: 'var(--pp-font-mono)' }}>
+                {[['inscritos', l.total, 'var(--pp-fg-1)'], ['dentro', l.dentro, 'var(--pp-pulse)'],
+                  ['presença', `${pct}%`, pct >= 50 ? 'var(--pp-pulse)' : 'var(--pp-amber)']].map(([k, v, cor]) => (
+                    <div key={k}>
+                      <div style={{ fontSize: 10, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--pp-fg-4)' }}>{k}</div>
+                      <div style={{ fontWeight: 700, fontSize: 18, color: cor }}>{v}</div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center', marginBottom: 'var(--pp-s-5)' }}>
         <div className="pp-inputwrap" style={{ flex: 1, minWidth: 240, maxWidth: 480 }}>
           <Icon name="search" size={16} />
@@ -166,6 +205,9 @@ export default function ListaPorta() {
                   {/* Telefone na frente do e-mail: na porta liga-se, não se escreve. */}
                   {g.phone ? ` · ${g.phone}` : ''}
                   {g.email ? ` · ${g.email}` : ''}
+                  {/* Quando entrou na lista: o desempate de "esse nome é do
+                      fim da noite?" numa lista que cresceu o dia inteiro. */}
+                  {g.created_at ? ` · inscrito ${horaCurta(g.created_at)}` : ''}
                 </div>
               </div>
               {completo ? (

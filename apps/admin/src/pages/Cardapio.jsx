@@ -16,12 +16,53 @@ import { brl } from '../lib/format.js';
  */
 const EMPTY = { name: '', category: '', price_reais: '', stock: '', cost_reais: '' };
 
+/**
+ * Miniatura do item. `menu_items.image_url` já vem no payload de adminListMenu
+ * e a tabela ignorava — quem confere o cardápio reconhece o produto pela foto
+ * antes de ler o nome.
+ *
+ * Sem URL não se inventa imagem: fica a inicial num quadro neutro, do mesmo
+ * tamanho, pra linha não pular de altura entre itens com e sem foto. O quadro
+ * também fica ATRÁS da imagem, então se a URL quebrar em runtime o fallback já
+ * está no lugar — basta esconder o <img>.
+ */
+function Thumb({ item }) {
+  return (
+    <div
+      aria-hidden="true"
+      style={{
+        position: 'relative', flex: '0 0 auto', width: 40, height: 40,
+        borderRadius: 'var(--pp-r-control)', overflow: 'hidden',
+        background: 'var(--pp-glass-2)', border: '1px solid var(--pp-edge-1)',
+        display: 'grid', placeItems: 'center',
+        color: 'var(--pp-fg-4)', fontWeight: 700, fontSize: 15,
+      }}
+    >
+      {(item.name?.[0] ?? '?').toUpperCase()}
+      {item.image_url && (
+        // alt vazio de propósito: o nome do item está ao lado, no mesmo campo.
+        // Repetir o nome no alt faria o leitor de tela anunciar duas vezes —
+        // aqui a foto é reforço visual, não informação nova.
+        <img
+          src={item.image_url} alt="" loading="lazy" decoding="async"
+          onError={(e) => { e.currentTarget.style.display = 'none'; }}
+          style={{
+            position: 'absolute', inset: 0,
+            width: '100%', height: '100%', objectFit: 'cover',
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
 /** Margem em % e em reais. Sem custo informado, "—" — não se inventa lucro. */
 function margem(it) {
   if (it.cost_cents == null || !it.price_cents) return <span style={{ color: 'var(--pp-fg-5)' }}>—</span>;
   const lucro = it.price_cents - it.cost_cents;
   const pct = Math.round((lucro / it.price_cents) * 100);
-  const cor = pct < 0 ? '#FF6B61' : pct < 30 ? 'var(--pp-amber)' : 'var(--pp-pulse)';
+  // Cores só por token: prejuízo usa o vermelho do sistema, nada de hex solto.
+  const cor = pct < 0 ? 'var(--pp-red)' : pct < 30 ? 'var(--pp-amber)' : 'var(--pp-pulse)';
   return (
     <span style={{ color: cor, fontVariantNumeric: 'tabular-nums', fontWeight: 600 }}>
       {pct}%<span style={{ color: 'var(--pp-fg-4)', fontSize: 12, fontWeight: 400 }}> · {brl(lucro)}</span>
@@ -153,8 +194,13 @@ export default function Cardapio() {
             {items.map((it) => (
               <tr key={it.id} style={it.available && it.stock === 0 ? { background: 'rgba(255,59,48,0.05)' } : undefined}>
                 <td>
-                  <div style={{ fontWeight: 600 }}>{it.name}</div>
-                  {it.category && <div style={{ color: 'var(--pp-fg-4)', fontSize: 12 }}>{it.category}</div>}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <Thumb item={it} />
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ fontWeight: 600 }}>{it.name}</div>
+                      {it.category && <div style={{ color: 'var(--pp-fg-4)', fontSize: 12 }}>{it.category}</div>}
+                    </div>
+                  </div>
                 </td>
                 <td style={{ fontFamily: 'var(--pp-font-mono)' }}>{brl(it.price_cents)}</td>
                 <td style={{ color: 'var(--pp-fg-3)', fontFamily: 'var(--pp-font-mono)' }}>{it.cost_cents != null ? brl(it.cost_cents) : '—'}</td>
