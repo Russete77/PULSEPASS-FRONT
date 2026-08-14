@@ -10,8 +10,12 @@ const NAV = [
   { to: '/plataforma/taxas', icon: 'tag', label: 'Taxas' },
   { to: '/plataforma/fraude', icon: 'scan', label: 'Antifraude' },
   { to: '/plataforma/audit', icon: 'receipt', label: 'Audit log' },
+  { to: '/plataforma/suporte', icon: 'search', label: 'Suporte' },
+  // "Configuração", não "Feature flags": flag de verdade (rollout, kill switch)
+  // não existe no backend, e o nome do menu não pode prometer o que a tela não entrega.
+  { to: '/plataforma/flags', icon: 'compass', label: 'Configuração' },
 ];
-const SOON = ['Suporte', 'Feature flags'];
+const SOON = [];
 
 function AdmLogo() {
   return (

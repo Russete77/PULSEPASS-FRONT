@@ -33,6 +33,8 @@ import PlatformFraud from './pages/plataforma/Fraud.jsx';
 import PlatformFinance from './pages/plataforma/Finance.jsx';
 import PlatformTaxas from './pages/plataforma/Taxas.jsx';
 import PlatformAudit from './pages/plataforma/Audit.jsx';
+import PlatformSuporte from './pages/plataforma/Suporte.jsx';
+import PlatformFlags from './pages/plataforma/Flags.jsx';
 
 function Protected({ children }) {
   const { user, loading } = useAuth();
@@ -77,6 +79,8 @@ const TITULOS = criarResolvedorDeTitulo({
   '/plataforma/taxas': 'Taxas',
   '/plataforma/financeiro': 'Financeiro da plataforma',
   '/plataforma/audit': 'Auditoria da plataforma',
+  '/plataforma/suporte': 'Suporte',
+  '/plataforma/flags': 'Configuração da plataforma',
 });
 
 export default function App() {
@@ -115,6 +119,10 @@ export default function App() {
       <Route path="/plataforma/taxas" element={<Protected><PlatformTaxas /></Protected>} />
       <Route path="/plataforma/financeiro" element={<Protected><PlatformFinance /></Protected>} />
       <Route path="/plataforma/audit" element={<Protected><PlatformAudit /></Protected>} />
+      {/* Área da plataforma: além do login (Protected), o AdmShell de cada tela
+          checa /platform/whoami e nega quem não é super-admin. */}
+      <Route path="/plataforma/suporte" element={<Protected><PlatformSuporte /></Protected>} />
+      <Route path="/plataforma/flags" element={<Protected><PlatformFlags /></Protected>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
