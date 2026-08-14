@@ -6,6 +6,7 @@ import { Loading } from './components/States.jsx';
 import Discover from './pages/Discover.jsx';
 import Busca from './pages/Busca.jsx';
 import EventDetail from './pages/EventDetail.jsx';
+import Casa from './pages/Casa.jsx';
 import Checkout from './pages/Checkout.jsx';
 import PedidoConfirmado from './pages/PedidoConfirmado.jsx';
 import MyTickets from './pages/MyTickets.jsx';
@@ -33,6 +34,7 @@ const TITULOS = criarResolvedorDeTitulo({
   '/': 'Eventos',
   '/busca': 'Busca',
   '/eventos/:slug': 'Evento',
+  '/casa/:slug': 'A casa',
   '/eventos/:slug/camarotes': 'Camarotes',
   '/eventos/:slug/assentos': 'Escolha seu lugar',
   '/eventos/:slug/bar': 'Bar',
@@ -60,6 +62,9 @@ export default function App() {
           entrar para procurar mataria a busca vinda de fora. */}
       <Route path="/busca" element={<Busca />} />
       <Route path="/eventos/:slug" element={<EventDetail />} />
+      {/* Pública como a vitrine: a página da casa é justamente o que se
+          manda no story do Instagram, e exigir login mataria o link. */}
+      <Route path="/casa/:slug" element={<Casa />} />
       <Route path="/eventos/:slug/camarotes" element={<CamarotesPublic />} />
       <Route path="/eventos/:slug/assentos" element={<Assentos />} />
       <Route path="/eventos/:slug/bar" element={<Protected><OrderAhead /></Protected>} />

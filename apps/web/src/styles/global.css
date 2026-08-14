@@ -368,5 +368,62 @@ input, button, select, textarea { font-family: inherit; }
 .pp-barbar__total .lbl { font-family: var(--pp-font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--pp-fg-3); }
 .pp-barbar__total .val { font-family: var(--pp-font-mono); font-weight: 700; font-size: var(--pp-fs-20); font-variant-numeric: tabular-nums; }
 
+/* ══ CASA / página pública da produtora (CasaProfileScreen) ══
+   O mockup centra tudo no logo: é a marca da casa que a pessoa reconhece,
+   não o nome escrito. Daí o bloco grande e centralizado no topo, e a agenda
+   como LISTA (não grade de cartazes) — quem chega aqui já escolheu a casa e
+   está decidindo a DATA, e data se compara em coluna. */
+.pp-casa { max-width: 720px; margin: 0 auto; }
+.pp-casa-hero {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  gap: var(--pp-s-3); padding: var(--pp-s-6) 0 0;
+}
+.pp-casa-hero__logo {
+  width: 104px; height: 104px; padding: 10px; object-fit: contain;
+  border-radius: var(--pp-r-card); background: var(--pp-glass-2);
+  border: 1px solid var(--pp-edge-3); box-shadow: var(--pp-shine), var(--pp-shadow-1);
+}
+.pp-casa-hero__sigla {
+  width: 104px; height: 104px; display: grid; place-items: center;
+  border-radius: var(--pp-r-card);
+  background: rgba(var(--pp-pulse-rgb), 0.10);
+  border: 1px solid rgba(var(--pp-pulse-rgb), 0.35);
+  color: var(--pp-pulse);
+  font-family: var(--pp-font-display); font-weight: 700;
+  font-size: var(--pp-fs-32); letter-spacing: -0.04em;
+}
+.pp-casa-hero__nome {
+  font-family: var(--pp-font-display); font-weight: 700;
+  font-size: var(--pp-t-title); letter-spacing: -0.025em; margin: 0;
+}
+/* Três números, e três em qualquer largura: são curtos e a comparação entre
+   eles é o ponto. Empilhar no telefone quebraria a leitura horizontal. */
+.pp-casa-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.pp-casa-agenda { display: flex; flex-direction: column; gap: var(--pp-s-2); }
+.pp-casa-ev {
+  display: flex; align-items: center; gap: var(--pp-s-4);
+  padding: var(--pp-s-3); border-radius: var(--pp-r-card);
+  background: var(--pp-glass-1); border: 1px solid var(--pp-edge-1);
+  color: inherit; transition: background var(--pp-dur-1) var(--pp-ease), border-color var(--pp-dur-1) var(--pp-ease);
+}
+.pp-casa-ev:hover { background: var(--pp-glass-2); border-color: var(--pp-edge-3); }
+.pp-casa-ev__data {
+  width: 58px; flex-shrink: 0; text-align: center; padding: 7px 0;
+  border-radius: var(--pp-r-control);
+  background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2);
+}
+.pp-casa-ev__dia { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-18); line-height: 1; }
+.pp-casa-ev__mes {
+  font-family: var(--pp-font-mono); font-size: 10px; font-weight: 600;
+  letter-spacing: 0.08em; color: var(--pp-pulse); margin-top: 3px;
+}
+.pp-casa-ev__meio { flex: 1; min-width: 0; }
+.pp-casa-ev__titulo { font-weight: 600; font-size: var(--pp-fs-15); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pp-casa-ev__local { font-size: var(--pp-fs-12); color: var(--pp-fg-3); margin-top: 3px; }
+.pp-casa-ev__preco {
+  font-family: var(--pp-font-mono); font-weight: 700; font-size: var(--pp-fs-14);
+  font-variant-numeric: tabular-nums; flex-shrink: 0;
+}
+
 /* ── Footer ── */
 .pp-footer { border-top: 1px solid var(--pp-edge-1); padding: var(--pp-s-6) 0; color: var(--pp-fg-4); font-size: var(--pp-fs-13); text-align: center; }

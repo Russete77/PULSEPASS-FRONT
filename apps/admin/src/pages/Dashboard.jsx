@@ -9,6 +9,9 @@ import { brl, eventDate, dateTime } from '../lib/format.js';
 const TIER_TONES = ['var(--pp-pulse)', 'var(--pp-violet)', 'var(--pp-cyan)', 'var(--pp-pink)', 'var(--pp-amber)'];
 
 const STATIONS = [
+  // Primeiro da fila porque é a tela que se abre no começo da noite e fica
+  // aberta: responde "como está agora" sem precisar de mais nenhuma aba.
+  { to: '/ao-vivo', label: 'Ao vivo' },
   { to: '/porta', label: 'Porta' },
   { to: '/bilheteria', label: 'Bilheteria' },
   { to: '/pdv', label: 'PDV' },

@@ -58,7 +58,7 @@ export default function Garcom() {
 
   return (
     <Shell>
-      <OpsBack to={`/eventos/${id}`} label="Dashboard" />
+      <OpsBack eventId={id} />
 
       <div className="ck-eyebrow">salão · garçom</div>
       <h1 className="ck-h1">Suas mesas · {mesas.length}</h1>

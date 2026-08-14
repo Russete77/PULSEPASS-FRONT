@@ -139,10 +139,19 @@ export default function EventDetail() {
         <div className="pp-stack pp-stack-5 pp-reveal">
           {event.marca && (
             <div className="pp-marca">
-              {event.marca.logo_url
-                ? <img src={event.marca.logo_url} alt={event.marca.nome} className="pp-marca__logo" />
-                : <span className="pp-marca__nome">{event.marca.nome}</span>}
-              <div className="pp-cluster-2">
+              {/* Clicável: quem gostou da festa quer ver o que MAIS essa casa
+                  vai fazer, e antes esse caminho não existia. */}
+              <Link to={`/casa/${event.marca.slug}`} aria-label={`Ver a página de ${event.marca.nome}`}>
+                {event.marca.logo_url
+                  ? <img src={event.marca.logo_url} alt={event.marca.nome} className="pp-marca__logo" />
+                  : <span className="pp-marca__nome">{event.marca.nome}</span>}
+              </Link>
+              {/* pp-cluster-2 é só o modificador de gap — sem pp-cluster o
+                  contêiner não é flex e os links empilham. */}
+              <div className="pp-cluster pp-cluster-2">
+                <Link to={`/casa/${event.marca.slug}`} className="pp-link pp-link--muted">
+                  agenda da casa
+                </Link>
                 {event.marca.site && (
                   <a href={event.marca.site} target="_blank" rel="noopener noreferrer nofollow"
                     className="pp-link pp-link--muted">site</a>

@@ -108,7 +108,7 @@ export default function Cozinha() {
 
   return (
     <Shell>
-      <OpsBack to={`/eventos/${id}`} label="Dashboard" />
+      <OpsBack eventId={id} />
 
       {/* ── Barra de status (top bar do mockup) ── */}
       <div className="ck-kds__topo">

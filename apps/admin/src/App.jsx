@@ -8,6 +8,7 @@ import RedefinirSenha from './pages/RedefinirSenha.jsx';
 import Events from './pages/Events.jsx';
 import EventWizard from './pages/EventWizard.jsx';
 import Dashboard from './pages/Dashboard.jsx';
+import AoVivo from './pages/AoVivo.jsx';
 import Porta from './pages/Porta.jsx';
 import PDV from './pages/PDV.jsx';
 import Cozinha from './pages/Cozinha.jsx';
@@ -54,6 +55,7 @@ const TITULOS = criarResolvedorDeTitulo({
   '/': 'Meus eventos',
   '/novo': 'Criar evento',
   '/eventos/:id': 'Dashboard',
+  '/eventos/:id/ao-vivo': '🟢 Ao vivo',
   '/eventos/:id/porta': '🚪 Porta',
   '/eventos/:id/lista-porta': 'Lista na porta',
   '/eventos/:id/fila-espera': 'Fila de espera',
@@ -94,6 +96,7 @@ export default function App() {
       <Route path="/" element={<Protected><Events /></Protected>} />
       <Route path="/novo" element={<Protected><EventWizard /></Protected>} />
       <Route path="/eventos/:id" element={<Protected><Dashboard /></Protected>} />
+      <Route path="/eventos/:id/ao-vivo" element={<Protected><AoVivo /></Protected>} />
       <Route path="/eventos/:id/porta" element={<Protected><Porta /></Protected>} />
       <Route path="/eventos/:id/lista-porta" element={<Protected><ListaPorta /></Protected>} />
       <Route path="/eventos/:id/fila-espera" element={<Protected><FilaEspera /></Protected>} />

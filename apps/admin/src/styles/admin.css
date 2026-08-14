@@ -569,6 +569,11 @@ html, body { overflow-x: hidden; }
 .ck-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--pp-s-4); }
 @media (max-width: 980px) { .ck-kpis { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 420px) { .ck-kpis { grid-template-columns: 1fr; } }
+/* Faixa de números DENTRO de um painel (Ao vivo). Vem depois das media
+   queries acima de propósito: o painel pode ocupar meia tela, então quem
+   manda no número de colunas é a largura do container, não a da janela —
+   e por isso auto-fit em vez de mais um breakpoint. */
+.ck-kpis--painel { grid-template-columns: repeat(auto-fit, minmax(148px, 1fr)); }
 .ck-kpi {
   position: relative; overflow: hidden;
   padding: var(--pp-s-5); background: var(--pp-glass-2);
