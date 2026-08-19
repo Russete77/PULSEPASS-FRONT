@@ -35,6 +35,10 @@ export function Shell({ children }) {
               <NavLink to="/novo" className="ck-navlink">Criar evento</NavLink>
               <NavLink to="/repasse" className="ck-navlink">Repasse</NavLink>
               <NavLink to="/marca" className="ck-navlink">Marca</NavLink>
+              {/* Chave de API e webhook são da produtora inteira, não de um
+                  evento — por isso entram aqui, junto de Repasse e Marca, e
+                  não no menu do dashboard do evento. */}
+              <NavLink to="/integracoes" className="ck-navlink">Integrações</NavLink>
             </>
           )}
           {isAdmin && (

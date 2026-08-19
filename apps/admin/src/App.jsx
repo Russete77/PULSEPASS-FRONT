@@ -28,6 +28,7 @@ import Conciliacao from './pages/Conciliacao.jsx';
 import Equipe from './pages/Equipe.jsx';
 import Repasse from './pages/Repasse.jsx';
 import Marca from './pages/Marca.jsx';
+import Integracoes from './pages/Integracoes.jsx';
 import ListaPorta from './pages/ListaPorta.jsx';
 import Platform from './pages/plataforma/Platform.jsx';
 import PlatformOrgs from './pages/plataforma/Orgs.jsx';
@@ -77,6 +78,7 @@ const TITULOS = criarResolvedorDeTitulo({
   '/eventos/:id/equipe': 'Equipe',
   '/repasse': 'Repasse',
   '/marca': 'Marca',
+  '/integracoes': 'Integrações',
   '/plataforma': 'Plataforma',
   '/plataforma/orgs': 'Produtoras',
   '/plataforma/fraude': 'Fraude',
@@ -119,6 +121,9 @@ export default function App() {
       <Route path="/eventos/:id/equipe" element={<Protected><Equipe /></Protected>} />
       <Route path="/repasse" element={<Protected><Repasse /></Protected>} />
       <Route path="/marca" element={<Protected><Marca /></Protected>} />
+      {/* Integrações são da PRODUTORA, não do evento: a chave atravessa todos
+          os eventos da casa. Por isso vive na raiz, ao lado de Marca/Repasse. */}
+      <Route path="/integracoes" element={<Protected><Integracoes /></Protected>} />
       <Route path="/plataforma" element={<Protected><Platform /></Protected>} />
       <Route path="/plataforma/orgs" element={<Protected><PlatformOrgs /></Protected>} />
       <Route path="/plataforma/fraude" element={<Protected><PlatformFraud /></Protected>} />

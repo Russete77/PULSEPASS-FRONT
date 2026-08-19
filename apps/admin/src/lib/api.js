@@ -198,4 +198,31 @@ export const api = {
   // Carteira Asaas da produtora (split/repasse)
   setOrgWallet: (orgId, asaas_wallet_id) =>
     request(`/admin/organizations/${orgId}/asaas-wallet`, { method: 'PATCH', body: { asaas_wallet_id } }),
+
+  // ── Integrações da produtora: chaves de API e webhooks ──
+  //
+  // Duas rotas devolvem SEGREDO, e só uma vez na vida: `criarChaveApi` traz
+  // `chave`, `criarWebhook` e `rotacionarWebhookSecret` trazem `secret`. Não
+  // existe rota de "mostrar de novo" — o banco guarda hash/cifra. Quem chamar
+  // estes três é responsável por entregar o valor à pessoa na hora; jogar a
+  // resposta fora é perder a chave.
+  listarChavesApi: (orgId) => request(`/admin/organizations/${orgId}/api-keys`),
+  criarChaveApi: (orgId, { nome, escopos }) =>
+    request(`/admin/organizations/${orgId}/api-keys`, { method: 'POST', body: { nome, escopos } }),
+  revogarChaveApi: (orgId, chaveId) =>
+    request(`/admin/organizations/${orgId}/api-keys/${chaveId}`, { method: 'DELETE' }),
+
+  // Devolve { assinaturas, entregas, eventos } — o catálogo de eventos vem
+  // junto de propósito: a tela não mantém uma cópia própria da lista.
+  listarWebhooks: (orgId) => request(`/admin/organizations/${orgId}/webhooks`),
+  criarWebhook: (orgId, { url, eventos }) =>
+    request(`/admin/organizations/${orgId}/webhooks`, { method: 'POST', body: { url, eventos } }),
+  pausarWebhook: (orgId, assinaturaId, ativa) =>
+    request(`/admin/organizations/${orgId}/webhooks/${assinaturaId}`, { method: 'PATCH', body: { ativa } }),
+  removerWebhook: (orgId, assinaturaId) =>
+    request(`/admin/organizations/${orgId}/webhooks/${assinaturaId}`, { method: 'DELETE' }),
+  rotacionarWebhookSecret: (orgId, assinaturaId) =>
+    request(`/admin/organizations/${orgId}/webhooks/${assinaturaId}/secret`, { method: 'POST' }),
+  reprocessarWebhook: (orgId, assinaturaId) =>
+    request(`/admin/organizations/${orgId}/webhooks/${assinaturaId}/reprocessar`, { method: 'POST' }),
 };
