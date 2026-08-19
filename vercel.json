@@ -1,0 +1,41 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+
+  "//": [
+    "Este é o ÚNICO arquivo de config que a Vercel lê na raiz. Os",
+    "vercel.web.json e vercel.admin.json ao lado nunca foram carregados —",
+    "a Vercel não aceita nome alternativo, e por isso o deploy quebrava com",
+    "'No Output Directory named public' mesmo com o build passando.",
+    "",
+    "O monorepo tem DOIS apps publicáveis. Este projeto serve o app do",
+    "CLIENTE (apps/web), que é o produto público. O cockpit da produtora",
+    "(apps/admin) precisa de um PROJETO SEPARADO na Vercel, com Root",
+    "Directory = apps/admin — ele já tem o próprio apps/admin/vercel.json.",
+    "Deixar os dois no mesmo domínio colocaria a operação da casa atrás da",
+    "mesma porta da vitrine, o que é exatamente o que não se quer."
+  ],
+
+  "installCommand": "npm ci",
+
+  "//buildCommand": [
+    "Só o workspace do cliente. `turbo run build` compilaria o admin também",
+    "e o resultado seria descartado — tempo de build pago por nada."
+  ],
+  "buildCommand": "npm run build --workspace=apps/web",
+  "outputDirectory": "apps/web/dist",
+
+  "//rewrites": [
+    "SPA com React Router: sem isto, abrir /eventos/festa direto (link",
+    "compartilhado no WhatsApp, que é COMO as pessoas chegam) devolve 404 —",
+    "o arquivo não existe, quem resolve a rota é o JS depois de carregar."
+  ],
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
+
+  "headers": [
+    {
+      "//": "Os assets levam hash no nome; cache longo é seguro e evita rebaixar a vitrine no 3G da fila.",
+      "source": "/assets/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+    }
+  ]
+}
