@@ -57,7 +57,7 @@ input, button, select, textarea { font-family: inherit; }
 
 /* ── Header editorial (home) ── */
 .pp-home-head { max-width: 720px; }
-.pp-home-head h1 .accent { font-family: var(--pp-font-serif); font-style: italic; font-weight: 400; color: var(--pp-pulse); }
+.pp-home-head h1 .accent { font-weight: 700; color: var(--pp-pulse); }
 
 /* ── Search bar (catálogo) — pill glass com ícone (spec GInput) ── */
 .pp-searchbar { display: flex; gap: var(--pp-s-3); margin: var(--pp-s-6) 0 var(--pp-s-5); max-width: 560px; }
@@ -118,7 +118,7 @@ input, button, select, textarea { font-family: inherit; }
 /* header de cidade (estilo Catalog/Sympla) */
 .pp-cityhead { display: flex; align-items: baseline; gap: 10px; }
 .pp-cityhead h1 { margin: 2px 0 0; }
-.pp-cityhead .city { font-family: var(--pp-font-serif); font-style: italic; font-weight: 400; color: var(--pp-pulse); }
+.pp-cityhead .city { font-weight: 700; color: var(--pp-pulse); }
 
 /* scroll horizontal (bombando) */
 .pp-hscroll { display: flex; gap: var(--pp-s-3); overflow-x: auto; padding-bottom: var(--pp-s-2); scrollbar-width: none; scroll-snap-type: x mandatory; }
@@ -178,7 +178,7 @@ input, button, select, textarea { font-family: inherit; }
 .pp-steps .bar { flex: 1; height: 4px; border-radius: 99px; background: rgba(255,255,255,0.1); }
 .pp-steps .bar.on { background: var(--pp-pulse); }
 .pp-checkout h1 { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-28); line-height: 1; letter-spacing: -0.025em; margin: 8px 0 0; }
-.pp-checkout h1 .accent { font-family: var(--pp-font-serif); font-style: italic; font-weight: 400; color: var(--pp-pulse); font-size: var(--pp-fs-24); }
+.pp-checkout h1 .accent { font-weight: 700; color: var(--pp-pulse); font-size: var(--pp-fs-24); }
 /* Relógio da cobrança Pix. A cor sai do token âmbar (era um hex solto) —
    é aviso, não erro: ainda dá tempo de pagar. */
 .pp-countdown { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; background: rgba(255,184,0,0.10); border: 1px solid rgba(255,184,0,0.25); font-family: var(--pp-font-mono); font-size: var(--pp-fs-13); font-weight: 600; color: var(--pp-amber); }

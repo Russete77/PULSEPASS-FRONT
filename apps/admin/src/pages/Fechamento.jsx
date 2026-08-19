@@ -78,6 +78,18 @@ export default function Fechamento() {
   const total = rows.reduce((s, r) => s + r.total_cents, 0);
   const orders = rows.reduce((s, r) => s + r.orders, 0);
 
+  /* Conferência de carteira: o saldo de cada carteira bate com o extrato?
+     São TRÊS estados, e a diferença entre eles é o ponto. "Não havia o que
+     conferir" não é "está tudo certo" — confundir os dois foi o que fez esta
+     tela assinar OK por baixo de qualquer rombo enquanto o backend filtrava
+     as carteiras por um `event_id` que a carteira única deixou sempre nulo.
+     O `?? ledger.ok` cobre a janela em que o back ainda é o antigo. */
+  const conf = ledger && {
+    status: ledger.status ?? (ledger.ok ? 'ok' : 'divergencias'),
+    conferidas: ledger.conferidas,
+    drifts: ledger.drifts ?? [],
+  };
+
   /* KPIs com o fio de cor no topo, como no mockup. O quarto cartão é a
      integridade do ledger: no fechamento, "o saldo bate?" é um número tão
      importante quanto o total. */
@@ -85,10 +97,15 @@ export default function Fechamento() {
     { l: 'Total PDV (cashless)', v: brl(total), d: 'débito de saldo, sem espécie', cor: 'var(--pp-pulse)' },
     { l: 'Pedidos', v: String(orders), d: `${rows.length} operador(es)`, cor: 'var(--pp-cyan)' },
     { l: 'Turnos de gaveta', v: String(turnos.length), d: `${turnos.filter((t) => !t.fechado_em).length} aberto(s)`, cor: 'var(--pp-violet)' },
-    ledger && {
-      l: 'Ledger', v: ledger.ok ? 'OK' : `${ledger.drifts.length} divergência(s)`,
-      d: ledger.ok ? 'saldos batem com as transações' : 'carteiras a investigar',
-      cor: ledger.ok ? 'var(--pp-pulse)' : 'var(--pp-amber)',
+    conf && {
+      l: 'Conferência de carteira',
+      v: conf.status === 'sem_movimento' ? '—'
+        : conf.status === 'divergencias' ? `${conf.drifts.length} divergência(s)` : 'OK',
+      d: conf.status === 'sem_movimento'
+        ? 'nenhuma carteira movimentou no bar'
+        : `${conf.conferidas ?? '—'} carteira(s) conferida(s) · saldo x extrato`,
+      cor: conf.status === 'divergencias' ? 'var(--pp-amber)'
+        : conf.status === 'sem_movimento' ? 'var(--pp-fg-4)' : 'var(--pp-pulse)',
     },
   ].filter(Boolean);
 
@@ -237,9 +254,18 @@ export default function Fechamento() {
         </div>
       </div>
 
-      {ledger && !ledger.ok && (
+      {conf?.status === 'divergencias' && (
         <p className="ck-sub" style={{ marginTop: 12, color: 'var(--pp-amber)' }}>
-          ⚠ {ledger.drifts.length} carteira(s) com saldo divergente da soma das transações — investigar
+          ⚠ {conf.drifts.length} de {conf.conferidas} carteira(s) com saldo divergente da soma das
+          transações — investigar antes de fechar a noite.
+        </p>
+      )}
+
+      {/* Sem consumo no bar não há carteira a conferir. Dizer isso é o
+          oposto de dar OK: o silêncio aqui era o bug. */}
+      {conf?.status === 'sem_movimento' && (
+        <p className="ck-sub" style={{ marginTop: 12, color: 'var(--pp-fg-4)' }}>
+          Nenhuma carteira movimentou no bar deste evento — não há saldo a conferir.
         </p>
       )}
 

@@ -168,7 +168,7 @@ h1.ck-h1 { font-family: var(--pp-font-display); font-weight: 700; font-size: var
 .adm-content { padding: var(--pp-s-8); max-width: 1280px; }
 .adm-eyebrow { font-family: var(--pp-font-mono); font-size: var(--pp-fs-12); letter-spacing: 0.14em; text-transform: uppercase; color: var(--pp-pink); }
 .adm-h1 { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-28); letter-spacing: -0.03em; margin: 4px 0 0; }
-.adm-h1 .accent { font-family: var(--pp-font-serif); font-style: italic; font-weight: 400; color: var(--pp-pink); }
+.adm-h1 .accent { font-weight: 700; color: var(--pp-pink); }
 .adm-kpis { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
 @media (max-width: 1100px) { .adm-kpis { grid-template-columns: repeat(3, 1fr); } }
 .adm-kpi { padding: 14px; border-radius: 14px; background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2); position: relative; overflow: hidden; }

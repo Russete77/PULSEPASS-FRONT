@@ -60,7 +60,10 @@
   font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums;
 }
 /* Assinatura editorial — Newsreader itálico verde ("Sinta o pulso do evento.") */
-.pp-accent  { font-family: var(--pp-font-serif); font-style: italic; font-weight: 400; color: var(--pp-pulse); }
+/* Sem itálico e sem serifada: o destaque é COR e PESO. Palavra em
+   serifada itálica no meio de um título sans é a assinatura visual mais
+   batida que existe, e some assim que a tela vira ferramenta de trabalho. */
+.pp-accent  { font-weight: 700; color: var(--pp-pulse); }
 /* Meta em mono uppercase (spec: "SEX · 22 NOV · 22H") */
 .pp-meta    { font-family: var(--pp-font-mono); font-size: var(--pp-fs-13); letter-spacing: 0.04em; text-transform: uppercase; color: var(--pp-fg-3); }
 
