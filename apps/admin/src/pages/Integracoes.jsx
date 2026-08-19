@@ -153,7 +153,11 @@ function SegredoUnico({ aberto, titulo, contexto, rotuloValor, valor, comoUsar, 
 
   return (
     <div className="pp-overlay">
-      <div ref={caixaRef} className="pp-modal" role="alertdialog" aria-modal="true"
+      {/* Mais largo que o padrão: a chave e o comando de exemplo são linhas
+          longas, e em 460px elas quebravam tanto que o conteúdo passava da
+          altura da janela e virava rolagem — numa tela que a pessoa só vê uma
+          vez, o que fica abaixo da dobra é o que ela não copia. */}
+      <div ref={caixaRef} className="pp-modal pp-modal--lg" role="alertdialog" aria-modal="true"
         aria-labelledby="pp-segredo-titulo" aria-describedby="pp-segredo-aviso">
         <div className="pp-modal__head">
           <h2 className="pp-modal__title" id="pp-segredo-titulo">{titulo}</h2>
@@ -165,9 +169,8 @@ function SegredoUnico({ aberto, titulo, contexto, rotuloValor, valor, comoUsar, 
           <p id="pp-segredo-aviso" className="pp-aviso-unico">
             <Icon name="clock" size={14} />
             <span>
-              <strong>Este valor aparece uma única vez.</strong> Não guardamos nada que
-              permita mostrá-lo de novo — nem o suporte consegue recuperar. Copie e cole
-              onde for usar antes de fechar. {contexto}
+              <strong>Aparece uma única vez.</strong> Nem o suporte recupera —
+              copie antes de fechar. {contexto}
             </span>
           </p>
 
@@ -327,10 +330,6 @@ export default function Integracoes() {
             }}>
               curl -H &quot;Authorization: Bearer {nova.prefixo}…&quot; {BASE_PUBLICA}/eu
             </code>
-            <p className="pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', margin: '8px 0 0' }}>
-              O prefixo <span className="pp-mono">{nova.prefixo}</span> fica visível na lista —
-              é assim que você reconhece depois qual linha é esta chave.
-            </p>
           </>
         ),
       });
