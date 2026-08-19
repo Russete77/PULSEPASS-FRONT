@@ -162,12 +162,8 @@ function SegredoUnico({ aberto, titulo, contexto, rotuloValor, valor, comoUsar, 
         <div className="pp-modal__body">
           {/* O aviso vem ANTES do valor, não depois: quem lê de cima pra baixo
               precisa saber o que está em jogo antes de bater o olho no campo. */}
-          <p id="pp-segredo-aviso" className="pp-note" style={{
-            margin: '0 0 var(--pp-s-4)', borderColor: 'rgba(255,184,0,0.35)',
-            background: 'rgba(255,184,0,0.08)',
-            display: 'flex', gap: 10, alignItems: 'flex-start', lineHeight: 1.5,
-          }}>
-            <Icon name="clock" size={15} />
+          <p id="pp-segredo-aviso" className="pp-aviso-unico">
+            <Icon name="clock" size={14} />
             <span>
               <strong>Este valor aparece uma única vez.</strong> Não guardamos nada que
               permita mostrá-lo de novo — nem o suporte consegue recuperar. Copie e cole
@@ -175,21 +171,30 @@ function SegredoUnico({ aberto, titulo, contexto, rotuloValor, valor, comoUsar, 
             </span>
           </p>
 
-          <label className="ck-label" htmlFor="pp-segredo-valor">{rotuloValor}</label>
-          <input
-            id="pp-segredo-valor" ref={valorRef} className="ck-input pp-mono"
-            value={valor} readOnly spellCheck="false"
-            onFocus={(e) => e.target.select()}
-            style={{ fontSize: 'var(--pp-fs-13)' }}
-          />
-
-          <div className="pp-row" style={{ gap: 10, marginTop: 'var(--pp-s-3)', flexWrap: 'wrap' }}>
-            <BotaoCopiar valor={valor} chave="segredo" copiado={copiado} copiar={copiar}
-              rotulo="Copiar valor" classe="ck-btn ck-btn--primary ck-btn--sm" />
-            <span className="pp-mono pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)' }}>
-              ou selecione o campo e use Ctrl+C
-            </span>
+          {/* O valor é o assunto da janela, então ocupa o lugar de assunto: um
+              bloco próprio, largura inteira, quebrando em QUALQUER caractere.
+              Antes era um `ck-input` solto — e `.ck-input` não tem width:100%
+              fora de um `.ck-field`, então a chave aparecia cortada com o
+              rótulo espremido ao lado. Chave cortada é chave copiada pela
+              metade, que é o pior desfecho possível aqui. */}
+          <div className="pp-cofre">
+            <div className="pp-cofre__topo">
+              <span className="ck-label" id="pp-segredo-rot">{rotuloValor}</span>
+              <BotaoCopiar valor={valor} chave="segredo" copiado={copiado} copiar={copiar}
+                rotulo={copiado === 'segredo' ? 'Copiado' : 'Copiar'}
+                classe="ck-btn ck-btn--primary ck-btn--sm" />
+            </div>
+            <textarea
+              id="pp-segredo-valor" ref={valorRef} className="pp-cofre__valor pp-mono"
+              value={valor} readOnly spellCheck="false" rows={2}
+              aria-labelledby="pp-segredo-rot"
+              onFocus={(e) => e.target.select()}
+            />
           </div>
+
+          <p className="pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', margin: '6px 2px 0' }}>
+            Ou clique no valor para selecionar tudo e use Ctrl+C.
+          </p>
 
           {/* Região viva: leitor de tela precisa ouvir que copiou — o ícone
               trocando não alcança quem não vê. */}
@@ -202,22 +207,13 @@ function SegredoUnico({ aberto, titulo, contexto, rotuloValor, valor, comoUsar, 
                 : ''}
           </p>
 
-          {comoUsar && (
-            <div style={{
-              marginTop: 'var(--pp-s-4)', padding: 'var(--pp-s-4)',
-              borderRadius: 'var(--pp-r-card)', background: 'var(--pp-ink-950)',
-              border: '1px solid var(--pp-edge-1)',
-            }}>
-              {comoUsar}
-            </div>
-          )}
+          {comoUsar && <div className="pp-comousar">{comoUsar}</div>}
 
-          <label className="pp-row" style={{
-            gap: 10, marginTop: 'var(--pp-s-5)', alignItems: 'flex-start', cursor: 'pointer',
-          }}>
-            <input type="checkbox" checked={guardei} onChange={(e) => setGuardei(e.target.checked)}
-              style={{ width: 18, height: 18, flexShrink: 0, marginTop: 2, accentColor: 'var(--pp-pulse)' }} />
-            <span style={{ fontSize: 'var(--pp-fs-14)', color: 'var(--pp-fg-2)', lineHeight: 1.45 }}>
+          {/* A trava fica destacada, não como caixinha perdida no rodapé: é a
+              única coisa entre a pessoa e perder a chave para sempre. */}
+          <label className={`pp-trava ${guardei ? 'is-on' : ''}`}>
+            <input type="checkbox" checked={guardei} onChange={(e) => setGuardei(e.target.checked)} />
+            <span>
               Guardei em lugar seguro. Entendo que fechar esta janela apaga o valor
               da tela para sempre.
             </span>
@@ -231,9 +227,13 @@ function SegredoUnico({ aberto, titulo, contexto, rotuloValor, valor, comoUsar, 
             Fechar
           </button>
         </div>
+        {/* clamp em px, não `--pp-fs-11`: esse token NÃO existe na escala (ela
+            começa em 12), e variável indefinida faz a regra inteira ser
+            descartada — o texto voltava a herdar 16px. */}
         {!guardei && (
           <p id="pp-segredo-trava" className="pp-muted-2" style={{
-            fontSize: 'var(--pp-fs-12)', margin: 0, padding: '0 var(--pp-s-5) var(--pp-s-4)', textAlign: 'right',
+            fontSize: 'clamp(10.5px, 2.2vw, 11.5px)', margin: 0,
+            padding: '0 var(--pp-s-5) var(--pp-s-4)', textAlign: 'center',
           }}>
             Marque a caixa acima para liberar o fechamento.
           </p>
