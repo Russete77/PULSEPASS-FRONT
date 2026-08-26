@@ -1517,3 +1517,27 @@ html, body { overflow-x: hidden; }
   border: 1px solid var(--pp-edge-3); cursor: pointer;
 }
 .ck-swatch.is-on { border: 2px solid var(--pp-white); }
+
+/* ── Mapa de assentos (conferência no cockpit) ──
+   O desenho é LEITURA, não escolha: quem escolhe poltrona é o comprador, no
+   app dele. Aqui a pergunta é "quanto da casa já saiu", e ela se responde de
+   longe, pela mancha de cor. Por isso o assento é pequeno e denso — sessenta
+   por fileira precisam caber na largura de um painel, e o alvo de 44px vale
+   para controle, não para marca de estado.
+   O tom vem de --k (.ck-k--*), a mesma etiqueta dos KPIs e das barras. */
+.ck-mapa {
+  display: grid; gap: var(--pp-s-1);
+  padding-bottom: var(--pp-s-2); /* espaço da barra de rolagem horizontal */
+}
+.ck-mapa__fila { display: flex; align-items: center; gap: var(--pp-s-3); }
+/* Coluna fixa: sem ela o rótulo "A" e o "AA" desalinham a casa inteira. */
+.ck-mapa__rot { width: 24px; flex-shrink: 0; text-align: right; color: var(--pp-fg-4); }
+.ck-mapa__assentos { display: flex; gap: var(--pp-s-1); }
+/* Raio pequeno e cru, como .ck-dot: os três raios do sistema desenham
+   superfície (controle 8, card 12); num quadrado de 16px, 8px vira bolinha. */
+.ck-assento {
+  width: 16px; height: 16px; flex-shrink: 0; border-radius: 3px;
+  background: var(--k, var(--pp-fg-4));
+}
+/* Bloqueado é ausência: a poltrona existe na planta e não está à venda. */
+.ck-assento--vazio { background: transparent; border: 1px dashed var(--pp-edge-3); }

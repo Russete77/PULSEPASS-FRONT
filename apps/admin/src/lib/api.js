@@ -14,6 +14,10 @@ const client = createApiClient({
 
 // Admin: todas as rotas exigem autenticação.
 const request = (path, opts = {}) => client.request(path, { auth: true, ...opts });
+// Rotas do catálogo público (/events/:slug/...). Chamadas SEM token de
+// propósito: é exatamente a resposta que o comprador recebe. Se o cockpit
+// mandasse o token, a produtora veria um mapa que ninguém mais vê.
+const publicRequest = (path, opts = {}) => client.request(path, opts);
 
 export const api = {
   me: () => request('/admin/me'),
@@ -71,6 +75,22 @@ export const api = {
     return request(`/admin/events/${id}/cover`, { method: 'POST', body: { path } });
   },
   removeCover: (id) => request(`/admin/events/${id}/cover`, { method: 'DELETE' }),
+
+  // ── Assento marcado ──
+  //
+  // Gerar a grade é IRREVERSÍVEL por aqui: não existe rota que apague assento,
+  // e é assim de propósito — apagar um assento vendido apagaria o lugar de
+  // alguém que pagou. Por isso a tela mostra a conta antes de chamar.
+  // O servidor recusa com 409 se o setor já tem grade (ver o texto em
+  // seats/service.js), que é o que impede a grade duplicada.
+  gerarAssentos: (id, { setor, tier_id, fileiras, por_fileira }) =>
+    request(`/admin/events/${id}/assentos`, {
+      method: 'POST', body: { setor, tier_id, fileiras, por_fileira },
+    }),
+  // O mapa é o do CATÁLOGO PÚBLICO — a mesma resposta que o comprador vê.
+  // Só existe para evento publicado; em rascunho responde "não encontrado",
+  // e a tela trata isso como etapa que falta, não como falha.
+  mapaAssentos: (slug) => publicRequest(`/events/${slug}/assentos`),
 
   // ── Marca da produtora (white-label) ──
   getBranding: (orgId) => request(`/admin/organizations/${orgId}/branding`),

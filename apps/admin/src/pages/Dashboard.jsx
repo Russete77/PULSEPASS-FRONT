@@ -27,6 +27,11 @@ const STATIONS = [
   { to: '/cupons', label: 'Cupons' },
   { to: '/marketing', label: 'Marketing' },
   { to: '/camarotes', label: 'Camarotes' },
+  // Onde o público senta. Fica ao lado de Camarotes porque é a mesma pergunta
+  // ("quem senta onde") e porque as duas se resolvem ANTES da noite: a grade
+  // de assentos precisa existir antes de a primeira venda com lugar marcado
+  // acontecer, e até agora não havia por onde criá-la.
+  { to: '/assentos', label: 'Assentos' },
   { to: '/conciliacao', label: 'Financeiro' },
   { to: '/equipe', label: 'Equipe' },
 ];

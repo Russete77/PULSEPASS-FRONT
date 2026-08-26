@@ -21,6 +21,7 @@ import FilaEspera from './pages/FilaEspera.jsx';
 import Cardapio from './pages/Cardapio.jsx';
 import Fechamento from './pages/Fechamento.jsx';
 import Camarotes from './pages/Camarotes.jsx';
+import Assentos from './pages/Assentos.jsx';
 import Promoters from './pages/Promoters.jsx';
 import Cupons from './pages/Cupons.jsx';
 import Marketing from './pages/Marketing.jsx';
@@ -71,6 +72,7 @@ const TITULOS = criarResolvedorDeTitulo({
   '/eventos/:id/cardapio': 'Cardápio',
   '/eventos/:id/fechamento': 'Fechamento',
   '/eventos/:id/camarotes': 'Camarotes',
+  '/eventos/:id/assentos': 'Assentos',
   '/eventos/:id/promoters': 'Promoters',
   '/eventos/:id/cupons': 'Cupons',
   '/eventos/:id/marketing': 'Marketing',
@@ -114,6 +116,7 @@ export default function App() {
       <Route path="/eventos/:id/cardapio" element={<Protected><Cardapio /></Protected>} />
       <Route path="/eventos/:id/fechamento" element={<Protected><Fechamento /></Protected>} />
       <Route path="/eventos/:id/camarotes" element={<Protected><Camarotes /></Protected>} />
+      <Route path="/eventos/:id/assentos" element={<Protected><Assentos /></Protected>} />
       <Route path="/eventos/:id/promoters" element={<Protected><Promoters /></Protected>} />
       <Route path="/eventos/:id/cupons" element={<Protected><Cupons /></Protected>} />
       <Route path="/eventos/:id/marketing" element={<Protected><Marketing /></Protected>} />
