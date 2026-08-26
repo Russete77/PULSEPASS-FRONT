@@ -13,6 +13,8 @@ import PedidoConfirmado from './pages/PedidoConfirmado.jsx';
 import MyTickets from './pages/MyTickets.jsx';
 import MyOrders from './pages/MyOrders.jsx';
 import Wallet from './pages/Wallet.jsx';
+import Fidelidade from './pages/Fidelidade.jsx';
+import Transferencias from './pages/Transferencias.jsx';
 import OrderAhead from './pages/OrderAhead.jsx';
 import PromoterPortal from './pages/PromoterPortal.jsx';
 import CamarotesPublic from './pages/CamarotesPublic.jsx';
@@ -62,6 +64,8 @@ const TITULOS = criarResolvedorDeTitulo({
   '/meus-ingressos': 'Meus ingressos',
   '/meus-pedidos': 'Meus pedidos',
   '/carteira': 'Carteira',
+  '/fidelidade': 'Meus pontos',
+  '/transferencias': 'Transferências',
   '/perfil': 'Meu perfil',
   '/promoter': 'Promoter',
   '/ingresso/:id': 'Meu ingresso',
@@ -93,6 +97,11 @@ export default function App() {
       <Route path="/meus-ingressos" element={<Protected><MyTickets /></Protected>} />
       <Route path="/meus-pedidos" element={<Protected><MyOrders /></Protected>} />
       <Route path="/carteira" element={<Protected><Wallet /></Protected>} />
+      {/* Pontos e transferências são registros da CONTA: fora dela não há o
+          que mostrar, e ambas as APIs exigem token. Protegidas como a
+          carteira. */}
+      <Route path="/fidelidade" element={<Protected><Fidelidade /></Protected>} />
+      <Route path="/transferencias" element={<Protected><Transferencias /></Protected>} />
       <Route path="/perfil" element={<Protected><Perfil /></Protected>} />
       <Route path="/promoter" element={<Protected><PromoterPortal /></Protected>} />
       <Route path="/ingresso/:id" element={<Protected><TicketView /></Protected>} />

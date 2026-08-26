@@ -53,6 +53,10 @@ export const api = {
   getTicketQrToken: (id) => request(`/tickets/${id}/qr-token`, { auth: true }),
   transferTicket: (id, toEmail) =>
     request(`/tickets/${id}/transfer`, { method: 'POST', body: { toEmail }, auth: true }),
+  // Histórico de transferências (enviadas e recebidas). Existe porque a
+  // transferência ROTACIONA o código: quem passou adiante vê o ingresso sumir
+  // da conta e o QR antigo parar de valer, e sem registro isso parece perda.
+  myTransfers: () => request('/tickets/transferencias', { auth: true }),
 
   // Carteira cashless (saldo, recarga via Asaas, extrato)
   getWallet: (eventId) => request(`/wallet${eventId ? `?eventId=${eventId}` : ''}`, { auth: true }),
@@ -60,6 +64,15 @@ export const api = {
   createTopup: (body) => request('/wallet/topups', { method: 'POST', body, auth: true }),
   getTopup: (id) => request(`/wallet/topups/${id}`, { auth: true }),
   simulateTopupPaid: (id) => request(`/wallet/topups/${id}/simulate-paid`, { method: 'POST', auth: true }),
+
+  // ── Fidelidade (pontos) ──
+  // Pontos são POR PRODUTORA, não globais: /programas lista quem tem programa
+  // ATIVO e o saldo é consultado uma produtora por vez. /saldo devolve 404
+  // quando o programa daquela produtora não está ativo.
+  fidelidadeProgramas: () => request('/fidelidade/programas', { auth: true }),
+  fidelidadeSaldo: (orgId) => request(`/fidelidade/${orgId}/saldo`, { auth: true }),
+  fidelidadeResgatar: (orgId, pontos) =>
+    request(`/fidelidade/${orgId}/resgatar`, { method: 'POST', body: { pontos }, auth: true }),
 
   // Bar cashless — pedir no app (OrderAhead)
   getEventMenu: (slug) => request(`/events/${slug}/menu`),

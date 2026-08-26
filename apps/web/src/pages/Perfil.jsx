@@ -23,9 +23,12 @@ import { useAuth } from '../context/AuthContext.jsx';
  * - Telefone e CPF. Também existem em `profiles` e também ficaram de fora do
  *   select de /admin/me. Lê-los do user_metadata do Supabase seria mostrar o
  *   que foi digitado no cadastro, não o que está no banco hoje.
- * - Tier/fidelidade ("Pulse Gold · 71%"), conquistas, reputação em estrelas e
- *   os contadores de eventos/cashless. Não existe programa de fidelidade, nem
- *   badges, nem avaliação de usuário no produto — nada disso tem tabela.
+ * - Tier ("Pulse Gold · 71%"), conquistas, reputação em estrelas e os
+ *   contadores de eventos/cashless. Não existe faixa, nem badge, nem avaliação
+ *   de usuário no produto — nada disso tem tabela. O programa de PONTOS, esse
+ *   sim, existe (migration 0056) e virou tela própria: mas os pontos são por
+ *   produtora, não um tier global do perfil, então ele entra como atalho e não
+ *   como selo aqui em cima.
  * - Linhas de ajuste (métodos de pagamento, notificações, LGPD, ajuda). Nenhuma
  *   dessas telas existe; link para o vazio é pior que ausência de link.
  *
@@ -57,8 +60,14 @@ function iniciais(nome, email) {
 /** Atalhos para telas que EXISTEM neste app. Os mesmos destinos do topo. */
 const ATALHOS = [
   { to: '/meus-ingressos', icone: 'ticket', titulo: 'Meus ingressos', apoio: 'QR de entrada e transferência' },
+  // Logo abaixo dos ingressos porque é sobre eles: é aqui que quem passou um
+  // ingresso adiante e viu o QR parar de valer vem procurar o comprovante.
+  { to: '/transferencias', icone: 'share', titulo: 'Transferências', apoio: 'ingressos que você enviou e recebeu' },
   { to: '/meus-pedidos', icone: 'receipt', titulo: 'Meus pedidos', apoio: 'histórico de compras e reembolso' },
   { to: '/carteira', icone: 'wallet', titulo: 'Carteira', apoio: 'saldo do bar e recargas' },
+  // Vizinho da carteira: as duas são saldo. A diferença — pontos valem por
+  // produtora, dinheiro vale em qualquer uma — está dentro da tela.
+  { to: '/fidelidade', icone: 'crown', titulo: 'Fidelidade', apoio: 'seus pontos em cada produtora' },
   { to: '/promoter', icone: 'users', titulo: 'Portal do promoter', apoio: 'sua lista e comissões' },
 ];
 

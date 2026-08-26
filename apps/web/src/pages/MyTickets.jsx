@@ -13,8 +13,15 @@ import { Icon } from '../components/Icon.jsx';
  * indo para um evento agora, não navegando o histórico.
  *
  * O que o desenho traz e não foi portado: a faixa de fidelidade ("Pulse Gold ·
- * cashback 5%"). Não existe programa de fidelidade no produto, e desenhar
- * cashback na tela seria prometer dinheiro que ninguém vai pagar.
+ * cashback 5%"). Existe programa de PONTOS (ver /fidelidade), mas ele é por
+ * produtora e não tem faixa nem cashback — carimbar "Gold · 5%" no topo da
+ * carteira seria prometer uma regra que o backend não tem.
+ *
+ * A transferência ROTACIONA o código do ingresso: quem passa adiante vê o
+ * ingresso sumir desta lista e o QR antigo parar de valer. Por isso o link
+ * para /transferencias aparece aqui — inclusive (e principalmente) no estado
+ * vazio, que é onde cai quem acabou de transferir o único ingresso que tinha
+ * e está achando que perdeu.
  */
 
 const bigDate = (iso) => {
@@ -137,6 +144,10 @@ export default function MyTickets() {
           <div className="pp-empty__icon"><Icon name="ticket" size={30} /></div>
           <div className="pp-empty__title">Nenhum ingresso ainda</div>
           <p>Bora achar um rolê? <Link to="/" className="pp-link">Explorar eventos</Link></p>
+          <p className="pp-t-support pp-mt-3">
+            Passou um ingresso para alguém?{' '}
+            <Link to="/transferencias" className="pp-link">Ver transferências</Link>
+          </p>
         </Empty>
       )}
 
@@ -234,6 +245,16 @@ export default function MyTickets() {
             </div>
           )}
         </>
+      )}
+
+      {/* A explicação curta de para onde vai um ingresso transferido. Fica
+          fora do bloco das abas para valer também para quem só tem o
+          ingresso em destaque. */}
+      {status === 'done' && tickets.length > 0 && (
+        <p className="pp-t-support pp-mt-8">
+          Transferiu um ingresso? Ele sai desta lista e o QR antigo para de valer.{' '}
+          <Link to="/transferencias" className="pp-link">Ver transferências</Link>
+        </p>
       )}
     </Page>
   );

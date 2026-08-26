@@ -134,8 +134,7 @@ export default function Assentos() {
           <div className="pp-empty__icon"><Icon name="sofa" size={30} /></div>
           <div className="pp-empty__title">Este evento não tem lugar marcado</div>
           <p>A entrada é por ordem de chegada — o ingresso se compra direto na página do evento.</p>
-          <Link to={`/eventos/${slug}`} className="pp-btn pp-btn--primary pp-btn--sm"
-            className="pp-btn pp-btn--primary pp-btn--sm pp-mt-4">
+          <Link to={`/eventos/${slug}`} className="pp-btn pp-btn--primary pp-btn--sm pp-mt-4">
             Ver ingressos
           </Link>
         </Empty>

@@ -828,3 +828,18 @@ h1[tabindex="-1"]:focus { outline: none; }
   font-size: var(--pp-fs-28); letter-spacing: -0.03em; line-height: 1.05;
   margin-top: 2px;
 }
+
+/* ── Alvo de toque em aparelho de dedo ──
+   O botao pequeno tem 36px, que e a densidade certa PARA MOUSE: o ponteiro
+   mira com precisao de pixel e 44px em toda parte deixaria a tela frouxa.
+   Dedo nao mira. Em aparelho de ponteiro grosso os controles compactos
+   crescem para o piso de 44 — nao e o mesmo problema, entao nao e a mesma
+   medida.
+
+   Vale para `.pp-btn--sm` (38 usos no app do cliente, entre eles o Resgatar
+   da fidelidade, que move dinheiro) e para o chip, que ja tinha sido
+   corrigido. Sem isto, o piso de 44 valia so no papel. */
+@media (pointer: coarse) {
+  .pp-btn--sm { min-height: 44px; }
+  .pp-btn--icon.pp-btn--sm { min-width: 44px; }
+}

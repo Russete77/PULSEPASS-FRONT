@@ -57,11 +57,10 @@ export function DirectionsButton({ venue, address, city, state, className = '', 
                 {apps.map((a) => (
                   <a
                     key={a.label}
-                    className="pp-btn pp-btn--glass pp-btn--block"
+                    className="pp-btn pp-btn--glass pp-btn--block pp-btn--lista"
                     href={a.href}
                     target="_blank"
                     rel="noreferrer"
-                    className="pp-btn pp-btn--glass pp-btn--block pp-btn--lista"
                   >
                     <Icon name={a.icon} size={18} />
                     {a.label}

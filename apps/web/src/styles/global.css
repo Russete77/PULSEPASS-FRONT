@@ -94,6 +94,13 @@ input, button, select, textarea { font-family: inherit; }
 .pp-meta-bloco { max-width: 340px; }
 /* Botão que é item de lista: ícone à esquerda, rótulo colado nele. */
 .pp-btn--lista { justify-content: flex-start; gap: var(--pp-s-3); }
+/* Link que é ALVO, não prosa.
+   Link solto numa linha própria — "Ver a casa", um título clicável — é um
+   controle, e vale para ele o mesmo mínimo de 44px de qualquer botão. Link
+   no meio de uma frase continua sendo prosa e fica de fora desta regra (é a
+   exceção que a própria WCAG 2.5.8 abre para texto corrido). */
+.pp-alvo { display: inline-flex; align-items: center; min-height: 44px; }
+
 /* Respiro do QR dentro do ingresso e do estado sem QR. */
 .pp-qrbox { padding: var(--pp-s-2) 0; }
 .pp-semqr { padding: var(--pp-s-6) var(--pp-s-2); }
@@ -772,6 +779,60 @@ input, button, select, textarea { font-family: inherit; }
   font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-body);
   letter-spacing: -0.02em; font-variant-numeric: tabular-nums; flex-shrink: 0;
 }
+
+/* ══ FIDELIDADE (pontos por produtora) ══
+   Ponto NÃO é dinheiro, e a tela não pode deixar a dúvida no ar: o número
+   grande é o saldo em pontos, no papel de money (é o saldo da tela), e o
+   valor em real aparece um degrau abaixo, como consequência — nunca ao
+   contrário. Por isso o saldo não usa .pp-money: aquela classe carrega a
+   promessa de moeda, e aqui a unidade é "pontos".
+
+   Cada produtora é um saldo separado: não existe total somado nesta tela,
+   porque somar pontos de casas diferentes seria inventar um número que
+   não pode ser gasto em lugar nenhum. */
+.pp-fid { max-width: 560px; margin: 0 auto; }
+.pp-fid__saldo { display: flex; align-items: baseline; gap: var(--pp-s-2); margin-top: var(--pp-s-2); }
+.pp-fid__pontos {
+  font-family: var(--pp-font-display); font-weight: 700;
+  font-size: var(--pp-t-money); letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums; line-height: 1;
+}
+/* Saldo negativo: dívida de pontos, o único caso em que o número é a má
+   notícia. Mesmo tratamento da carteira — o sinal vem à parte e o número é
+   formatado pelo ABSOLUTO, senão "-13" com centavos vira "-13,-50". */
+.pp-fid__pontos--devendo { color: var(--pp-red); }
+.pp-fid__unidade { font-size: var(--pp-t-section); color: var(--pp-fg-3); font-weight: 600; }
+/* O que os pontos valem em dinheiro. Só existe quando a produtora definiu
+   centavos_por_ponto — sem a regra, não há valor a prometer. */
+.pp-fid__vale { margin-top: var(--pp-s-2); font-size: var(--pp-t-support); color: var(--pp-fg-2); }
+.pp-fid__acoes { display: flex; flex-wrap: wrap; gap: var(--pp-s-2); margin-top: var(--pp-s-5); }
+.pp-fid__acoes > .pp-btn { flex: 1; min-width: 140px; }
+/* Painel que abre dentro do cartão (resgate / extrato): separado por régua,
+   não por outro cartão — dois cartões aninhados leem como duas coisas. */
+.pp-fid__painel { margin-top: var(--pp-s-5); padding-top: var(--pp-s-5); border-top: 1px solid var(--pp-edge-2); }
+
+/* ══ TRANSFERÊNCIAS DE INGRESSO ══
+   A transferência rotaciona o código. O par "antes → depois" é o coração
+   da tela, e é dado técnico: mono, e o antigo riscado — a marca de riscado
+   diz "parou de valer" antes de qualquer frase explicar. */
+.pp-transf { max-width: 620px; margin: 0 auto; }
+.pp-transf__codigos {
+  display: flex; align-items: center; flex-wrap: wrap;
+  gap: var(--pp-s-2); margin-top: var(--pp-s-2);
+}
+.pp-transf__code {
+  font-family: var(--pp-font-mono); font-size: var(--pp-t-support); font-weight: 600;
+  letter-spacing: 0.04em; word-break: break-all;
+  padding: var(--pp-s-1) var(--pp-s-2); border-radius: var(--pp-r-control);
+  background: var(--pp-glass-1); border: 1px solid var(--pp-edge-2); color: var(--pp-fg-2);
+}
+.pp-transf__code--antigo { color: var(--pp-fg-4); text-decoration-color: var(--pp-red); }
+.pp-transf__code--novo {
+  color: var(--pp-pulse);
+  background: rgba(var(--pp-pulse-rgb), 0.08);
+  border-color: rgba(var(--pp-pulse-rgb), 0.28);
+}
+.pp-transf__seta { color: var(--pp-fg-4); }
 
 /* ── Footer ── */
 .pp-footer { border-top: 1px solid var(--pp-edge-1); padding: var(--pp-s-6) 0; color: var(--pp-fg-3); font-size: var(--pp-t-support); text-align: center; }

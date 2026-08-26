@@ -245,12 +245,11 @@ export default function TicketView() {
           <div className="pp-card pp-card--pad">
             <label htmlFor="ticketview-1" className="pp-label">E-mail de quem vai receber</label>
             <input id="ticketview-1"
-              className="pp-input"
+              className="pp-input pp-mt-1"
               type="email" autoComplete="email" inputMode="email" autoCapitalize="off" autoCorrect="off" spellCheck="false"
               value={tEmail}
               onChange={(e) => setTEmail(e.target.value)}
               placeholder="amigo@email.com"
-              className="pp-input pp-mt-1"
             />
             {tMsg && <p className="pp-note pp-note--pulse pp-accent pp-mt-3" role="status">{tMsg}</p>}
             <div className="pp-row pp-mt-3">
