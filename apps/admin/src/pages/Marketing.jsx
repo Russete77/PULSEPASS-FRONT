@@ -96,16 +96,12 @@ export default function Marketing() {
       {/* A tarja não é decorativa: sem ela alguém clica em "enviar" e acha que o e-mail saiu. */}
       {!entregaAtiva && (
         <div
-          className="ck-panel"
-          style={{
-            maxWidth: 720, marginTop: 'var(--pp-s-4)',
-            borderColor: 'var(--pp-amber)', display: 'flex', gap: 'var(--pp-s-3)', alignItems: 'flex-start',
-          }}
+          className="ck-panel ck-w-read ck-mt-4 ck-flex ck-gap-3 ck-ai-start ck-panel--amber"
         >
-          <span style={{ color: 'var(--pp-amber)', flexShrink: 0, marginTop: 2 }}><Icon name="clock" size={18} /></span>
+          <span className="ck-c-amber ck-shrink0 ck-mt-1"><Icon name="clock" size={18} /></span>
           <div>
-            <div className="ck-panel__title" style={{ color: 'var(--pp-amber)' }}>Modo simulado</div>
-            <p className="ck-panel__sub" style={{ margin: 0 }}>
+            <div className="ck-panel__title ck-c-amber">Modo simulado</div>
+            <p className="ck-panel__sub ck-m-0">
               Não há provedor de e-mail configurado (<span className="pp-mono">RESEND_API_KEY</span>), então
               nenhum e-mail sai de verdade. As campanhas são registradas com o público real e ficam marcadas
               como <strong>simuladas</strong> no histórico.
@@ -115,17 +111,17 @@ export default function Marketing() {
       )}
 
       {aviso && (
-        <div className="ck-panel" style={{ maxWidth: 720, marginTop: 'var(--pp-s-4)', borderColor: 'var(--pp-pulse)' }}>
-          <div className="pp-row" style={{ gap: 'var(--pp-s-3)', alignItems: 'center' }}>
-            <span style={{ color: 'var(--pp-pulse)' }}><Icon name="check" size={18} /></span>
+        <div className="ck-panel ck-w-read ck-mt-4 ck-panel--pulse">
+          <div className="pp-row ck-gap-3 ck-ai-center">
+            <span className="ck-c-pulse"><Icon name="check" size={18} /></span>
             <span>{aviso}</span>
           </div>
         </div>
       )}
 
       {/* ── Segmentos: número real, consultado ── */}
-      <section aria-label="Segmentos do público" style={{ maxWidth: 720, marginTop: 'var(--pp-s-5)' }}>
-        <div className="ck-panel__title" style={{ marginBottom: 'var(--pp-s-3)' }}>Público disponível</div>
+      <section aria-label="Segmentos do público" className="ck-w-read ck-mt-5">
+        <div className="ck-panel__title ck-mb-3">Público disponível</div>
         <div className="ck-kpis">
           {segments.map((s) => (
             <div key={s.id} className="ck-kpi" style={{ '--k': TONES[s.id] ?? 'var(--pp-pulse)' }}>
@@ -138,9 +134,9 @@ export default function Marketing() {
       </section>
 
       {/* ── Nova campanha ── */}
-      <form onSubmit={criar} className="ck-panel" style={{ maxWidth: 720, marginTop: 'var(--pp-s-5)' }}>
+      <form onSubmit={criar} className="ck-panel ck-w-read ck-mt-5">
         <div className="ck-panel__title">Nova campanha</div>
-        <p className="ck-panel__sub" style={{ marginBottom: 'var(--pp-s-4)' }}>
+        <p className="ck-panel__sub ck-mb-4">
           o texto vai como está — sem HTML, sem link de rastreio
         </p>
 
@@ -152,7 +148,7 @@ export default function Marketing() {
           />
         </div>
 
-        <div className="ck-field" style={{ marginTop: 'var(--pp-s-4)' }}>
+        <div className="ck-field ck-mt-4">
           <label htmlFor="mkt-corpo" className="ck-label">Mensagem</label>
           <textarea
             id="mkt-corpo" className="ck-textarea" rows={6} value={form.body} onChange={set('body')}
@@ -161,7 +157,7 @@ export default function Marketing() {
           />
         </div>
 
-        <div className="ck-field" style={{ marginTop: 'var(--pp-s-4)' }}>
+        <div className="ck-field ck-mt-4">
           <label htmlFor="mkt-segmento" className="ck-label">Quem recebe</label>
           <select id="mkt-segmento" className="ck-select" value={form.segment} onChange={set('segment')}>
             {segments.map((s) => (
@@ -169,20 +165,20 @@ export default function Marketing() {
             ))}
           </select>
           {segAtual && (
-            <p className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 'var(--pp-s-2)' }}>
+            <p className="pp-muted ck-t-support ck-mt-2">
               {segAtual.descricao} {segAtual.size === 0 && '— vazio agora, o envio vai recusar.'}
             </p>
           )}
         </div>
 
-        <button className="ck-btn ck-btn--primary" disabled={saving} style={{ marginTop: 'var(--pp-s-4)' }}>
+        <button className="ck-btn ck-btn--primary ck-mt-4" disabled={saving}>
           <Icon name="plus" size={16} /> {saving ? 'Criando…' : 'Criar rascunho'}
         </button>
       </form>
 
       {/* ── Histórico ── */}
-      <section aria-label="Histórico de campanhas" style={{ maxWidth: 720, marginTop: 'var(--pp-s-5)' }}>
-        <div className="pp-between" style={{ marginBottom: 'var(--pp-s-3)' }}>
+      <section aria-label="Histórico de campanhas" className="ck-w-read ck-mt-5">
+        <div className="pp-between ck-mb-3">
           <span className="ck-panel__title">Histórico · {campaigns.length}</span>
         </div>
 
@@ -198,15 +194,15 @@ export default function Marketing() {
           {campaigns.map((c) => {
             const badge = STATUS_BADGE[c.status] ?? STATUS_BADGE.draft;
             return (
-              <article key={c.id} className="ck-card" style={{ padding: 'var(--pp-s-4)' }}>
-                <div className="pp-between" style={{ alignItems: 'flex-start', gap: 'var(--pp-s-3)' }}>
-                  <div style={{ minWidth: 0 }}>
-                    <div className="pp-row" style={{ gap: 'var(--pp-s-2)', alignItems: 'center', flexWrap: 'wrap' }}>
+              <article key={c.id} className="ck-card ck-p-4">
+                <div className="pp-between ck-ai-start ck-gap-3">
+                  <div className="ck-min0">
+                    <div className="pp-row ck-gap-2 ck-ai-center pp-wrap">
                       <strong>{c.subject}</strong>
                       <span className={`ck-badge ${badge.cls}`}>{badge.label}</span>
                       {c.mode === 'mock' && <span className="ck-badge ck-badge--warning">Simulada</span>}
                     </div>
-                    <p className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)', margin: '4px 0 0' }}>
+                    <p className="pp-muted ck-t-support ck-m-0 ck-mt-1">
                       {labelSeg(c.segment)} · criada {dataHora(c.created_at)}
                       {c.sent_at && ` · enviada ${dataHora(c.sent_at)}`}
                     </p>
@@ -221,22 +217,22 @@ export default function Marketing() {
 
                 {/* Só o que o sistema sabe. Não há rastreio de abertura nem de clique. */}
                 {c.status === 'sent' && (
-                  <div className="pp-row" style={{ gap: 'var(--pp-s-5)', marginTop: 'var(--pp-s-3)', flexWrap: 'wrap' }}>
-                    <span className="pp-mono pp-muted" style={{ fontSize: 'var(--pp-fs-12)' }}>
-                      público <strong style={{ color: 'var(--pp-fg)' }}>{c.audience_count}</strong>
+                  <div className="pp-row ck-gap-5 ck-mt-3 pp-wrap">
+                    <span className="pp-mono pp-muted ck-t-support">
+                      público <strong className="ck-c-fg">{c.audience_count}</strong>
                     </span>
                     {c.mode === 'mock' ? (
-                      <span className="pp-mono pp-muted" style={{ fontSize: 'var(--pp-fs-12)' }}>
-                        simulados <strong style={{ color: 'var(--pp-amber)' }}>{c.mock_count}</strong>
+                      <span className="pp-mono pp-muted ck-t-support">
+                        simulados <strong className="ck-c-amber">{c.mock_count}</strong>
                       </span>
                     ) : (
                       <>
-                        <span className="pp-mono pp-muted" style={{ fontSize: 'var(--pp-fs-12)' }}>
-                          enviados <strong style={{ color: 'var(--pp-pulse)' }}>{c.sent_count}</strong>
+                        <span className="pp-mono pp-muted ck-t-support">
+                          enviados <strong className="ck-c-pulse">{c.sent_count}</strong>
                         </span>
                         {c.failed_count > 0 && (
-                          <span className="pp-mono pp-muted" style={{ fontSize: 'var(--pp-fs-12)' }}>
-                            falhas <strong style={{ color: 'var(--pp-red)' }}>{c.failed_count}</strong>
+                          <span className="pp-mono pp-muted ck-t-support">
+                            falhas <strong className="ck-c-red">{c.failed_count}</strong>
                           </span>
                         )}
                       </>
@@ -249,7 +245,7 @@ export default function Marketing() {
         </div>
 
         {campaigns.length > 0 && (
-          <p className="pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 'var(--pp-s-4)' }}>
+          <p className="pp-muted-2 ck-t-support ck-mt-4">
             O sistema registra entrega, não leitura: não há rastreio de abertura nem de clique,
             então não existe taxa de abertura para mostrar aqui.
           </p>

@@ -95,24 +95,24 @@ export default function FilaEspera() {
 
       {/* Fio de cor no topo de cada KPI: mesma leitura do painel do design
           system. Todos os números saem do endpoint da fila. */}
-      <div className="ck-kpis" style={{ gridTemplateColumns: `repeat(${vencidos > 0 ? 4 : 3}, 1fr)` }}>
-        <div className="ck-kpi" style={{ '--k': 'var(--pp-amber)' }}>
+      <div className={`ck-kpis ${vencidos > 0 ? 'ck-cols-4' : 'ck-cols-3'}`}>
+        <div className="ck-kpi ck-k--amber">
           <div className="lbl">Aguardando</div>
           <div className="val">{data.waiting}</div>
           <div className="d">{ingressosNaFila} ingresso{ingressosNaFila === 1 ? '' : 's'} pedidos</div>
         </div>
-        <div className="ck-kpi" style={{ '--k': 'var(--pp-cyan)' }}>
+        <div className="ck-kpi ck-k--cyan">
           <div className="lbl">Convidados</div>
           <div className="val">{data.invited}</div>
           <div className="d">convite com prazo de 1h</div>
         </div>
-        <div className="ck-kpi" style={{ '--k': 'var(--pp-pulse)' }}>
+        <div className="ck-kpi ck-k--pulse">
           <div className="lbl">Compraram</div>
-          <div className="val" style={{ color: data.converted > 0 ? 'var(--pp-pulse)' : undefined }}>{data.converted}</div>
+          <div className={`val ${data.converted > 0 ? 'ck-c-pulse' : ''}`}>{data.converted}</div>
           <div className="d">vieram da fila</div>
         </div>
         {vencidos > 0 && (
-          <div className="ck-kpi" style={{ '--k': 'var(--pp-fg-4)' }}>
+          <div className="ck-kpi ck-k--dim">
             <div className="lbl">Convite venceu</div>
             <div className="val">{vencidos}</div>
             <div className="d">a vez passou pro próximo</div>
@@ -121,10 +121,10 @@ export default function FilaEspera() {
       </div>
 
       {entries.length === 0 ? (
-        <div className="pp-empty" style={{ maxWidth: 640 }}>
+        <div className="pp-empty ck-w-mid">
           <div className="pp-empty__icon"><Icon name="users" size={28} /></div>
           <div className="pp-empty__title">Ninguém na fila ainda</div>
-          <p style={{ margin: '0 0 var(--pp-s-4)' }}>
+          <p className="ck-m-0 ck-mb-4">
             A opção de entrar na fila só aparece pro cliente quando um lote esgota.
             Se ainda há ingresso à venda, é sinal de que a demanda está sendo atendida.
           </p>
@@ -133,9 +133,9 @@ export default function FilaEspera() {
           </Link>
         </div>
       ) : (
-        <div className="ck-duo" style={{ marginTop: 'var(--pp-s-5)' }}>
-          <section className="ck-panel" aria-label="Pessoas na fila de espera" style={{ padding: 0, overflow: 'hidden' }}>
-            <div className="pp-between" style={{ padding: 'var(--pp-s-5) var(--pp-s-5) var(--pp-s-4)', flexWrap: 'wrap' }}>
+        <div className="ck-duo ck-mt-5">
+          <section className="ck-panel ck-p-0 ck-hidden" aria-label="Pessoas na fila de espera">
+            <div className="pp-between pp-wrap ck-cabeca">
               <div>
                 <div className="ck-panel__title">Na fila · {entries.length}</div>
                 <p className="ck-panel__sub">ordem de chegada — o primeiro é o primeiro a ser convidado</p>
@@ -158,7 +158,7 @@ export default function FilaEspera() {
             </div>
 
             {visiveis.length === 0 ? (
-              <p className="ck-empty" style={{ padding: 'var(--pp-s-8) var(--pp-s-5)' }}>
+              <p className="ck-empty">
                 Ninguém nesta situação agora.
               </p>
             ) : visiveis.map((e, i) => {
@@ -171,21 +171,16 @@ export default function FilaEspera() {
               return (
                 <div
                   key={e.id}
-                  className="pp-row"
-                  style={{
-                    flexWrap: 'wrap', padding: '13px var(--pp-s-5)',
-                    borderTop: '1px solid var(--pp-edge-1)',
-                    background: vencendo ? 'rgba(255,184,0,0.05)' : undefined,
-                  }}
+                  className={`pp-row pp-wrap ck-fila__linha ${vencendo ? 'ck-fila__linha--vencendo' : ''}`}
                 >
                   {/* A posição vem do banco (position), não do índice da tela:
                       filtro aplicado não pode renumerar a fila de ninguém. */}
-                  <span className="pp-mono pp-num pp-muted-2" style={{ minWidth: 30 }} aria-label={`Posição ${e.position ?? i + 1}`}>
+                  <span className="pp-mono pp-num pp-muted-2 ck-fit--xs" aria-label={`Posição ${e.position ?? i + 1}`}>
                     {e.position ?? i + 1}º
                   </span>
-                  <div style={{ flex: 1, minWidth: 180 }}>
-                    <div style={{ fontWeight: 600, fontSize: 'var(--pp-fs-14)' }}>{e.name || e.email}</div>
-                    <div className="pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 2 }}>
+                  <div className="ck-flex1 ck-fit">
+                    <div className="ck-w-semi ck-t-support">{e.name || e.email}</div>
+                    <div className="pp-muted-2 ck-meta">
                       {e.ticket_tiers?.name ?? 'lote'}
                       {e.quantity > 1 && ` · ${e.quantity} ingressos`}
                       {' · entrou em '}{dateTime(e.created_at)}
@@ -193,7 +188,7 @@ export default function FilaEspera() {
                   </div>
                   <span className={st.badge} style={{ color: st.cor }}>{st.label}</span>
                   {vencendo && (
-                    <span className="pp-row pp-mono" style={{ gap: 5, color: 'var(--pp-amber)', fontSize: 'var(--pp-fs-12)' }}>
+                    <span className="pp-row pp-mono ck-gap-1 ck-c-amber ck-t-support">
                       <Icon name="clock" size={12} /> vence em {Math.max(1, Math.round(restaMs / 60_000))} min
                     </span>
                   )}
@@ -207,7 +202,7 @@ export default function FilaEspera() {
           {porLote.length > 0 && (
             <aside className="ck-panel" aria-label="Demanda reprimida por lote">
               <div className="ck-eyebrow">Demanda por lote</div>
-              <p className="ck-panel__sub" style={{ marginBottom: 'var(--pp-s-4)' }}>
+              <p className="ck-panel__sub ck-mb-4">
                 ingressos pedidos por quem ainda aguarda
               </p>
               <div className="pp-stack pp-stack-3">
@@ -216,9 +211,9 @@ export default function FilaEspera() {
                   const pct = Math.max(4, (l.ingressos / maiorLote) * 100);
                   return (
                     <div key={l.nome}>
-                      <div className="pp-between" style={{ marginBottom: 6 }}>
-                        <span className="pp-truncate" style={{ fontSize: 'var(--pp-fs-13)', fontWeight: 600 }}>{l.nome}</span>
-                        <span className="pp-mono pp-num pp-muted" style={{ fontSize: 'var(--pp-fs-12)' }}>
+                      <div className="pp-between ck-mb-2">
+                        <span className="pp-truncate ck-t-support ck-w-semi">{l.nome}</span>
+                        <span className="pp-mono pp-num pp-muted ck-t-support">
                           {l.ingressos} ing · {l.pessoas} pess
                         </span>
                       </div>
@@ -229,7 +224,7 @@ export default function FilaEspera() {
                   );
                 })}
               </div>
-              <p className="pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 'var(--pp-s-4)' }}>
+              <p className="pp-muted-2 ck-t-support ck-mt-4">
                 Lote com fila cheia é lote que podia ter vendido mais. Abrir um lote
                 extra dispara convite automático pra quem está esperando nele.
               </p>

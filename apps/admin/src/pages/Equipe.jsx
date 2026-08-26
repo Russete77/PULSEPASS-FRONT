@@ -86,13 +86,13 @@ export default function Equipe() {
       <p className="ck-sub">Delegue acesso por papel: gerente, porta ou bar. O dono sempre tem acesso total.</p>
 
       {/* Convite: a ação principal da tela, acima da lista como no mockup. */}
-      <div className="ck-panel" style={{ maxWidth: 720 }}>
-        <form onSubmit={add} style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'flex-end' }}>
-          <div className="ck-field" style={{ flex: '1 1 220px', margin: 0 }}>
+      <div className="ck-panel ck-w-read">
+        <form onSubmit={add} className="ck-flex ck-gap-3 pp-wrap ck-ai-end">
+          <div className="ck-field ck-m-0 ck-flex1 ck-fit--lg">
             <label htmlFor="equipe-1" className="ck-label">E-mail (já cadastrado no PulsePass)</label>
             <input id="equipe-1" className="ck-input" type="email" autoComplete="email" inputMode="email" autoCapitalize="off" autoCorrect="off" spellCheck="false" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="pessoa@email.com" />
           </div>
-          <div className="ck-field" style={{ margin: 0 }}>
+          <div className="ck-field ck-m-0">
             <label htmlFor="equipe-2" className="ck-label">Papel</label>
             <select id="equipe-2" className="ck-select" value={role} onChange={(e) => setRole(e.target.value)}>
               {ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
@@ -106,15 +106,15 @@ export default function Equipe() {
       </div>
 
       {staff.length === 0 ? (
-        <div className="pp-empty" style={{ marginTop: 'var(--pp-s-5)' }}>
+        <div className="pp-empty ck-mt-5">
           <div className="pp-empty__icon"><Icon name="users" size={28} /></div>
           <div className="pp-empty__title">Ninguém na equipe ainda</div>
           <p>Só o dono opera o evento. Convide a primeira pessoa no formulário acima.</p>
         </div>
       ) : (
         /* Lista + detalhe, a divisão do TeamStaffScreen. */
-        <div className="ck-team" style={{ marginTop: 'var(--pp-s-5)' }}>
-          <nav className="ck-panel" style={{ padding: 0, overflow: 'hidden' }} aria-label="Membros da equipe">
+        <div className="ck-team ck-mt-5">
+          <nav className="ck-panel ck-p-0 ck-hidden" aria-label="Membros da equipe">
             {staff.map((s) => (
               <button
                 key={s.id} type="button"
@@ -123,11 +123,11 @@ export default function Equipe() {
                 onClick={() => setAbertoId(s.id)}
               >
                 <span className="ck-avatar" aria-hidden="true">{inicialDe(s)}</span>
-                <span className="pp-grow" style={{ minWidth: 0 }}>
-                  <span className="pp-truncate" style={{ display: 'block', fontWeight: 600, fontSize: 'var(--pp-fs-14)' }}>
+                <span className="pp-grow ck-min0">
+                  <span className="pp-truncate ck-block ck-w-semi ck-t-support">
                     {s.profiles?.full_name || s.profiles?.email}
                   </span>
-                  <span className="pp-muted" style={{ display: 'block', fontSize: 'var(--pp-fs-12)', marginTop: 2 }}>
+                  <span className="pp-muted ck-meta">
                     {ROLE_CURTO[s.role] ?? s.role}
                     {s.permissoes?.length ? ` · +${s.permissoes.length} permiss${s.permissoes.length === 1 ? 'ão' : 'ões'}` : ''}
                   </span>
@@ -201,12 +201,12 @@ function DetalheMembro({ eventId, membro, catalogo, onSalvo, onRemover }) {
     <section className="pp-stack pp-stack-4" aria-label={`Detalhe de ${nome}`}>
       {/* Perfil — cabeçalho do detalhe no desenho do mockup. Sem "online",
           "2FA" ou "última atividade": o backend não devolve nada disso. */}
-      <div className="ck-panel pp-row" style={{ gap: 16, flexWrap: 'wrap' }}>
+      <div className="ck-panel pp-row ck-gap-4 pp-wrap">
         <span className="ck-avatar ck-avatar--lg" aria-hidden="true">{inicialDe(membro)}</span>
-        <div className="pp-grow" style={{ minWidth: 180 }}>
-          <div style={{ fontFamily: 'var(--pp-font-display)', fontWeight: 700, fontSize: 'var(--pp-fs-20)', letterSpacing: '-0.02em' }}>{nome}</div>
-          <div className="pp-mono pp-muted" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 3 }}>{membro.profiles?.email}</div>
-          <div style={{ marginTop: 8 }}>
+        <div className="pp-grow ck-fit">
+          <div className="ck-display ck-w-bold ck-t-section">{nome}</div>
+          <div className="pp-mono pp-muted ck-meta">{membro.profiles?.email}</div>
+          <div className="ck-mt-2">
             <span className="ck-badge">{ROLES.find((r) => r.value === membro.role)?.label ?? membro.role}</span>
           </div>
         </div>
@@ -219,11 +219,11 @@ function DetalheMembro({ eventId, membro, catalogo, onSalvo, onRemover }) {
       <div className="ck-panel">
         <div className="pp-between">
           <div className="ck-panel__title">Permissões · matriz granular</div>
-          <span className="pp-mono pp-muted" style={{ fontSize: 'var(--pp-fs-12)' }}>
+          <span className="pp-mono pp-muted ck-t-support">
             {marcadas.length} de {catalogo.length} ativas
           </span>
         </div>
-        <p className="pp-muted" style={{ fontSize: 'var(--pp-fs-13)', margin: '4px 0 var(--pp-s-4)' }}>
+        <p className="pp-muted ck-t-support ck-m-0 ck-mt-1 ck-mb-4">
           O papel <b>{ROLES.find((r) => r.value === membro.role)?.label ?? membro.role}</b> já
           dá o acesso padrão. Marque só o que essa pessoa precisa ALÉM disso.
         </p>
@@ -242,7 +242,7 @@ function DetalheMembro({ eventId, membro, catalogo, onSalvo, onRemover }) {
 
         {erro && <ErrorBox>{erro}</ErrorBox>}
 
-        <div className="pp-row" style={{ marginTop: 'var(--pp-s-4)', justifyContent: 'flex-end' }}>
+        <div className="pp-row ck-mt-4 ck-jc-end">
           {mudou && (
             <button className="ck-btn ck-btn--ghost ck-btn--sm" onClick={() => setMarcadas(originais)} disabled={salvando}>
               Descartar

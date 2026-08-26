@@ -152,10 +152,10 @@ export default function Marca() {
     return (
       <Shell>
         <BackLink to="/" label="Eventos" />
-        <div className="pp-empty" style={{ maxWidth: 560 }}>
+        <div className="pp-empty ck-w-mid">
           <div className="pp-empty__icon"><Icon name="crown" size={28} /></div>
           <div className="pp-empty__title">Você ainda não tem produtora</div>
-          <p style={{ margin: '0 0 var(--pp-s-4)' }}>
+          <p className="ck-m-0 ck-mb-4">
             Crie o primeiro evento — a produtora nasce junto, e a marca fica disponível aqui.
           </p>
           <Link to="/novo" className="ck-btn ck-btn--primary ck-btn--sm">
@@ -180,14 +180,14 @@ export default function Marca() {
     <Shell>
       <BackLink to="/" label="Eventos" />
 
-      <div className="pp-between" style={{ alignItems: 'flex-end', flexWrap: 'wrap', gap: 'var(--pp-s-4)' }}>
+      <div className="pp-between ck-ai-end pp-wrap ck-gap-4">
         <div>
           <div className="ck-eyebrow">produtora · white-label</div>
           <h1 className="ck-h1">Sua casa, <span className="pp-accent">sua cara.</span></h1>
         </div>
         {/* Ações no alto, como no mockup: quem mexeu na cor vê o par
             reverter/salvar sem precisar rolar até o fim do formulário. */}
-        <div className="pp-row" style={{ gap: 10 }}>
+        <div className="pp-row ck-gap-3">
           <button type="button" className="ck-btn ck-btn--glass ck-btn--sm" onClick={reverter} disabled={!sujo || salvando}>
             <Icon name="refresh" size={15} /> Reverter
           </button>
@@ -197,7 +197,7 @@ export default function Marca() {
         </div>
       </div>
 
-      <p className="ck-sub" style={{ maxWidth: 640 }}>
+      <p className="ck-sub ck-w-mid">
         O logo e a cor abaixo aparecem para quem compra. O rodapé, a política e o
         pagamento continuam sendo do PulsePass — o comprador precisa saber com quem
         falar se algo der errado.
@@ -205,13 +205,13 @@ export default function Marca() {
 
       {/* Confirmação de salvamento em região viva: leitor de tela precisa
           saber que gravou; o botão volta a "Salvar marca" e some sozinho. */}
-      <p aria-live="polite" className="pp-mono" style={{ minHeight: 18, margin: '0 0 var(--pp-s-4)', fontSize: 'var(--pp-fs-12)', color: 'var(--pp-pulse)' }}>
+      <p aria-live="polite" className="pp-mono ck-m-0 ck-mb-4 ck-t-support ck-c-pulse ck-viva">
         {salvo && !sujo ? 'marca salva ✓' : ''}
       </p>
 
       {erro && <ErrorBox>{erro}</ErrorBox>}
 
-      <div className="ck-duo" style={{ alignItems: 'start' }}>
+      <div className="ck-duo ck-ai-start">
         {/* ── Coluna de controles ── */}
         <div className="pp-stack pp-stack-4">
           <section className="ck-panel" aria-label="Logo da produtora">
@@ -223,15 +223,11 @@ export default function Marca() {
                 {/* Fundo escuro no preview porque é sobre escuro que ele vai
                     aparecer. Logo que só funciona em fundo branco precisa ser
                     descoberto AQUI, não pela produtora depois de publicar. */}
-                <div style={{
-                  marginTop: 'var(--pp-s-4)', padding: 'var(--pp-s-5)', borderRadius: 'var(--pp-r-card)',
-                  background: 'var(--pp-ink-950)', border: '1px solid var(--pp-edge-2)',
-                  display: 'grid', placeItems: 'center', minHeight: 120,
-                }}>
+                <div className="ck-mt-4 ck-p-5 ck-mock__tela">
                   <img src={marca.logo_url} alt="Logo atual da produtora"
-                    style={{ maxHeight: 76, maxWidth: '100%' }} />
+                    className="ck-mock__logo" />
                 </div>
-                <div className="pp-row" style={{ gap: 8, marginTop: 'var(--pp-s-4)', flexWrap: 'wrap' }}>
+                <div className="pp-row ck-gap-2 ck-mt-4 pp-wrap">
                   <button className="ck-btn ck-btn--glass ck-btn--sm" disabled={enviando}
                     onClick={() => inputRef.current?.click()}>
                     <Icon name="refresh" size={15} /> {enviando ? 'Enviando…' : 'Trocar logo'}
@@ -242,11 +238,8 @@ export default function Marca() {
                 </div>
               </>
             ) : (
-              <div style={{
-                marginTop: 'var(--pp-s-4)', padding: 'var(--pp-s-5)', borderRadius: 'var(--pp-r-card)',
-                background: 'var(--pp-ink-950)', border: '1px dashed var(--pp-edge-3)', textAlign: 'center',
-              }}>
-                <p className="pp-muted" style={{ fontSize: 'var(--pp-fs-13)', margin: '0 0 var(--pp-s-4)' }}>
+              <div className="ck-mt-4 ck-p-5 ck-center ck-mock__vazio">
+                <p className="pp-muted ck-t-support ck-m-0 ck-mb-4">
                   Sem logo, a página mostra o nome da produtora em texto.
                 </p>
                 <button className="ck-btn ck-btn--primary ck-btn--sm" disabled={enviando}
@@ -256,11 +249,10 @@ export default function Marca() {
               </div>
             )}
 
-            <p className="pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 'var(--pp-s-3)', marginBottom: 0 }}>
+            <p className="pp-muted-2 ck-t-support ck-mt-3 ck-mb-0">
               PNG, JPG, WebP ou SVG, até {LIMITE_MB} MB. Fundo transparente funciona melhor.
             </p>
-            <input ref={inputRef} type="file" accept={ACEITOS.join(',')}
-              onChange={escolherLogo} style={{ display: 'none' }} />
+            <input className="ck-none" ref={inputRef} type="file" accept={ACEITOS.join(',')} onChange={escolherLogo}/>
           </section>
 
           <section className="ck-panel" aria-label="Cor da marca">
@@ -269,19 +261,14 @@ export default function Marca() {
 
             {/* Amostra grande + hex, como a paleta do mockup — mas com UM slot,
                 que é o único que o backend guarda (brand_color). */}
-            <div className="pp-row" style={{ gap: 'var(--pp-s-4)', marginTop: 'var(--pp-s-4)', alignItems: 'stretch' }}>
-              <div aria-hidden="true" style={{
-                width: 84, borderRadius: 'var(--pp-r-card)', background: corHex,
-                border: '1px solid var(--pp-edge-3)', flexShrink: 0,
-              }} />
-              <div className="pp-grow" style={{ minWidth: 0 }}>
-                <div className="ck-field" style={{ marginBottom: 'var(--pp-s-3)' }}>
+            <div className="pp-row ck-gap-4 ck-mt-4 ck-ai-stretch">
+              <div aria-hidden="true" className="ck-shrink0 ck-mock__amostra" style={{ background: corHex }} />
+              <div className="pp-grow ck-min0">
+                <div className="ck-field ck-mb-3">
                   <label className="ck-label" htmlFor="marca-cor">Escolher no seletor</label>
-                  <input id="marca-cor" type="color" className="ck-input"
-                    style={{ width: 72, padding: 4, height: 44 }}
-                    value={/^#[0-9a-f]{6}$/i.test(corHex) ? corHex : PADRAO} onChange={set('brand_color')} />
+                  <input id="marca-cor" type="color" className="ck-input ck-input--num-xs" value={/^#[0-9a-f]{6}$/i.test(corHex) ? corHex : PADRAO} onChange={set('brand_color')}/>
                 </div>
-                <div className="ck-field" style={{ marginBottom: 0 }}>
+                <div className="ck-field ck-mb-0">
                   <label className="ck-label" htmlFor="marca-hex">Hexadecimal</label>
                   <input id="marca-hex" className="ck-input pp-mono"
                     value={marca?.brand_color ?? ''} onChange={set('brand_color')}
@@ -291,7 +278,7 @@ export default function Marca() {
               </div>
             </div>
 
-            <div className="ck-label" style={{ marginTop: 'var(--pp-s-4)', marginBottom: 8 }}>Sugestões</div>
+            <div className="ck-label ck-mt-4 ck-mb-2">Sugestões</div>
             <div className="pp-cluster pp-cluster-2">
               {CORES.map((c) => {
                 const ativa = (marca?.brand_color ?? '').toUpperCase() === c.hex;
@@ -299,18 +286,14 @@ export default function Marca() {
                   <button key={c.hex} type="button" title={`${c.nome} · ${c.hex}`}
                     aria-label={`Usar a cor ${c.nome}, ${c.hex}`} aria-pressed={ativa}
                     onClick={() => { setMarca((m) => ({ ...m, brand_color: c.hex })); setSalvo(false); }}
-                    style={{
-                      width: 36, height: 36, borderRadius: 'var(--pp-r-sm)', background: c.hex, cursor: 'pointer',
-                      border: ativa ? '2px solid var(--pp-white)' : '1px solid var(--pp-edge-3)',
-                    }} />
+                    className={`ck-swatch ${ativa ? 'is-on' : ''}`}
+                    style={{ background: c.hex }} />
                 );
               })}
             </div>
 
             {corApagada && (
-              <p id="marca-contraste" className="pp-note" style={{
-                marginTop: 'var(--pp-s-4)', borderColor: 'rgba(255,184,0,0.35)', background: 'rgba(255,184,0,0.07)',
-              }}>
+              <p id="marca-contraste" className="pp-note ck-mt-4 ck-aviso">
                 <Icon name="clock" size={14} /> Essa cor quase some no fundo escuro da vitrine.
                 Veja a prévia ao lado antes de salvar — o botão de comprar precisa saltar.
               </p>
@@ -321,24 +304,24 @@ export default function Marca() {
             <div className="ck-panel__title">Onde te encontram</div>
             <p className="ck-panel__sub">aparecem junto do seu nome na página do evento</p>
 
-            <div className="ck-field" style={{ marginTop: 'var(--pp-s-4)' }}>
+            <div className="ck-field ck-mt-4">
               <label className="ck-label" htmlFor="marca-site">Site (opcional)</label>
               <input id="marca-site" className="ck-input" type="url" inputMode="url"
                 autoCapitalize="off" autoCorrect="off" spellCheck="false"
                 value={marca?.site_url ?? ''} onChange={set('site_url')} placeholder="suacasa.com.br"
                 aria-describedby="marca-site-dica" />
-              <p id="marca-site-dica" className="pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', margin: 0 }}>
+              <p id="marca-site-dica" className="pp-muted-2 ck-t-support ck-m-0">
                 Pode colar sem https — a gente completa ao salvar.
               </p>
             </div>
 
-            <div className="ck-field" style={{ marginBottom: 0 }}>
+            <div className="ck-field ck-mb-0">
               <label className="ck-label" htmlFor="marca-insta">Instagram (opcional)</label>
               <input id="marca-insta" className="ck-input"
                 autoCapitalize="off" autoCorrect="off" spellCheck="false"
                 value={marca?.instagram ?? ''} onChange={set('instagram')} placeholder="suacasa"
                 aria-describedby="marca-insta-dica" />
-              <p id="marca-insta-dica" className="pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', margin: 0 }}>
+              <p id="marca-insta-dica" className="pp-muted-2 ck-t-support ck-m-0">
                 Só o nome de usuário, sem arroba.
               </p>
             </div>
@@ -356,28 +339,19 @@ export default function Marca() {
             <span className="ck-badge">como o cliente vê</span>
           </div>
 
-          <div style={{
-            marginTop: 'var(--pp-s-4)', borderRadius: 'var(--pp-r-lg)', overflow: 'hidden',
-            border: '1px solid var(--pp-edge-2)', background: 'var(--pp-ink-950)',
-          }}>
-            <div className="pp-row" aria-hidden="true" style={{
-              gap: 10, padding: '10px 14px', background: 'var(--pp-ink-900)',
-              borderBottom: '1px solid var(--pp-edge-1)',
-            }}>
-              <span className="pp-row" style={{ gap: 5 }}>
+          <div className="ck-mt-4 ck-mock">
+            <div className="pp-row ck-gap-3 ck-mock__barra" aria-hidden="true">
+              <span className="pp-row ck-gap-1">
                 {['var(--pp-red)', 'var(--pp-amber)', 'var(--pp-pulse)'].map((c) => (
-                  <span key={c} style={{ width: 9, height: 9, borderRadius: '50%', background: c, opacity: 0.7 }} />
+                  <span key={c} className="ck-mock__dot" style={{ background: c }} />
                 ))}
               </span>
-              <span className="pp-mono pp-truncate" style={{
-                flex: 1, padding: '4px 12px', borderRadius: 'var(--pp-r-sm)',
-                background: 'rgba(0,0,0,0.35)', fontSize: 'var(--pp-fs-12)', color: 'var(--pp-fg-3)',
-              }}>
+              <span className="pp-mono pp-truncate ck-flex1 ck-t-support pp-muted ck-mock__url">
                 {HOST_PUBLICO.replace(/^https?:\/\//, '')}/eventos/…
               </span>
             </div>
 
-            <div style={{ padding: 'var(--pp-s-4) var(--pp-s-5)', borderBottom: '1px solid var(--pp-edge-1)' }}>
+            <div className="ck-mock__faixa">
               <div className="pp-marca">
                 {marca?.logo_url
                   ? <img className="pp-marca__logo" src={marca.logo_url} alt="" />
@@ -385,24 +359,17 @@ export default function Marca() {
               </div>
             </div>
 
-            <div style={{ padding: 'var(--pp-s-5)' }}>
+            <div className="ck-p-5">
               <div className="pp-meta">seu evento aqui</div>
-              <div style={{
-                fontFamily: 'var(--pp-font-display)', fontWeight: 700,
-                fontSize: 'var(--pp-fs-24)', letterSpacing: '-0.02em', margin: '4px 0 var(--pp-s-4)',
-              }}>
+              <div className="ck-t-title ck-m-0 ck-mt-1 ck-mb-4">
                 Nome do seu evento
               </div>
-              <button type="button" disabled aria-label="Exemplo do botão de compra, não clicável" style={{
-                width: '100%', height: 46, borderRadius: 'var(--pp-r-control)',
-                background: corHex, color: tintaCta, border: 0,
-                fontWeight: 700, fontSize: 'var(--pp-fs-15)', cursor: 'default', opacity: 1,
-              }}>
+              <button type="button" disabled aria-label="Exemplo do botão de compra, não clicável" className="ck-full ck-w-bold ck-t-body ck-mock__cta" style={{ background: corHex, color: tintaCta }}>
                 Comprar ingresso
               </button>
 
               {(marca?.site_url || marca?.instagram) && (
-                <div className="pp-cluster pp-cluster-2" style={{ marginTop: 'var(--pp-s-4)', justifyContent: 'center' }}>
+                <div className="pp-cluster pp-cluster-2 ck-mt-4 ck-jc-center">
                   {marca?.site_url && (
                     <span className="ck-badge"><Icon name="external" size={12} /> {marca.site_url.replace(/^https?:\/\//, '')}</span>
                   )}
@@ -412,13 +379,13 @@ export default function Marca() {
                 </div>
               )}
 
-              <p className="pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 'var(--pp-s-4)', textAlign: 'center' }}>
+              <p className="pp-muted-2 ck-t-support ck-mt-4 ck-center">
                 Pagamento processado por PulsePass
               </p>
             </div>
           </div>
 
-          <p className="pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 'var(--pp-s-4)', marginBottom: 0 }}>
+          <p className="pp-muted-2 ck-t-support ck-mt-4 ck-mb-0">
             O evento da prévia é ilustrativo. O que muda de verdade com o que
             está aqui é o logo, a cor do botão e os links — o resto da página
             continua igual pra todo mundo.

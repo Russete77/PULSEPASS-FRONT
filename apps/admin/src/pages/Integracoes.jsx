@@ -195,16 +195,13 @@ function SegredoUnico({ aberto, titulo, contexto, rotuloValor, valor, comoUsar, 
             />
           </div>
 
-          <p className="pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', margin: '6px 2px 0' }}>
+          <p className="pp-muted-2 ck-t-support ck-m-0 ck-mt-2">
             Ou clique no valor para selecionar tudo e use Ctrl+C.
           </p>
 
           {/* Região viva: leitor de tela precisa ouvir que copiou — o ícone
               trocando não alcança quem não vê. */}
-          <p aria-live="polite" role="status" className="pp-mono" style={{
-            minHeight: 18, margin: '8px 0 0', fontSize: 'var(--pp-fs-12)',
-            color: copiado.startsWith('erro') ? 'var(--pp-red)' : 'var(--pp-pulse)',
-          }}>
+          <p aria-live="polite" role="status" className={`pp-mono ck-m-0 ck-mt-2 ck-t-support ck-viva ${copiado.startsWith('erro') ? 'ck-c-red' : 'ck-c-pulse'}`}>
             {copiado === 'segredo' ? 'copiado para a área de transferência ✓'
               : copiado.startsWith('erro') ? 'o navegador bloqueou a cópia — selecione o campo e copie à mão'
                 : ''}
@@ -230,14 +227,11 @@ function SegredoUnico({ aberto, titulo, contexto, rotuloValor, valor, comoUsar, 
             Fechar
           </button>
         </div>
-        {/* clamp em px, não `--pp-fs-11`: esse token NÃO existe na escala (ela
-            começa em 12), e variável indefinida faz a regra inteira ser
-            descartada — o texto voltava a herdar 16px. */}
+        {/* Degrau de etiqueta (--pp-t-label). Antes era um clamp em px com
+            casa decimal, inventado porque a escala crua não tinha 11 — o papel
+            tem, e é o mesmo que carimba toda etiqueta do cockpit. */}
         {!guardei && (
-          <p id="pp-segredo-trava" className="pp-muted-2" style={{
-            fontSize: 'clamp(10.5px, 2.2vw, 11.5px)', margin: 0,
-            padding: '0 var(--pp-s-5) var(--pp-s-4)', textAlign: 'center',
-          }}>
+          <p id="pp-segredo-trava" className="pp-muted-2 ck-m-0 ck-center ck-t-label ck-p-rodape">
             Marque a caixa acima para liberar o fechamento.
           </p>
         )}
@@ -323,11 +317,8 @@ export default function Integracoes() {
         valor: nova.chave,
         comoUsar: (
           <>
-            <div className="ck-label" style={{ marginBottom: 6 }}>Como usar</div>
-            <code className="pp-mono" style={{
-              display: 'block', fontSize: 'var(--pp-fs-12)', color: 'var(--pp-fg-2)',
-              wordBreak: 'break-all', lineHeight: 1.6,
-            }}>
+            <div className="ck-label ck-mb-2">Como usar</div>
+            <code className="pp-mono ck-block ck-t-support ck-c-fg2 ck-quebra">
               curl -H &quot;Authorization: Bearer {nova.prefixo}…&quot; {BASE_PUBLICA}/eu
             </code>
           </>
@@ -354,8 +345,8 @@ export default function Integracoes() {
         valor: novo.secret,
         comoUsar: (
           <>
-            <div className="ck-label" style={{ marginBottom: 6 }}>Como conferir do seu lado</div>
-            <p className="pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', margin: '0 0 6px', lineHeight: 1.6 }}>
+            <div className="ck-label ck-mb-2">Como conferir do seu lado</div>
+            <p className="pp-muted-2 ck-t-support ck-m-0 ck-mb-2 ck-lh">
               Cabeçalho <span className="pp-mono">X-PulsePass-Signature</span>, no formato{' '}
               <span className="pp-mono">t=&lt;unix&gt;,v1=&lt;hex&gt;</span>. O{' '}
               <span className="pp-mono">v1</span> é HMAC-SHA256 de{' '}
@@ -445,10 +436,10 @@ export default function Integracoes() {
   if (status === 'sem-org') {
     return (
       <Shell>
-        <div className="pp-empty" style={{ maxWidth: 560 }}>
+        <div className="pp-empty ck-w-mid">
           <div className="pp-empty__icon"><Icon name="box" size={28} /></div>
           <div className="pp-empty__title">Você ainda não tem produtora</div>
-          <p style={{ margin: '0 0 var(--pp-s-4)' }}>
+          <p className="ck-m-0 ck-mb-4">
             A chave de API é da produtora. Crie o primeiro evento — a produtora nasce
             junto, e as integrações ficam disponíveis aqui.
           </p>
@@ -464,7 +455,7 @@ export default function Integracoes() {
     <Shell>
       <div className="ck-eyebrow">produtora · integrações</div>
       <h1 className="ck-h1">Chaves, webhooks e <span className="pp-accent">conexões</span></h1>
-      <p className="ck-sub" style={{ maxWidth: 700 }}>
+      <p className="ck-sub ck-w-read">
         A chave deixa o seu sistema <strong>puxar</strong> dado nosso. O webhook faz a gente{' '}
         <strong>avisar</strong> o seu sistema quando algo acontece. As duas coisas são da sua
         produtora — quem emite responde pelo que sair.
@@ -475,25 +466,25 @@ export default function Integracoes() {
       {/* Indicadores. Quatro, como no mockup — mas só o que o backend sabe
           responder. Requests/hora, latência e rate limit não existem, e chutar
           esses números numa tela de infraestrutura induz decisão errada. */}
-      <div className="ck-kpis" style={{ marginTop: 'var(--pp-s-5)' }}>
-        <div className="ck-kpi" style={{ '--k': 'var(--pp-pulse)' }}>
+      <div className="ck-kpis ck-mt-5">
+        <div className="ck-kpi ck-k--pulse">
           <div className="lbl">Chaves ativas</div>
           <div className="val">{chavesAtivas}</div>
           <div className="d">{chaves.length - chavesAtivas} revogada(s)</div>
         </div>
-        <div className="ck-kpi" style={{ '--k': 'var(--pp-cyan)' }}>
+        <div className="ck-kpi ck-k--cyan">
           <div className="lbl">Webhooks ativos</div>
           <div className="val">{hooksAtivos}</div>
           <div className="d">{assinaturas.length - hooksAtivos} pausado(s)</div>
         </div>
-        <div className="ck-kpi" style={{ '--k': 'var(--pp-amber)' }}>
+        <div className="ck-kpi ck-k--amber">
           <div className="lbl">Na fila</div>
           <div className="val">{naFila}</div>
           <div className="d">
             {entregas.length ? `nas últimas ${entregas.length} entregas` : 'nenhuma entrega ainda'}
           </div>
         </div>
-        <div className="ck-kpi" style={{ '--k': desistiu ? 'var(--pp-red)' : 'var(--pp-violet)' }}>
+        <div className={`ck-kpi ${desistiu ? 'ck-k--red' : 'ck-k--violet'}`}>
           <div className="lbl">Desistiram</div>
           <div className="val">{desistiu}</div>
           <div className="d">{desistiu ? 'reprocesse depois de consertar o destino' : 'nada preso'}</div>
@@ -502,66 +493,54 @@ export default function Integracoes() {
 
       {/* Recado do reprocesso: região viva, porque a ação não muda nada
           visível de imediato quando o destino continua fora do ar. */}
-      <p aria-live="polite" role="status" className="pp-mono" style={{
-        minHeight: 18, margin: 'var(--pp-s-3) 0 0',
-        fontSize: 'var(--pp-fs-12)', color: 'var(--pp-pulse)',
-      }}>
+      <p aria-live="polite" role="status" className="pp-mono ck-m-0 ck-mt-3 ck-t-support ck-c-pulse ck-viva">
         {recado}
       </p>
 
-      <div className="ck-duo" style={{ marginTop: 'var(--pp-s-4)', gridTemplateColumns: '1fr 1fr' }}>
+      <div className="ck-duo ck-mt-4 ck-cols-2">
         {/* ═══ Coluna: chaves de API ═══ */}
         <div className="pp-stack">
           <section className="ck-panel" aria-labelledby="int-chaves-t">
-            <div className="pp-between" style={{ alignItems: 'baseline' }}>
+            <div className="pp-between ck-ai-base">
               <div className="ck-panel__title" id="int-chaves-t">Chaves de API · {chaves.length}</div>
-              <span className="pp-muted-2 pp-mono" style={{ fontSize: 'var(--pp-fs-12)' }}>somente leitura</span>
+              <span className="pp-muted-2 pp-mono ck-t-support">somente leitura</span>
             </div>
             <p className="ck-panel__sub">
               A chave completa aparece uma vez, na criação. Depois só o prefixo.
             </p>
 
             {chaves.length === 0 && (
-              <div className="pp-empty" style={{ marginTop: 'var(--pp-s-4)' }}>
+              <div className="pp-empty ck-mt-4">
                 <div className="pp-empty__icon"><Icon name="scan" size={26} /></div>
                 <div className="pp-empty__title">Nenhuma chave ainda</div>
                 <p>Crie a primeira no formulário abaixo e cole no seu sistema.</p>
               </div>
             )}
 
-            <div className="pp-stack pp-stack-3" style={{ marginTop: 'var(--pp-s-4)' }}>
+            <div className="pp-stack pp-stack-3 ck-mt-4">
               {chaves.map((c) => {
                 const revogada = !!c.revogada_em;
                 return (
-                  <article key={c.id} style={{
-                    padding: 'var(--pp-s-4)', borderRadius: 'var(--pp-r-card)',
-                    background: 'var(--pp-glass-1)',
-                    border: `1px solid ${revogada ? 'var(--pp-edge-1)' : 'var(--pp-edge-2)'}`,
-                    opacity: revogada ? 0.6 : 1,
-                  }}>
-                    <div className="pp-between" style={{ gap: 10 }}>
-                      <span style={{ fontWeight: 600, fontSize: 'var(--pp-fs-14)' }}>{c.nome}</span>
+                  <article key={c.id} className={`ck-p-4 ck-item ${revogada ? 'ck-item--fraco' : ''}`}>
+                    <div className="pp-between ck-gap-3">
+                      <span className="ck-w-semi ck-t-support">{c.nome}</span>
                       <span className={`pp-badge ${revogada ? 'pp-badge--red' : 'pp-badge--success'}`}>
                         {revogada ? 'revogada' : 'ativa'}
                       </span>
                     </div>
 
-                    <div className="pp-mono" style={{
-                      marginTop: 8, padding: '6px 10px', borderRadius: 'var(--pp-r-sm)',
-                      background: 'var(--pp-ink-950)', fontSize: 'var(--pp-fs-12)',
-                      color: 'var(--pp-fg-3)', overflowWrap: 'anywhere',
-                    }}>
+                    <div className="pp-mono ck-mt-2 ck-t-support pp-muted ck-valor-tec">
                       {c.prefixo}<span aria-label=" seguido do restante oculto">…</span>
                     </div>
 
-                    <div className="pp-cluster pp-cluster-2" style={{ marginTop: 8 }}>
+                    <div className="pp-cluster pp-cluster-2 ck-mt-2">
                       {(c.escopos ?? []).map((e) => (
-                        <span key={e} className="ck-badge" style={{ fontSize: 9 }}>{e}</span>
+                        <span key={e} className="ck-badge ck-t-label">{e}</span>
                       ))}
                     </div>
 
-                    <div className="pp-between" style={{ marginTop: 10, gap: 10, flexWrap: 'wrap' }}>
-                      <span className="pp-mono pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)' }}>
+                    <div className="pp-between ck-mt-3 ck-gap-3 pp-wrap">
+                      <span className="pp-mono pp-muted-2 ck-t-support">
                         {revogada
                           ? `revogada em ${dateTime(c.revogada_em)}`
                           : c.ultimo_uso_em
@@ -586,34 +565,27 @@ export default function Integracoes() {
             <div className="ck-panel__title" id="int-nova-chave-t">Nova chave</div>
             <p className="ck-panel__sub">o nome é como você vai reconhecer a chave na hora de revogar</p>
 
-            <div className="ck-field" style={{ marginTop: 'var(--pp-s-4)' }}>
+            <div className="ck-field ck-mt-4">
               <label className="ck-label" htmlFor="int-chave-nome">Onde esta chave vai ser usada</label>
               <input id="int-chave-nome" className="ck-input" value={formChave.nome}
                 onChange={(e) => setFormChave((f) => ({ ...f, nome: e.target.value }))}
                 placeholder="ERP financeiro · servidor" required minLength={2} maxLength={60}
                 aria-describedby="int-chave-nome-dica" />
-              <p id="int-chave-nome-dica" className="pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', margin: 0 }}>
+              <p id="int-chave-nome-dica" className="pp-muted-2 ck-t-support ck-m-0">
                 &quot;chave 2&quot; não ajuda ninguém a decidir se pode revogar.
               </p>
             </div>
 
-            <fieldset style={{ border: 0, padding: 0, margin: '0 0 var(--pp-s-4)' }}>
-              <legend className="ck-label" style={{ padding: 0 }}>O que ela pode ler</legend>
-              <div className="pp-stack pp-stack-1" style={{ marginTop: 8 }}>
+            <fieldset className="ck-p-0 ck-m-0 ck-mb-4 ck-b-0">
+              <legend className="ck-label ck-p-0">O que ela pode ler</legend>
+              <div className="pp-stack pp-stack-1 ck-mt-2">
                 {escoposCatalogo.map((e) => (
-                  <label key={e.id} className="pp-row" style={{
-                    gap: 10, alignItems: 'flex-start', cursor: 'pointer',
-                    padding: '8px 10px', borderRadius: 'var(--pp-r-sm)',
-                    background: formChave.escopos.includes(e.id) ? 'var(--pp-glass-2)' : 'transparent',
-                    border: '1px solid var(--pp-edge-1)',
-                  }}>
-                    <input type="checkbox" checked={formChave.escopos.includes(e.id)}
-                      onChange={() => setFormChave((f) => ({ ...f, escopos: alternar(f.escopos, e.id) }))}
-                      style={{ width: 16, height: 16, marginTop: 3, flexShrink: 0, accentColor: 'var(--pp-pulse)' }} />
+                  <label key={e.id} className={`pp-row ck-gap-3 ck-ai-start ck-opcao ${formChave.escopos.includes(e.id) ? 'is-on' : ''}`}>
+                    <input type="checkbox" checked={formChave.escopos.includes(e.id)} onChange={() => setFormChave((f) => ({ ...f, escopos: alternar(f.escopos, e.id) }))} className="ck-mt-1 ck-shrink0 ck-check"/>
                     <span>
-                      <span style={{ fontSize: 'var(--pp-fs-14)', fontWeight: 600 }}>{e.titulo}</span>
-                      <span className="pp-mono pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', marginLeft: 8 }}>{e.id}</span>
-                      <span className="pp-muted" style={{ display: 'block', fontSize: 'var(--pp-fs-12)' }}>{e.descricao}</span>
+                      <span className="ck-t-support ck-w-semi">{e.titulo}</span>
+                      <span className="pp-mono pp-muted-2 ck-t-support ck-ml-2">{e.id}</span>
+                      <span className="pp-muted ck-block ck-t-support">{e.descricao}</span>
                     </span>
                   </label>
                 ))}
@@ -624,7 +596,7 @@ export default function Integracoes() {
               <Icon name="plus" size={16} /> {criandoChave ? 'Criando…' : 'Criar chave'}
             </button>
             {!formChave.escopos.length && (
-              <p className="pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', margin: '8px 0 0' }}>
+              <p className="pp-muted-2 ck-t-support ck-m-0 ck-mt-2">
                 Escolha pelo menos um escopo.
               </p>
             )}
@@ -636,10 +608,7 @@ export default function Integracoes() {
           {/* A limitação de disparo fica NO ALTO da coluna de webhooks, e não
               num rodapé de documentação: quem depende do aviso pra emitir nota
               ou liberar acesso precisa saber disso antes de cadastrar a URL. */}
-          <div className="pp-note" style={{
-            borderColor: 'rgba(255,184,0,0.35)', background: 'rgba(255,184,0,0.07)', margin: 0,
-            display: 'flex', gap: 10, alignItems: 'flex-start', lineHeight: 1.5,
-          }}>
+          <div className="pp-note ck-m-0 ck-flex ck-gap-3 ck-ai-start ck-aviso ck-lh">
             <Icon name="clock" size={15} />
             <span>
               <strong>O envio é melhor esforço, não fila.</strong> O aviso é gravado sempre
@@ -651,9 +620,9 @@ export default function Integracoes() {
           </div>
 
           <section className="ck-panel" aria-labelledby="int-hooks-t">
-            <div className="pp-between" style={{ alignItems: 'baseline' }}>
+            <div className="pp-between ck-ai-base">
               <div className="ck-panel__title" id="int-hooks-t">Webhooks · {assinaturas.length}</div>
-              <span className="pp-muted-2 pp-mono" style={{ fontSize: 'var(--pp-fs-12)' }}>
+              <span className="pp-muted-2 pp-mono ck-t-support">
                 HMAC-SHA256 · 6 tentativas
               </span>
             </div>
@@ -663,69 +632,53 @@ export default function Integracoes() {
             </p>
 
             {assinaturas.length === 0 && (
-              <div className="pp-empty" style={{ marginTop: 'var(--pp-s-4)' }}>
+              <div className="pp-empty ck-mt-4">
                 <div className="pp-empty__icon"><Icon name="share" size={26} /></div>
                 <div className="pp-empty__title">Nenhum webhook ainda</div>
                 <p>Cadastre a URL do seu sistema abaixo para receber os avisos.</p>
               </div>
             )}
 
-            <div className="pp-stack pp-stack-3" style={{ marginTop: 'var(--pp-s-4)' }}>
+            <div className="pp-stack pp-stack-3 ck-mt-4">
               {assinaturas.map((a) => {
                 const s = porAssinatura.get(a.id);
                 const temFalha = (s?.desistiu ?? 0) > 0;
                 const emAcao = ocupado === a.id;
                 return (
-                  <article key={a.id} style={{
-                    position: 'relative', padding: 'var(--pp-s-4)', borderRadius: 'var(--pp-r-card)',
-                    background: 'var(--pp-glass-1)',
-                    border: `1px solid ${temFalha ? 'rgba(255,59,48,0.28)' : 'var(--pp-edge-2)'}`,
-                    opacity: a.ativa ? 1 : 0.68,
-                  }}>
+                  <article key={a.id} className={`ck-rel ck-p-4 ck-item ${temFalha ? 'ck-item--falha' : ''} ${a.ativa ? '' : 'ck-item--fraco'}`}>
                     {temFalha && (
-                      <span aria-hidden="true" style={{
-                        position: 'absolute', left: 0, top: 0, bottom: 0, width: 3,
-                        background: 'var(--pp-red)', borderRadius: 'var(--pp-r-card) 0 0 var(--pp-r-card)',
-                      }} />
+                      <span aria-hidden="true" className="ck-item__fio-erro" />
                     )}
 
-                    <div className="pp-between" style={{ gap: 10, alignItems: 'flex-start' }}>
-                      <span className="pp-mono" style={{
-                        fontSize: 'var(--pp-fs-12)', overflowWrap: 'anywhere', lineHeight: 1.5,
-                      }}>
+                    <div className="pp-between ck-gap-3 ck-ai-start">
+                      <span className="pp-mono ck-t-support ck-quebra-suave">
                         {a.url}
                       </span>
-                      <span className={`pp-badge ${a.ativa ? 'pp-badge--success' : 'pp-badge--neutral'}`}
-                        style={{ flexShrink: 0 }}>
+                      <span className={`pp-badge ${a.ativa ? 'pp-badge--success' : 'pp-badge--neutral'} ck-shrink0`}>
                         {a.ativa ? 'ativo' : 'pausado'}
                       </span>
                     </div>
 
-                    <div className="pp-cluster pp-cluster-2" style={{ marginTop: 8 }}>
+                    <div className="pp-cluster pp-cluster-2 ck-mt-2">
                       {(a.eventos ?? []).map((e) => (
-                        <span key={e} className="ck-badge" style={{ fontSize: 9 }}>{e}</span>
+                        <span key={e} className="ck-badge ck-t-label">{e}</span>
                       ))}
                     </div>
 
-                    <div className="pp-mono pp-muted-2" style={{ marginTop: 8, fontSize: 'var(--pp-fs-12)' }}>
+                    <div className="pp-mono pp-muted-2 ck-mt-2 ck-t-support">
                       {s
                         ? `${s.total} entrega(s) recente(s) · ${s.entregue} ok · ${s.pendente} na fila · ${s.desistiu} desistiu`
                         : 'nenhuma entrega recente'}
                     </div>
 
                     {s?.ultimaFalha?.erro && (
-                      <p className="pp-mono" style={{
-                        marginTop: 8, marginBottom: 0, padding: '6px 10px',
-                        borderRadius: 'var(--pp-r-sm)', background: 'rgba(255,59,48,0.08)',
-                        border: '1px solid rgba(255,59,48,0.22)', fontSize: 'var(--pp-fs-12)',
-                        color: 'var(--pp-fg-2)', overflowWrap: 'anywhere',
-                      }}>
+                      <p className="pp-mono ck-mt-2 ck-mb-0 ck-t-support ck-c-fg2 ck-erro-inline">
                         última falha: {s.ultimaFalha.erro}
                         {s.ultimaFalha.http_status ? ` (HTTP ${s.ultimaFalha.http_status})` : ''}
                       </p>
                     )}
 
-                    <div className="pp-cluster pp-cluster-2" style={{ marginTop: 10 }}>
+                    <div className="pp-cluster pp-cluster-2 ck-mt-3">
                       <button type="button" className="ck-btn ck-btn--glass ck-btn--sm"
                         onClick={() => alternarAtiva(a)} disabled={emAcao}
                         aria-label={`${a.ativa ? 'Pausar' : 'Retomar'} o webhook ${a.url}`}>
@@ -757,35 +710,28 @@ export default function Integracoes() {
             <div className="ck-panel__title" id="int-novo-hook-t">Novo webhook</div>
             <p className="ck-panel__sub">https, endereço público — destino em rede interna é recusado</p>
 
-            <div className="ck-field" style={{ marginTop: 'var(--pp-s-4)' }}>
+            <div className="ck-field ck-mt-4">
               <label className="ck-label" htmlFor="int-hook-url">URL do seu sistema</label>
               <input id="int-hook-url" className="ck-input pp-mono" type="url" inputMode="url"
                 autoCapitalize="off" autoCorrect="off" spellCheck="false"
                 value={formHook.url} onChange={(e) => setFormHook((f) => ({ ...f, url: e.target.value }))}
                 placeholder="https://seusistema.com.br/webhooks/pulsepass" required maxLength={500}
                 aria-describedby="int-hook-url-dica" />
-              <p id="int-hook-url-dica" className="pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', margin: 0 }}>
+              <p id="int-hook-url-dica" className="pp-muted-2 ck-t-support ck-m-0">
                 Responda 2xx rápido e processe depois: passamos de 10 s e a entrega vira falha.
               </p>
             </div>
 
-            <fieldset style={{ border: 0, padding: 0, margin: '0 0 var(--pp-s-4)' }}>
-              <legend className="ck-label" style={{ padding: 0 }}>O que você quer receber</legend>
-              <div className="pp-stack pp-stack-1" style={{ marginTop: 8 }}>
+            <fieldset className="ck-p-0 ck-m-0 ck-mb-4 ck-b-0">
+              <legend className="ck-label ck-p-0">O que você quer receber</legend>
+              <div className="pp-stack pp-stack-1 ck-mt-2">
                 {eventosCatalogo.map((e) => (
-                  <label key={e.id} className="pp-row" style={{
-                    gap: 10, alignItems: 'flex-start', cursor: 'pointer',
-                    padding: '8px 10px', borderRadius: 'var(--pp-r-sm)',
-                    background: formHook.eventos.includes(e.id) ? 'var(--pp-glass-2)' : 'transparent',
-                    border: '1px solid var(--pp-edge-1)',
-                  }}>
-                    <input type="checkbox" checked={formHook.eventos.includes(e.id)}
-                      onChange={() => setFormHook((f) => ({ ...f, eventos: alternar(f.eventos, e.id) }))}
-                      style={{ width: 16, height: 16, marginTop: 3, flexShrink: 0, accentColor: 'var(--pp-pulse)' }} />
+                  <label key={e.id} className={`pp-row ck-gap-3 ck-ai-start ck-opcao ${formHook.eventos.includes(e.id) ? 'is-on' : ''}`}>
+                    <input type="checkbox" checked={formHook.eventos.includes(e.id)} onChange={() => setFormHook((f) => ({ ...f, eventos: alternar(f.eventos, e.id) }))} className="ck-mt-1 ck-shrink0 ck-check"/>
                     <span>
-                      <span style={{ fontSize: 'var(--pp-fs-14)', fontWeight: 600 }}>{e.titulo}</span>
-                      <span className="pp-mono pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', marginLeft: 8 }}>{e.id}</span>
-                      <span className="pp-muted" style={{ display: 'block', fontSize: 'var(--pp-fs-12)' }}>{e.descricao}</span>
+                      <span className="ck-t-support ck-w-semi">{e.titulo}</span>
+                      <span className="pp-mono pp-muted-2 ck-t-support ck-ml-2">{e.id}</span>
+                      <span className="pp-muted ck-block ck-t-support">{e.descricao}</span>
                     </span>
                   </label>
                 ))}
@@ -796,7 +742,7 @@ export default function Integracoes() {
               <Icon name="plus" size={16} /> {criandoHook ? 'Criando…' : 'Criar webhook'}
             </button>
             {!formHook.eventos.length && (
-              <p className="pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', margin: '8px 0 0' }}>
+              <p className="pp-muted-2 ck-t-support ck-m-0 ck-mt-2">
                 Escolha pelo menos um evento.
               </p>
             )}
@@ -808,10 +754,10 @@ export default function Integracoes() {
           O mockup punha "integrações nativas 1-click" aqui embaixo. Elas não
           existem. O que existe — e o integrador precisa — é o extrato do que
           saiu, com o erro à vista e o caminho de conserto ao lado. */}
-      <section className="ck-panel" style={{ marginTop: 'var(--pp-s-5)' }} aria-labelledby="int-entregas-t">
-        <div className="pp-between" style={{ alignItems: 'baseline' }}>
+      <section className="ck-panel ck-mt-5" aria-labelledby="int-entregas-t">
+        <div className="pp-between ck-ai-base">
           <div className="ck-panel__title" id="int-entregas-t">Entregas recentes</div>
-          <span className="pp-muted-2 pp-mono" style={{ fontSize: 'var(--pp-fs-12)' }}>
+          <span className="pp-muted-2 pp-mono ck-t-support">
             últimas {entregas.length} · todas as assinaturas
           </span>
         </div>
@@ -821,17 +767,15 @@ export default function Integracoes() {
         </p>
 
         {entregas.length === 0 ? (
-          <div className="pp-empty" style={{ marginTop: 'var(--pp-s-4)' }}>
+          <div className="pp-empty ck-mt-4">
             <div className="pp-empty__icon"><Icon name="receipt" size={26} /></div>
             <div className="pp-empty__title">Nada saiu ainda</div>
             <p>A primeira entrega aparece aqui assim que um pedido for pago ou um ingresso for lido na porta.</p>
           </div>
         ) : (
-          <div className="ck-tablewrap" style={{ marginTop: 'var(--pp-s-4)' }}>
+          <div className="ck-tablewrap ck-mt-4">
             <table className="ck-table">
-              <caption className="pp-muted-2" style={{
-                captionSide: 'bottom', textAlign: 'left', fontSize: 'var(--pp-fs-12)', paddingTop: 8,
-              }}>
+              <caption className="pp-muted-2 ck-t-support ck-caption--fim">
                 Entregas de webhook, da mais recente para a mais antiga.
               </caption>
               <thead>
@@ -850,18 +794,16 @@ export default function Integracoes() {
                   const destino = assinaturas.find((a) => a.id === e.assinatura_id);
                   return (
                     <tr key={e.id}>
-                      <td className="pp-mono" style={{ fontSize: 'var(--pp-fs-12)', whiteSpace: 'nowrap' }}>
+                      <td className="pp-mono ck-t-support ck-nowrap">
                         {dateTime(e.created_at)}
                       </td>
-                      <td className="pp-mono" style={{ fontSize: 'var(--pp-fs-12)' }}>{e.evento}</td>
-                      <td className="pp-mono pp-muted" style={{
-                        fontSize: 'var(--pp-fs-12)', maxWidth: 240, overflowWrap: 'anywhere',
-                      }}>
+                      <td className="pp-mono ck-t-support">{e.evento}</td>
+                      <td className="pp-mono pp-muted ck-t-support ck-td-longa">
                         {destino?.url ?? '—'}
                       </td>
                       <td><span className={`pp-badge ${st.classe}`}>{st.rotulo}</span></td>
-                      <td className="num pp-mono" style={{ fontSize: 'var(--pp-fs-12)' }}>{e.tentativas ?? 0}</td>
-                      <td className="pp-mono" style={{ fontSize: 'var(--pp-fs-12)', color: 'var(--pp-fg-3)' }}>
+                      <td className="num pp-mono ck-t-support">{e.tentativas ?? 0}</td>
+                      <td className="pp-mono ck-t-support pp-muted">
                         {e.entregue_em
                           ? `HTTP ${e.http_status ?? '2xx'} · ${dateTime(e.entregue_em)}`
                           : e.erro
@@ -880,40 +822,35 @@ export default function Integracoes() {
       </section>
 
       {/* ═══ Contrato da integração ═══ */}
-      <section className="ck-panel" style={{ marginTop: 'var(--pp-s-4)' }} aria-labelledby="int-doc-t">
+      <section className="ck-panel ck-mt-4" aria-labelledby="int-doc-t">
         <div className="ck-panel__title" id="int-doc-t">O contrato, em quatro linhas</div>
         <p className="ck-panel__sub">é isso que o seu desenvolvedor precisa saber</p>
 
-        <div className="ck-duo" style={{ marginTop: 'var(--pp-s-4)', gridTemplateColumns: '1fr 1fr' }}>
+        <div className="ck-duo ck-mt-4 ck-cols-2">
           <div>
             <div className="ck-label">Endereço da API</div>
-            <div className="pp-row" style={{ gap: 10, marginTop: 6, flexWrap: 'wrap' }}>
-              <code className="pp-mono" style={{
-                padding: '6px 10px', borderRadius: 'var(--pp-r-sm)', background: 'var(--pp-ink-950)',
-                fontSize: 'var(--pp-fs-12)', color: 'var(--pp-fg-2)', overflowWrap: 'anywhere',
-              }}>
+            <div className="pp-row ck-gap-3 ck-mt-2 pp-wrap">
+              <code className="pp-mono ck-t-support ck-c-fg2 ck-valor-tec">
                 {BASE_PUBLICA}
               </code>
               <BotaoCopiar valor={BASE_PUBLICA} chave="base" copiado={copiado} copiar={copiar}
                 rotulo="Copiar endereço" />
             </div>
-            <p className="pp-muted" style={{ fontSize: 'var(--pp-fs-13)', marginTop: 10, lineHeight: 1.6 }}>
+            <p className="pp-muted ck-t-support ck-mt-3 ck-lh">
               Autenticação por <span className="pp-mono">Authorization: Bearer &lt;sua chave&gt;</span>.
               Comece por <span className="pp-mono">GET /eu</span> — ele confirma que a chave vale e
               diz quais escopos ela tem. Depois:{' '}
               <span className="pp-mono">/eventos</span>, <span className="pp-mono">/eventos/:id/ingressos</span>{' '}
               e <span className="pp-mono">/pedidos</span>. Só leitura, sempre recortado pela sua produtora.
             </p>
-            <p aria-live="polite" role="status" className="pp-mono" style={{
-              minHeight: 16, margin: '4px 0 0', fontSize: 'var(--pp-fs-12)', color: 'var(--pp-pulse)',
-            }}>
+            <p aria-live="polite" role="status" className="pp-mono ck-m-0 ck-mt-1 ck-t-support ck-c-pulse ck-viva">
               {copiado === 'base' ? 'endereço copiado ✓' : ''}
             </p>
           </div>
 
           <div>
             <div className="ck-label">Assinatura do webhook</div>
-            <p className="pp-muted" style={{ fontSize: 'var(--pp-fs-13)', marginTop: 6, lineHeight: 1.6 }}>
+            <p className="pp-muted ck-t-support ck-mt-2 ck-lh">
               Todo POST leva o cabeçalho <span className="pp-mono">X-PulsePass-Signature</span> no
               formato <span className="pp-mono">t=&lt;unix&gt;,v1=&lt;hex&gt;</span>. O{' '}
               <span className="pp-mono">v1</span> é HMAC-SHA256 de{' '}
@@ -922,7 +859,7 @@ export default function Integracoes() {
               tiver <span className="pp-mono">t</span> de mais de 5 minutos atrás — senão uma entrega
               capturada pode ser reenviada por outra pessoa.
             </p>
-            <p className="pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 8, lineHeight: 1.6 }}>
+            <p className="pp-muted-2 ck-t-support ck-mt-2 ck-lh">
               O <span className="pp-mono">id</span> da entrega vai no corpo e se repete a cada
               retentativa: use-o como chave de idempotência para não lançar a mesma venda duas vezes.
             </p>

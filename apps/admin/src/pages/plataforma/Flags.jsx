@@ -83,11 +83,11 @@ export default function Flags() {
     <AdmShell where="Configuração da plataforma · leitura do que existe de verdade">
       <div className="pp-stack pp-stack-5 pp-reveal">
         <div>
-          <div className="adm-eyebrow" style={{ color: 'var(--pp-pulse)' }}>Configuração</div>
+          <div className="adm-eyebrow ck-c-pulse">Configuração</div>
           <div className="adm-h1">
-            O que é <span className="accent" style={{ color: 'var(--pp-pulse)' }}>configurável</span> hoje
+            O que é <span className="accent ck-c-pulse">configurável</span> hoje
           </div>
-          <p className="pp-muted" style={{ margin: '4px 0 0', maxWidth: 640 }}>
+          <p className="pp-muted ck-m-0 ck-mt-1 ck-w-mid">
             Os valores abaixo vêm de <code className="pp-mono">platform_settings</code> e do cadastro das
             produtoras. É o estado real da plataforma neste momento.
           </p>
@@ -102,18 +102,18 @@ export default function Flags() {
           toggle que não persiste é pior do que tela que falta, porque ele parece ter funcionado.
         </div>
 
-        <div className="adm-kpis" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
-          <div className="adm-kpi" style={{ '--k': 'var(--pp-amber)' }}>
+        <div className="adm-kpis ck-cols-3">
+          <div className="adm-kpi ck-k--amber">
             <div className="l">Taxa padrão</div>
             <div className="v">{billing.default_fee_percent}%</div>
             <div className="d">{billing.updated_at ? `alterada em ${dateTime(billing.updated_at)}` : 'nunca alterada'}</div>
           </div>
-          <div className="adm-kpi" style={{ '--k': 'var(--pp-violet)' }}>
+          <div className="adm-kpi ck-k--violet">
             <div className="l">Taxas negociadas</div>
             <div className="v">{negociadas.length}</div>
             <div className="d">{orgs.length - negociadas.length} no padrão</div>
           </div>
-          <div className="adm-kpi" style={{ '--k': semCarteira.length ? 'var(--pp-amber)' : 'var(--pp-pulse)' }}>
+          <div className={`adm-kpi ${semCarteira.length ? 'ck-k--amber' : 'ck-k--pulse'}`}>
             <div className="l">Repasse automático</div>
             <div className="v">{orgs.length - semCarteira.length}/{orgs.length || 0}</div>
             <div className="d">{semCarteira.length ? `${semCarteira.length} em repasse manual` : 'todas com carteira'}</div>
@@ -135,38 +135,38 @@ export default function Flags() {
           <div className="adm-panel">
             <div className="pp-between">
               <div>
-                <strong style={{ fontFamily: 'var(--pp-font-display)', fontSize: 'var(--pp-fs-18)' }}>Configurável hoje</strong>
-                <p className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)', margin: '2px 0 0' }}>
+                <strong className="ck-display ck-t-section">Configurável hoje</strong>
+                <p className="pp-muted ck-t-support ck-m-0 ck-mt-1">
                   Cada item mostra o valor em vigor e onde ele se muda — a edição vive na tela dona do assunto,
                   para a alteração passar pela validação e pela trilha que já existem lá.
                 </p>
               </div>
             </div>
 
-            <div className="pp-stack pp-stack-3" style={{ marginTop: 'var(--pp-s-4)' }}>
-              <div className="pp-row" style={{ padding: '12px 14px', borderRadius: 'var(--pp-r-md)', background: 'var(--pp-glass-1)', border: '1px solid var(--pp-edge-1)', flexWrap: 'wrap' }}>
-                <span className="pp-grow" style={{ minWidth: 220 }}>
-                  <strong style={{ fontSize: 'var(--pp-fs-14)' }}>Taxa padrão da plataforma</strong>
-                  <span className="pp-muted" style={{ display: 'block', fontSize: 'var(--pp-fs-12)', marginTop: 2 }}>
+            <div className="pp-stack pp-stack-3 ck-mt-4">
+              <div className="pp-row pp-wrap ck-caixa">
+                <span className="pp-grow ck-fit--lg">
+                  <strong className="ck-t-support">Taxa padrão da plataforma</strong>
+                  <span className="pp-muted ck-meta">
                     vale para toda produtora sem taxa negociada
                   </span>
                 </span>
-                <span className="pp-mono" style={{ fontWeight: 700, fontSize: 'var(--pp-fs-18)', color: 'var(--pp-amber)' }}>
+                <span className="pp-mono ck-w-bold ck-t-section ck-c-amber">
                   {billing.default_fee_percent}%
                 </span>
                 <Link to="/plataforma/taxas" className="ck-btn ck-btn--glass ck-btn--sm">Editar em Taxas</Link>
               </div>
 
-              <div className="pp-row" style={{ padding: '12px 14px', borderRadius: 'var(--pp-r-md)', background: 'var(--pp-glass-1)', border: '1px solid var(--pp-edge-1)', flexWrap: 'wrap' }}>
-                <span className="pp-grow" style={{ minWidth: 220 }}>
-                  <strong style={{ fontSize: 'var(--pp-fs-14)' }}>Taxa por produtora</strong>
-                  <span className="pp-muted" style={{ display: 'block', fontSize: 'var(--pp-fs-12)', marginTop: 2 }}>
+              <div className="pp-row pp-wrap ck-caixa">
+                <span className="pp-grow ck-fit--lg">
+                  <strong className="ck-t-support">Taxa por produtora</strong>
+                  <span className="pp-muted ck-meta">
                     {negociadas.length === 0
                       ? 'nenhuma exceção contratual — todas seguem o padrão'
                       : negociadas.map((o) => `${o.name} (${o.fee_percent}%)`).join(' · ')}
                   </span>
                 </span>
-                <span className="pp-mono" style={{ fontWeight: 700, fontSize: 'var(--pp-fs-18)', color: 'var(--pp-violet)' }}>
+                <span className="pp-mono ck-w-bold ck-t-section ck-c-violet">
                   {negociadas.length}
                 </span>
                 <Link to="/plataforma/taxas" className="ck-btn ck-btn--glass ck-btn--sm">Editar em Taxas</Link>
@@ -175,19 +175,19 @@ export default function Flags() {
               {/* Carteira Asaas não se cadastra daqui: a produtora abre a subconta
                   pelo próprio cockpit. A tela mostra o risco, e não um botão que
                   não existe do lado do super-admin. */}
-              <div className="pp-row" style={{ padding: '12px 14px', borderRadius: 'var(--pp-r-md)', background: 'var(--pp-glass-1)', border: `1px solid ${semCarteira.length ? 'var(--pp-amber)' : 'var(--pp-edge-1)'}`, flexWrap: 'wrap' }}>
-                <span className="pp-grow" style={{ minWidth: 220 }}>
-                  <strong style={{ fontSize: 'var(--pp-fs-14)' }}>Repasse automático (split Asaas)</strong>
-                  <span className="pp-muted" style={{ display: 'block', fontSize: 'var(--pp-fs-12)', marginTop: 2 }}>
+              <div className={`pp-row pp-wrap ck-caixa ${semCarteira.length ? 'ck-panel--amber' : ''}`}>
+                <span className="pp-grow ck-fit--lg">
+                  <strong className="ck-t-support">Repasse automático (split Asaas)</strong>
+                  <span className="pp-muted ck-meta">
                     {semCarteira.length === 0
                       ? 'todas as produtoras recebem por split — nenhuma transferência manual pendente'
                       : `sem carteira, repasse manual: ${semCarteira.map((o) => o.name).join(' · ')}`}
                   </span>
-                  <span className="pp-muted-2" style={{ display: 'block', fontSize: 'var(--pp-fs-12)', marginTop: 4 }}>
+                  <span className="pp-muted-2 ck-meta">
                     A subconta é criada pela própria produtora no cockpit dela; o super-admin não abre conta por ninguém.
                   </span>
                 </span>
-                <span className="pp-mono" style={{ fontWeight: 700, fontSize: 'var(--pp-fs-18)', color: semCarteira.length ? 'var(--pp-amber)' : 'var(--pp-pulse)' }}>
+                <span className={`pp-mono ck-w-bold ck-t-section ${semCarteira.length ? 'ck-c-amber' : 'ck-c-pulse'}`}>
                   {orgs.length - semCarteira.length}/{orgs.length}
                 </span>
               </div>
@@ -195,41 +195,41 @@ export default function Flags() {
           </div>
         )}
 
-        <div className="pp-cols-2" style={{ alignItems: 'start' }}>
+        <div className="pp-cols-2 ck-ai-start">
           <div className="adm-panel">
-            <div className="pp-eyebrow" style={{ color: 'var(--pp-cyan)' }}>Fixo no código · {FIXO.length}</div>
-            <p className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)', margin: '4px 0 0' }}>
+            <div className="pp-eyebrow ck-c-cyan">Fixo no código · {FIXO.length}</div>
+            <p className="pp-muted ck-t-support ck-m-0 ck-mt-1">
               Regras que valem sempre e não têm chave para desligar. Estão aqui para quem opera
               saber o que NÃO adianta procurar.
             </p>
-            <ul className="pp-stack pp-stack-2" style={{ listStyle: 'none', margin: 'var(--pp-s-4) 0 0', padding: 0 }}>
+            <ul className="pp-stack pp-stack-2 ck-lista ck-mt-4">
               {FIXO.map((r) => (
-                <li key={r.t} style={{ padding: '10px 12px', borderRadius: 'var(--pp-r-md)', background: 'var(--pp-glass-1)', border: '1px solid var(--pp-edge-1)' }}>
+                <li className="ck-caixa" key={r.t}>
                   <div className="pp-row">
-                    <span className="ck-badge" style={{ fontSize: 9 }}>fixo</span>
-                    <strong className="pp-grow" style={{ fontSize: 'var(--pp-fs-13)' }}>{r.t}</strong>
+                    <span className="ck-badge ck-t-label">fixo</span>
+                    <strong className="pp-grow ck-t-support">{r.t}</strong>
                   </div>
-                  <p className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)', margin: '6px 0 0' }}>{r.d}</p>
-                  <p className="pp-mono pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', margin: '4px 0 0' }}>{r.src}</p>
+                  <p className="pp-muted ck-t-support ck-m-0 ck-mt-2">{r.d}</p>
+                  <p className="pp-mono pp-muted-2 ck-t-support ck-m-0 ck-mt-1">{r.src}</p>
                 </li>
               ))}
             </ul>
           </div>
 
           <div className="adm-panel">
-            <div className="pp-eyebrow" style={{ color: 'var(--pp-fg-4)' }}>Não existe ainda · {AUSENTE.length}</div>
-            <p className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)', margin: '4px 0 0' }}>
+            <div className="pp-eyebrow pp-muted-2">Não existe ainda · {AUSENTE.length}</div>
+            <p className="pp-muted ck-t-support ck-m-0 ck-mt-1">
               O que o desenho previa e o backend ainda não sustenta.
             </p>
-            <ul className="pp-stack pp-stack-1" style={{ listStyle: 'none', margin: 'var(--pp-s-4) 0 0', padding: 0 }}>
+            <ul className="pp-stack pp-stack-1 ck-lista ck-mt-4">
               {AUSENTE.map((a) => (
-                <li key={a} className="pp-row" style={{ padding: '8px 0', borderBottom: '1px solid var(--pp-edge-1)' }}>
+                <li key={a} className="ck-linha ck-jc-start">
                   <Icon name="close" size={14} aria-hidden="true" />
-                  <span className="pp-grow" style={{ fontSize: 'var(--pp-fs-13)', color: 'var(--pp-fg-3)' }}>{a}</span>
+                  <span className="pp-grow ck-t-support pp-muted">{a}</span>
                 </li>
               ))}
             </ul>
-            <p className="pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 'var(--pp-s-3)' }}>
+            <p className="pp-muted-2 ck-t-support ck-mt-3">
               Para destravar: tabela <code className="pp-mono">feature_flags</code> (chave, descrição,
               percentual, orgs na whitelist) e as rotas <code className="pp-mono">GET /platform/flags</code> e{' '}
               <code className="pp-mono">PATCH /platform/flags/:chave</code> gravando na trilha de auditoria.

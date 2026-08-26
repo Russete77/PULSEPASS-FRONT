@@ -61,67 +61,67 @@ export default function Platform() {
         </div>
 
         <div className="adm-kpis">
-          <Kpi l="GMV total" v={brl(gmv)} d={`${stats.orders_count} transações`} c="var(--pp-pulse)" />
-          <Kpi l="GMV 24h" v={brl(stats.gmv_24h_cents)} d="ingressos + bar" c="var(--pp-pink)" />
-          <Kpi l="Organizações" v={stats.orgs_count} d="ativas na plataforma" c="var(--pp-violet)" />
-          <Kpi l="Eventos ao vivo" v={stats.events_live} d={`de ${stats.events_total} totais`} c="var(--pp-cyan)" />
+          <Kpi l="GMV total" v={brl(gmv)} d={`${stats.orders_count} transações`} tom="pulse" />
+          <Kpi l="GMV 24h" v={brl(stats.gmv_24h_cents)} d="ingressos + bar" tom="pink" />
+          <Kpi l="Organizações" v={stats.orgs_count} d="ativas na plataforma" tom="violet" />
+          <Kpi l="Eventos ao vivo" v={stats.events_live} d={`de ${stats.events_total} totais`} tom="cyan" />
           <Kpi
             l="Ingressos emitidos"
             v={stats.tickets_count}
             d={integro ? 'ledger íntegro' : `${stats.drift_count} divergências`}
-            c={integro ? 'var(--pp-pulse)' : 'var(--pp-amber)'}
+            tom={integro ? 'pulse' : 'amber'}
           />
         </div>
 
-        <div className="pp-cols-2" style={{ gridTemplateColumns: '1.4fr 1fr', alignItems: 'start' }}>
+        <div className="ck-duo">
           <div className="adm-panel">
-            <div className="pp-between" style={{ alignItems: 'baseline', flexWrap: 'wrap' }}>
+            <div className="pp-between ck-ai-base pp-wrap">
               <div>
-                <div style={{ fontFamily: 'var(--pp-font-display)', fontWeight: 600, fontSize: 'var(--pp-fs-18)' }}>
+                <div className="ck-display ck-w-semi ck-t-section">
                   De onde vem o dinheiro
                 </div>
-                <div className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 2 }}>
+                <div className="pp-muted ck-meta">
                   composição e distribuição em todas as orgs
                 </div>
               </div>
-              <div className="pp-price" style={{ fontSize: 'var(--pp-fs-20)' }}>{brl(gmv)}</div>
+              <div className="pp-price ck-t-section">{brl(gmv)}</div>
             </div>
 
             {/* Composição real do GMV: bilheteria vs bar. Dois campos que o
                 /stats já devolvia e a tela nunca mostrou — e é a primeira
                 pergunta de quem olha a plataforma de cima. */}
             {gmv > 0 && (
-              <div style={{ marginTop: 'var(--pp-s-5)' }}>
+              <div className="ck-mt-5">
                 <div
                   role="img"
                   aria-label={`Ingressos ${Math.round(pctIngresso)}% do GMV, bar ${Math.round(pctBar)}%`}
-                  style={{ display: 'flex', height: 12, borderRadius: 99, overflow: 'hidden', background: 'var(--pp-glass-1)' }}
+                  className="ck-mixbar"
                 >
-                  <span style={{ width: `${pctIngresso}%`, background: 'var(--pp-pulse)' }} />
-                  <span style={{ width: `${pctBar}%`, background: 'var(--pp-violet)' }} />
+                  <span className="ck-mixbar__a" style={{ width: `${pctIngresso}%` }} />
+                  <span className="ck-mixbar__b" style={{ width: `${pctBar}%` }} />
                 </div>
-                <div className="pp-cluster" style={{ marginTop: 'var(--pp-s-3)', gap: 'var(--pp-s-5)' }}>
-                  <Legenda cor="var(--pp-pulse)" rotulo="Ingressos" valor={brl(stats.gmv_tickets_cents)} pct={pctIngresso} />
-                  <Legenda cor="var(--pp-violet)" rotulo="Bar / cashless" valor={brl(stats.gmv_bar_cents)} pct={pctBar} />
+                <div className="pp-cluster ck-mt-3 ck-gap-5">
+                  <Legenda tom="pulse" rotulo="Ingressos" valor={brl(stats.gmv_tickets_cents)} pct={pctIngresso} />
+                  <Legenda tom="violet" rotulo="Bar / cashless" valor={brl(stats.gmv_bar_cents)} pct={pctBar} />
                 </div>
               </div>
             )}
 
-            <div className="pp-eyebrow" style={{ marginTop: 'var(--pp-s-6)', color: 'var(--pp-fg-3)' }}>
+            <div className="pp-eyebrow ck-mt-6 pp-muted">
               GMV por cidade · top {stats.by_city.length}
             </div>
-            <div className="pp-stack pp-stack-2" style={{ marginTop: 'var(--pp-s-3)' }}>
+            <div className="pp-stack pp-stack-2 ck-mt-3">
               {stats.by_city.length === 0 && <p className="pp-muted">Sem vendas ainda.</p>}
               {stats.by_city.map((row, i) => (
                 <div key={row.city} className="adm-bar">
-                  <span className="pp-truncate" style={{ width: 120, fontSize: 'var(--pp-fs-13)' }}>{row.city}</span>
+                  <span className="pp-truncate ck-t-support ck-col-rot">{row.city}</span>
                   <div className="track">
                     <div className="fill" style={{
                       width: `${Math.max(4, (row.gmv_cents / maiorCidade) * 100)}%`,
                       background: TONS[i % TONS.length],
                     }} />
                   </div>
-                  <span className="pp-mono pp-num" style={{ width: 96, textAlign: 'right', fontSize: 'var(--pp-fs-13)', fontWeight: 600 }}>
+                  <span className="pp-mono pp-num ck-right ck-t-support ck-w-semi ck-col-val">
                     {brl(row.gmv_cents)}
                   </span>
                 </div>
@@ -135,27 +135,24 @@ export default function Platform() {
                 ledger. Sem sinal inventado — se está limpo, diz que está. */}
             <section className="adm-panel" aria-label="Integridade do ledger">
               <div className="pp-between">
-                <div className="pp-eyebrow" style={{ color: integro ? 'var(--pp-pulse)' : 'var(--pp-amber)' }}>
+                <div className={`pp-eyebrow ${integro ? 'ck-c-pulse' : 'ck-c-amber'}`}>
                   {integro ? 'Integridade · ok' : `Divergências · ${stats.drift_count}`}
                 </div>
                 <span className="pp-pulse-dot" aria-hidden="true" />
               </div>
 
               {integro ? (
-                <div className="pp-note pp-note--pulse pp-row" style={{ marginTop: 'var(--pp-s-3)', color: 'var(--pp-pulse)' }}>
+                <div className="pp-note pp-note--pulse pp-row ck-mt-3 ck-c-pulse">
                   <Icon name="check" size={16} />
-                  <span style={{ fontSize: 'var(--pp-fs-13)' }}>Todo saldo bate com o histórico de transações.</span>
+                  <span className="ck-t-support">Todo saldo bate com o histórico de transações.</span>
                 </div>
               ) : (
-                <div className="pp-stack pp-stack-2" style={{ marginTop: 'var(--pp-s-3)' }}>
-                  {drifts == null && <p className="pp-muted" style={{ fontSize: 'var(--pp-fs-13)' }}>Carregando divergências…</p>}
+                <div className="pp-stack pp-stack-2 ck-mt-3">
+                  {drifts == null && <p className="pp-muted ck-t-support">Carregando divergências…</p>}
                   {(drifts ?? []).slice(0, 4).map((d) => (
-                    <div key={d.wallet_id} className="pp-between" style={{
-                      padding: '8px 10px', borderRadius: 'var(--pp-r-md)',
-                      background: 'rgba(255,59,48,0.07)', border: '1px solid rgba(255,59,48,0.22)',
-                    }}>
-                      <span className="pp-truncate" style={{ fontSize: 'var(--pp-fs-12)' }}>{d.event}</span>
-                      <span className="pp-mono" style={{ fontSize: 'var(--pp-fs-12)', color: 'var(--pp-red)', fontWeight: 600 }}>
+                    <div key={d.wallet_id} className="pp-between ck-caixa--sm ck-caixa--erro">
+                      <span className="pp-truncate ck-t-support">{d.event}</span>
+                      <span className="pp-mono ck-t-support ck-c-red ck-w-semi">
                         {brl(d.drift_cents)}
                       </span>
                     </div>
@@ -169,24 +166,21 @@ export default function Platform() {
 
             <section className="adm-panel" aria-label="Ranking de organizações por GMV">
               <div className="pp-between">
-                <div className="pp-eyebrow" style={{ color: 'var(--pp-violet-hi)' }}>Top orgs · GMV</div>
-                <Link to="/plataforma/orgs" className="pp-link pp-link--muted" style={{ fontSize: 'var(--pp-fs-12)' }}>
+                <div className="pp-eyebrow ck-c-violet">Top orgs · GMV</div>
+                <Link to="/plataforma/orgs" className="pp-link pp-link--muted ck-t-support">
                   ver todas
                 </Link>
               </div>
-              <div className="pp-stack pp-stack-1" style={{ marginTop: 'var(--pp-s-4)' }}>
+              <div className="pp-stack pp-stack-1 ck-mt-4">
                 {stats.top_orgs.length === 0 && <p className="pp-muted">Sem orgs com vendas.</p>}
                 {stats.top_orgs.map((o, i) => (
-                  <div key={o.id} className="pp-between" style={{
-                    padding: '8px 0',
-                    borderBottom: i < stats.top_orgs.length - 1 ? '1px solid var(--pp-edge-1)' : 'none',
-                  }}>
-                    <span className="pp-row" style={{ minWidth: 0 }}>
-                      <span className="pp-mono pp-muted-2" style={{ width: 18 }}>{i + 1}</span>
-                      <span className="pp-truncate" style={{ fontWeight: 600 }}>{o.name}</span>
+                  <div key={o.id} className="ck-linha">
+                    <span className="pp-row ck-min0">
+                      <span className="pp-mono pp-muted-2 ck-col-pos">{i + 1}</span>
+                      <span className="pp-truncate ck-w-semi">{o.name}</span>
                     </span>
-                    <span className="pp-row" style={{ flexShrink: 0 }}>
-                      <span className="pp-mono pp-muted" style={{ fontSize: 'var(--pp-fs-12)' }}>{o.events} ev</span>
+                    <span className="pp-row ck-shrink0">
+                      <span className="pp-mono pp-muted ck-t-support">{o.events} ev</span>
                       <span className="pp-price">{brl(o.gmv_cents)}</span>
                     </span>
                   </div>
@@ -200,9 +194,9 @@ export default function Platform() {
   );
 }
 
-function Kpi({ l, v, d, c }) {
+function Kpi({ l, v, d, tom }) {
   return (
-    <div className="adm-kpi" style={{ '--k': c }}>
+    <div className={`adm-kpi ck-k--${tom}`}>
       <div className="l">{l}</div>
       <div className="v">{v}</div>
       <div className="d">{d}</div>
@@ -210,13 +204,13 @@ function Kpi({ l, v, d, c }) {
   );
 }
 
-function Legenda({ cor, rotulo, valor, pct }) {
+function Legenda({ tom, rotulo, valor, pct }) {
   return (
-    <span className="pp-row" style={{ gap: 8 }}>
-      <span aria-hidden="true" style={{ width: 8, height: 8, borderRadius: 2, background: cor, flexShrink: 0 }} />
+    <span className="pp-row ck-gap-2">
+      <span aria-hidden="true" className={`ck-dot ck-k--${tom} ck-dot--tom`} />
       <span>
-        <span className="pp-label" style={{ display: 'block' }}>{rotulo}</span>
-        <span className="pp-mono pp-num" style={{ fontSize: 'var(--pp-fs-13)', fontWeight: 600 }}>
+        <span className="pp-label ck-block">{rotulo}</span>
+        <span className="pp-mono pp-num ck-t-support ck-w-semi">
           {valor} <span className="pp-muted-2">· {Math.round(pct)}%</span>
         </span>
       </span>

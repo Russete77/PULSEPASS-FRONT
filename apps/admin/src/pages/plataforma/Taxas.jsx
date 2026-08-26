@@ -55,9 +55,9 @@ export default function PlatformTaxas() {
     <AdmShell where="Taxas e split · alterações valem para as próximas vendas">
       <div className="pp-stack pp-stack-5 pp-reveal">
         <div>
-          <div className="adm-eyebrow" style={{ color: 'var(--pp-amber)' }}>Taxas &amp; receita</div>
-          <div className="adm-h1">Como a PulsePass <span className="accent" style={{ color: 'var(--pp-amber)' }}>monetiza</span></div>
-          <p className="pp-muted" style={{ margin: '4px 0 0', maxWidth: 620 }}>
+          <div className="adm-eyebrow ck-c-amber">Taxas &amp; receita</div>
+          <div className="adm-h1">Como a PulsePass <span className="accent ck-c-amber">monetiza</span></div>
+          <p className="pp-muted ck-m-0 ck-mt-1 ck-w-mid">
             A taxa incide sobre o valor <strong>líquido</strong> da venda — o provedor
             desconta a taxa dele antes da divisão.
           </p>
@@ -67,23 +67,23 @@ export default function PlatformTaxas() {
 
         {/* Cards no desenho dos pricing tiers do mockup — mas só com o que
             existe de verdade: o padrão da plataforma e as exceções. */}
-        <div className="pp-cols-2" style={{ gridTemplateColumns: '1.2fr 1fr', alignItems: 'stretch' }}>
-          <div className="adm-fee" style={{ '--k': 'var(--pp-amber)' }}>
-            <div className="pp-between" style={{ alignItems: 'flex-start' }}>
+        <div className="ck-duo ck-ai-stretch">
+          <div className="adm-fee ck-k--amber">
+            <div className="pp-between ck-ai-start">
               <div>
-                <div style={{ fontFamily: 'var(--pp-font-display)', fontWeight: 700, fontSize: 'var(--pp-fs-18)' }}>Taxa padrão</div>
-                <div className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 3 }}>vale para toda produtora sem taxa negociada</div>
+                <div className="ck-display ck-w-bold ck-t-section">Taxa padrão</div>
+                <div className="pp-muted ck-meta">vale para toda produtora sem taxa negociada</div>
               </div>
             </div>
             <div className="adm-fee__pct">{data.default_fee_percent}%</div>
             {/* Edição inline, como o painel "Editando" do mockup. */}
-            <div className="pp-row" style={{ marginTop: 14, flexWrap: 'wrap' }}>
-              <label htmlFor="taxa-padrao" className="ck-label" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }}>
+            <div className="pp-row ck-mt-4 pp-wrap">
+              <label htmlFor="taxa-padrao" className="ck-label ck-hidden ck-sr">
                 Nova taxa padrão em porcentagem
               </label>
-              <input id="taxa-padrao" className="ck-input" type="number" min="0" max="100" step="0.01"
-                value={padrao} onChange={(e) => setPadrao(e.target.value)} style={{ maxWidth: 120 }} />
-              <span className="pp-mono" style={{ fontSize: 'var(--pp-fs-18)' }}>%</span>
+              <input id="taxa-padrao" className="ck-input ck-input--num" type="number" min="0" max="100" step="0.01"
+                value={padrao} onChange={(e) => setPadrao(e.target.value)} />
+              <span className="pp-mono ck-t-section">%</span>
               <button className="ck-btn ck-btn--primary ck-btn--sm" onClick={salvarPadrao}
                 disabled={salvando === 'padrao' || toBps(padrao) === data.default_fee_bps}>
                 {salvando === 'padrao' ? 'Salvando…' : 'Aplicar novo padrão'}
@@ -91,15 +91,15 @@ export default function PlatformTaxas() {
             </div>
             <div className="adm-fee__foot">
               <span>produtoras no padrão</span>
-              <span className="pp-mono" style={{ fontWeight: 700, color: 'var(--pp-fg)' }}>{noPadrao}</span>
+              <span className="pp-mono ck-w-bold ck-c-fg">{noPadrao}</span>
             </div>
           </div>
 
-          <div className="adm-fee" style={{ '--k': 'var(--pp-violet)' }}>
-            <div style={{ fontFamily: 'var(--pp-font-display)', fontWeight: 700, fontSize: 'var(--pp-fs-18)' }}>Negociadas</div>
-            <div className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 3 }}>exceções contratuais por produtora</div>
-            <div className="adm-fee__pct" style={{ color: 'var(--pp-violet)' }}>{negociadas}</div>
-            <p className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)', margin: '6px 0 0', lineHeight: 1.5 }}>
+          <div className="adm-fee ck-k--violet">
+            <div className="ck-display ck-w-bold ck-t-section">Negociadas</div>
+            <div className="pp-muted ck-meta">exceções contratuais por produtora</div>
+            <div className="adm-fee__pct ck-c-violet">{negociadas}</div>
+            <p className="pp-muted ck-t-support ck-m-0 ck-mt-2 ck-lh">
               Vendas já realizadas mantêm a taxa que valia no momento da compra,
               e toda alteração fica registrada na trilha de auditoria.
             </p>
@@ -110,47 +110,47 @@ export default function PlatformTaxas() {
         <div className="adm-panel">
           <div className="pp-between">
             <div>
-              <div style={{ fontFamily: 'var(--pp-font-display)', fontWeight: 600, fontSize: 'var(--pp-fs-18)' }}>Taxa por produtora</div>
-              <p className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)', margin: '2px 0 0' }}>
+              <div className="ck-display ck-w-semi ck-t-section">Taxa por produtora</div>
+              <p className="pp-muted ck-t-support ck-m-0 ck-mt-1">
                 deixe o campo vazio e aplique para a produtora voltar ao padrão
               </p>
             </div>
-            <span className="pp-mono pp-muted" style={{ fontSize: 'var(--pp-fs-12)' }}>{data.organizations.length} orgs</span>
+            <span className="pp-mono pp-muted ck-t-support">{data.organizations.length} orgs</span>
           </div>
 
           {data.organizations.length === 0 && (
-            <p className="pp-muted" style={{ marginTop: 'var(--pp-s-4)' }}>Nenhuma produtora ainda.</p>
+            <p className="pp-muted ck-mt-4">Nenhuma produtora ainda.</p>
           )}
 
-          <div style={{ marginTop: 'var(--pp-s-3)' }}>
+          <div className="ck-mt-3">
             {data.organizations.map((o) => (
               <div key={o.id} className="adm-orgfee">
-                <div className="pp-grow" style={{ minWidth: 180 }}>
+                <div className="pp-grow ck-fit">
                   <strong>{o.name}</strong>
-                  <div style={{ color: 'var(--pp-fg-4)', fontSize: 12, marginTop: 2 }}>
-                    <span className="ck-badge" style={{ fontSize: 9, marginRight: 6 }}>
+                  <div className="pp-muted-2 ck-meta">
+                    <span className="ck-badge ck-t-label ck-mr-2">
                       {o.usa_padrao ? 'padrão' : 'negociada'}
                     </span>
                     {o.usa_padrao ? `usa o padrão (${data.default_fee_percent}%)` : `negociada: ${o.fee_percent}%`}
                     {/* Sem carteira não há split: a venda inteira fica na conta da
                         plataforma e o repasse vira transferência manual. */}
                     {!o.repasse_automatico && (
-                      <span style={{ color: 'var(--pp-amber)' }}> · sem carteira Asaas: repasse manual</span>
+                      <span className="ck-c-amber"> · sem carteira Asaas: repasse manual</span>
                     )}
                   </div>
                 </div>
                 {/* O número que vale hoje, no peso do mockup. */}
-                <span className="adm-orgfee__pct" style={{ color: o.usa_padrao ? 'var(--pp-fg-3)' : 'var(--pp-amber)' }}>
+                <span className={`adm-orgfee__pct ${o.usa_padrao ? 'pp-muted' : 'ck-c-amber'}`}>
                   {o.usa_padrao ? data.default_fee_percent : o.fee_percent}%
                 </span>
-                <label htmlFor={`fee-${o.id}`} style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }}>
+                <label htmlFor={`fee-${o.id}`} className="ck-sr">
                   Nova taxa de {o.name} em porcentagem
                 </label>
-                <input id={`fee-${o.id}`} className="ck-input" type="number" min="0" max="100" step="0.01"
+                <input id={`fee-${o.id}`} className="ck-input ck-input--num" type="number" min="0" max="100" step="0.01"
                   placeholder={data.default_fee_percent}
                   value={rascunho[o.id] ?? toPct(o.fee_bps)}
                   onChange={(e) => setRascunho((r) => ({ ...r, [o.id]: e.target.value }))}
-                  style={{ maxWidth: 104 }} />
+                  />
                 <span className="pp-mono">%</span>
                 <button className="ck-btn ck-btn--glass ck-btn--sm" onClick={() => salvarOrg(o)}
                   disabled={salvando === o.id || rascunho[o.id] === undefined}>

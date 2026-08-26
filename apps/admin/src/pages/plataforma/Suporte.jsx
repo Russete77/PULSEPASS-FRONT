@@ -22,10 +22,10 @@ import { brl, dateTime } from '../../lib/format.js';
 // Mesmo vocabulário visual da trilha (/plataforma/audit): o suporte e a
 // auditoria olham o MESMO feed, então o ícone tem que significar a mesma coisa.
 const KIND = {
-  payment: { icon: 'check', color: 'var(--pp-pulse)', label: 'Pagamento' },
-  refund: { icon: 'refresh', color: 'var(--pp-pink)', label: 'Reembolso' },
-  event: { icon: 'calendar', color: 'var(--pp-cyan)', label: 'Evento' },
-  org: { icon: 'users', color: 'var(--pp-violet)', label: 'Produtora' },
+  payment: { icon: 'check', tom: 'pulse', label: 'Pagamento' },
+  refund: { icon: 'refresh', tom: 'pink', label: 'Reembolso' },
+  event: { icon: 'calendar', tom: 'cyan', label: 'Evento' },
+  org: { icon: 'users', tom: 'violet', label: 'Produtora' },
 };
 
 const norm = (v) => (v ?? '').toString().toLowerCase().trim();
@@ -109,11 +109,11 @@ export default function Suporte() {
     <AdmShell where="Consulta de suporte · só dado real da plataforma">
       <div className="pp-stack pp-stack-5 pp-reveal">
         <div>
-          <div className="adm-eyebrow" style={{ color: 'var(--pp-cyan)' }}>Suporte</div>
+          <div className="adm-eyebrow ck-c-cyan">Suporte</div>
           <div className="adm-h1">
-            Contexto para <span className="accent" style={{ color: 'var(--pp-cyan)' }}>responder</span>
+            Contexto para <span className="accent ck-c-cyan">responder</span>
           </div>
-          <p className="pp-muted" style={{ margin: '4px 0 0', maxWidth: 640 }}>
+          <p className="pp-muted ck-m-0 ck-mt-1 ck-w-mid">
             Quem é a produtora, qual taxa vale, se o repasse é automático e o que
             acabou de acontecer de dinheiro. Sem inbox e sem SLA — o backend não
             tem ticket, e painel que inventa número é pior que painel que falta.
@@ -132,7 +132,7 @@ export default function Suporte() {
           produtora, evento e movimento recente.
         </div>
 
-        <form role="search" onSubmit={(e) => e.preventDefault()} className="pp-stack pp-stack-1" style={{ maxWidth: 520 }}>
+        <form role="search" onSubmit={(e) => e.preventDefault()} className="pp-stack pp-stack-1 ck-w-form">
           <label className="pp-label" htmlFor="busca-suporte">Buscar</label>
           <div className="pp-inputwrap">
             <Icon name="search" size={16} />
@@ -147,7 +147,7 @@ export default function Suporte() {
               onChange={(e) => setQ(e.target.value)}
             />
           </div>
-          <p className="pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', margin: 0 }}>
+          <p className="pp-muted-2 ck-t-support ck-m-0">
             {orgsFiltradas.length} produtora{orgsFiltradas.length === 1 ? '' : 's'} ·{' '}
             {feedFiltrado.length} movimento{feedFiltrado.length === 1 ? '' : 's'} nos últimos 40 registros
           </p>
@@ -155,14 +155,14 @@ export default function Suporte() {
 
         {/* Divergência aberta é interrupção: aparece antes de qualquer resposta. */}
         {driftsFiltrados.length > 0 && (
-          <div className="adm-panel" style={{ borderColor: 'var(--pp-red)' }}>
+          <div className="adm-panel ck-panel--red">
             <div className="pp-row">
               <Icon name="scan" size={16} />
               <strong>
                 {driftsFiltrados.length} carteira{driftsFiltrados.length === 1 ? '' : 's'} com saldo divergente do ledger
               </strong>
             </div>
-            <p className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)', margin: '2px 0 var(--pp-s-3)' }}>
+            <p className="pp-muted ck-t-support ck-m-0 ck-mt-1 ck-mb-3">
               Antes de prometer devolução ou recarga ao cliente, confira aqui — o saldo exibido no app pode não bater.
             </p>
             <table className="ck-table">
@@ -188,16 +188,16 @@ export default function Suporte() {
           </div>
         )}
 
-        <div className="pp-cols-2" style={{ gridTemplateColumns: '340px 1fr', alignItems: 'start' }}>
+        <div className="ck-duo">
           {/* Coluna de resultados — o "inbox" do mockup, com o que existe. */}
           <div className="adm-panel">
             <div className="pp-between">
-              <strong style={{ fontFamily: 'var(--pp-font-display)', fontSize: 'var(--pp-fs-16)' }}>Produtoras</strong>
-              <span className="pp-mono pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)' }}>{orgsFiltradas.length}</span>
+              <strong className="ck-display ck-t-body">Produtoras</strong>
+              <span className="pp-mono pp-muted-2 ck-t-support">{orgsFiltradas.length}</span>
             </div>
 
             {orgsFiltradas.length === 0 ? (
-              <div className="pp-empty" style={{ padding: 'var(--pp-s-6) 0' }}>
+              <div className="pp-empty ck-py-6">
                 <div className="pp-empty__icon"><Icon name="search" size={26} /></div>
                 <div className="pp-empty__title">Nada com “{q}”</div>
                 <p>A busca cobre nome, slug, e-mail do dono e cidade.</p>
@@ -206,7 +206,7 @@ export default function Suporte() {
                 </button>
               </div>
             ) : (
-              <ul className="pp-stack pp-stack-1" style={{ listStyle: 'none', margin: 'var(--pp-s-3) 0 0', padding: 0 }}>
+              <ul className="pp-stack pp-stack-1 ck-lista ck-mt-3">
                 {orgsFiltradas.map((o) => {
                   const ativa = o.id === selecionada;
                   return (
@@ -215,19 +215,13 @@ export default function Suporte() {
                         type="button"
                         aria-pressed={ativa}
                         onClick={() => setSelecionada(ativa ? null : o.id)}
-                        style={{
-                          width: '100%', textAlign: 'left', cursor: 'pointer',
-                          padding: '10px 12px', borderRadius: 'var(--pp-r-md)',
-                          background: ativa ? 'var(--pp-glass-3)' : 'var(--pp-glass-1)',
-                          border: `1px solid ${ativa ? 'var(--pp-cyan)' : 'var(--pp-edge-1)'}`,
-                          color: 'var(--pp-fg)', font: 'inherit',
-                        }}
+                        className={`ck-opcao--lista ${ativa ? 'is-on' : ''}`}
                       >
-                        <span style={{ display: 'block', fontWeight: 600, fontSize: 'var(--pp-fs-14)' }}>{o.name}</span>
-                        <span className="pp-mono pp-muted-2" style={{ display: 'block', fontSize: 'var(--pp-fs-12)', marginTop: 2 }}>
+                        <span className="ck-block ck-w-semi ck-t-support">{o.name}</span>
+                        <span className="pp-mono pp-muted-2 ck-meta">
                           {o.owner_email}
                         </span>
-                        <span className="pp-muted-2" style={{ display: 'block', fontSize: 'var(--pp-fs-12)', marginTop: 2 }}>
+                        <span className="pp-muted-2 ck-meta">
                           {o.city} · {o.events} evento{o.events === 1 ? '' : 's'} · {brl(o.gmv_cents)}
                         </span>
                       </button>
@@ -251,10 +245,10 @@ export default function Suporte() {
               </div>
             ) : (
               <div className="pp-stack pp-stack-3">
-                <div className="pp-between" style={{ alignItems: 'flex-start' }}>
+                <div className="pp-between ck-ai-start">
                   <div>
-                    <div style={{ fontFamily: 'var(--pp-font-display)', fontWeight: 700, fontSize: 'var(--pp-fs-20)' }}>{org.name}</div>
-                    <div className="pp-mono pp-muted" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 2 }}>
+                    <div className="ck-display ck-w-bold ck-t-section">{org.name}</div>
+                    <div className="pp-mono pp-muted ck-meta">
                       /{org.slug} · desde {dateTime(org.created_at)}
                     </div>
                   </div>
@@ -263,14 +257,14 @@ export default function Suporte() {
                   </button>
                 </div>
 
-                <div className="adm-kpis" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
-                  <div className="adm-kpi" style={{ '--k': 'var(--pp-cyan)' }}>
+                <div className="adm-kpis ck-cols-4">
+                  <div className="adm-kpi ck-k--cyan">
                     <div className="l">Eventos</div><div className="v">{org.events}</div>
                   </div>
-                  <div className="adm-kpi" style={{ '--k': 'var(--pp-pulse)' }}>
+                  <div className="adm-kpi ck-k--pulse">
                     <div className="l">GMV</div><div className="v">{brl(org.gmv_cents)}</div>
                   </div>
-                  <div className="adm-kpi" style={{ '--k': 'var(--pp-amber)' }}>
+                  <div className="adm-kpi ck-k--amber">
                     <div className="l">Taxa vigente</div>
                     <div className="v">
                       {org.cobranca
@@ -278,8 +272,8 @@ export default function Suporte() {
                         : '—'}
                     </div>
                   </div>
-                  <div className="adm-kpi" style={{ '--k': 'var(--pp-violet)' }}>
-                    <div className="l">Cidade</div><div className="v" style={{ fontSize: 'var(--pp-fs-18)' }}>{org.city}</div>
+                  <div className="adm-kpi ck-k--violet">
+                    <div className="l">Cidade</div><div className="v ck-t-section">{org.city}</div>
                   </div>
                 </div>
 
@@ -290,7 +284,7 @@ export default function Suporte() {
                   </div>
                   <div className="pp-row">
                     <span className="ck-badge">taxa</span>
-                    <span style={{ fontSize: 'var(--pp-fs-13)' }}>
+                    <span className="ck-t-support">
                       {org.cobranca?.usa_padrao === false
                         ? `negociada em ${org.cobranca.fee_percent}%`
                         : `padrão da plataforma (${state.billing.default_fee_percent}%)`}
@@ -302,7 +296,7 @@ export default function Suporte() {
                       "não caiu". */}
                   <div className="pp-row">
                     <span className="ck-badge">repasse</span>
-                    <span style={{ fontSize: 'var(--pp-fs-13)', color: org.cobranca?.repasse_automatico ? 'var(--pp-fg)' : 'var(--pp-amber)' }}>
+                    <span className={`ck-t-support ${org.cobranca?.repasse_automatico ? 'ck-c-fg' : 'ck-c-amber'}`}>
                       {org.cobranca?.repasse_automatico
                         ? 'automático — split na carteira Asaas da produtora'
                         : 'manual — sem carteira Asaas, a venda inteira fica na conta da plataforma'}
@@ -312,19 +306,19 @@ export default function Suporte() {
 
                 <div>
                   <div className="pp-between">
-                    <strong style={{ fontSize: 'var(--pp-fs-14)' }}>Movimentos recentes</strong>
-                    <span className="pp-mono pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)' }}>{movimentos.length}</span>
+                    <strong className="ck-t-support">Movimentos recentes</strong>
+                    <span className="pp-mono pp-muted-2 ck-t-support">{movimentos.length}</span>
                   </div>
-                  <p className="pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', margin: '2px 0 var(--pp-s-2)' }}>
+                  <p className="pp-muted-2 ck-t-support ck-m-0 ck-mt-1 ck-mb-2">
                     Vem da trilha da plataforma, que guarda os últimos 40 registros globais —
                     movimento mais antigo que isso não aparece aqui.
                   </p>
                   {movimentos.length === 0 ? (
-                    <p className="pp-muted" style={{ fontSize: 'var(--pp-fs-13)' }}>
+                    <p className="pp-muted ck-t-support">
                       Nenhum movimento desta produtora nos últimos 40 registros da plataforma.
                     </p>
                   ) : (
-                    <ul className="pp-stack pp-stack-1" style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+                    <ul className="pp-stack pp-stack-1 ck-lista">
                       {movimentos.map((m, i) => <Movimento key={`${m.at}-${i}`} item={m} />)}
                     </ul>
                   )}
@@ -339,16 +333,16 @@ export default function Suporte() {
         <div className="adm-panel">
           <div className="pp-between">
             <div>
-              <strong style={{ fontFamily: 'var(--pp-font-display)', fontSize: 'var(--pp-fs-16)' }}>Últimos movimentos da plataforma</strong>
-              <p className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)', margin: '2px 0 0' }}>
+              <strong className="ck-display ck-t-body">Últimos movimentos da plataforma</strong>
+              <p className="pp-muted ck-t-support ck-m-0 ck-mt-1">
                 Pagamentos, reembolsos, eventos e produtoras — os 40 mais recentes, filtrados pela busca.
               </p>
             </div>
-            <span className="pp-mono pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)' }}>{feedFiltrado.length}</span>
+            <span className="pp-mono pp-muted-2 ck-t-support">{feedFiltrado.length}</span>
           </div>
 
           {feedFiltrado.length === 0 ? (
-            <div className="pp-empty" style={{ padding: 'var(--pp-s-6) 0' }}>
+            <div className="pp-empty ck-py-6">
               <div className="pp-empty__icon"><Icon name="receipt" size={26} /></div>
               <div className="pp-empty__title">{q ? `Nenhum movimento com “${q}”` : 'Nenhum movimento ainda'}</div>
               <p>{q ? 'O feed guarda só os 40 registros mais recentes da plataforma.' : 'Assim que houver venda, ela aparece aqui.'}</p>
@@ -359,7 +353,7 @@ export default function Suporte() {
               )}
             </div>
           ) : (
-            <ul className="pp-stack pp-stack-1" style={{ listStyle: 'none', margin: 'var(--pp-s-3) 0 0', padding: 0 }}>
+            <ul className="pp-stack pp-stack-1 ck-lista ck-mt-3">
               {feedFiltrado.map((m, i) => <Movimento key={`${m.at}-${i}`} item={m} />)}
             </ul>
           )}
@@ -372,24 +366,24 @@ export default function Suporte() {
 function Movimento({ item }) {
   const k = KIND[item.kind] ?? KIND.event;
   return (
-    <li className="ck-feed__row" style={{ alignItems: 'flex-start' }}>
+    <li className="ck-feed__row ck-ai-start">
       {/* ck-feed__ic nasce verde (pulse); a cor do tipo entra por variável de
           token, nunca por hex — cada tipo de movimento tem a sua. */}
-      <span className="ck-feed__ic" style={{ background: 'var(--pp-glass-2)', borderColor: 'var(--pp-edge-2)', color: k.color }} aria-hidden="true">
+      <span className={`ck-feed__ic ck-feed__ic--neutro ck-c-${k.tom}`} aria-hidden="true">
         <Icon name={k.icon} size={16} />
       </span>
-      <span className="pp-mono" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }}>{k.label}</span>
+      <span className="pp-mono ck-hidden ck-sr">{k.label}</span>
       <span className="pp-grow">
-        <span style={{ display: 'block', fontWeight: 600, fontSize: 'var(--pp-fs-13)' }}>{item.title}</span>
-        <span className="pp-muted" style={{ display: 'block', fontSize: 'var(--pp-fs-12)', marginTop: 2 }}>{item.detail}</span>
+        <span className="ck-block ck-w-semi ck-t-support">{item.title}</span>
+        <span className="pp-muted ck-meta">{item.detail}</span>
       </span>
-      <span style={{ textAlign: 'right', flexShrink: 0 }}>
+      <span className="ck-right ck-shrink0">
         {item.amount_cents != null && (
-          <span className="pp-mono" style={{ display: 'block', fontWeight: 700, fontSize: 'var(--pp-fs-13)', color: item.kind === 'refund' ? 'var(--pp-pink)' : 'var(--pp-pulse)' }}>
+          <span className={`pp-mono ck-block ck-w-bold ck-t-support ${item.kind === 'refund' ? 'ck-c-pink' : 'ck-c-pulse'}`}>
             {brl(item.amount_cents)}
           </span>
         )}
-        <span className="pp-mono pp-muted-2" style={{ display: 'block', fontSize: 'var(--pp-fs-12)', marginTop: 2 }}>{dateTime(item.at)}</span>
+        <span className="pp-mono pp-muted-2 ck-meta">{dateTime(item.at)}</span>
       </span>
     </li>
   );

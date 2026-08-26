@@ -78,13 +78,13 @@ export default function Cupons() {
 
       {/* Painel largo (cupons) — a coluna de campanhas/push do mockup não
           existe no backend, então não entra. */}
-      <form onSubmit={create} className="ck-panel" style={{ maxWidth: 720 }}>
+      <form onSubmit={create} className="ck-panel ck-w-read">
         <div className="ck-panel__title">Novo cupom</div>
-        <p className="ck-panel__sub" style={{ marginBottom: 'var(--pp-s-4)' }}>o código sobe pra caixa alta sozinho</p>
-        <div className="ck-row" style={{ gridTemplateColumns: '1fr 1fr 1fr' }}>
+        <p className="ck-panel__sub ck-mb-4">o código sobe pra caixa alta sozinho</p>
+        <div className="ck-row ck-cols-3">
           <div className="ck-field">
             <label htmlFor="cupons-1" className="ck-label">Código</label>
-            <input id="cupons-1" className="ck-input" value={form.code} onChange={set('code')} placeholder="VIP20" style={{ textTransform: 'uppercase' }} required minLength={3} />
+            <input id="cupons-1" className="ck-input ck-upper ck-cod" value={form.code} onChange={set('code')} placeholder="VIP20" required minLength={3} />
           </div>
           <div className="ck-field">
             <label htmlFor="cupons-2" className="ck-label">Tipo</label>
@@ -113,11 +113,11 @@ export default function Cupons() {
         </button>
       </form>
 
-      <section aria-label="Cupons do evento" style={{ maxWidth: 720, marginTop: 'var(--pp-s-5)' }}>
-        <div className="pp-between" style={{ marginBottom: 'var(--pp-s-3)' }}>
+      <section aria-label="Cupons do evento" className="ck-w-read ck-mt-5">
+        <div className="pp-between ck-mb-3">
           <span className="ck-panel__title">Cupons · {coupons.length}</span>
           {coupons.length > 0 && (
-            <span className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)' }}>{ativos} ativo{ativos === 1 ? '' : 's'}</span>
+            <span className="pp-muted ck-t-support">{ativos} ativo{ativos === 1 ? '' : 's'}</span>
           )}
         </div>
 
@@ -140,15 +140,15 @@ export default function Cupons() {
                 <span className="ck-cupom__code">{c.code}</span>
 
                 <div className="ck-cupom__info">
-                  <div style={{ fontWeight: 600, fontSize: 'var(--pp-fs-14)' }}>
+                  <div className="ck-w-semi ck-t-support">
                     {fmtValue(c)} de desconto
                   </div>
-                  <div className="pp-muted pp-mono" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 4 }}>
+                  <div className="pp-muted pp-mono ck-meta">
                     {c.expires_at
                       ? `até ${new Date(c.expires_at).toLocaleDateString('pt-BR')}`
                       : 'sem expiração'}
                     {' · '}
-                    <span className={`ck-badge ${c.active ? 'ck-badge--published' : 'ck-badge--draft'}`} style={{ fontSize: 9 }}>
+                    <span className={`ck-badge ${c.active ? 'ck-badge--published' : 'ck-badge--draft'} ck-t-label`}>
                       {c.active ? 'ativo' : 'inativo'}
                     </span>
                   </div>
@@ -157,7 +157,7 @@ export default function Cupons() {
                 {/* Uso real: barra só quando existe limite; sem limite mostra
                     a contagem crua em vez de inventar denominador. */}
                 <div className="ck-cupom__uso">
-                  <div className="pp-between" style={{ fontSize: 'var(--pp-fs-12)', marginBottom: 4 }}>
+                  <div className="pp-between ck-t-support ck-mb-1">
                     <span className="pp-mono pp-muted">{c.used_count} uso{c.used_count === 1 ? '' : 's'}</span>
                     <span className="pp-mono pp-muted-2">{c.max_uses != null ? c.max_uses : '∞'}</span>
                   </div>
@@ -168,7 +168,7 @@ export default function Cupons() {
                   )}
                 </div>
 
-                <div className="pp-row" style={{ gap: 8 }}>
+                <div className="pp-row ck-gap-2">
                   <button className="ck-btn ck-btn--glass ck-btn--sm" onClick={() => toggle(c)}>
                     {c.active ? 'Desativar' : 'Ativar'}
                   </button>

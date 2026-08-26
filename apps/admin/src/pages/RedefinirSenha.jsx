@@ -26,23 +26,23 @@ export default function RedefinirSenha() {
   }
 
   return (
-    <div style={{ minHeight: '100dvh', display: 'grid', placeItems: 'center', padding: 20 }}>
-      <div className="ck-card" style={{ width: '100%', maxWidth: 420, padding: 'var(--pp-s-8)' }}>
+    <div className="ck-p-5 ck-centro">
+      <div className="ck-card ck-full ck-w-form ck-p-6">
         <div className="ck-eyebrow">nova senha</div>
-        <h1 className="ck-h1" style={{ fontSize: 'var(--pp-fs-28)' }}>Redefinir senha</h1>
+        <h1 className="ck-h1">Redefinir senha</h1>
         {done ? (
-          <p style={{ color: 'var(--pp-pulse)', marginTop: 16 }}>Senha atualizada! Redirecionando…</p>
+          <p className="ck-c-pulse ck-mt-4">Senha atualizada! Redirecionando…</p>
         ) : !user ? (
           <ErrorBox>Link inválido ou expirado. Solicite um novo no login.</ErrorBox>
         ) : (
-          <form onSubmit={submit} style={{ marginTop: 16 }}>
+          <form onSubmit={submit} className="ck-mt-4">
             <CampoSenha
               id="redefinirs-1" className="ck-input" classeRotulo="ck-label" classeCampo="ck-field"
               rotulo="Nova senha" autoComplete="new-password" autoFocus
               valor={password} aoMudar={(e) => setPassword(e.target.value)}
             />
             {error && <ErrorBox>{error}</ErrorBox>}
-            <button className="ck-btn ck-btn--primary" style={{ width: '100%', marginTop: 8 }} disabled={busy}>
+            <button className="ck-btn ck-btn--primary ck-full ck-mt-2" disabled={busy}>
               {busy ? 'Salvando…' : 'Salvar nova senha'}
             </button>
           </form>

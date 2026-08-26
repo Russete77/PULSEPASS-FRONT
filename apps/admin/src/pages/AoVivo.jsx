@@ -61,11 +61,14 @@ const RITMO_MINIMO_MS = 60_000;
 
 const relogio = () => new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
-function corDoTempo(min) {
-  if (min == null) return 'var(--pp-fg-3)';
-  if (min >= LIMITE_ATRASO) return 'var(--pp-red)';
-  if (min >= LIMITE_ATENCAO) return 'var(--pp-amber)';
-  return 'var(--pp-fg-2)';
+/* O tempo de espera vira TOM, não cor escrita à mão. O cockpit tem seis
+   tons com significado e um deles é sempre o certo — cor solta numa tela é
+   como nasce o sétimo verde que ninguém sabe de onde veio. */
+function tomDoTempo(min) {
+  if (min == null) return 'dim';
+  if (min >= LIMITE_ATRASO) return 'red';
+  if (min >= LIMITE_ATENCAO) return 'amber';
+  return null;
 }
 
 const minutosDesde = (iso) => {
@@ -80,11 +83,11 @@ function duracao(min) {
   return `${Math.floor(min / 60)} h ${String(min % 60).padStart(2, '0')} min`;
 }
 
-function Kpi({ label, valor, detalhe, cor }) {
+function Kpi({ label, valor, detalhe, tom }) {
   return (
-    <div className="ck-kpi" style={cor ? { '--k': cor } : undefined}>
+    <div className={`ck-kpi ${tom ? `ck-k--${tom}` : ''}`}>
       <div className="lbl">{label}</div>
-      <div className="val" style={cor ? { color: cor } : undefined}>{valor}</div>
+      <div className={`val ${tom ? `ck-c-${tom}` : ''}`}>{valor}</div>
       {detalhe && <div className="d">{detalhe}</div>}
     </div>
   );
@@ -94,14 +97,14 @@ function Kpi({ label, valor, detalhe, cor }) {
 function Painel({ titulo, sub, acao, children }) {
   return (
     <section className="ck-panel" aria-label={titulo}>
-      <div className="ck-between" style={{ alignItems: 'flex-start' }}>
+      <div className="ck-between ck-ai-start">
         <div>
           <h2 className="ck-panel__title">{titulo}</h2>
           {sub && <p className="ck-panel__sub">{sub}</p>}
         </div>
         {acao}
       </div>
-      <div style={{ marginTop: 'var(--pp-s-4)' }}>{children}</div>
+      <div className="ck-mt-4">{children}</div>
     </section>
   );
 }
@@ -109,8 +112,8 @@ function Painel({ titulo, sub, acao, children }) {
 function Vazio({ texto, cta }) {
   return (
     <div>
-      <p style={{ color: 'var(--pp-fg-3)', fontSize: 'var(--pp-fs-14)', margin: 0 }}>{texto}</p>
-      {cta && <div style={{ marginTop: 'var(--pp-s-3)' }}>{cta}</div>}
+      <p className="pp-muted ck-t-support ck-m-0">{texto}</p>
+      {cta && <div className="ck-mt-3">{cta}</div>}
     </div>
   );
 }
@@ -245,7 +248,7 @@ export default function AoVivo() {
       {/* Barra de estado — o cabeçalho do mockup: o que está acontecendo,
           um alerta quando há, e o relógio. */}
       <div className="ck-kds__topo">
-        <div style={{ display: 'flex', gap: 'var(--pp-s-2)', flexWrap: 'wrap', alignItems: 'center' }}>
+        <div className="ck-flex ck-gap-2 pp-wrap ck-ai-center">
           <span className="ck-badge ck-badge--live">
             <span className="pp-pulse-dot" /> ao vivo
           </span>
@@ -263,10 +266,10 @@ export default function AoVivo() {
         <span className="ck-kds__relogio" aria-label="Hora atual">{hora}</span>
       </div>
 
-      <h1 className="ck-h1" style={{ marginTop: 'var(--pp-s-4)' }}>Como está a noite</h1>
+      <h1 className="ck-h1 ck-mt-4">Como está a noite</h1>
 
       {/* Atalhos para a estação que resolve cada problema visto aqui. */}
-      <nav aria-label="Estações da operação" className="ck-tabs" style={{ marginTop: 'var(--pp-s-3)' }}>
+      <nav aria-label="Estações da operação" className="ck-tabs ck-mt-3">
         <Link to={`/eventos/${id}/porta`} className="ck-tab">Porta</Link>
         <Link to={`/eventos/${id}/cozinha`} className="ck-tab">Cozinha</Link>
         <Link to={`/eventos/${id}/garcom`} className="ck-tab">Salão</Link>
@@ -279,51 +282,51 @@ export default function AoVivo() {
       {/* ── LOTAÇÃO ── */}
       {ocupacao ? (
         <>
-          <div className="ck-kpis" style={{ marginTop: 'var(--pp-s-6)' }}>
+          <div className="ck-kpis ck-mt-6">
             <Kpi
               label="dentro agora"
               valor={dentro ?? '—'}
-              cor="var(--pp-pulse)"
+              tom="pulse"
               detalhe={pctPresenca != null ? `${pctPresenca}% de quem tem ingresso` : null}
             />
-            <Kpi label="já saíram" valor={ocupacao.left ?? 0} cor="var(--pp-violet)"
+            <Kpi label="já saíram" valor={ocupacao.left ?? 0} tom="violet"
               detalhe="podem voltar (reentrada)" />
-            <Kpi label="entradas totais" valor={ocupacao.total_entries ?? 0} cor="var(--pp-cyan)"
+            <Kpi label="entradas totais" valor={ocupacao.total_entries ?? 0} tom="cyan"
               detalhe="conta reentrada" />
             <Kpi label="ingressos válidos" valor={vendidos ?? '—'}
               detalhe="teto da lotação" />
           </div>
 
           {pctPresenca != null && (
-            <div className="ck-bar" style={{ marginTop: 'var(--pp-s-4)', maxWidth: 620 }}>
+            <div className="ck-bar ck-mt-4 ck-w-mid">
               <div className="track">
                 {/* A barra é o mesmo número do KPI, desenhado. Passa de 100%
                     só se a casa vender e liberar mais gente do que emitiu —
                     por isso o clamp, para a barra não estourar o trilho. */}
                 <i className="fill" style={{ width: `${Math.min(100, pctPresenca)}%` }} />
               </div>
-              <span className="pp-mono" style={{ fontSize: 'var(--pp-fs-13)', color: 'var(--pp-fg-3)' }}>
+              <span className="pp-mono ck-t-support pp-muted">
                 {dentro} de {vendidos}
               </span>
             </div>
           )}
 
           {ritmo && (
-            <p className="pp-mono" style={{ fontSize: 'var(--pp-fs-13)', color: 'var(--pp-fg-3)', marginTop: 'var(--pp-s-3)' }}>
+            <p className="pp-mono ck-t-support pp-muted ck-mt-3">
               ritmo de entrada:{' '}
-              <b style={{ color: 'var(--pp-fg)' }}>{ritmo.porMinuto.toFixed(1)}/min</b>
+              <b className="ck-c-fg">{ritmo.porMinuto.toFixed(1)}/min</b>
               {' '}· {ritmo.entradas} {ritmo.entradas === 1 ? 'entrada' : 'entradas'} nos últimos {ritmo.minutos} min
-              {' '}<span style={{ color: 'var(--pp-fg-4)' }}>(medido desde que esta tela abriu)</span>
+              {' '}<span className="pp-muted-2">(medido desde que esta tela abriu)</span>
             </p>
           )}
         </>
       ) : (
-        <div className="ck-panel" style={{ marginTop: 'var(--pp-s-6)' }}>
+        <div className="ck-panel ck-mt-6">
           <Vazio texto="A lotação não está disponível para o seu acesso. Ela vem da porta — peça o papel de porta ou gerência a quem administra o evento." />
         </div>
       )}
 
-      <div className="ck-duo" style={{ marginTop: 'var(--pp-s-6)' }}>
+      <div className="ck-duo ck-mt-6">
         {/* ── FILA DO BAR ── */}
         {fila && (
           <Painel
@@ -339,21 +342,21 @@ export default function AoVivo() {
             ) : (
               <>
                 <div className="ck-kpis ck-kpis--painel">
-                  <Kpi label="em aberto" valor={abertos.length} cor="var(--pp-pulse)" />
+                  <Kpi label="em aberto" valor={abertos.length} tom="pulse" />
                   <Kpi label="espera média" valor={espera(esperaMedia)}
-                    cor={corDoTempo(esperaMedia)} />
-                  <Kpi label="prontos p/ retirar" valor={prontos.length} cor="var(--pp-violet)" />
+                    tom={tomDoTempo(esperaMedia)} />
+                  <Kpi label="prontos p/ retirar" valor={prontos.length} tom="violet" />
                 </div>
 
                 {esperaMax != null && (
-                  <p className="pp-mono" style={{ fontSize: 'var(--pp-fs-13)', color: 'var(--pp-fg-3)', marginTop: 'var(--pp-s-3)' }}>
-                    o mais antigo espera há <b style={{ color: corDoTempo(esperaMax) }}>{espera(esperaMax)}</b>
+                  <p className="pp-mono ck-t-support pp-muted ck-mt-3">
+                    o mais antigo espera há <b className={`ck-c-${tomDoTempo(esperaMax) ?? 'fg2'}`}>{espera(esperaMax)}</b>
                   </p>
                 )}
 
                 {/* De onde vem a pressão: mesa exige entrega, praça e app
                     esperam retirada. Muda quem a casa desloca. */}
-                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 'var(--pp-s-4)' }}>
+                <div className="ck-flex ck-gap-2 pp-wrap ck-mt-4">
                   {porOrigem.mesa > 0 && <span className="ck-badge">mesa · {porOrigem.mesa}</span>}
                   {porOrigem.praca > 0 && <span className="ck-badge">praça de bar · {porOrigem.praca}</span>}
                   {porOrigem.app > 0 && <span className="ck-badge">app · {porOrigem.app}</span>}
@@ -378,18 +381,18 @@ export default function AoVivo() {
                 cta={<Link to={`/eventos/${id}/fechamento`} className="ck-btn ck-btn--glass ck-btn--sm">Ver a conferência</Link>}
               />
             ) : (
-              <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+              <ul className="ck-lista">
                 {caixasAbertos.map((t) => {
                   const min = minutosDesde(t.aberto_em);
                   return (
                     <li key={t.id} className="ck-feed__row">
-                      <div className="pp-grow" style={{ minWidth: 0 }}>
-                        <div style={{ fontWeight: 600, fontSize: 'var(--pp-fs-14)' }}>{t.operador}</div>
-                        <div style={{ color: 'var(--pp-fg-4)', fontSize: 'var(--pp-fs-12)' }}>
+                      <div className="pp-grow ck-min0">
+                        <div className="ck-w-semi ck-t-support">{t.operador}</div>
+                        <div className="pp-muted-2 ck-t-support">
                           {t.praca ? `${t.praca} · ` : ''}fundo {brl(t.fundo_cents ?? 0)}
                         </div>
                       </div>
-                      <span className="pp-mono" style={{ fontSize: 'var(--pp-fs-13)', color: 'var(--pp-fg-3)' }}>
+                      <span className="pp-mono ck-t-support pp-muted">
                         aberto há {duracao(min)}
                       </span>
                     </li>
@@ -403,7 +406,7 @@ export default function AoVivo() {
 
       {/* ── MESAS POR ÁREA ── */}
       {mesas && (
-        <div style={{ marginTop: 'var(--pp-s-6)' }}>
+        <div className="ck-mt-6">
           <Painel
             titulo="Salão"
             sub="mesas por área — o banco não guarda a posição no mapa, só a área"
@@ -417,14 +420,14 @@ export default function AoVivo() {
             ) : (
               <>
                 <div className="ck-kpis ck-kpis--painel">
-                  <Kpi label="mesas ocupadas" valor={`${mesasOcupadas.length}/${mesas.length}`} cor="var(--pp-pulse)" />
-                  <Kpi label="consumo em aberto" valor={brl(consumoAberto)} cor="var(--pp-cyan)" />
+                  <Kpi label="mesas ocupadas" valor={`${mesasOcupadas.length}/${mesas.length}`} tom="pulse" />
+                  <Kpi label="consumo em aberto" valor={brl(consumoAberto)} tom="cyan" />
                   <Kpi label="esperando entrega" valor={mesas.filter((x) => x.prontos > 0).length}
-                    cor="var(--pp-violet)" detalhe="mesa com prato pronto" />
+                    tom="violet" detalhe="mesa com prato pronto" />
                 </div>
 
-                <table className="ck-table" style={{ marginTop: 'var(--pp-s-4)' }}>
-                  <caption className="ck-panel__sub" style={{ textAlign: 'left', paddingBottom: 8 }}>
+                <table className="ck-table ck-mt-4">
+                  <caption className="ck-panel__sub ck-caption">
                     Ocupação por área
                   </caption>
                   <thead>
@@ -450,7 +453,7 @@ export default function AoVivo() {
                 </table>
 
                 {mesasOcupadas.length > 0 && (
-                  <div className="ck-mesas" style={{ marginTop: 'var(--pp-s-5)' }}>
+                  <div className="ck-mesas ck-mt-5">
                     {[...mesasOcupadas]
                       .sort((a, b) => b.prontos - a.prontos || b.consumo_cents - a.consumo_cents)
                       .slice(0, 6)
@@ -482,17 +485,17 @@ export default function AoVivo() {
 
       {/* ── VENDA DA NOITE ── */}
       {metricas && (
-        <div style={{ marginTop: 'var(--pp-s-6)' }}>
+        <div className="ck-mt-6">
           <Painel
             titulo="Venda da noite"
             sub="acumulado do evento, ingresso + bar"
             acao={<Link to={`/eventos/${id}/conciliacao`} className="ck-btn ck-btn--glass ck-btn--sm">Financeiro</Link>}
           >
             <div className="ck-kpis">
-              <Kpi label="ingressos" valor={brl(metricas.ticket_revenue_cents)} cor="var(--pp-pulse)"
+              <Kpi label="ingressos" valor={brl(metricas.ticket_revenue_cents)} tom="pulse"
                 detalhe={`${metricas.orders_paid} ${metricas.orders_paid === 1 ? 'pedido pago' : 'pedidos pagos'}`} />
-              <Kpi label="bar" valor={brl(metricas.bar_revenue_cents)} cor="var(--pp-cyan)" />
-              <Kpi label="total" valor={brl(metricas.total_revenue_cents)} cor="var(--pp-violet)" />
+              <Kpi label="bar" valor={brl(metricas.bar_revenue_cents)} tom="cyan" />
+              <Kpi label="total" valor={brl(metricas.total_revenue_cents)} tom="violet" />
               <Kpi label="check-in" valor={`${metricas.checked_in}/${metricas.tickets_sold}`}
                 detalhe="ingressos emitidos" />
             </div>
@@ -500,7 +503,7 @@ export default function AoVivo() {
         </div>
       )}
 
-      <p className="ck-live" style={{ marginTop: 'var(--pp-s-6)' }}>
+      <p className="ck-live ck-mt-6">
         <span className="pp-pulse-dot" /> atualizando a cada {INTERVALO_MS / 1000}s
       </p>
     </Shell>

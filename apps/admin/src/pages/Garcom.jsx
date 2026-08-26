@@ -66,24 +66,24 @@ export default function Garcom() {
       {/* Os três números da noite, como no mockup (só os que existem):
           o total em aberto é o que precisa ser cobrado antes de alguém ir
           embora; os prontos são a próxima caminhada. */}
-      <div className="ck-metrics" style={{ marginTop: 16 }}>
+      <div className="ck-metrics ck-mt-4">
         <div className="ck-card ck-metric">
           <div className="lbl">Em aberto no salão</div>
-          <div className="val" style={{ color: 'var(--pp-pulse)' }}>{brl(vendido)}</div>
+          <div className="val ck-c-pulse">{brl(vendido)}</div>
         </div>
         <div className="ck-card ck-metric">
           <div className="lbl">Mesas ocupadas</div>
-          <div className="val">{ocupadas.length}<span style={{ fontSize: 16, color: 'var(--pp-fg-4)' }}>/{mesas.length}</span></div>
+          <div className="val">{ocupadas.length}<span className="ck-t-body pp-muted-2">/{mesas.length}</span></div>
         </div>
         <div className="ck-card ck-metric">
           <div className="lbl">Prontos para levar</div>
-          <div className="val" style={{ color: prontas.length ? 'var(--pp-violet)' : undefined }}>{prontas.length}</div>
+          <div className={`val ${prontas.length ? 'ck-c-violet' : ''}`}>{prontas.length}</div>
         </div>
       </div>
 
       {erro && <ErrorBox>{erro}</ErrorBox>}
 
-      <div className="ck-tabs" style={{ marginTop: 20 }}>
+      <div className="ck-tabs ck-mt-5">
         {[
           ['todas', `Todas · ${mesas.length}`],
           ['ocupadas', `Ocupadas · ${ocupadas.length}`],
@@ -96,19 +96,19 @@ export default function Garcom() {
       </div>
 
       {mesas.length === 0 ? (
-        <div className="ck-card" style={{ maxWidth: 520, marginTop: 18 }}>
+        <div className="ck-card ck-w-form ck-mt-5">
           <strong>Nenhuma mesa cadastrada</strong>
-          <p style={{ color: 'var(--pp-fg-3)', fontSize: 14, margin: '6px 0 14px' }}>
+          <p className="pp-muted ck-t-support ck-m-0 ck-mt-2 ck-mb-4">
             O salão precisa ter mesas para o garçom lançar pedido nelas.
           </p>
           <a href={`/eventos/${id}/camarotes`} className="ck-btn ck-btn--primary">Cadastrar mesas</a>
         </div>
       ) : visiveis.length === 0 ? (
-        <p style={{ color: 'var(--pp-fg-3)', marginTop: 18 }}>
+        <p className="pp-muted ck-mt-5">
           {aba === 'prontas' ? 'Nada pronto para levar agora.' : 'Nenhuma mesa com consumo em aberto.'}
         </p>
       ) : (
-        <div className="ck-mesas" style={{ marginTop: 18 }}>
+        <div className="ck-mesas ck-mt-5">
           {visiveis.map((m) => (
             <button key={m.id}
               className={`ck-mesa ${m.prontos ? 'ck-mesa--pronta' : m.pedidos_abertos ? 'ck-mesa--ocupada' : ''}`}
@@ -147,7 +147,7 @@ export default function Garcom() {
         />
       )}
 
-      <p className="ck-live" style={{ marginTop: 16 }}>
+      <p className="ck-live ck-mt-4">
         <span className="pp-pulse-dot" /> atualizando a cada 10s
       </p>
     </Shell>
@@ -217,7 +217,7 @@ function LancarPedido({ eventId, mesa, menu, onFechar, onLancado }) {
           <div>
             <h2 className="pp-modal__title">{mesa.nome}{mesa.area ? ` · ${mesa.area}` : ''}</h2>
             {mesa.pedidos_abertos > 0 && (
-              <div className="pp-mono" style={{ fontSize: 11, color: 'var(--pp-fg-4)', marginTop: 2 }}>
+              <div className="pp-mono ck-t-label pp-muted-2 ck-mt-1">
                 comanda aberta · {mesa.pedidos_abertos} pedido{mesa.pedidos_abertos > 1 ? 's' : ''}
               </div>
             )}
@@ -244,28 +244,28 @@ function LancarPedido({ eventId, mesa, menu, onFechar, onLancado }) {
             </form>
           ) : (
             <>
-              <div className="ck-card" style={{ marginBottom: 14, padding: 'var(--pp-s-4)' }}>
+              <div className="ck-card ck-mb-4 ck-p-4">
                 <div className="ck-between">
                   <div>
-                    <div className="ck-label" style={{ margin: 0 }}>Comanda de</div>
-                    <div style={{ fontWeight: 600 }}>{cliente.full_name ?? cliente.email}</div>
+                    <div className="ck-label ck-m-0">Comanda de</div>
+                    <div className="ck-w-semi">{cliente.full_name ?? cliente.email}</div>
                   </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <div className="ck-label" style={{ margin: 0 }}>Saldo</div>
-                    <div className="pp-money" style={{ fontSize: 20 }}>{brl(cliente.balance_cents)}</div>
+                  <div className="ck-right">
+                    <div className="ck-label ck-m-0">Saldo</div>
+                    <div className="pp-money ck-t-section">{brl(cliente.balance_cents)}</div>
                   </div>
                 </div>
               </div>
 
               {menu.length === 0 ? (
-                <p style={{ color: 'var(--pp-fg-3)' }}>Cardápio vazio — nada para lançar.</p>
+                <p className="pp-muted">Cardápio vazio — nada para lançar.</p>
               ) : (
                 <>
                   {/* Strip de categorias, como no mockup — com 40 itens no
                       cardápio, achar "Doses" rolando a lista inteira é lento
                       com a mesa esperando. */}
                   {categorias.length > 1 && (
-                    <div className="ck-tabs" style={{ marginBottom: 12 }}>
+                    <div className="ck-tabs ck-mb-3">
                       {categorias.map((c) => (
                         <button key={c} type="button" className={`ck-tab ${categoria === c ? 'is-on' : ''}`}
                           onClick={() => setCategoria(c)}>{c}</button>
@@ -276,8 +276,8 @@ function LancarPedido({ eventId, mesa, menu, onFechar, onLancado }) {
                   {visiveis.map((it) => (
                     <div key={it.id} className={`ck-gcm__item ${carrinho[it.id] ? 'is-on' : ''}`}>
                       <div className="pp-grow">
-                        <div style={{ fontWeight: 600 }}>{it.name}</div>
-                        <div className="pp-mono" style={{ fontSize: 13, color: 'var(--pp-fg-3)', marginTop: 2 }}>{brl(it.price_cents)}</div>
+                        <div className="ck-w-semi">{it.name}</div>
+                        <div className="pp-mono ck-t-support pp-muted ck-mt-1">{brl(it.price_cents)}</div>
                       </div>
                       <div className="pp-stepper">
                         <button onClick={() => passo(it, -1)} disabled={!carrinho[it.id]}
@@ -295,7 +295,7 @@ function LancarPedido({ eventId, mesa, menu, onFechar, onLancado }) {
 
               {erro && <ErrorBox>{erro}</ErrorBox>}
               {semSaldo && (
-                <p style={{ color: 'var(--pp-amber)', fontSize: 13, marginTop: 12 }}>
+                <p className="ck-c-amber ck-t-support ck-mt-3">
                   Faltam {brl(total - cliente.balance_cents)} no saldo. O cliente precisa recarregar.
                 </p>
               )}
@@ -304,28 +304,27 @@ function LancarPedido({ eventId, mesa, menu, onFechar, onLancado }) {
         </div>
 
         {cliente && (
-          <div className="pp-modal__foot" style={{ display: 'block' }}>
+          <div className="pp-modal__foot ck-block">
             {/* Resumo da comanda (estrutura da WaiterOrderScreen): o que está
                 sendo ADICIONADO separado do que a mesa já deve — são decisões
                 diferentes ("confirmo o pedido?" vs "cobro a mesa?"). */}
-            <div className="ck-between" style={{ marginBottom: 12 }}>
+            <div className="ck-between ck-mb-3">
               <div>
-                <div className="ck-label" style={{ margin: 0 }}>Adicionando · {qtd} {qtd === 1 ? 'item' : 'itens'}</div>
-                <div className="pp-money" style={{ fontSize: 'var(--pp-fs-24)', marginTop: 2 }}>{brl(total)}</div>
+                <div className="ck-label ck-m-0">Adicionando · {qtd} {qtd === 1 ? 'item' : 'itens'}</div>
+                <div className="pp-money ck-mt-1">{brl(total)}</div>
               </div>
               {mesa.consumo_cents > 0 && (
-                <div style={{ textAlign: 'right' }}>
-                  <div className="ck-label" style={{ margin: 0 }}>Comanda da mesa</div>
-                  <div className="pp-mono" style={{ fontWeight: 600, marginTop: 2 }}>
+                <div className="ck-right">
+                  <div className="ck-label ck-m-0">Comanda da mesa</div>
+                  <div className="pp-mono ck-w-semi ck-mt-1">
                     {brl(mesa.consumo_cents + total)}
                   </div>
                 </div>
               )}
             </div>
-            <div style={{ display: 'flex', gap: 10 }}>
+            <div className="ck-flex ck-gap-3">
               <button className="pp-btn pp-btn--ghost" onClick={onFechar}>Cancelar</button>
-              <button className={`pp-btn pp-btn--primary ${enviando ? 'is-loading' : ''}`} style={{ flex: 1 }}
-                disabled={enviando || qtd === 0 || semSaldo} onClick={lancar}>
+              <button className={`pp-btn pp-btn--primary ${enviando ? 'is-loading' : ''} ck-flex1`} disabled={enviando || qtd === 0 || semSaldo} onClick={lancar}>
                 Enviar pra cozinha & bar
               </button>
             </div>

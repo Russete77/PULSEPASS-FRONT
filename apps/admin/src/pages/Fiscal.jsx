@@ -82,35 +82,32 @@ export default function Fiscal() {
           parágrafo: quem abre a tela às pressas precisa ver que NADA foi
           enviado à prefeitura antes de acreditar nos números abaixo. */}
       {mock && (
-        <div className="pp-note" role="status" style={{
-          maxWidth: 720, marginBottom: 'var(--pp-s-5)',
-          borderColor: 'rgba(255,184,0,0.35)', background: 'rgba(255,184,0,0.07)',
-        }}>
-          <span className="ck-badge ck-badge--draft" style={{ marginRight: 8 }}>modo de teste</span>
+        <div className="pp-note ck-w-read ck-mb-5 ck-aviso" role="status">
+          <span className="ck-badge ck-badge--draft ck-mr-2">modo de teste</span>
           Nenhuma nota está sendo enviada à prefeitura. Os números abaixo são
           simulados e servem só pra conferir o fluxo.
         </div>
       )}
 
       <div className="ck-kpis">
-        <div className="ck-kpi" style={{ '--k': 'var(--pp-pulse)' }}>
+        <div className="ck-kpi ck-k--pulse">
           <div className="lbl">Emitidas</div>
-          <div className="val" style={{ color: 'var(--pp-pulse)' }}>{s.issued_count ?? 0}</div>
+          <div className="val ck-c-pulse">{s.issued_count ?? 0}</div>
           <div className="d">{brl(s.issued_cents ?? 0)} em notas</div>
         </div>
-        <div className="ck-kpi" style={{ '--k': 'var(--pp-amber)' }}>
+        <div className="ck-kpi ck-k--amber">
           <div className="lbl">Processando</div>
           <div className="val">{s.pending_count ?? 0}</div>
           <div className="d">aguardando a prefeitura</div>
         </div>
-        <div className="ck-kpi" style={{ '--k': 'var(--pp-red)' }}>
+        <div className="ck-kpi ck-k--red">
           <div className="lbl">Falharam</div>
-          <div className="val" style={{ color: (s.failed_count ?? 0) > 0 ? 'var(--pp-red)' : undefined }}>
+          <div className={`val ${(s.failed_count ?? 0) > 0 ? 'ck-c-red' : ''}`}>
             {s.failed_count ?? 0}
           </div>
           <div className="d">{(s.failed_count ?? 0) > 0 ? 'motivo na linha da nota' : 'nenhuma recusada'}</div>
         </div>
-        <div className="ck-kpi" style={{ '--k': 'var(--pp-fg-4)' }}>
+        <div className="ck-kpi ck-k--dim">
           <div className="lbl">Canceladas</div>
           <div className="val">{s.cancelled_count ?? 0}</div>
           <div className="d">reembolso cancela a nota</div>
@@ -118,17 +115,17 @@ export default function Fiscal() {
       </div>
 
       {documentos.length === 0 ? (
-        <div className="pp-empty" style={{ maxWidth: 640 }}>
+        <div className="pp-empty ck-w-mid">
           <div className="pp-empty__icon"><Icon name="receipt" size={28} /></div>
           <div className="pp-empty__title">Nenhuma nota ainda</div>
-          <p style={{ margin: 0 }}>
+          <p className="ck-m-0">
             A emissão automática só acontece com <code className="pp-mono">FISCAL_AUTO_ISSUE</code> ligado.
             Sem isso, a nota é emitida pedido a pedido pelo backend — e aparece aqui assim que sair.
           </p>
         </div>
       ) : (
-        <section className="ck-panel" aria-label="Notas fiscais do evento" style={{ marginTop: 'var(--pp-s-5)', padding: 0, overflow: 'hidden' }}>
-          <div className="pp-between" style={{ padding: 'var(--pp-s-5) var(--pp-s-5) var(--pp-s-4)', flexWrap: 'wrap' }}>
+        <section className="ck-panel ck-mt-5 ck-p-0 ck-hidden" aria-label="Notas fiscais do evento">
+          <div className="pp-between pp-wrap ck-cabeca">
             <div>
               <div className="ck-panel__title">Livro de notas · {documentos.length}</div>
               <p className="ck-panel__sub">mais recentes primeiro</p>
@@ -149,12 +146,12 @@ export default function Fiscal() {
           </div>
 
           {visiveis.length === 0 ? (
-            <p className="ck-empty" style={{ padding: 'var(--pp-s-8) var(--pp-s-5)' }}>
+            <p className="ck-empty">
               Nenhuma nota nesta situação.
             </p>
           ) : (
             <div className="ck-tablewrap">
-              <table className="ck-table" style={{ minWidth: 780 }}>
+              <table className="ck-table ck-table--wide">
                 <thead>
                   <tr>
                     <th scope="col">Nota</th>
@@ -172,31 +169,31 @@ export default function Fiscal() {
                     return [
                       <tr key={d.id}>
                         <td>
-                          <div className="pp-mono" style={{ fontWeight: 600 }}>
+                          <div className="pp-mono ck-w-semi">
                             {d.numero ? `nº ${d.numero}` : 'sem número'}
                           </div>
                           {d.codigo_verificacao && (
-                            <div className="pp-mono pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 2 }}>
+                            <div className="pp-mono pp-muted-2 ck-meta">
                               {d.codigo_verificacao}
                             </div>
                           )}
                         </td>
                         <td>
-                          <div style={{ fontSize: 'var(--pp-fs-14)' }}>{d.buyer_name || 'sem tomador'}</div>
+                          <div className="ck-t-support">{d.buyer_name || 'sem tomador'}</div>
                           {doc && (
-                            <div className="pp-mono pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 2 }}>{doc}</div>
+                            <div className="pp-mono pp-muted-2 ck-meta">{doc}</div>
                           )}
                         </td>
                         {/* Data que importa é a da emissão; enquanto não emitiu,
                             a do registro é a única que existe. */}
-                        <td className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)' }}>
+                        <td className="pp-muted ck-t-support">
                           {dateTime(d.issued_at ?? d.created_at)}
                           {!d.issued_at && <div className="pp-muted-2">registro</div>}
                         </td>
                         <td className="num"><span className="pp-price">{brl(d.amount_cents)}</span></td>
                         <td><span className={st.badge} style={{ color: st.cor }}>{st.label}</span></td>
                         <td>
-                          <span className="pp-row" style={{ gap: 6 }}>
+                          <span className="pp-row ck-gap-2">
                             {d.pdf_url && (
                               <a className="ck-btn ck-btn--glass ck-btn--sm" href={d.pdf_url} target="_blank" rel="noreferrer"
                                 aria-label={`Baixar PDF da nota ${d.numero ?? ''}`}>
@@ -212,7 +209,7 @@ export default function Fiscal() {
                               </a>
                             )}
                             {!d.pdf_url && !d.xml_url && (
-                              <span className="pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)' }}>—</span>
+                              <span className="pp-muted-2 ck-t-support">—</span>
                             )}
                           </span>
                         </td>
@@ -221,8 +218,8 @@ export default function Fiscal() {
                       // nada com o contador nem com a prefeitura.
                       d.status === 'failed' && d.error ? (
                         <tr key={`${d.id}-erro`}>
-                          <td colSpan={6} style={{ paddingTop: 0, color: 'var(--pp-red)', fontSize: 'var(--pp-fs-12)' }}>
-                            <span className="pp-row" style={{ alignItems: 'flex-start', gap: 6 }}>
+                          <td colSpan={6} className="ck-c-red ck-t-support ck-pt-0">
+                            <span className="pp-row ck-ai-start ck-gap-2">
                               <Icon name="close" size={13} />
                               <span>
                                 {d.error}

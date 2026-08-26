@@ -8,11 +8,14 @@ import {
 } from '../lib/offlineDoor.js';
 import { startScanner, cameraSupported, secureContextOk, feedback } from '../lib/qrScanner.js';
 
-const RESULT_STYLE = {
-  ok: { bg: 'rgba(0,255,133,0.10)', border: 'rgba(0,255,133,0.45)', color: 'var(--pp-pulse)' },
-  already_used: { bg: 'rgba(255,184,0,0.10)', border: 'rgba(255,184,0,0.4)', color: 'var(--pp-amber)' },
-  invalid: { bg: 'rgba(255,59,48,0.10)', border: 'rgba(255,59,48,0.4)', color: '#FF6B61' },
-  wrong_event: { bg: 'rgba(255,59,48,0.10)', border: 'rgba(255,59,48,0.4)', color: '#FF6B61' },
+/* Três leituras, não quatro cores escritas à mão: liberado, atenção, barrado.
+   O CSS (.ck-veredito--*) carrega fundo, borda e cor do texto juntos — era
+   isso que estava espalhado em rgba solto, inclusive com o verde antigo. */
+const VEREDITO = {
+  ok: 'ok',
+  already_used: 'aviso',
+  invalid: 'erro',
+  wrong_event: 'erro',
 };
 
 const isNetworkError = (msg) =>
@@ -170,7 +173,7 @@ export default function Porta() {
 
   useEffect(() => () => stopScan(), []);
 
-  const rs = result ? RESULT_STYLE[result.result] ?? RESULT_STYLE.invalid : null;
+  const veredito = result ? VEREDITO[result.result] ?? 'erro' : null;
 
   return (
     <Shell>
@@ -178,52 +181,45 @@ export default function Porta() {
       <div className="ck-eyebrow">porta · check-in</div>
       <h1 className="ck-h1">Validar entrada</h1>
       <p className="ck-sub">Escaneie o QR ou digite o código do ingresso (PP-XXXX-XXXX).</p>
-      <Link to={`/eventos/${id}/lista-porta`} className="ck-btn ck-btn--glass ck-btn--sm" style={{ marginBottom: 'var(--pp-s-4)' }}>
+      <Link to={`/eventos/${id}/lista-porta`} className="ck-btn ck-btn--glass ck-btn--sm ck-mb-4">
         <Icon name="users" size={15} /> Check-in da lista (AZList)
       </Link>
 
       {/* Barra de status offline */}
-      <div className="ck-card" style={{ maxWidth: 520, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-        <span style={{
-          display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13,
-          color: online ? 'var(--pp-pulse)' : 'var(--pp-amber)',
-        }}>
-          <span style={{
-            width: 8, height: 8, borderRadius: 99,
-            background: online ? 'var(--pp-pulse)' : 'var(--pp-amber)',
-          }} />
+      <div className="ck-card ck-w-form ck-flex ck-ai-center ck-gap-3 pp-wrap">
+        <span className={`ck-status ${online ? 'ck-c-pulse' : 'ck-c-amber'}`}>
           {online ? 'Online' : 'Offline'}
         </span>
-        <span style={{ color: 'var(--pp-fg-3)', fontSize: 13 }}>
+        <span className="pp-muted ck-t-support">
           {manifest ? `Manifesto: ${manifest.count} ingressos` : 'Manifesto não baixado'}
         </span>
         {pending > 0 && (
-          <span style={{ color: 'var(--pp-amber)', fontSize: 13 }}>· {pending} na fila</span>
+          <span className="ck-c-amber ck-t-support">· {pending} na fila</span>
         )}
         {occupancy && (
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13 }}>
+          <span className="ck-iflex ck-ai-center ck-gap-2 ck-t-support">
             <Icon name="users" size={14} />
-            <strong style={{ fontFamily: 'var(--pp-font-mono)', fontSize: 15 }}>{occupancy.inside}</strong>
-            <span style={{ color: 'var(--pp-fg-4)' }}>dentro</span>
-            {occupancy.left > 0 && <span style={{ color: 'var(--pp-fg-4)' }}>· {occupancy.left} saíram</span>}
+            <strong className="pp-mono ck-t-body">{occupancy.inside}</strong>
+            <span className="pp-muted-2">dentro</span>
+            {occupancy.left > 0 && <span className="pp-muted-2">· {occupancy.left} saíram</span>}
           </span>
         )}
         {/* Progresso da noite: quantos dos vendidos já entraram, quantos faltam.
             É o que responde "vai chegar mais gente?" sem sair da tela. Os dados
             já vinham da RPC de lotação — só não eram renderizados. */}
         {occupancy?.tickets_sold > 0 && (
-          <span style={{ fontSize: 13, color: 'var(--pp-fg-3)' }}>
+          <span className="ck-t-support pp-muted">
             · check-ins{' '}
-            <strong style={{ fontFamily: 'var(--pp-font-mono)', color: 'var(--pp-fg)' }}>
+            <strong className="pp-mono ck-c-fg">
               {Math.min(100, Math.round(((occupancy.inside + occupancy.left) / occupancy.tickets_sold) * 100))}%
             </strong>
             {' '}· faltam{' '}
-            <strong style={{ fontFamily: 'var(--pp-font-mono)', color: 'var(--pp-fg)' }}>
+            <strong className="pp-mono ck-c-fg">
               {Math.max(0, occupancy.tickets_sold - occupancy.inside - occupancy.left)}
             </strong>
           </span>
         )}
-        <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
+        <div className="ck-ml-auto ck-flex ck-gap-2">
           <button type="button" className="ck-btn ck-btn--glass" onClick={downloadManifest} disabled={manifestBusy || !online}>
             {manifestBusy ? 'Baixando…' : 'Baixar manifesto'}
           </button>
@@ -233,7 +229,7 @@ export default function Porta() {
         </div>
       </div>
 
-      <div className="ck-card" style={{ maxWidth: 520, marginTop: 16 }}>
+      <div className="ck-card ck-w-form ck-mt-4">
         <form onSubmit={(e) => { e.preventDefault(); submit(); }}>
           {/* Qual portaria é esta: carimba cada movimento com o portão. Fica
               gravado no aparelho — configura uma vez, vale a noite toda. */}
@@ -244,17 +240,10 @@ export default function Porta() {
           </div>
           <div className="ck-field">
             <label htmlFor="porta-1" className="ck-label">Código do ingresso</label>
-            <input id="porta-1"
-              className="ck-input"
-              value={code}
-              onChange={(e) => setCode(e.target.value.toUpperCase())}
-              placeholder="PP-XXXX-XXXX"
-              autoFocus
-              style={{ fontFamily: 'var(--pp-font-mono)', letterSpacing: 2 }}
-            />
+            <input id="porta-1" className="ck-input pp-mono ck-cod" value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="PP-XXXX-XXXX" autoFocus/>
           </div>
           {error && <ErrorBox>{error}</ErrorBox>}
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          <div className="ck-flex ck-gap-3 pp-wrap">
             <button className="ck-btn ck-btn--primary" disabled={busy || !code.trim()}>
               {busy ? 'Validando…' : 'Validar'}
             </button>
@@ -277,26 +266,23 @@ export default function Porta() {
         </form>
 
         {/* O vídeo fica montado sempre: o ref precisa existir ANTES de startScanner. */}
-        <div style={{ display: scanning ? 'block' : 'none', marginTop: 16, position: 'relative' }}>
+        <div className={`ck-mt-4 ck-rel ${scanning ? '' : 'ck-none'}`}>
           <video ref={videoRef} muted playsInline
-            style={{ width: '100%', borderRadius: 12, background: '#000', aspectRatio: '4 / 3', objectFit: 'cover' }} />
+            className="ck-scanvideo" />
           {/* Mira: ajuda o porteiro a centralizar o QR sem pensar. */}
-          <div aria-hidden style={{
-            position: 'absolute', inset: '18% 22%', border: '2px solid rgba(0,255,133,0.85)',
-            borderRadius: 14, boxShadow: '0 0 0 9999px rgba(0,0,0,0.28)', pointerEvents: 'none',
-          }} />
-          <p style={{ color: 'var(--pp-fg-4)', fontSize: 12, marginTop: 10 }}>
+          <div aria-hidden className="ck-mira" />
+          <p className="pp-muted-2 ck-t-support ck-mt-3">
             Câmera ligada — a fila pode andar sem parar. Cada leitura apita.
           </p>
         </div>
 
         {scanBlockedByHttp && (
-          <p style={{ color: 'var(--pp-amber)', fontSize: 12, marginTop: 12 }}>
+          <p className="ck-c-amber ck-t-support ck-mt-3">
             A câmera exige HTTPS. Abra o cockpit por um endereço https:// para escanear.
           </p>
         )}
         {!scanSupported && (
-          <p style={{ color: 'var(--pp-fg-4)', fontSize: 12, marginTop: 12 }}>
+          <p className="pp-muted-2 ck-t-support ck-mt-3">
             Este dispositivo não expõe câmera ao navegador — use a entrada manual.
           </p>
         )}
@@ -306,8 +292,8 @@ export default function Porta() {
           no celular: ela fala o nome, o porteiro valida pelo código. Funciona
           offline por construção — a fonte é o IndexedDB, não a rede. */}
       {manifest && (
-        <div className="ck-card" style={{ maxWidth: 520, marginTop: 16 }}>
-          <div className="ck-field" style={{ margin: 0 }}>
+        <div className="ck-card ck-w-form ck-mt-4">
+          <div className="ck-field ck-m-0">
             <label htmlFor="porta-busca" className="ck-label">Buscar por nome (no manifesto)</label>
             <input id="porta-busca" className="ck-input" value={busca}
               autoComplete="off"
@@ -319,17 +305,14 @@ export default function Porta() {
               placeholder="nome de quem comprou" />
           </div>
           {achados.length > 0 && (
-            <ul style={{ listStyle: 'none', margin: '12px 0 0', padding: 0 }}>
+            <ul className="ck-lista ck-mt-3">
               {achados.map((t) => (
-                <li key={t.id} style={{
-                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                  gap: 10, padding: '8px 0', borderBottom: '1px solid var(--pp-edge-2)',
-                }}>
-                  <div style={{ minWidth: 0 }}>
-                    <div style={{ fontWeight: 600 }}>{t.holder}</div>
-                    <div style={{ color: 'var(--pp-fg-4)', fontSize: 12 }}>
+                <li key={t.id} className="ck-linha">
+                  <div className="ck-min0">
+                    <div className="ck-w-semi">{t.holder}</div>
+                    <div className="pp-muted-2 ck-t-support">
                       <span className="pp-mono">{t.code}</span> · {t.tier}
-                      {t.status !== 'valid' && <span style={{ color: 'var(--pp-amber)' }}> · {t.status === 'used' ? 'já entrou' : t.status}</span>}
+                      {t.status !== 'valid' && <span className="ck-c-amber"> · {t.status === 'used' ? 'já entrou' : t.status}</span>}
                     </div>
                   </div>
                   {t.status === 'valid' && (
@@ -343,7 +326,7 @@ export default function Porta() {
             </ul>
           )}
           {busca.trim().length >= 2 && achados.length === 0 && (
-            <p style={{ color: 'var(--pp-fg-4)', fontSize: 13, marginTop: 10 }}>
+            <p className="pp-muted-2 ck-t-support ck-mt-3">
               Ninguém com esse nome no manifesto. Confira a grafia — ou o ingresso é de outro evento.
             </p>
           )}
@@ -352,12 +335,11 @@ export default function Porta() {
 
       {result && (
         <div
-          className="ck-card"
-          style={{ maxWidth: 520, marginTop: 20, background: rs.bg, borderColor: rs.border }}
+          className={`ck-card ck-w-form ck-mt-5 ck-veredito ck-veredito--${veredito}`}
         >
           {/* A mensagem vem do servidor e já distingue entrada, reentrada e
               saída — o porteiro precisa ver QUAL foi, não só "ok". */}
-          <div style={{ fontFamily: 'var(--pp-font-display)', fontWeight: 700, fontSize: 'var(--pp-fs-24)', color: rs.color, display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div className="ck-veredito__msg">
             {result.result === 'ok' ? (
               <>
                 <Icon name={result.direction === 'out' ? 'arrowRight' : 'check'} size={22} strokeWidth={2.5} />
@@ -366,15 +348,15 @@ export default function Porta() {
             ) : result.message}
           </div>
           {result.result === 'ok' && result.entries > 1 && (
-            <p style={{ color: 'var(--pp-fg-3)', fontSize: 13, marginTop: 4 }}>
+            <p className="pp-muted ck-meta">
               {result.entries}ª entrada deste ingresso
             </p>
           )}
-          {result.offline && <p style={{ color: 'var(--pp-amber)', fontSize: 12, marginTop: 4 }}>validado offline · será sincronizado</p>}
-          {result.holder && <p style={{ marginTop: 8 }}>{result.holder} · {result.tier}</p>}
-          {result.code && <p style={{ color: 'var(--pp-fg-3)', fontFamily: 'var(--pp-font-mono)' }}>{result.code}</p>}
+          {result.offline && <p className="ck-c-amber ck-meta">validado offline · será sincronizado</p>}
+          {result.holder && <p className="ck-mt-2">{result.holder} · {result.tier}</p>}
+          {result.code && <p className="pp-muted pp-mono">{result.code}</p>}
           {result.checked_in_at && result.result === 'already_used' && (
-            <p style={{ color: 'var(--pp-fg-3)', fontSize: 13 }}>
+            <p className="pp-muted ck-t-support">
               Check-in anterior: {new Date(result.checked_in_at).toLocaleString('pt-BR')}
             </p>
           )}
@@ -384,24 +366,17 @@ export default function Porta() {
       {/* Log dos últimos scans desta sessão — quando alguém contesta na fila,
           a resposta está aqui, não na memória do porteiro. */}
       {historico.length > 1 && (
-        <div className="ck-card" style={{ maxWidth: 520, marginTop: 16 }}>
+        <div className="ck-card ck-w-form ck-mt-4">
           <div className="ck-label">Últimos check-ins</div>
-          <ul style={{ listStyle: 'none', margin: '10px 0 0', padding: 0 }}>
+          <ul className="ck-lista ck-mt-3">
             {historico.map((h, i) => (
-              <li key={`${h.at}-${i}`} style={{
-                display: 'flex', justifyContent: 'space-between', gap: 10,
-                padding: '6px 0', borderBottom: '1px solid var(--pp-edge-2)', fontSize: 13,
-              }}>
-                <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  <span style={{
-                    color: h.result === 'ok' ? 'var(--pp-pulse)'
-                      : h.result === 'already_used' ? 'var(--pp-amber)' : '#FF6B61',
-                    marginRight: 8,
-                  }}>●</span>
+              <li key={`${h.at}-${i}`} className="ck-linha ck-t-support">
+                <span className="ck-min0 ck-trunc">
+                  <span className={`ck-mr-2 ${h.result === 'ok' ? 'ck-c-pulse' : h.result === 'already_used' ? 'ck-c-amber' : 'ck-c-red'}`}>●</span>
                   {h.holder ?? h.code ?? h.message}
-                  {h.offline && <span style={{ color: 'var(--pp-amber)' }}> · offline</span>}
+                  {h.offline && <span className="ck-c-amber"> · offline</span>}
                 </span>
-                <span style={{ color: 'var(--pp-fg-4)', fontFamily: 'var(--pp-font-mono)', whiteSpace: 'nowrap' }}>
+                <span className="pp-muted-2 pp-mono ck-nowrap">
                   {new Date(h.at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                 </span>
               </li>

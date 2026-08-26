@@ -19,9 +19,9 @@ const SOON = [];
 
 function AdmLogo() {
   return (
-    <svg width="28" height="28" viewBox="0 0 64 64" style={{ display: 'block' }}>
-      <circle cx="32" cy="32" r="22" fill="none" stroke="#FF3D88" strokeWidth="2.5" />
-      <path d="M14 32 L22 32 L26 24 L30 40 L34 22 L38 38 L42 32 L50 32" fill="none" stroke="#FF3D88" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    <svg width="28" height="28" viewBox="0 0 64 64" className="ck-block">
+      <circle cx="32" cy="32" r="22" fill="none" stroke="var(--pp-pink)" strokeWidth="2.5" />
+      <path d="M14 32 L22 32 L26 24 L30 40 L34 22 L38 38 L42 32 L50 32" fill="none" stroke="var(--pp-pink)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -44,18 +44,18 @@ export function AdmShell({ where = 'Visão geral da plataforma', children }) {
             <div className="sub">SUPER-ADMIN</div>
           </div>
         </div>
-        <div className="ck-eyebrow" style={{ padding: '6px 12px', color: 'var(--pp-fg-4)' }}>Operação</div>
+        <div className="ck-eyebrow pp-muted-2 ck-p-sm">Operação</div>
         {NAV.map((n) => (
           <NavLink key={n.to} to={n.to} end={n.end} className="adm-navlink">
             <Icon name={n.icon} size={16} /> {n.label}
           </NavLink>
         ))}
         {SOON.map((s) => (
-          <span key={s} className="adm-navlink" style={{ opacity: 0.4, cursor: 'default' }}>
-            <Icon name="box" size={16} /> {s} <span style={{ marginLeft: 'auto', fontSize: 9, fontFamily: 'var(--pp-font-mono)' }}>em breve</span>
+          <span key={s} className="adm-navlink ck-off">
+            <Icon name="box" size={16} /> {s} <span className="ck-ml-auto ck-t-label pp-mono">em breve</span>
           </span>
         ))}
-        <button className="ck-btn ck-btn--glass ck-btn--sm" style={{ marginTop: 'auto' }} onClick={() => navigate('/')}>
+        <button className="ck-btn ck-btn--glass ck-btn--sm ck-mt-auto" onClick={() => navigate('/')}>
           <Icon name="arrowLeft" size={15} /> Voltar ao cockpit
         </button>
       </aside>
@@ -64,7 +64,7 @@ export function AdmShell({ where = 'Visão geral da plataforma', children }) {
         <header className="adm-topbar">
           <div className="pp-row">
             <span className="adm-secpill"><Icon name="scan" size={12} /> MODO ADMINISTRATIVO · TUDO É TRILHADO</span>
-            <span className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)' }}>{where}</span>
+            <span className="pp-muted ck-t-support">{where}</span>
           </div>
           <span className="ck-live"><span className="pp-pulse-dot" /> status OK</span>
         </header>

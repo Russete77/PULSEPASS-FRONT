@@ -110,7 +110,7 @@ export default function ListaPorta() {
     <Shell>
       <OpsBack eventId={id} />
       <div className="ck-eyebrow">porta · lista (azlist)</div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 8 }}>
+      <div className="ck-flex ck-jc-btw ck-ai-base pp-wrap ck-gap-2">
         <h1 className="ck-h1">Check-in da lista</h1>
         {guests.length > 0 && (
           <button className="ck-btn ck-btn--glass ck-btn--sm" onClick={exportarCsv}>
@@ -126,7 +126,7 @@ export default function ListaPorta() {
       {/* As listas do evento — toca para filtrar. O % diz qual promoter de
           fato TROUXE gente, não só quem inscreveu nome. */}
       {listas.length > 1 && (
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 'var(--pp-s-4)' }}>
+        <div className="ck-flex ck-gap-2 pp-wrap ck-mb-4">
           <button className={`pp-chip ${lista === '' ? 'pp-chip--active' : ''}`} onClick={() => setLista('')}>
             Todas ({guests.length})
           </button>
@@ -148,18 +148,21 @@ export default function ListaPorta() {
         if (!l) return null;
         const pct = l.total > 0 ? Math.round((l.dentro / l.total) * 100) : 0;
         return (
-          <div className="ck-card" style={{ maxWidth: 680, marginBottom: 'var(--pp-s-5)', padding: '12px 18px' }}>
-            <div className="pp-between" style={{ gap: 12, flexWrap: 'wrap' }}>
+          <div className="ck-card ck-w-read ck-mb-5 ck-linha--pad">
+            <div className="pp-between ck-gap-3 pp-wrap">
               <div>
                 <div className="ck-label">Lista de {l.nome}</div>
-                {TIPO_LISTA[l.tipo] && <span className="ck-badge" style={{ fontSize: 11 }}>{TIPO_LISTA[l.tipo]}</span>}
+                {TIPO_LISTA[l.tipo] && <span className="ck-badge ck-t-label">{TIPO_LISTA[l.tipo]}</span>}
               </div>
-              <div style={{ display: 'flex', gap: 20, fontFamily: 'var(--pp-font-mono)' }}>
-                {[['inscritos', l.total, 'var(--pp-fg-1)'], ['dentro', l.dentro, 'var(--pp-pulse)'],
-                  ['presença', `${pct}%`, pct >= 50 ? 'var(--pp-pulse)' : 'var(--pp-amber)']].map(([k, v, cor]) => (
+              <div className="ck-flex ck-gap-5 pp-mono">
+                {/* "inscritos" apontava para --pp-fg-1, token que não existe:
+                    o número saía sem cor definida. Agora os três saem do mesmo
+                    vocabulário de tons do cockpit. */}
+                {[['inscritos', l.total, 'fg'], ['dentro', l.dentro, 'pulse'],
+                  ['presença', `${pct}%`, pct >= 50 ? 'pulse' : 'amber']].map(([k, v, tom]) => (
                     <div key={k}>
-                      <div style={{ fontSize: 10, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--pp-fg-4)' }}>{k}</div>
-                      <div style={{ fontWeight: 700, fontSize: 18, color: cor }}>{v}</div>
+                      <div className="ck-eyebrow">{k}</div>
+                      <div className={`ck-w-bold ck-t-section ck-c-${tom}`}>{v}</div>
                     </div>
                   ))}
               </div>
@@ -168,13 +171,12 @@ export default function ListaPorta() {
         );
       })()}
 
-      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center', marginBottom: 'var(--pp-s-5)' }}>
-        <div className="pp-inputwrap" style={{ flex: 1, minWidth: 240, maxWidth: 480 }}>
+      <div className="ck-flex ck-gap-3 pp-wrap ck-ai-center ck-mb-5">
+        <div className="pp-inputwrap ck-flex1 ck-w-form ck-fit--lg">
           <Icon name="search" size={16} />
-          <input className="ck-input" style={{ width: '100%', paddingLeft: 46 }}
-            placeholder="Nome, telefone ou e-mail…" value={q} onChange={(e) => setQ(e.target.value)} autoFocus />
+          <input className="ck-input ck-full" placeholder="Nome, telefone ou e-mail…" value={q} onChange={(e) => setQ(e.target.value)} autoFocus />
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
+        <div className="ck-flex ck-gap-2">
           {[['todos', 'Todos'], ['dentro', 'Já dentro'], ['aguardando', 'Aguardando']].map(([k, rotulo]) => (
             <button key={k} className={`pp-chip ${filtro === k ? 'pp-chip--active' : ''}`} onClick={() => setFiltro(k)}>
               {rotulo}
@@ -183,23 +185,23 @@ export default function ListaPorta() {
         </div>
       </div>
 
-      <div className="ck-card" style={{ padding: 0, overflow: 'hidden', maxWidth: 680 }}>
-        {filtered.length === 0 && <p className="pp-muted" style={{ padding: 'var(--pp-s-6)' }}>Nenhum convidado {q || lista || filtro !== 'todos' ? 'encontrado com esse filtro' : 'na lista ainda'}.</p>}
+      <div className="ck-card ck-card--flush ck-w-read">
+        {filtered.length === 0 && <p className="pp-muted ck-p-6">Nenhum convidado {q || lista || filtro !== 'todos' ? 'encontrado com esse filtro' : 'na lista ainda'}.</p>}
         {filtered.map((g, i) => {
           const total = g.party_size ?? 1;
           const dentro = g.checked_in_count ?? (g.status === 'checked_in' ? 1 : 0);
           const faltam = total - dentro;
           const completo = faltam <= 0;
           return (
-            <div key={g.id} className="pp-between" style={{ padding: '14px 18px', borderBottom: i < filtered.length - 1 ? '1px solid var(--pp-edge-1)' : 'none', gap: 12 }}>
-              <div className="pp-grow" style={{ minWidth: 0 }}>
-                <div style={{ fontWeight: 600 }}>
-                  {g.name}{total > 1 && <span style={{ color: 'var(--pp-fg-3)', fontWeight: 400 }}> +{total - 1}</span>}
+            <div key={g.id} className="ck-linha ck-linha--pad">
+              <div className="pp-grow ck-min0">
+                <div className="ck-w-semi">
+                  {g.name}{total > 1 && <span className="pp-muted ck-w-reg"> +{total - 1}</span>}
                   {TIPO_LISTA[g.list_type] && (
-                    <span className="ck-badge" style={{ marginLeft: 8, fontSize: 11 }}>{TIPO_LISTA[g.list_type]}</span>
+                    <span className="ck-badge ck-ml-2 ck-t-label">{TIPO_LISTA[g.list_type]}</span>
                   )}
                 </div>
-                <div className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 2 }}>
+                <div className="pp-muted ck-meta">
                   {g.promoter ? `lista de ${g.promoter}` : 'lista'}
                   {total > 1 && ` · ${dentro} de ${total} dentro`}
                   {/* Telefone na frente do e-mail: na porta liga-se, não se escreve. */}
@@ -217,7 +219,7 @@ export default function ListaPorta() {
               ) : (
                 // Com acompanhantes o porteiro escolhe QUANTOS estão entrando
                 // agora — obrigar o grupo a chegar junto trava a fila.
-                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                <div className="ck-flex ck-gap-2 pp-wrap ck-jc-end">
                   <button className="ck-btn ck-btn--primary ck-btn--sm" disabled={busy === g.id}
                     onClick={() => checkin(g, 1)}>
                     {busy === g.id ? '…' : total > 1 ? '+1 entrou' : 'Liberar entrada'}

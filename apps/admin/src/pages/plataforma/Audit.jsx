@@ -5,11 +5,15 @@ import { Icon } from '@pulsepass/shared/Icon';
 import { api } from '../../lib/api.js';
 import { brl, dateTime } from '../../lib/format.js';
 
+/* Tipo do lançamento vira TOM, não hex. Os valores anteriores eram hex cru
+   concatenado com sufixo de alfa ("#22D3EE18") — truque que só funciona com
+   hex e que já não funcionaria com token. O chip agora é neutro e só o ícone
+   recebe a cor: quatro chips coloridos numa coluna viravam semáforo. */
 const KIND = {
-  payment: { icon: 'check', color: 'var(--pp-pulse)', label: 'Pagamento' },
-  refund: { icon: 'refresh', color: '#FF3D88', label: 'Reembolso' },
-  event: { icon: 'calendar', color: '#22D3EE', label: 'Evento' },
-  org: { icon: 'users', color: '#A78BFA', label: 'Org' },
+  payment: { icon: 'check', tom: 'pulse', label: 'Pagamento' },
+  refund: { icon: 'refresh', tom: 'pink', label: 'Reembolso' },
+  event: { icon: 'calendar', tom: 'cyan', label: 'Evento' },
+  org: { icon: 'users', tom: 'violet', label: 'Org' },
 };
 
 export default function Audit() {
@@ -20,11 +24,11 @@ export default function Audit() {
   return (
     <AdmShell where="Trilha de atividade · tempo real">
       {error ? <ErrorBox>{error}</ErrorBox> : !feed ? <Loading /> : (
-        <div className="pp-stack pp-stack-5 pp-reveal" style={{ maxWidth: 760 }}>
+        <div className="pp-stack pp-stack-5 pp-reveal ck-w-read">
           <div>
-            <div className="adm-eyebrow" style={{ color: '#67E8F9' }}>Audit log</div>
-            <div className="adm-h1">A plataforma <span className="accent" style={{ color: '#67E8F9' }}>em tempo real</span></div>
-            <p className="pp-muted" style={{ margin: '4px 0 0' }}>Trilha real de pagamentos, reembolsos, eventos e orgs — o que aconteceu, quando.</p>
+            <div className="adm-eyebrow ck-c-cyan">Audit log</div>
+            <div className="adm-h1">A plataforma <span className="accent ck-c-cyan">em tempo real</span></div>
+            <p className="pp-muted ck-m-0 ck-mt-1">Trilha real de pagamentos, reembolsos, eventos e orgs — o que aconteceu, quando.</p>
           </div>
 
           <div className="adm-panel">
@@ -33,15 +37,15 @@ export default function Audit() {
               {feed.map((a, i) => {
                 const k = KIND[a.kind] ?? KIND.event;
                 return (
-                  <div key={i} className="pp-row" style={{ padding: '10px 0', borderBottom: i < feed.length - 1 ? '1px solid var(--pp-edge-1)' : 'none', alignItems: 'flex-start' }}>
-                    <span className="pp-tx__icon" style={{ background: `${k.color}18`, borderColor: `${k.color}40`, color: k.color }}><Icon name={k.icon} size={16} /></span>
+                  <div key={i} className="ck-linha ck-ai-start">
+                    <span className={`ck-feed__ic ck-feed__ic--neutro ck-c-${k.tom}`} aria-hidden="true"><Icon name={k.icon} size={16} /></span>
                     <div className="pp-grow">
-                      <div style={{ fontWeight: 600, fontSize: 'var(--pp-fs-14)' }}>{a.title}</div>
-                      <div className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 2 }}>{a.detail}</div>
+                      <div className="ck-w-semi ck-t-support">{a.title}</div>
+                      <div className="pp-muted ck-meta">{a.detail}</div>
                     </div>
-                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                      {a.amount_cents != null && <div className="pp-mono" style={{ fontWeight: 700, fontSize: 'var(--pp-fs-13)', color: a.kind === 'refund' ? 'var(--pp-pink)' : 'var(--pp-pulse)' }}>{brl(a.amount_cents)}</div>}
-                      <div className="pp-mono pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 2 }}>{dateTime(a.at)}</div>
+                    <div className="ck-right ck-shrink0">
+                      {a.amount_cents != null && <div className={`pp-mono ck-w-bold ck-t-support ${a.kind === 'refund' ? 'ck-c-pink' : 'ck-c-pulse'}`}>{brl(a.amount_cents)}</div>}
+                      <div className="pp-mono pp-muted-2 ck-meta">{dateTime(a.at)}</div>
                     </div>
                   </div>
                 );

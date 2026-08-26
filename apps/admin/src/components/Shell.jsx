@@ -42,7 +42,7 @@ export function Shell({ children }) {
             </>
           )}
           {isAdmin && (
-            <NavLink to="/plataforma" className="ck-navlink" style={{ color: 'var(--pp-pink)', marginTop: 'var(--pp-s-4)' }}>
+            <NavLink to="/plataforma" className="ck-navlink ck-c-pink ck-mt-4">
               ◆ PulseADM
             </NavLink>
           )}
@@ -55,8 +55,8 @@ export function Shell({ children }) {
           <span className="ck-live">
             <span className="pp-pulse-dot" /> ao vivo
           </span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <span style={{ color: 'var(--pp-fg-3)', fontSize: 13 }}>{user?.email}</span>
+          <div className="ck-flex ck-ai-center ck-gap-3">
+            <span className="pp-muted ck-t-support">{user?.email}</span>
             <button
               className="ck-btn ck-btn--glass"
               onClick={async () => { await signOut(); navigate('/entrar'); }}
@@ -72,14 +72,14 @@ export function Shell({ children }) {
 }
 
 export function Loading({ label = 'Carregando…' }) {
-  return <div className="ck-loading"><div className="ck-spinner" /><p style={{ marginTop: 14 }}>{label}</p></div>;
+  return <div className="ck-loading"><div className="ck-spinner" /><p className="ck-mt-4">{label}</p></div>;
 }
 export function ErrorBox({ children }) { return <div className="ck-error">{children}</div>; }
 
 /** Voltar padrão do cockpit — ícone de linha, nunca glifo "←" digitado. */
 export function BackLink({ to, label }) {
   return (
-    <Link to={to} className="ck-btn ck-btn--glass ck-btn--sm" style={{ marginBottom: 'var(--pp-s-4)' }}>
+    <Link to={to} className="ck-btn ck-btn--glass ck-btn--sm ck-mb-4">
       <Icon name="arrowLeft" size={16} /> {label}
     </Link>
   );
@@ -93,7 +93,7 @@ export function OpsBack({ eventId }) {
   const { isStaffOnly } = useAuth();
   const to = isStaffOnly ? '/' : `/eventos/${eventId}`;
   return (
-    <Link to={to} className="ck-btn ck-btn--glass ck-btn--sm" style={{ marginBottom: 'var(--pp-s-4)' }}>
+    <Link to={to} className="ck-btn ck-btn--glass ck-btn--sm ck-mb-4">
       <Icon name="arrowLeft" size={16} /> {isStaffOnly ? 'Meus plantões' : 'Dashboard'}
     </Link>
   );

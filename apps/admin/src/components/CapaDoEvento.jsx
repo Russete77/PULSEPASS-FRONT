@@ -50,19 +50,16 @@ export default function CapaDoEvento({ eventId, coverUrl, onChange }) {
   }
 
   return (
-    <div className="ck-card" style={{ maxWidth: 560 }}>
+    <div className="ck-card ck-w-mid">
       <div className="ck-label">Capa do evento</div>
 
       {coverUrl ? (
         <>
           <img
             src={coverUrl} alt="Capa do evento"
-            style={{
-              width: '100%', aspectRatio: '16 / 9', objectFit: 'cover',
-              borderRadius: 'var(--pp-r-card)', marginTop: 10, display: 'block',
-            }}
+            className="ck-full ck-mt-3 ck-block ck-capa"
           />
-          <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
+          <div className="ck-flex ck-gap-2 ck-mt-3 pp-wrap">
             <button className="ck-btn ck-btn--glass ck-btn--sm" disabled={enviando}
               onClick={() => inputRef.current?.click()}>
               {enviando ? 'Enviando…' : 'Trocar imagem'}
@@ -74,10 +71,10 @@ export default function CapaDoEvento({ eventId, coverUrl, onChange }) {
         </>
       ) : (
         <>
-          <p style={{ color: 'var(--pp-amber)', fontSize: 13, margin: '8px 0 4px' }}>
+          <p className="ck-c-amber ck-t-support ck-m-0 ck-mt-2 ck-mb-1">
             Este evento está sem capa.
           </p>
-          <p style={{ color: 'var(--pp-fg-4)', fontSize: 12, margin: '0 0 14px' }}>
+          <p className="pp-muted-2 ck-t-support ck-m-0 ck-mb-4">
             A imagem é a primeira coisa que a pessoa vê na vitrine e no ingresso.
             Sem ela, seu evento aparece com um fundo neutro e vende menos.
           </p>
@@ -88,13 +85,12 @@ export default function CapaDoEvento({ eventId, coverUrl, onChange }) {
         </>
       )}
 
-      {erro && <p style={{ color: '#FF6B61', fontSize: 13, marginTop: 10 }}>{erro}</p>}
-      <p style={{ color: 'var(--pp-fg-4)', fontSize: 11, marginTop: 10 }}>
+      {erro && <p className="ck-c-red ck-t-support ck-mt-3">{erro}</p>}
+      <p className="pp-muted-2 ck-t-label ck-mt-3">
         Proporção 16:9, até {LIMITE_MB} MB. JPG, PNG, WebP ou AVIF.
       </p>
 
-      <input ref={inputRef} type="file" accept={ACEITOS.join(',')}
-        onChange={escolher} style={{ display: 'none' }} />
+      <input className="ck-none" ref={inputRef} type="file" accept={ACEITOS.join(',')} onChange={escolher}/>
     </div>
   );
 }

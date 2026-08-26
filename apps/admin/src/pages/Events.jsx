@@ -90,17 +90,17 @@ export default function Events() {
         <h1 className="ck-h1">Meus plantões</h1>
         <p className="ck-sub">Os eventos em que você está escalado. Toque para abrir sua estação.</p>
         {error && <ErrorBox>{error}</ErrorBox>}
-        <div className="ck-grid" style={{ marginTop: 24 }}>
+        <div className="ck-grid ck-mt-6">
           {me.assignments.map(({ role, event }) => (
             <div key={`${event.id}-${role}`} className="ck-card">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
-                <strong style={{ fontSize: 'var(--pp-fs-18)', fontFamily: 'var(--pp-font-display)' }}>{event.title}</strong>
+              <div className="ck-flex ck-jc-btw ck-ai-start ck-gap-2">
+                <strong className="ck-t-section ck-display">{event.title}</strong>
                 <span className="ck-badge">{STAFF_LABEL[role] ?? role}</span>
               </div>
-              <p style={{ color: 'var(--pp-fg-3)', fontSize: 13, marginTop: 10 }}>
+              <p className="pp-muted ck-t-support ck-mt-3">
                 {eventDate(event.starts_at)} · {event.city}/{event.state}
               </p>
-              <div style={{ display: 'flex', gap: 8, marginTop: 16, flexWrap: 'wrap' }}>
+              <div className="ck-flex ck-gap-2 ck-mt-4 pp-wrap">
                 {STATIONS[role]?.map(({ to, label }, i) => (
                   <Link key={to} to={`/eventos/${event.id}${to}`}
                     className={`ck-btn ${i === 0 ? 'ck-btn--primary' : 'ck-btn--glass'}`}>{label}</Link>
@@ -120,7 +120,7 @@ export default function Events() {
         <div className="ck-eyebrow">primeiro passo</div>
         <h1 className="ck-h1">Crie sua organização</h1>
         <p className="ck-sub">A casa/produtora dona dos eventos. Você poderá criar eventos em seguida.</p>
-        <form className="ck-card" style={{ maxWidth: 520 }} onSubmit={createOrg}>
+        <form className="ck-card ck-w-form" onSubmit={createOrg}>
           <div className="ck-field">
             <label htmlFor="events-1" className="ck-label">Nome da organização</label>
             <input id="events-1" className="ck-input" value={orgName} onChange={(e) => setOrgName(e.target.value)} required minLength={2} placeholder="Ex.: Casa Pulse" />
@@ -142,7 +142,7 @@ export default function Events() {
     <Shell>
       {/* Cabeçalho no desenho do MultiEventScreen: eyebrow com a contagem,
           título com assinatura serifada e a ação principal à direita. */}
-      <div className="pp-between pp-wrap" style={{ alignItems: 'flex-end' }}>
+      <div className="pp-between pp-wrap ck-ai-end">
         <div>
           <div className="ck-eyebrow">{me?.organizations[0]?.name} · {events.length} evento{events.length === 1 ? '' : 's'}</div>
           <h1 className="ck-h1">Seus eventos da <span className="pp-accent">temporada</span></h1>
@@ -155,29 +155,29 @@ export default function Events() {
       {error && <ErrorBox>{error}</ErrorBox>}
 
       {events.length === 0 ? (
-        <div className="pp-empty" style={{ marginTop: 24 }}>
+        <div className="pp-empty ck-mt-6">
           <div className="pp-empty__icon"><Icon name="calendar" size={30} /></div>
           <div className="pp-empty__title">Nenhum evento ainda</div>
           <p>A vitrine começa no primeiro evento publicado.</p>
-          <button className="ck-btn ck-btn--primary" style={{ marginTop: 16 }} onClick={() => navigate('/novo')}>
+          <button className="ck-btn ck-btn--primary ck-mt-4" onClick={() => navigate('/novo')}>
             Criar o primeiro evento
           </button>
         </div>
       ) : (
         <>
           {/* Resumo: só contagens reais (a listagem não devolve receita). */}
-          <div className="ck-kpis" style={{ marginTop: 20, gridTemplateColumns: 'repeat(3, 1fr)' }}>
-            <div className="ck-kpi" style={{ '--k': 'var(--pp-pulse)' }}>
+          <div className="ck-kpis ck-mt-5 ck-cols-3">
+            <div className="ck-kpi ck-k--pulse">
               <div className="lbl">No ar</div>
               <div className="val">{porStatus.published ?? 0}</div>
               <div className="d">{proximo ? `próximo: ${eventDate(proximo.starts_at)}` : 'nenhum publicado'}</div>
             </div>
-            <div className="ck-kpi" style={{ '--k': 'var(--pp-amber)' }}>
+            <div className="ck-kpi ck-k--amber">
               <div className="lbl">Rascunhos</div>
               <div className="val">{porStatus.draft ?? 0}</div>
               <div className="d">ainda fora da vitrine</div>
             </div>
-            <div className="ck-kpi" style={{ '--k': 'var(--pp-violet)' }}>
+            <div className="ck-kpi ck-k--violet">
               <div className="lbl">Total</div>
               <div className="val">{events.length}</div>
               <div className="d">todos os status</div>
@@ -185,7 +185,7 @@ export default function Events() {
           </div>
 
           {/* Filtro por status — as pílulas do mockup, com contagens reais. */}
-          <div className="ck-tabs" role="tablist" aria-label="Filtrar eventos por status" style={{ marginTop: 'var(--pp-s-5)' }}>
+          <div className="ck-tabs ck-mt-5" role="tablist" aria-label="Filtrar eventos por status">
             {['todos', 'published', 'draft', 'paused', 'ended', 'cancelled']
               .filter((s) => s === 'todos' || porStatus[s])
               .map((s) => (
@@ -199,13 +199,9 @@ export default function Events() {
               ))}
           </div>
 
-          <div className="ck-grid" style={{ marginTop: 'var(--pp-s-4)' }}>
+          <div className="ck-grid ck-mt-4">
             {visiveis.map((ev) => (
-              <Link
-                key={ev.id} to={`/eventos/${ev.id}`}
-                className={`ck-card ck-event ck-evcard ${ev.status === 'published' ? 'ck-evcard--live' : ''} ${ev.status === 'draft' ? 'ck-evcard--draft' : ''}`}
-                style={{ padding: 0 }}
-              >
+              <Link key={ev.id} to={`/eventos/${ev.id}`} className={`ck-card ck-event ck-evcard ${ev.status === 'published' ? 'ck-evcard--live' : ''} ${ev.status === 'draft' ? 'ck-evcard--draft' : ''} ck-p-0`}>
                 {/* "Capa" estrutural: a listagem não devolve imagem, então o
                     topo é atmosfera de token com o título — nada de foto falsa. */}
                 <div className="ck-evcard__capa">
@@ -221,7 +217,7 @@ export default function Events() {
               </Link>
             ))}
             {visiveis.length === 0 && (
-              <p className="pp-muted" style={{ gridColumn: '1 / -1' }}>Nenhum evento com esse status.</p>
+              <p className="pp-muted ck-span-all">Nenhum evento com esse status.</p>
             )}
           </div>
         </>

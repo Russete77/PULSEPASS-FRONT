@@ -24,19 +24,19 @@ button { cursor: pointer; }
   position: sticky; top: 0; height: 100dvh;
 }
 .ck-brand {
-  display: flex; align-items: center; gap: 10px;
-  font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-18);
+  display: flex; align-items: center; gap: var(--pp-s-3);
+  font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-section);
   margin-bottom: var(--pp-s-6);
 }
 .ck-brand .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--pp-pulse); animation: pp-pulse-ring 1.8s var(--pp-ease) infinite; }
 .ck-nav { display: flex; flex-direction: column; gap: 4px; flex: 1; }
 .ck-navlink {
-  padding: 10px 12px; border-radius: var(--pp-r-md);
-  color: var(--pp-fg-3); font-size: var(--pp-fs-14); font-weight: 500;
+  padding: var(--pp-s-3); border-radius: var(--pp-r-control);
+  color: var(--pp-fg-3); font-size: var(--pp-t-support); font-weight: 500;
 }
 .ck-navlink:hover { background: var(--pp-glass-1); color: var(--pp-fg-2); }
 .ck-navlink.active { background: var(--pp-glass-2); color: var(--pp-fg); }
-.ck-side-foot { font-size: var(--pp-fs-12); color: var(--pp-fg-4); }
+.ck-side-foot { font-size: var(--pp-t-support); color: var(--pp-fg-4); }
 
 .ck-main { flex: 1; min-width: 0; }
 .ck-topbar {
@@ -67,7 +67,7 @@ h1.ck-h1 { font-family: var(--pp-font-display); font-weight: 700; font-size: var
 .ck-sub { color: var(--pp-fg-3); margin: 0 0 var(--pp-s-6); }
 
 /* ── Buttons (alinhado ao spec pp-) ── */
-.ck-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 22px; border-radius: var(--pp-r-control); font-family: var(--pp-font-body); font-weight: 600; font-size: var(--pp-fs-14); letter-spacing: -0.005em; border: 1px solid transparent; transition: filter var(--pp-dur-1) var(--pp-ease), background var(--pp-dur-2) var(--pp-ease); }
+.ck-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 var(--pp-s-6); border-radius: var(--pp-r-control); font-family: var(--pp-font-body); font-weight: 600; font-size: var(--pp-t-support); letter-spacing: -0.005em; border: 1px solid transparent; transition: filter var(--pp-dur-1) var(--pp-ease), background var(--pp-dur-2) var(--pp-ease); }
 /* Chapado: sem gradiente nem sombra colorida (ver tokens v4). */
 .ck-btn--primary { background: var(--pp-pulse); color: var(--pp-pulse-ink); font-weight: 700; }
 .ck-btn--primary:hover:not(:disabled) { background: var(--pp-pulse-hi); }
@@ -76,18 +76,18 @@ h1.ck-h1 { font-family: var(--pp-font-display); font-weight: 700; font-size: var
 .ck-btn--ghost { background: transparent; color: var(--pp-fg-2); }
 .ck-btn--ghost:hover:not(:disabled) { color: var(--pp-fg); background: var(--pp-glass-1); }
 .ck-btn--danger { background: rgba(255,59,48,0.14); color: #FF6B61; border-color: rgba(255,59,48,0.30); }
-.ck-btn--sm { height: 36px; padding: 0 16px; font-size: var(--pp-fs-13); }
+.ck-btn--sm { height: 36px; padding: 0 var(--pp-s-4); font-size: var(--pp-t-support); }
 .ck-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
 /* ── Cards ── */
-.ck-card { background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2); border-radius: var(--pp-r-lg); padding: var(--pp-s-5); box-shadow: var(--pp-shine), var(--pp-shadow-1); }
+.ck-card { background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2); border-radius: var(--pp-r-card); padding: var(--pp-s-5); box-shadow: var(--pp-shine), var(--pp-shadow-1); }
 
 /* ── Inputs ── */
-.ck-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: var(--pp-s-4); }
-.ck-label { font-size: var(--pp-fs-12); color: var(--pp-fg-3); font-family: var(--pp-font-mono); letter-spacing: 0.06em; text-transform: uppercase; }
+.ck-field { display: flex; flex-direction: column; gap: var(--pp-s-2); margin-bottom: var(--pp-s-4); }
+.ck-label { font-size: var(--pp-t-support); color: var(--pp-fg-3); font-family: var(--pp-font-mono); letter-spacing: 0.06em; text-transform: uppercase; }
 .ck-input, .ck-textarea, .ck-select {
-  background: rgba(255,255,255,0.05); border: 1px solid var(--pp-edge-2); border-radius: var(--pp-r-md);
-  color: var(--pp-fg); padding: 0 var(--pp-s-4); height: 46px; font-size: var(--pp-fs-15); outline: none;
+  background: rgba(255,255,255,0.05); border: 1px solid var(--pp-edge-2); border-radius: var(--pp-r-control);
+  color: var(--pp-fg); padding: 0 var(--pp-s-4); height: 48px; font-size: var(--pp-t-body); outline: none;
   transition: border-color var(--pp-dur-2) var(--pp-ease), box-shadow var(--pp-dur-2) var(--pp-ease);
 }
 .ck-input::placeholder, .ck-textarea::placeholder { color: var(--pp-fg-4); }
@@ -108,16 +108,16 @@ h1.ck-h1 { font-family: var(--pp-font-display); font-weight: 700; font-size: var
 /* ── Metrics grid (dashboard) ── */
 .ck-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--pp-s-4); }
 @media (max-width: 980px) { .ck-metrics { grid-template-columns: repeat(2, 1fr); } }
-.ck-metric { padding: var(--pp-s-5); background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2); border-radius: var(--pp-r-lg); box-shadow: var(--pp-shine), var(--pp-shadow-1); }
-.ck-metric .lbl { font-size: var(--pp-fs-12); color: var(--pp-fg-3); font-family: var(--pp-font-mono); text-transform: uppercase; letter-spacing: 0.08em; }
-.ck-metric .val { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-32); margin-top: 8px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.ck-metric { padding: var(--pp-s-5); background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2); border-radius: var(--pp-r-card); box-shadow: var(--pp-shine), var(--pp-shadow-1); }
+.ck-metric .lbl { font-size: var(--pp-t-support); color: var(--pp-fg-3); font-family: var(--pp-font-mono); text-transform: uppercase; letter-spacing: 0.08em; }
+.ck-metric .val { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-money); margin-top: 8px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 /* Numero grande fica na display: mono e para dado tecnico, nao para KPI. */
 .ck-metric .val.accent { color: var(--pp-pulse); }
 
 /* ── Table ── */
 .ck-table { width: 100%; border-collapse: collapse; }
-.ck-table th, .ck-table td { text-align: left; padding: var(--pp-s-3) var(--pp-s-4); border-bottom: 1px solid var(--pp-edge-1); font-size: var(--pp-fs-14); }
-.ck-table th { color: var(--pp-fg-3); font-weight: 600; font-size: var(--pp-fs-12); text-transform: uppercase; letter-spacing: 0.06em; }
+.ck-table th, .ck-table td { text-align: left; padding: var(--pp-s-3) var(--pp-s-4); border-bottom: 1px solid var(--pp-edge-1); font-size: var(--pp-t-support); }
+.ck-table th { color: var(--pp-fg-3); font-weight: 600; font-size: var(--pp-t-support); text-transform: uppercase; letter-spacing: 0.06em; }
 .ck-table tbody tr { transition: background var(--pp-dur-1) var(--pp-ease); }
 .ck-table tbody tr:hover { background: var(--pp-glass-1); }
 .ck-table td.num, .ck-table th.num { text-align: right; font-variant-numeric: tabular-nums; }
@@ -128,14 +128,14 @@ h1.ck-h1 { font-family: var(--pp-font-display); font-weight: 700; font-size: var
 .ck-event:hover { transform: translateY(-3px); }
 
 /* ── Badges (mono uppercase, alinhado ao spec) ── */
-.ck-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: var(--pp-r-pill); font-family: var(--pp-font-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.85); }
+.ck-badge { display: inline-flex; align-items: center; gap: var(--pp-s-2); padding: var(--pp-s-1) var(--pp-s-2); border-radius: var(--pp-r-pill); font-family: var(--pp-font-mono); font-size: var(--pp-t-label); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.85); }
 .ck-badge--published, .ck-badge--success { color: #4DFFA8; border-color: rgba(0,255,133,0.22); background: rgba(0,255,133,0.14); }
 .ck-badge--draft, .ck-badge--warning { color: #FFD15C; border-color: rgba(255,184,0,0.24); background: rgba(255,184,0,0.14); }
 .ck-badge--danger { color: #FF7A75; border-color: rgba(255,59,48,0.24); background: rgba(255,59,48,0.14); }
 
 /* ── States ── */
 .ck-loading, .ck-empty { text-align: center; color: var(--pp-fg-3); padding: var(--pp-s-16) var(--pp-s-5); }
-.ck-error { background: rgba(255,59,48,0.08); border: 1px solid rgba(255,59,48,0.25); color: #FF6B61; border-radius: var(--pp-r-md); padding: var(--pp-s-3) var(--pp-s-4); margin: var(--pp-s-3) 0; }
+.ck-error { background: rgba(255,59,48,0.08); border: 1px solid rgba(255,59,48,0.25); color: #FF6B61; border-radius: var(--pp-r-control); padding: var(--pp-s-3) var(--pp-s-4); margin: var(--pp-s-3) 0; }
 .ck-spinner { width: 26px; height: 26px; border-radius: 50%; border: 3px solid var(--pp-edge-2); border-top-color: var(--pp-pulse); animation: pp-spin 0.8s linear infinite; margin: 0 auto; }
 @keyframes pp-spin { to { transform: rotate(360deg); } }
 
@@ -150,38 +150,42 @@ h1.ck-h1 { font-family: var(--pp-font-display); font-weight: 700; font-size: var
 .ck-tier input, .ck-row input, .ck-tier select, .ck-row select { width: 100%; }
 @media (max-width: 900px) { .ck-tier { grid-template-columns: 1fr 1fr 1fr auto; } }
 @media (max-width: 640px) { .ck-tier { grid-template-columns: 1fr 1fr; } .ck-row { grid-template-columns: 1fr; } }
-.ck-iconbtn { width: 44px; height: 46px; border-radius: var(--pp-r-md); background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2); color: var(--pp-fg-2); }
+/* O `font-size` faltava, então os glifos − e + herdavam o padrão do
+   navegador (13px) dentro de um botão de 44px: alvo grande com marca
+   pequena. São os botões MAIS tocados do PDV — é com eles que o operador
+   monta a comanda com fila no balcão. */
+.ck-iconbtn { width: 44px; height: 48px; border-radius: var(--pp-r-control); background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2); color: var(--pp-fg-2); font-size: var(--pp-t-section); line-height: 1; }
 
-.ck-live { display: inline-flex; align-items: center; gap: 8px; color: var(--pp-fg-3); font-size: var(--pp-fs-13); }
+.ck-live { display: inline-flex; align-items: center; gap: 8px; color: var(--pp-fg-3); font-size: var(--pp-t-support); }
 
 /* ══ PulseADM · god-mode super-admin (identidade rosa) ══ */
 .adm-side { width: 240px; flex-shrink: 0; background: rgba(11,13,18,0.7); backdrop-filter: var(--pp-blur-md); border-right: 1px solid var(--pp-edge-1); padding: var(--pp-s-5); display: flex; flex-direction: column; gap: 4px; position: sticky; top: 0; height: 100dvh; }
-.adm-brand { display: flex; align-items: center; gap: 10px; margin-bottom: var(--pp-s-5); }
-.adm-brand .wm { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-16); }
+.adm-brand { display: flex; align-items: center; gap: var(--pp-s-3); margin-bottom: var(--pp-s-5); }
+.adm-brand .wm { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-body); }
 .adm-brand .wm b { color: var(--pp-pink); }
-.adm-brand .sub { font-family: var(--pp-font-mono); font-size: 9px; letter-spacing: 0.12em; color: var(--pp-pink); }
-.adm-navlink { padding: 10px 12px; border-radius: var(--pp-r-md); color: var(--pp-fg-3); font-size: var(--pp-fs-14); font-weight: 500; display: flex; align-items: center; gap: 10px; }
+.adm-brand .sub { font-family: var(--pp-font-mono); font-size: var(--pp-t-label); letter-spacing: 0.12em; color: var(--pp-pink); }
+.adm-navlink { padding: var(--pp-s-3); border-radius: var(--pp-r-control); color: var(--pp-fg-3); font-size: var(--pp-t-support); font-weight: 500; display: flex; align-items: center; gap: var(--pp-s-3); }
 .adm-navlink:hover { background: var(--pp-glass-1); color: var(--pp-fg-2); }
 .adm-navlink.active { background: rgba(255,61,136,0.10); border: 1px solid rgba(255,61,136,0.25); color: var(--pp-pink); }
 .adm-topbar { height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 0 var(--pp-s-8); border-bottom: 1px solid var(--pp-edge-1); position: sticky; top: 0; z-index: 10; background: rgba(12, 9, 16, 0.72); backdrop-filter: var(--pp-blur-md); }
-.adm-secpill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; background: rgba(255,59,48,0.10); border: 1px solid rgba(255,59,48,0.28); font-family: var(--pp-font-mono); font-size: 10px; font-weight: 600; letter-spacing: 0.06em; color: #FF7A75; }
+.adm-secpill { display: inline-flex; align-items: center; gap: var(--pp-s-2); padding: var(--pp-s-2) var(--pp-s-3); border-radius: var(--pp-r-pill); background: rgba(255,59,48,0.10); border: 1px solid rgba(255,59,48,0.28); font-family: var(--pp-font-mono); font-size: var(--pp-t-label); font-weight: 600; letter-spacing: 0.06em; color: #FF7A75; }
 .adm-content { padding: var(--pp-s-8); max-width: 1280px; }
-.adm-eyebrow { font-family: var(--pp-font-mono); font-size: var(--pp-fs-12); letter-spacing: 0.14em; text-transform: uppercase; color: var(--pp-pink); }
-.adm-h1 { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-28); letter-spacing: -0.03em; margin: 4px 0 0; }
+.adm-eyebrow { font-family: var(--pp-font-mono); font-size: var(--pp-t-label); letter-spacing: 0.14em; text-transform: uppercase; color: var(--pp-pink); }
+.adm-h1 { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-title); letter-spacing: -0.03em; margin: 4px 0 0; }
 .adm-h1 .accent { font-weight: 700; color: var(--pp-pink); }
 .adm-kpis { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
 @media (max-width: 1100px) { .adm-kpis { grid-template-columns: repeat(3, 1fr); } }
-.adm-kpi { padding: 14px; border-radius: 14px; background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2); position: relative; overflow: hidden; }
+.adm-kpi { padding: var(--pp-s-4); border-radius: var(--pp-r-card); background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2); position: relative; overflow: hidden; }
 .adm-kpi::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--k, var(--pp-pulse)); opacity: 0.8; }
-.adm-kpi .l { font-family: var(--pp-font-mono); font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--pp-fg-3); }
-.adm-kpi .v { font-family: var(--pp-font-mono); font-weight: 700; font-size: var(--pp-fs-24); margin-top: 4px; letter-spacing: -0.02em; }
-.adm-kpi .d { margin-top: 3px; font-size: 10px; color: var(--k, var(--pp-fg-3)); }
-.adm-panel { padding: 18px; border-radius: 18px; background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2); }
-.adm-bar { display: flex; align-items: center; gap: 10px; }
-.adm-bar .track { flex: 1; height: 8px; border-radius: 99px; background: var(--pp-glass-1); overflow: hidden; }
-.adm-bar .fill { height: 100%; border-radius: 99px; }
-.adm-toolbtn { padding: 10px 16px; border-radius: 12px; background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2); color: var(--pp-fg); font-size: var(--pp-fs-13); font-weight: 600; display: inline-flex; align-items: center; gap: 8px; }
-.adm-btn-pink { background: var(--pp-pink); color: #fff; border: none; box-shadow: 0 4px 16px rgba(255,61,136,0.35); padding: 10px 16px; border-radius: 12px; font-size: var(--pp-fs-13); font-weight: 700; display: inline-flex; align-items: center; gap: 8px; }
+.adm-kpi .l { font-family: var(--pp-font-mono); font-size: var(--pp-t-label); letter-spacing: 0.08em; text-transform: uppercase; color: var(--pp-fg-3); }
+.adm-kpi .v { font-family: var(--pp-font-mono); font-weight: 700; font-size: var(--pp-t-money); margin-top: 4px; letter-spacing: -0.02em; }
+.adm-kpi .d { margin-top: var(--pp-s-1); font-size: var(--pp-t-label); color: var(--k, var(--pp-fg-3)); }
+.adm-panel { padding: var(--pp-s-5); border-radius: var(--pp-r-card); background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2); }
+.adm-bar { display: flex; align-items: center; gap: var(--pp-s-3); }
+.adm-bar .track { flex: 1; height: 8px; border-radius: var(--pp-r-pill); background: var(--pp-glass-1); overflow: hidden; }
+.adm-bar .fill { height: 100%; border-radius: var(--pp-r-pill); }
+.adm-toolbtn { padding: var(--pp-s-3) var(--pp-s-4); border-radius: var(--pp-r-control); background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2); color: var(--pp-fg); font-size: var(--pp-t-support); font-weight: 600; display: inline-flex; align-items: center; gap: 8px; }
+.adm-btn-pink { background: var(--pp-pink); color: #fff; border: none; box-shadow: 0 4px 16px rgba(255,61,136,0.35); padding: var(--pp-s-3) var(--pp-s-4); border-radius: var(--pp-r-control); font-size: var(--pp-t-support); font-weight: 700; display: inline-flex; align-items: center; gap: 8px; }
 
 /* ═══════════════════════════════════════════════════════
    REVISÃO DE UX · CELULAR
@@ -237,12 +241,12 @@ html, body { overflow-x: hidden; }
   display: flex; align-items: center; justify-content: space-between;
   gap: var(--pp-s-4); flex-wrap: wrap;
   padding: var(--pp-s-3) var(--pp-s-4);
-  border-radius: var(--pp-r-lg);
+  border-radius: var(--pp-r-card);
   background: var(--pp-glass-1); border: 1px solid var(--pp-edge-1);
 }
 .ck-kds__relogio {
-  font-family: var(--pp-font-mono); font-weight: 700; font-size: var(--pp-fs-18);
-  padding: 4px 10px; border-radius: var(--pp-r-control);
+  font-family: var(--pp-font-mono); font-weight: 700; font-size: var(--pp-t-section);
+  padding: var(--pp-s-1) var(--pp-s-3); border-radius: var(--pp-r-control);
   background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2);
   font-variant-numeric: tabular-nums;
 }
@@ -263,45 +267,45 @@ html, body { overflow-x: hidden; }
 .ck-kds__card--pronto .ck-kds__stripe { background: var(--pp-violet); }
 
 .ck-kds__etapa {
-  font-family: var(--pp-font-mono); font-size: 9px; letter-spacing: 0.06em;
-  text-transform: uppercase; color: var(--pp-fg-4); margin-top: 2px;
+  font-family: var(--pp-font-mono); font-size: var(--pp-t-label); letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--pp-fg-4); margin-top: var(--pp-s-1);
 }
 .ck-kds__acao { width: 100%; }
 .ck-kds__origem {
-  font-family: var(--pp-font-mono); font-size: 11px; font-weight: 600;
+  font-family: var(--pp-font-mono); font-size: var(--pp-t-label); font-weight: 600;
   letter-spacing: 0.06em; text-transform: uppercase; color: var(--pp-fg-3);
 }
 /* Mesa é o único caso em que ALGUÉM precisa levar o prato. Merece destaque
    — nas outras origens o cliente vem buscar. */
 .ck-kds__origem--mesa { color: var(--pp-pulse); }
-.ck-kds__cliente { font-weight: 600; font-size: var(--pp-fs-15); margin-top: 2px; }
+.ck-kds__cliente { font-weight: 600; font-size: var(--pp-t-body); margin-top: var(--pp-s-1); }
 
 /* O tempo é o maior elemento do card, de propósito. */
 .ck-kds__tempo {
-  font-family: var(--pp-font-display); font-weight: 700; font-size: 30px;
+  font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-money);
   line-height: 1; font-variant-numeric: tabular-nums; white-space: nowrap;
 }
-.ck-kds__tempo span { font-size: 12px; font-weight: 500; margin-left: 2px; opacity: 0.7; }
+.ck-kds__tempo span { font-size: var(--pp-t-support); font-weight: 500; margin-left: var(--pp-s-1); opacity: 0.7; }
 
 /* Cada item numa caixa escura (estrutura do mockup): sobre o card tingido,
    é a caixa que devolve contraste ao texto do prato. */
-.ck-kds__itens { list-style: none; padding: 0; margin: var(--pp-s-3) 0 0; display: flex; flex-direction: column; gap: 6px; }
+.ck-kds__itens { list-style: none; padding: 0; margin: var(--pp-s-3) 0 0; display: flex; flex-direction: column; gap: var(--pp-s-2); }
 .ck-kds__itens li {
-  font-size: var(--pp-fs-15); color: var(--pp-fg);
-  padding: 7px 10px; border-radius: var(--pp-r-control);
+  font-size: var(--pp-t-body); color: var(--pp-fg);
+  padding: var(--pp-s-2) var(--pp-s-3); border-radius: var(--pp-r-control);
   background: rgba(0, 0, 0, 0.3);
 }
 .ck-kds__itens b { color: var(--pp-fg-2); margin-right: 4px; font-family: var(--pp-font-mono); }
 /* Observação do cliente ("sem gelo") é o que mais gera prato devolvido.
    Fica em âmbar para não passar batido na leitura rápida. */
-.ck-kds__obs { display: block; color: var(--pp-amber); font-style: normal; font-size: var(--pp-fs-13); margin-top: 2px; }
+.ck-kds__obs { display: block; color: var(--pp-amber); font-style: normal; font-size: var(--pp-t-support); margin-top: var(--pp-s-1); }
 
 /* ── Abas simples (garçom) ── */
-.ck-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.ck-tabs { display: flex; gap: var(--pp-s-2); flex-wrap: wrap; }
 .ck-tabs .ck-tab {
-  height: 38px; padding: 0 16px; border-radius: var(--pp-r-control);
+  height: 40px; padding: 0 16px; border-radius: var(--pp-r-control);
   background: var(--pp-glass-1); border: 1px solid var(--pp-edge-1);
-  color: var(--pp-fg-3); font-size: var(--pp-fs-14); font-weight: 600;
+  color: var(--pp-fg-3); font-size: var(--pp-t-support); font-weight: 600;
   font-family: var(--pp-font-body); cursor: pointer;
   transition: background var(--pp-dur-2) var(--pp-ease), color var(--pp-dur-2) var(--pp-ease);
 }
@@ -320,7 +324,7 @@ html, body { overflow-x: hidden; }
   display: flex; align-items: center; gap: var(--pp-s-4);
   width: 100%; text-align: left; cursor: pointer;
   background: var(--pp-glass-2); border: 1.5px solid var(--pp-edge-2);
-  border-radius: var(--pp-r-lg); padding: var(--pp-s-4);
+  border-radius: var(--pp-r-card); padding: var(--pp-s-4);
   color: var(--pp-fg); font-family: var(--pp-font-body);
   transition: border-color var(--pp-dur-2) var(--pp-ease), background var(--pp-dur-2) var(--pp-ease);
 }
@@ -335,33 +339,33 @@ html, body { overflow-x: hidden; }
   display: grid; place-items: center;
   border-radius: var(--pp-r-card);
   background: var(--pp-glass-2); border: 1px solid var(--pp-edge-3);
-  font-family: var(--pp-font-mono); font-weight: 700; font-size: var(--pp-fs-13);
-  overflow: hidden; padding: 2px; text-align: center; line-height: 1.1;
+  font-family: var(--pp-font-mono); font-weight: 700; font-size: var(--pp-t-support);
+  overflow: hidden; padding: var(--pp-s-1); text-align: center; line-height: 1.1;
 }
 .ck-mesa--ocupada .ck-mesa__chip { background: rgba(var(--pp-pulse-rgb), 0.12); border-color: rgba(var(--pp-pulse-rgb), 0.4); color: var(--pp-pulse); }
 .ck-mesa--pronta .ck-mesa__chip { background: rgba(167, 139, 250, 0.14); border-color: rgba(167, 139, 250, 0.5); color: var(--pp-violet); }
 
-.ck-mesa__meio { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.ck-mesa__meio { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--pp-s-1); }
 .ck-mesa__nome {
   font-family: var(--pp-font-display); font-weight: 700;
-  font-size: var(--pp-fs-16); letter-spacing: -0.015em;
+  font-size: var(--pp-t-body); letter-spacing: -0.015em;
 }
-.ck-mesa__area { color: var(--pp-fg-4); font-family: var(--pp-font-body); font-weight: 400; font-size: var(--pp-fs-13); }
+.ck-mesa__area { color: var(--pp-fg-4); font-family: var(--pp-font-body); font-weight: 400; font-size: var(--pp-t-support); }
 .ck-mesa__itens {
-  color: var(--pp-fg-4); font-size: var(--pp-fs-12); font-family: var(--pp-font-mono);
+  color: var(--pp-fg-4); font-size: var(--pp-t-support); font-family: var(--pp-font-mono);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .ck-mesa__badge {
   align-self: flex-start;
-  font-family: var(--pp-font-mono); font-size: 11px; font-weight: 600;
+  font-family: var(--pp-font-mono); font-size: var(--pp-t-label); font-weight: 600;
   text-transform: uppercase; letter-spacing: 0.05em;
   color: var(--pp-violet); background: rgba(167, 139, 250, 0.14);
   border: 1px solid rgba(167, 139, 250, 0.35);
-  padding: 3px 8px; border-radius: var(--pp-r-pill); white-space: nowrap;
+  padding: var(--pp-s-1) var(--pp-s-2); border-radius: var(--pp-r-pill); white-space: nowrap;
 }
 .ck-mesa__fim { display: flex; align-items: center; gap: 8px; flex-shrink: 0; color: var(--pp-fg-4); }
 .ck-mesa__valor {
-  font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-18);
+  font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-section);
   font-variant-numeric: tabular-nums; color: var(--pp-fg);
 }
 
@@ -369,7 +373,7 @@ html, body { overflow-x: hidden; }
    borda (mesma regra dos lotes na bilheteria). */
 .ck-gcm__item {
   display: flex; align-items: center; gap: var(--pp-s-3);
-  padding: 8px 10px; margin: 0 -10px;
+  padding: var(--pp-s-2) var(--pp-s-3); margin: 0 calc(var(--pp-s-3) * -1);
   border-radius: var(--pp-r-card);
   border: 1px solid transparent; border-bottom: 1px solid var(--pp-edge-1);
 }
@@ -404,7 +408,7 @@ html, body { overflow-x: hidden; }
 .ck-totem__carrinho {
   position: sticky; top: var(--pp-s-6);
   display: flex; flex-direction: column;
-  padding: var(--pp-s-5); border-radius: var(--pp-r-lg);
+  padding: var(--pp-s-5); border-radius: var(--pp-r-card);
   background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2);
   box-shadow: var(--pp-shine), var(--pp-shadow-1);
   min-height: 60dvh;
@@ -412,7 +416,7 @@ html, body { overflow-x: hidden; }
 @media (max-width: 980px) { .ck-totem__carrinho { position: static; min-height: 0; } }
 .ck-totem__cartitulo {
   font-family: var(--pp-font-display); font-weight: 700;
-  font-size: var(--pp-fs-24); letter-spacing: -0.02em; margin: 0 0 var(--pp-s-4);
+  font-size: var(--pp-t-money); letter-spacing: -0.02em; margin: 0 0 var(--pp-s-4);
 }
 .ck-totem__caritens { flex: 1; display: flex; flex-direction: column; gap: var(--pp-s-3); }
 .ck-totem__caritem {
@@ -423,16 +427,16 @@ html, body { overflow-x: hidden; }
 /* No carrinho o passo é menor que no card antigo (52px): continua alvo
    confortável de dedo e cabem mais itens na coluna. */
 .ck-totem__caritem .ck-totem__passo { margin-top: 0; }
-.ck-totem__caritem .ck-totem__passo button { width: 52px; height: 52px; font-size: 22px; }
+.ck-totem__caritem .ck-totem__passo button { width: 52px; height: 52px; font-size: var(--pp-t-section); }
 .ck-totem__carpe { margin-top: var(--pp-s-5); padding-top: var(--pp-s-4); border-top: 1px solid var(--pp-edge-2); }
 .ck-totem__topo { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--pp-s-4); }
 .ck-totem h1 {
   font-family: var(--pp-font-display); font-weight: 700;
   font-size: clamp(30px, 5vw, 46px); letter-spacing: -0.03em; margin: 4px 0 0;
 }
-.ck-totem__sub { color: var(--pp-fg-3); font-size: var(--pp-fs-18); margin: 6px 0 0; }
-.ck-totem__vazio { color: var(--pp-fg-3); font-size: var(--pp-fs-18); }
-.ck-totem__cats .ck-tab { height: 52px; padding: 0 24px; font-size: var(--pp-fs-16); }
+.ck-totem__sub { color: var(--pp-fg-3); font-size: var(--pp-t-section); margin: var(--pp-s-2) 0 0; }
+.ck-totem__vazio { color: var(--pp-fg-3); font-size: var(--pp-t-section); }
+.ck-totem__cats .ck-tab { height: 52px; padding: 0 24px; font-size: var(--pp-t-body); }
 
 .ck-totem__grade {
   display: grid; gap: var(--pp-s-4);
@@ -440,8 +444,8 @@ html, body { overflow-x: hidden; }
 }
 .ck-totem__item {
   background: var(--pp-glass-2); border: 2px solid var(--pp-edge-2);
-  border-radius: var(--pp-r-lg); padding: var(--pp-s-5);
-  display: flex; flex-direction: column; gap: 6px; min-height: 140px;
+  border-radius: var(--pp-r-card); padding: var(--pp-s-5);
+  display: flex; flex-direction: column; gap: var(--pp-s-2); min-height: 140px;
   position: relative; overflow: hidden;
   transition: border-color var(--pp-dur-2) var(--pp-ease), background var(--pp-dur-2) var(--pp-ease);
 }
@@ -451,43 +455,43 @@ html, body { overflow-x: hidden; }
 .ck-totem__mais {
   width: 64px; height: 64px; flex-shrink: 0; border-radius: var(--pp-r-control);
   background: var(--pp-glass-3); border: 1px solid var(--pp-edge-3);
-  color: var(--pp-fg); font-size: 30px; line-height: 1; font-weight: 700;
+  color: var(--pp-fg); font-size: var(--pp-t-money); line-height: 1; font-weight: 700;
 }
 .ck-totem__mais:hover { background: var(--pp-pulse); color: var(--pp-pulse-ink); }
 .ck-totem__badgeqtd {
-  display: inline-grid; place-items: center; margin-left: 10px;
+  display: inline-grid; place-items: center; margin-left: var(--pp-s-3);
   min-width: 30px; height: 30px; padding: 0 8px; border-radius: var(--pp-r-pill);
   background: var(--pp-pulse); color: var(--pp-pulse-ink);
-  font-family: var(--pp-font-mono); font-size: var(--pp-fs-15); font-weight: 700;
+  font-family: var(--pp-font-mono); font-size: var(--pp-t-body); font-weight: 700;
   vertical-align: middle;
 }
 /* Item escolhido muda a BORDA, não o fundo: com meia dúzia selecionados, um
    fundo aceso em cada deixa a tela ilegível. */
 .ck-totem__item.is-on { border-color: var(--pp-pulse); background: rgba(var(--pp-pulse-rgb), 0.06); }
 .ck-totem__item.is-off { opacity: 0.45; }
-.ck-totem__nome { font-weight: 700; font-size: var(--pp-fs-20); line-height: 1.2; }
+.ck-totem__nome { font-weight: 700; font-size: var(--pp-t-section); line-height: 1.2; }
 .ck-totem__preco {
-  font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-24);
+  font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-money);
   font-variant-numeric: tabular-nums; margin-top: auto;
 }
-.ck-totem__esgotado { color: var(--pp-fg-4); font-size: var(--pp-fs-14); }
+.ck-totem__esgotado { color: var(--pp-fg-4); font-size: var(--pp-t-support); }
 
 .ck-totem__passo { display: flex; align-items: center; gap: var(--pp-s-3); margin-top: 8px; }
 .ck-totem__passo button {
   width: 64px; height: 64px; border-radius: var(--pp-r-control);
   background: var(--pp-glass-3); border: 1px solid var(--pp-edge-3);
-  color: var(--pp-fg); font-size: 28px; line-height: 1; cursor: pointer;
+  color: var(--pp-fg); font-size: var(--pp-t-money); line-height: 1; cursor: pointer;
 }
 .ck-totem__passo button:disabled { opacity: 0.3; cursor: not-allowed; }
 .ck-totem__passo button:last-child { background: var(--pp-pulse); color: var(--pp-pulse-ink); border-color: transparent; }
 .ck-totem__passo span {
   min-width: 42px; text-align: center; font-family: var(--pp-font-mono);
-  font-size: var(--pp-fs-24); font-variant-numeric: tabular-nums;
+  font-size: var(--pp-t-money); font-variant-numeric: tabular-nums;
 }
 
 .ck-totem__identificar { max-width: 560px; }
-.ck-totem__campo { height: 72px; font-size: var(--pp-fs-24); }
-.ck-totem__acao { height: 72px; width: 100%; font-size: var(--pp-fs-18); margin-top: var(--pp-s-4); }
+.ck-totem__campo { height: 72px; font-size: var(--pp-t-money); }
+.ck-totem__acao { height: 72px; width: 100%; font-size: var(--pp-t-section); margin-top: var(--pp-s-4); }
 
 .ck-totem__barra {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
@@ -496,9 +500,9 @@ html, body { overflow-x: hidden; }
   background: rgba(12, 9, 16, 0.92); border-top: 1px solid var(--pp-edge-2);
   backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
 }
-.ck-totem__barra-lbl { color: var(--pp-fg-3); font-size: var(--pp-fs-14); }
+.ck-totem__barra-lbl { color: var(--pp-fg-3); font-size: var(--pp-t-support); }
 .ck-totem__barra-val {
-  font-family: var(--pp-font-display); font-weight: 700; font-size: 34px;
+  font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-money);
   line-height: 1; font-variant-numeric: tabular-nums;
 }
 
@@ -521,15 +525,15 @@ html, body { overflow-x: hidden; }
    atendimento — e informação que muda atendimento não pode estar escondida
    num campo de observação que ninguém abre no meio da noite. */
 .ck-ocasiao {
-  display: inline-block; margin-left: 8px; padding: 2px 8px;
-  border-radius: var(--pp-r-pill); font-size: 11px; font-weight: 600;
+  display: inline-block; margin-left: var(--pp-s-2); padding: var(--pp-s-1) var(--pp-s-2);
+  border-radius: var(--pp-r-pill); font-size: var(--pp-t-label); font-weight: 600;
   background: rgba(255,184,0,0.14); color: var(--pp-amber);
   border: 1px solid rgba(255,184,0,0.3);
 }
 /* Tempo de ocupação: o número que decide qual mesa cobrar e qual liberar. */
 .ck-ocupada {
-  font-family: var(--pp-font-mono); font-size: 11px;
-  color: var(--pp-fg-4); margin-top: 3px;
+  font-family: var(--pp-font-mono); font-size: var(--pp-t-label);
+  color: var(--pp-fg-4); margin-top: var(--pp-s-1);
 }
 .ck-badge--live {
   background: rgba(var(--pp-pulse-rgb), 0.14); color: var(--pp-pulse);
@@ -540,7 +544,7 @@ html, body { overflow-x: hidden; }
    confirmação, sobrou é atenção, faltou é problema — e a cor precisa dizer
    isso antes de a pessoa ler o número. */
 .ck-conferencia {
-  margin-top: 16px; padding: 14px 16px;
+  margin-top: var(--pp-s-4); padding: var(--pp-s-4);
   border-radius: var(--pp-r-card); border: 1px solid;
 }
 .ck-conferencia--bateu {
@@ -577,35 +581,35 @@ html, body { overflow-x: hidden; }
 .ck-kpi {
   position: relative; overflow: hidden;
   padding: var(--pp-s-5); background: var(--pp-glass-2);
-  border: 1px solid var(--pp-edge-2); border-radius: var(--pp-r-lg);
+  border: 1px solid var(--pp-edge-2); border-radius: var(--pp-r-card);
   box-shadow: var(--pp-shine), var(--pp-shadow-1);
 }
 .ck-kpi::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--k, var(--pp-pulse)); opacity: 0.7; }
-.ck-kpi .lbl { font-size: var(--pp-fs-12); color: var(--pp-fg-3); font-family: var(--pp-font-mono); text-transform: uppercase; letter-spacing: 0.08em; }
-.ck-kpi .val { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-28); margin-top: 8px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
-.ck-kpi .d { margin-top: 4px; font-size: var(--pp-fs-12); color: var(--pp-fg-3); }
+.ck-kpi .lbl { font-size: var(--pp-t-support); color: var(--pp-fg-3); font-family: var(--pp-font-mono); text-transform: uppercase; letter-spacing: 0.08em; }
+.ck-kpi .val { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-money); margin-top: 8px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.ck-kpi .d { margin-top: 4px; font-size: var(--pp-t-support); color: var(--pp-fg-3); }
 
 /* Painel com título (o "card de seção" dos mockups de iPad) */
-.ck-panel { padding: var(--pp-s-5); background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2); border-radius: var(--pp-r-lg); box-shadow: var(--pp-shine), var(--pp-shadow-1); }
-.ck-panel__title { font-family: var(--pp-font-display); font-weight: 600; font-size: var(--pp-fs-18); letter-spacing: -0.015em; }
-.ck-panel__sub { color: var(--pp-fg-3); font-size: var(--pp-fs-12); margin: 2px 0 0; }
+.ck-panel { padding: var(--pp-s-5); background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2); border-radius: var(--pp-r-card); box-shadow: var(--pp-shine), var(--pp-shadow-1); }
+.ck-panel__title { font-family: var(--pp-font-display); font-weight: 600; font-size: var(--pp-t-section); letter-spacing: -0.015em; }
+.ck-panel__sub { color: var(--pp-fg-3); font-size: var(--pp-t-support); margin: var(--pp-s-1) 0 0; }
 
 /* Grid principal: painel largo + coluna lateral (chart + side do mockup) */
 .ck-duo { display: grid; grid-template-columns: 1.5fr 1fr; gap: var(--pp-s-4); align-items: start; }
 @media (max-width: 1020px) { .ck-duo { grid-template-columns: 1fr; } }
 
 /* Barra de progresso genérica (ocupação, lote, uso de cupom) */
-.ck-bar { display: flex; align-items: center; gap: 10px; }
-.ck-bar .track { flex: 1; height: 6px; border-radius: 99px; background: var(--pp-glass-1); overflow: hidden; }
-.ck-bar .fill { height: 100%; border-radius: 99px; background: var(--k, var(--pp-pulse)); }
+.ck-bar { display: flex; align-items: center; gap: var(--pp-s-3); }
+.ck-bar .track { flex: 1; height: 6px; border-radius: var(--pp-r-pill); background: var(--pp-glass-1); overflow: hidden; }
+.ck-bar .fill { height: 100%; border-radius: var(--pp-r-pill); background: var(--k, var(--pp-pulse)); }
 
 /* Feed de atividade (eventos recentes do mockup) */
 .ck-feed { display: flex; flex-direction: column; }
-.ck-feed__row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--pp-edge-1); }
+.ck-feed__row { display: flex; align-items: center; gap: var(--pp-s-3); padding: 8px 0; border-bottom: 1px solid var(--pp-edge-1); }
 .ck-feed__row:last-child { border-bottom: none; }
 .ck-feed__ic {
-  width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0;
-  display: grid; place-items: center; font-size: 11px; font-weight: 700;
+  width: 30px; height: 30px; border-radius: var(--pp-r-control); flex-shrink: 0;
+  display: grid; place-items: center; font-size: var(--pp-t-label); font-weight: 700;
   font-family: var(--pp-font-mono);
   background: rgba(var(--pp-pulse-rgb), 0.10); border: 1px solid rgba(var(--pp-pulse-rgb), 0.28);
   color: var(--pp-pulse);
@@ -630,8 +634,8 @@ html, body { overflow-x: hidden; }
 .ck-evcard__status { position: absolute; top: 10px; left: 10px; }
 .ck-evcard__title {
   font-family: var(--pp-font-display); font-weight: 700;
-  font-size: var(--pp-fs-18); letter-spacing: -0.015em; line-height: 1.15;
-  margin-top: 26px;
+  font-size: var(--pp-t-section); letter-spacing: -0.015em; line-height: 1.15;
+  margin-top: var(--pp-s-6);
 }
 .ck-evcard__body { padding: var(--pp-s-4); display: flex; align-items: center; justify-content: space-between; gap: var(--pp-s-3); }
 
@@ -645,9 +649,9 @@ html, body { overflow-x: hidden; }
 }
 .ck-cupom--off { opacity: 0.55; }
 .ck-cupom__code {
-  padding: 10px 14px; border-radius: var(--pp-r-md);
+  padding: var(--pp-s-3) var(--pp-s-4); border-radius: var(--pp-r-control);
   background: var(--pp-ink-900); border: 1px dashed var(--pp-edge-4);
-  font-family: var(--pp-font-mono); font-weight: 700; font-size: var(--pp-fs-15);
+  font-family: var(--pp-font-mono); font-weight: 700; font-size: var(--pp-t-body);
   letter-spacing: 0.1em; color: var(--k, var(--pp-pulse));
   min-width: 108px; text-align: center;
 }
@@ -660,7 +664,7 @@ html, body { overflow-x: hidden; }
 @media (max-width: 900px) { .ck-team { grid-template-columns: 1fr; } }
 .ck-member {
   display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
-  padding: 12px 14px; background: transparent; border: 0; cursor: pointer;
+  padding: var(--pp-s-3) var(--pp-s-4); background: transparent; border: 0; cursor: pointer;
   border-left: 3px solid transparent; border-bottom: 1px solid var(--pp-edge-1);
   color: var(--pp-fg); font-family: var(--pp-font-body);
 }
@@ -669,12 +673,12 @@ html, body { overflow-x: hidden; }
 .ck-member:last-child { border-bottom: none; }
 .ck-avatar {
   width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
-  display: grid; place-items: center; font-weight: 700; font-size: var(--pp-fs-14);
+  display: grid; place-items: center; font-weight: 700; font-size: var(--pp-t-support);
   font-family: var(--pp-font-display);
   background: rgba(var(--pp-pulse-rgb), 0.14); border: 1px solid rgba(var(--pp-pulse-rgb), 0.3);
   color: var(--pp-pulse);
 }
-.ck-avatar--lg { width: 56px; height: 56px; font-size: var(--pp-fs-22); }
+.ck-avatar--lg { width: 56px; height: 56px; font-size: var(--pp-t-section); }
 
 /* ── Login do cockpit (estrutura do MultiRoleLoginScreen) ── */
 .ck-login {
@@ -685,24 +689,24 @@ html, body { overflow-x: hidden; }
 .ck-login__brand { display: flex; flex-direction: column; align-items: center; gap: var(--pp-s-4); margin-bottom: var(--pp-s-6); text-align: center; }
 .ck-login__title {
   font-family: var(--pp-font-display); font-weight: 700;
-  font-size: var(--pp-fs-28); line-height: 1.05; letter-spacing: -0.025em;
-  margin: 6px 0 0; text-align: center; text-wrap: balance;
+  font-size: var(--pp-t-title); line-height: 1.05; letter-spacing: -0.025em;
+  margin: var(--pp-s-2) 0 0; text-align: center; text-wrap: balance;
 }
 
 /* ── Taxas (AdmTaxesScreen · identidade PulseADM) ──
    O % gigante em mono é a estrutura do pricing card do mockup. */
-.adm-fee { position: relative; overflow: hidden; padding: var(--pp-s-5); border-radius: 18px; background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2); }
+.adm-fee { position: relative; overflow: hidden; padding: var(--pp-s-5); border-radius: var(--pp-r-card); background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2); }
 .adm-fee::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--k, var(--pp-amber)); opacity: 0.8; }
 .adm-fee__pct {
   font-family: var(--pp-font-mono); font-weight: 700;
-  font-size: var(--pp-fs-36, 36px); letter-spacing: -0.03em;
-  color: var(--k, var(--pp-amber)); margin-top: 10px;
+  font-size: var(--pp-t-money); letter-spacing: -0.03em;
+  color: var(--k, var(--pp-amber)); margin-top: var(--pp-s-3);
   font-variant-numeric: tabular-nums;
 }
-.adm-fee__foot { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--pp-edge-1); display: flex; justify-content: space-between; font-size: var(--pp-fs-12); color: var(--pp-fg-3); }
-.adm-orgfee { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 14px 0; border-bottom: 1px solid var(--pp-edge-1); }
+.adm-fee__foot { margin-top: 12px; padding-top: var(--pp-s-3); border-top: 1px solid var(--pp-edge-1); display: flex; justify-content: space-between; font-size: var(--pp-t-support); color: var(--pp-fg-3); }
+.adm-orgfee { display: flex; align-items: center; gap: var(--pp-s-3); flex-wrap: wrap; padding: var(--pp-s-4) 0; border-bottom: 1px solid var(--pp-edge-1); }
 .adm-orgfee:last-of-type { border-bottom: none; }
-.adm-orgfee__pct { font-family: var(--pp-font-mono); font-weight: 700; font-size: var(--pp-fs-18); font-variant-numeric: tabular-nums; min-width: 64px; text-align: right; }
+.adm-orgfee__pct { font-family: var(--pp-font-mono); font-weight: 700; font-size: var(--pp-t-section); font-variant-numeric: tabular-nums; min-width: 64px; text-align: right; }
 
 /* ── Bilheteria (BoxOfficeScreen) ──
    Seleção à esquerda, comanda fixa à direita. Estrutura do mockup; nada dos
@@ -720,17 +724,17 @@ html, body { overflow-x: hidden; }
    fundos acesos deixariam a grade ilegível. */
 .ck-bo-lote.is-on { border-color: var(--pp-pulse); background: rgba(var(--pp-pulse-rgb), 0.05); }
 .ck-bo-lote.is-off { opacity: 0.5; }
-.ck-bo-lote__nome { font-weight: 700; font-size: var(--pp-fs-14); }
+.ck-bo-lote__nome { font-weight: 700; font-size: var(--pp-t-support); }
 .ck-bo-lote__preco {
-  font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-24);
-  letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin-top: 6px;
+  font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-money);
+  letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin-top: var(--pp-s-2);
 }
-.ck-bo-lote__resta { font-size: var(--pp-fs-12); color: var(--pp-fg-4); margin-top: 2px; font-family: var(--pp-font-mono); }
+.ck-bo-lote__resta { font-size: var(--pp-t-support); color: var(--pp-fg-4); margin-top: var(--pp-s-1); font-family: var(--pp-font-mono); }
 
 /* Forma de pagamento em cards com rádio (estrutura do mockup). */
 .ck-pays { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--pp-s-3); }
 .ck-pay {
-  display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+  display: flex; flex-direction: column; align-items: flex-start; gap: var(--pp-s-1);
   padding: var(--pp-s-4); border-radius: var(--pp-r-card); text-align: left;
   background: var(--pp-glass-1); border: 1.5px solid var(--pp-edge-2);
   color: var(--pp-fg); font-family: var(--pp-font-body); position: relative;
@@ -743,13 +747,13 @@ html, body { overflow-x: hidden; }
   border: 1.5px solid var(--pp-edge-4); box-sizing: border-box;
 }
 .ck-pay.is-on .ck-pay__radio { border: 5px solid var(--pp-pulse); }
-.ck-pay__l { font-weight: 700; font-size: var(--pp-fs-14); }
-.ck-pay__d { font-size: var(--pp-fs-12); color: var(--pp-fg-4); }
+.ck-pay__l { font-weight: 700; font-size: var(--pp-t-support); }
+.ck-pay__d { font-size: var(--pp-t-support); color: var(--pp-fg-4); }
 
 /* Comanda: acompanha a rolagem — o total nunca sai de vista. */
 .ck-bo-comanda__in {
   position: sticky; top: 84px;
-  padding: var(--pp-s-5); border-radius: var(--pp-r-lg);
+  padding: var(--pp-s-5); border-radius: var(--pp-r-card);
   background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2);
   box-shadow: var(--pp-shine), var(--pp-shadow-1);
 }
@@ -758,8 +762,8 @@ html, body { overflow-x: hidden; }
   display: flex; gap: var(--pp-s-4); flex-wrap: wrap;
   padding-bottom: var(--pp-s-3); border-bottom: 1px dashed var(--pp-edge-2);
 }
-.ck-bo-caixa .lbl { font-family: var(--pp-font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--pp-fg-4); }
-.ck-bo-caixa .val { font-family: var(--pp-font-mono); font-weight: 700; font-size: var(--pp-fs-15); font-variant-numeric: tabular-nums; margin-top: 2px; }
+.ck-bo-caixa .lbl { font-family: var(--pp-font-mono); font-size: var(--pp-t-label); letter-spacing: 0.08em; text-transform: uppercase; color: var(--pp-fg-4); }
+.ck-bo-caixa .val { font-family: var(--pp-font-mono); font-weight: 700; font-size: var(--pp-t-body); font-variant-numeric: tabular-nums; margin-top: var(--pp-s-1); }
 .ck-bo-itens { padding: var(--pp-s-2) 0; }
 .ck-bo-total { padding-top: var(--pp-s-3); border-top: 1px dashed var(--pp-edge-2); }
 
@@ -772,21 +776,21 @@ html, body { overflow-x: hidden; }
 
 .ck-wiz__side {
   position: sticky; top: 84px;
-  padding: var(--pp-s-5); border-radius: var(--pp-r-lg);
+  padding: var(--pp-s-5); border-radius: var(--pp-r-card);
   background: var(--pp-glass-1); border: 1px solid var(--pp-edge-1);
 }
 @media (max-width: 900px) { .ck-wiz__side { position: static; } }
 .ck-wiz__brand { margin-bottom: var(--pp-s-4); }
 .ck-wiz__title {
   font-family: var(--pp-font-display); font-weight: 700;
-  font-size: var(--pp-fs-18); letter-spacing: -0.02em; margin-bottom: 2px;
+  font-size: var(--pp-t-section); letter-spacing: -0.02em; margin-bottom: var(--pp-s-1);
 }
 .ck-wiz__progress {
-  height: 4px; border-radius: 99px; background: var(--pp-glass-2);
+  height: 4px; border-radius: var(--pp-r-pill); background: var(--pp-glass-2);
   overflow: hidden; margin-bottom: var(--pp-s-5);
 }
 .ck-wiz__progress i {
-  display: block; height: 100%; border-radius: 99px;
+  display: block; height: 100%; border-radius: var(--pp-r-pill);
   background: var(--pp-pulse);
   transition: width var(--pp-dur-3) var(--pp-ease);
 }
@@ -801,13 +805,13 @@ html, body { overflow-x: hidden; }
 .ck-wiz__step.is-done:not(:last-child)::after { background: rgba(var(--pp-pulse-rgb), 0.5); }
 .ck-wiz__step > button {
   display: flex; gap: 12px; align-items: flex-start; width: 100%;
-  padding: 10px 0; background: none; border: 0; text-align: left;
+  padding: var(--pp-s-3) 0; background: none; border: 0; text-align: left;
   color: inherit; font-family: var(--pp-font-body);
 }
 .ck-wiz__step > button:disabled { cursor: default; }
 .ck-wiz__dot {
   width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
-  display: grid; place-items: center; font-size: 12px; font-weight: 700;
+  display: grid; place-items: center; font-size: var(--pp-t-support); font-weight: 700;
   font-family: var(--pp-font-mono); position: relative; z-index: 1;
   background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2);
   color: var(--pp-fg-4);
@@ -819,10 +823,10 @@ html, body { overflow-x: hidden; }
 .ck-wiz__step.is-done .ck-wiz__dot {
   background: var(--pp-pulse); border-color: transparent; color: var(--pp-pulse-ink);
 }
-.ck-wiz__n { display: block; font-size: var(--pp-fs-14); font-weight: 600; color: var(--pp-fg-4); }
+.ck-wiz__n { display: block; font-size: var(--pp-t-support); font-weight: 600; color: var(--pp-fg-4); }
 .ck-wiz__step.is-on .ck-wiz__n { color: var(--pp-pulse); }
 .ck-wiz__step.is-done .ck-wiz__n { color: var(--pp-fg); }
-.ck-wiz__d { display: block; font-size: var(--pp-fs-12); color: var(--pp-fg-4); margin-top: 2px; }
+.ck-wiz__d { display: block; font-size: var(--pp-t-support); color: var(--pp-fg-4); margin-top: var(--pp-s-1); }
 
 .ck-wiz__main { min-width: 0; }
 .ck-wiz__foot {
@@ -847,7 +851,7 @@ html, body { overflow-x: hidden; }
 .ck-lote__add {
   height: 54px; border-radius: var(--pp-r-card);
   border: 1px dashed var(--pp-edge-4); background: var(--pp-glass-1);
-  color: var(--pp-fg-2); font-size: var(--pp-fs-14); font-weight: 600;
+  color: var(--pp-fg-2); font-size: var(--pp-t-support); font-weight: 600;
   display: flex; align-items: center; justify-content: center; gap: 8px;
   font-family: var(--pp-font-body);
 }
@@ -856,21 +860,21 @@ html, body { overflow-x: hidden; }
 /* Resumo do passo final. */
 .ck-wiz__resumo { margin: var(--pp-s-3) 0 0; }
 .ck-wiz__resumo > div {
-  display: flex; gap: var(--pp-s-4); padding: 10px 0;
-  border-bottom: 1px solid var(--pp-edge-1); font-size: var(--pp-fs-14);
+  display: flex; gap: var(--pp-s-4); padding: var(--pp-s-3) 0;
+  border-bottom: 1px solid var(--pp-edge-1); font-size: var(--pp-t-support);
 }
 .ck-wiz__resumo > div:last-child { border-bottom: none; }
 .ck-wiz__resumo dt {
   width: 130px; flex-shrink: 0; color: var(--pp-fg-3);
-  font-family: var(--pp-font-mono); font-size: var(--pp-fs-12);
-  text-transform: uppercase; letter-spacing: 0.06em; padding-top: 2px;
+  font-family: var(--pp-font-mono); font-size: var(--pp-t-support);
+  text-transform: uppercase; letter-spacing: 0.06em; padding-top: var(--pp-s-1);
 }
 .ck-wiz__resumo dd { margin: 0; min-width: 0; }
 
 /* ── Matriz de permissões ── */
 .ck-permlink {
   display: block; margin-top: 4px; padding: 0; background: none; border: 0;
-  color: var(--pp-fg-4); font-size: 12px; cursor: pointer; text-align: left;
+  color: var(--pp-fg-4); font-size: var(--pp-t-support); cursor: pointer; text-align: left;
   font-family: var(--pp-font-body);
 }
 .ck-permlink:hover { color: var(--pp-pulse); text-decoration: underline; }
@@ -879,21 +883,21 @@ html, body { overflow-x: hidden; }
 @media (min-width: 620px) { .ck-permgrid { grid-template-columns: 1fr 1fr; } }
 
 .ck-perm {
-  display: flex; align-items: flex-start; gap: 10px; cursor: pointer;
-  padding: 10px 12px; border-radius: var(--pp-r-card);
+  display: flex; align-items: flex-start; gap: var(--pp-s-3); cursor: pointer;
+  padding: var(--pp-s-3); border-radius: var(--pp-r-card);
   border: 1px solid var(--pp-edge-1); background: var(--pp-glass-1);
-  font-size: var(--pp-fs-14); line-height: 1.35;
+  font-size: var(--pp-t-support); line-height: 1.35;
 }
 .ck-perm:hover { border-color: var(--pp-edge-3); }
 /* Marcada muda a BORDA, não o fundo: com treze na tela, treze fundos acesos
    deixariam a matriz ilegível. */
 .ck-perm.is-on { border-color: var(--pp-pulse); background: rgba(var(--pp-pulse-rgb), 0.06); }
-.ck-perm input { margin-top: 2px; flex-shrink: 0; width: 16px; height: 16px; }
+.ck-perm input { margin-top: var(--pp-s-1); flex-shrink: 0; width: 16px; height: 16px; }
 /* O código técnico fica visível mas discreto: quem audita precisa dele, quem
    só está delegando acesso lê o rótulo em português. */
 .ck-perm__code {
-  display: block; font-family: var(--pp-font-mono); font-size: 10px;
-  color: var(--pp-fg-5); font-style: normal; margin-top: 2px;
+  display: block; font-family: var(--pp-font-mono); font-size: var(--pp-t-label);
+  color: var(--pp-fg-5); font-style: normal; margin-top: var(--pp-s-1);
 }
 
 /* ── Revelação única de segredo (chave de API / secret de webhook) ──
@@ -910,14 +914,14 @@ html, body { overflow-x: hidden; }
 }
 .pp-cofre__topo {
   display: flex; align-items: center; justify-content: space-between;
-  gap: var(--pp-s-3); padding: 10px 12px;
+  gap: var(--pp-s-3); padding: var(--pp-s-3);
   border-bottom: 1px solid var(--pp-edge-1);
   background: var(--pp-glass-1);
 }
 .pp-cofre__valor {
   display: block; width: 100%; resize: none;
-  padding: 12px; border: 0; background: transparent;
-  color: var(--pp-pulse); font-size: var(--pp-fs-14); line-height: 1.6;
+  padding: var(--pp-s-3); border: 0; background: transparent;
+  color: var(--pp-pulse); font-size: var(--pp-t-support); line-height: 1.6;
   /* break-all porque chave não tem palavra: quebrar "só entre palavras"
      empurraria o valor inteiro para uma linha só, com rolagem lateral. */
   word-break: break-all; outline: none;
@@ -933,29 +937,29 @@ html, body { overflow-x: hidden; }
 }
 .pp-comousar pre, .pp-comousar code {
   display: block; overflow-x: auto; white-space: pre;
-  font-family: var(--pp-font-mono); font-size: var(--pp-fs-12);
+  font-family: var(--pp-font-mono); font-size: var(--pp-t-support);
   line-height: 1.7; color: var(--pp-fg-2);
 }
 
 .pp-trava {
-  display: flex; gap: 10px; align-items: flex-start; cursor: pointer;
-  margin-top: var(--pp-s-5); padding: 12px 14px;
+  display: flex; gap: var(--pp-s-3); align-items: flex-start; cursor: pointer;
+  margin-top: var(--pp-s-5); padding: var(--pp-s-3) var(--pp-s-4);
   border: 1px solid var(--pp-edge-2); border-radius: var(--pp-r-card);
   background: var(--pp-glass-1);
   transition: border-color var(--pp-dur-2) var(--pp-ease), background var(--pp-dur-2) var(--pp-ease);
-  font-size: var(--pp-fs-14); color: var(--pp-fg-2); line-height: 1.45;
+  font-size: var(--pp-t-support); color: var(--pp-fg-2); line-height: 1.45;
 }
 .pp-trava:hover { background: var(--pp-glass-2); }
 .pp-trava.is-on { border-color: var(--pp-pulse); background: rgba(11,232,125,0.07); }
-.pp-trava input { width: 18px; height: 18px; flex-shrink: 0; margin-top: 1px; accent-color: var(--pp-pulse); }
+.pp-trava input { width: 18px; height: 18px; flex-shrink: 0; margin-top: var(--pp-s-1); accent-color: var(--pp-pulse); }
 
 /* Aviso de valor irrecuperavel. Texto menor e mais apertado que o corpo: ele
    precisa ser LIDO, e paragrafo grande em caixa colorida e o formato que as
    pessoas aprenderam a pular. Escala com a largura para nao virar bloco de
    seis linhas no celular. */
 .pp-aviso-unico {
-  display: flex; gap: 9px; align-items: flex-start;
-  margin: 0 0 var(--pp-s-4); padding: 11px 13px;
+  display: flex; gap: var(--pp-s-2); align-items: flex-start;
+  margin: 0 0 var(--pp-s-4); padding: var(--pp-s-3) var(--pp-s-4);
   border: 1px solid rgba(255,184,0,0.3); border-radius: var(--pp-r-card);
   background: rgba(255,184,0,0.07);
   font-size: clamp(11px, 2.4vw, 12px);
@@ -963,7 +967,553 @@ html, body { overflow-x: hidden; }
   text-wrap: pretty;
 }
 .pp-aviso-unico strong { color: var(--pp-fg); font-weight: 650; }
-.pp-aviso-unico svg { flex-shrink: 0; margin-top: 2px; color: var(--pp-amber); }
+.pp-aviso-unico svg { flex-shrink: 0; margin-top: var(--pp-s-1); color: var(--pp-amber); }
 
 /* A dica sob o cofre acompanha o mesmo degrau menor. */
 .pp-cofre + p { font-size: clamp(11px, 2.4vw, 12px); }
+
+/* ═══════════════════════════════════════════════════════════
+   CAMADA DO COCKPIT · papéis, ritmo e formas repetidas
+   ───────────────────────────────────────────────────────────
+   Por que isto existe: a auditoria contou 991 blocos de style
+   inline dentro de apps/admin. Não é um problema de estética — é
+   o motivo de o app parecer montado tela a tela. O mesmo rótulo
+   secundário aparecia em 11, 12, 13 e 14px em telas vizinhas;
+   quatro degraus dentro de 3px não fazem hierarquia, fazem ruído.
+
+   As regras deste bloco:
+   1. TAMANHO DE TEXTO só sai dos papéis (--pp-t-*). Três degraus
+      abaixo do corpo — etiqueta, apoio, corpo — e nada entre eles.
+   2. ESPAÇO só sai da grade de 4 (--pp-s-*). Sem 5px, sem 22px.
+   3. RAIO por função: controle 8, card 12, pílula só etiqueta.
+   4. Nada aqui desenha ornamento. Sem gradiente, sem glow, sem
+      animação de enfeite: é ferramenta de trabalho, e quem opera a
+      porta às 3h precisa ler, não admirar.
+
+   A classe é dobrada no seletor (.x.x) de propósito: um utilitário
+   precisa vencer a regra de componente que ele está corrigindo, do
+   mesmo jeito que o style inline vencia antes. Sem !important.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Papéis tipográficos ──
+   Só TAMANHO (e a face, onde o papel a implica). Cor e peso vêm
+   separados, para os três eixos poderem ser combinados sem inventar
+   um degrau novo a cada tela. */
+.ck-t-title.ck-t-title {
+  font-family: var(--pp-font-display); font-size: var(--pp-t-title);
+  font-weight: 700; line-height: 1.08; letter-spacing: -0.025em;
+}
+.ck-t-section.ck-t-section {
+  font-family: var(--pp-font-display); font-size: var(--pp-t-section);
+  font-weight: 600; line-height: 1.2; letter-spacing: -0.015em;
+}
+/* Dinheiro é onde a decisão mora: corpo grande, tabular para a coluna
+   de valores não dançar quando o número muda. */
+.ck-t-money.ck-t-money {
+  font-family: var(--pp-font-display); font-size: var(--pp-t-money);
+  font-weight: 700; letter-spacing: -0.03em; line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.ck-t-body.ck-t-body       { font-size: var(--pp-t-body); }
+.ck-t-support.ck-t-support { font-size: var(--pp-t-support); }
+.ck-t-label.ck-t-label     { font-size: var(--pp-t-label); }
+
+/* ── Face e peso ── */
+.ck-display.ck-display { font-family: var(--pp-font-display); letter-spacing: -0.02em; }
+.ck-w-semi.ck-w-semi { font-weight: 600; }
+.ck-w-bold.ck-w-bold { font-weight: 700; }
+
+/* ── Cor de texto ──
+   Nenhum hex novo: os tons já foram expurgados do produto. */
+.ck-c-fg.ck-c-fg         { color: var(--pp-fg); }
+.ck-c-fg2.ck-c-fg2       { color: var(--pp-fg-2); }
+.ck-c-pulse.ck-c-pulse   { color: var(--pp-pulse); }
+.ck-c-amber.ck-c-amber   { color: var(--pp-amber); }
+.ck-c-violet.ck-c-violet { color: var(--pp-violet); }
+.ck-c-cyan.ck-c-cyan     { color: var(--pp-cyan); }
+.ck-c-pink.ck-c-pink     { color: var(--pp-pink); }
+/* Vermelho de TEXTO é clareado — o --pp-red puro sobre ameixa escura
+   não passa em contraste de leitura. Mesmo tom já usado em .ck-error. */
+.ck-c-red.ck-c-red       { color: #FF6B61; }
+
+/* ── Tom do bloco (--k) ──
+   Fio no topo do KPI, preenchimento da barra, código do cupom: todos
+   leem --k. Era o inline mais repetido do admin; agora é etiqueta. */
+.ck-k--pulse  { --k: var(--pp-pulse); }
+.ck-k--violet { --k: var(--pp-violet); }
+.ck-k--cyan   { --k: var(--pp-cyan); }
+.ck-k--pink   { --k: var(--pp-pink); }
+.ck-k--amber  { --k: var(--pp-amber); }
+.ck-k--red    { --k: var(--pp-red); }
+.ck-k--dim    { --k: var(--pp-fg-4); }
+
+/* ── Margem · grade de 4 ──
+   .ck-m-0 vem ANTES dos direcionais de propósito: "ck-m-0 ck-mt-3" é
+   como se escreve margin 12px 0 0 sem abrir um style inline. */
+.ck-m-0.ck-m-0   { margin: 0; }
+.ck-mt-0.ck-mt-0 { margin-top: 0; }
+.ck-mt-1.ck-mt-1 { margin-top: var(--pp-s-1); }
+.ck-mt-2.ck-mt-2 { margin-top: var(--pp-s-2); }
+.ck-mt-3.ck-mt-3 { margin-top: var(--pp-s-3); }
+.ck-mt-4.ck-mt-4 { margin-top: var(--pp-s-4); }
+.ck-mt-5.ck-mt-5 { margin-top: var(--pp-s-5); }
+.ck-mt-6.ck-mt-6 { margin-top: var(--pp-s-6); }
+.ck-mt-auto.ck-mt-auto { margin-top: auto; }
+.ck-mb-0.ck-mb-0 { margin-bottom: 0; }
+.ck-mb-1.ck-mb-1 { margin-bottom: var(--pp-s-1); }
+.ck-mb-2.ck-mb-2 { margin-bottom: var(--pp-s-2); }
+.ck-mb-3.ck-mb-3 { margin-bottom: var(--pp-s-3); }
+.ck-mb-4.ck-mb-4 { margin-bottom: var(--pp-s-4); }
+.ck-mb-5.ck-mb-5 { margin-bottom: var(--pp-s-5); }
+.ck-mb-6.ck-mb-6 { margin-bottom: var(--pp-s-6); }
+.ck-ml-2.ck-ml-2 { margin-left: var(--pp-s-2); }
+.ck-ml-auto.ck-ml-auto { margin-left: auto; }
+
+/* ── Padding · mesma grade ── */
+.ck-p-0.ck-p-0 { padding: 0; }
+.ck-p-4.ck-p-4 { padding: var(--pp-s-4); }
+.ck-p-5.ck-p-5 { padding: var(--pp-s-5); }
+.ck-p-6.ck-p-6 { padding: var(--pp-s-6); }
+
+/* ── Espaço entre irmãos ── */
+.ck-gap-1.ck-gap-1 { gap: var(--pp-s-1); }
+.ck-gap-2.ck-gap-2 { gap: var(--pp-s-2); }
+.ck-gap-3.ck-gap-3 { gap: var(--pp-s-3); }
+.ck-gap-4.ck-gap-4 { gap: var(--pp-s-4); }
+.ck-gap-5.ck-gap-5 { gap: var(--pp-s-5); }
+.ck-gap-6.ck-gap-6 { gap: var(--pp-s-6); }
+
+/* ── Caixa ── */
+.ck-flex.ck-flex   { display: flex; }
+.ck-iflex.ck-iflex { display: inline-flex; }
+.ck-col.ck-col     { display: flex; flex-direction: column; }
+.ck-block.ck-block { display: block; }
+.ck-flex1.ck-flex1 { flex: 1; }
+.ck-min0.ck-min0   { min-width: 0; }
+.ck-shrink0.ck-shrink0 { flex-shrink: 0; }
+.ck-full.ck-full   { width: 100%; }
+.ck-hidden.ck-hidden { overflow: hidden; }
+.ck-nowrap.ck-nowrap { white-space: nowrap; }
+.ck-trunc.ck-trunc { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ck-right.ck-right   { text-align: right; }
+.ck-center.ck-center { text-align: center; }
+.ck-ai-start.ck-ai-start   { align-items: flex-start; }
+.ck-ai-end.ck-ai-end       { align-items: flex-end; }
+.ck-ai-center.ck-ai-center { align-items: center; }
+.ck-ai-base.ck-ai-base     { align-items: baseline; }
+.ck-jc-btw.ck-jc-btw { justify-content: space-between; }
+.ck-jc-end.ck-jc-end { justify-content: flex-end; }
+.ck-rel.ck-rel { position: relative; }
+
+/* ── Medida de linha ──
+   Três larguras, não sete. Formulário, bloco de configuração, texto
+   de leitura — mais que isso ninguém consegue manter alinhado. */
+.ck-w-form.ck-w-form { max-width: 520px; }
+.ck-w-mid.ck-w-mid   { max-width: 640px; }
+.ck-w-read.ck-w-read { max-width: 720px; }
+
+/* ── Formas que se repetiam em toda tela ── */
+
+/* Lista sem marcador: era listStyle none + margin 0 + padding 0
+   reescrito à mão em dez telas. */
+.ck-lista { list-style: none; margin: 0; padding: 0; }
+
+/* Linha de lista com fio embaixo (últimos check-ins, achados no
+   manifesto, itens do fechamento). O último item não leva fio — fio
+   solto no fim do bloco faz a lista parecer cortada. */
+.ck-linha {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--pp-s-3); padding: var(--pp-s-2) 0;
+  border-bottom: 1px solid var(--pp-edge-1);
+}
+.ck-linha:last-child { border-bottom: none; }
+
+/* Segunda linha de um item: código, horário, "3 de 40". Sempre no
+   degrau de apoio e sempre no tom terciário. */
+.ck-meta {
+  display: block; margin-top: var(--pp-s-1);
+  font-size: var(--pp-t-support);
+}
+
+/* Título de seção dentro da tela. O espaço ACIMA é maior que o de
+   baixo — título grudado no que vem antes é o erro mais comum. */
+.ck-secao {
+  font-family: var(--pp-font-display); font-size: var(--pp-t-section);
+  font-weight: 600; letter-spacing: -0.015em;
+  margin: var(--pp-s-8) 0 var(--pp-s-3);
+}
+
+/* Estado com bolinha: online/offline, fila, câmera. A bolinha herda a
+   cor do texto — uma classe de cor resolve o par inteiro. */
+.ck-status { display: inline-flex; align-items: center; gap: var(--pp-s-2); font-size: var(--pp-t-support); }
+.ck-status::before {
+  content: ''; width: 8px; height: 8px; border-radius: 50%;
+  background: currentColor; flex-shrink: 0;
+}
+
+/* Veredito do check-in na porta. Três estados, três leituras: liberado,
+   atenção, barrado — a cor diz isso antes de a pessoa ler o texto. */
+.ck-veredito__msg {
+  display: flex; align-items: center; gap: var(--pp-s-3);
+  font-family: var(--pp-font-display); font-weight: 700;
+  font-size: var(--pp-t-money); line-height: 1.1; letter-spacing: -0.03em;
+}
+.ck-veredito--ok    { background: rgba(var(--pp-pulse-rgb), 0.10); border-color: rgba(var(--pp-pulse-rgb), 0.45); }
+.ck-veredito--ok    .ck-veredito__msg { color: var(--pp-pulse); }
+.ck-veredito--aviso { background: rgba(255, 184, 0, 0.10); border-color: rgba(255, 184, 0, 0.40); }
+.ck-veredito--aviso .ck-veredito__msg { color: var(--pp-amber); }
+.ck-veredito--erro  { background: rgba(255, 59, 48, 0.10); border-color: rgba(255, 59, 48, 0.40); }
+.ck-veredito--erro  .ck-veredito__msg { color: #FF6B61; }
+
+/* Card sem respiro interno: o conteúdo (tabela, lista) traz o próprio. */
+.ck-card--flush { padding: 0; overflow: hidden; }
+
+/* Aviso âmbar dentro da tela (falta capa, câmera exige HTTPS). */
+.ck-aviso {
+  border-color: rgba(255, 184, 0, 0.42);
+  background: rgba(255, 184, 0, 0.08);
+}
+
+/* Só para leitor de tela. */
+.ck-sr {
+  position: absolute; width: 1px; height: 1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* Alvo de dedo em operação de porta e de bar: 44px é o mínimo, e é
+   onde alguém erra o toque três vezes com a fila andando. */
+@media (pointer: coarse) {
+  .ck-btn, .ck-iconbtn, .ck-tabs .ck-tab, .ck-tab { min-height: 44px; }
+}
+
+/* ── Segunda rodada: as formas que sobraram depois de varrer as 30 telas ── */
+
+.ck-w-reg.ck-w-reg { font-weight: 400; }
+.ck-lh.ck-lh { line-height: 1.6; }
+.ck-none.ck-none { display: none; }
+.ck-b-0.ck-b-0 { border: 0; }
+.ck-py-2.ck-py-2 { padding: var(--pp-s-2) 0; }
+.ck-py-3.ck-py-3 { padding: var(--pp-s-3) 0; }
+
+/* Largura de controle estreito (quantidade, limite de reentrada): campo de
+   número com 520px de largura mente sobre quanto se espera digitar nele. */
+.ck-w-xs.ck-w-xs { max-width: 320px; }
+
+/* Piso de largura para item de linha que quebra (filtro, rótulo de flag).
+   Três degraus, na grade de 8 — abaixo disso o texto quebra no meio. */
+.ck-fit.ck-fit       { min-width: 176px; }
+.ck-fit--sm.ck-fit--sm { min-width: 128px; }
+.ck-fit--lg.ck-fit--lg { min-width: 224px; }
+
+/* Dinheiro grande: o total da venda na bilheteria, que o operador confere
+   de longe antes de cobrar. */
+.ck-t-money--lg.ck-t-money--lg { font-size: clamp(2.25rem, 7vw, 3rem); }
+
+/* Linha com respiro de card (lista dentro de painel com moldura). */
+.ck-linha--pad { padding: var(--pp-s-4) var(--pp-s-5); }
+
+/* Linha do TOTAL: fio acima e respiro. Fecha comanda, fechamento de caixa
+   e extrato — sempre a mesma forma, porque é sempre a mesma leitura. */
+.ck-total {
+  margin-top: var(--pp-s-3); padding-top: var(--pp-s-3);
+  border-top: 1px solid var(--pp-edge-2);
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: var(--pp-s-3);
+}
+
+/* Caixa neutra dentro de um card (bloco de instrução, resumo de webhook). */
+.ck-caixa {
+  padding: var(--pp-s-3) var(--pp-s-4);
+  border-radius: var(--pp-r-control);
+  background: var(--pp-glass-1); border: 1px solid var(--pp-edge-1);
+}
+
+/* Valor técnico copiável: id, endpoint, chave. Quebra em qualquer ponto —
+   valor cortado pela metade não é copiável. */
+.ck-valor-tec {
+  padding: var(--pp-s-2) var(--pp-s-3);
+  border-radius: var(--pp-r-control);
+  background: var(--pp-ink-950);
+  font-family: var(--pp-font-mono);
+  overflow-wrap: anywhere;
+}
+
+/* Código de ingresso digitado à mão: mono com folga entre caracteres, para
+   o porteiro conferir O de 0 sem piscar. */
+.ck-cod { font-family: var(--pp-font-mono); letter-spacing: 0.08em; }
+
+/* Confirmação verde dentro da tela (par do .ck-aviso). Sai do token da
+   marca — o rgb solto que estava aqui era do verde antigo. */
+.ck-ok {
+  border-color: rgba(var(--pp-pulse-rgb), 0.40);
+  background: rgba(var(--pp-pulse-rgb), 0.08);
+}
+
+/* Ícone dentro do campo: o padding vive no CSS, não em cada input. */
+.pp-inputwrap > .ck-input { padding-left: 46px; }
+
+/* Botão de operação: bilheteria e PDV são batidos com o dedo, com pressa.
+   56px na grade de 4, bem acima do mínimo de 44. */
+.ck-btn--lg { height: 56px; padding: 0 var(--pp-s-6); font-size: var(--pp-t-body); }
+
+/* Colunas explícitas sobre uma grade existente. Encolhem sozinhas — grade
+   de 4 colunas num tablet em pé é uma coluna de 70px. */
+.ck-cols-2.ck-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.ck-cols-3.ck-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.ck-cols-4.ck-cols-4 { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 720px) {
+  .ck-cols-3.ck-cols-3, .ck-cols-4.ck-cols-4 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 420px) {
+  .ck-cols-2.ck-cols-2, .ck-cols-3.ck-cols-3, .ck-cols-4.ck-cols-4 { grid-template-columns: 1fr; }
+}
+
+.ck-py-1.ck-py-1 { padding: var(--pp-s-1) 0; }
+
+/* ── Terceira rodada: o que a varredura tela a tela revelou ── */
+
+.ck-mr-1.ck-mr-1 { margin-right: var(--pp-s-1); }
+.ck-mr-2.ck-mr-2 { margin-right: var(--pp-s-2); }
+.ck-ml-3.ck-ml-3 { margin-left: var(--pp-s-3); }
+.ck-py-6.ck-py-6 { padding: var(--pp-s-6) 0; }
+.ck-p-sm.ck-p-sm { padding: var(--pp-s-2) var(--pp-s-3); }
+.ck-vmid.ck-vmid { vertical-align: middle; }
+.ck-span-all.ck-span-all { grid-column: 1 / -1; }
+.ck-grade.ck-grade { display: grid; }
+
+/* Controle desligado que continua visível: quem não tem permissão precisa
+   ver que a ação existe, não descobrir que ela sumiu. */
+.ck-off { opacity: 0.45; cursor: not-allowed; }
+
+/* Linha com fio EM CIMA (bloco que cresce para baixo: auditoria, extrato). */
+.ck-linha--top {
+  border-bottom: none; border-top: 1px solid var(--pp-edge-1);
+  padding: var(--pp-s-3) 0;
+}
+
+/* Cabeçalho de painel com moldura: respiro maior em cima, menor embaixo,
+   porque a lista logo abaixo já traz o próprio. */
+.ck-cabeca { padding: var(--pp-s-5) var(--pp-s-5) var(--pp-s-4); }
+
+/* Legenda de tabela. */
+.ck-caption { text-align: left; padding-bottom: var(--pp-s-2); }
+.ck-caption--fim { caption-side: bottom; padding: var(--pp-s-2) 0 0; }
+
+/* Linha de status que aparece e some (copiado, salvo, erro). Reserva a
+   altura de antemão: sem isso a tela pula um degrau a cada confirmação. */
+.ck-viva { display: block; min-height: var(--pp-s-5); }
+
+/* Caixa de seleção do cockpit. */
+.ck-check { width: 16px; height: 16px; accent-color: var(--pp-pulse); }
+
+/* Botão de ícone compacto — em tela de dedo o alvo cresce sozinho. */
+.ck-iconbtn--sm { width: 32px; height: 32px; }
+@media (pointer: coarse) { .ck-iconbtn--sm { width: 44px; height: 44px; } }
+
+/* Grades por tamanho de card. Uma decisão por densidade, não por tela. */
+.ck-grid--sm { display: grid; gap: var(--pp-s-3); grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+.ck-grid--md { display: grid; gap: var(--pp-s-4); grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+
+/* Fio de cor no topo de um bloco. A cor vem do dado (--k ou inline). */
+.ck-fio { position: absolute; top: 0; left: 0; right: 0; height: 2px; opacity: 0.7; background: var(--k, var(--pp-pulse)); }
+
+/* Saldo grande no recibo do totem — menor que o código de retirada, que
+   continua sendo a única coisa que a pessoa precisa levar dali. */
+.ck-totem__codigo--sm { font-size: clamp(2rem, 6vw, 2.75rem); }
+
+.ck-jc-start.ck-jc-start { justify-content: flex-start; }
+.ck-ai-stretch.ck-ai-stretch { align-items: stretch; }
+.ck-fit--xs.ck-fit--xs { min-width: 24px; }
+.ck-nopointer.ck-nopointer { pointer-events: none; }
+.ck-sublinha.ck-sublinha { text-decoration: underline; text-underline-offset: 3px; }
+.ck-scroll.ck-scroll { overflow: auto; -webkit-overflow-scrolling: touch; }
+
+/* Rodape de janela modal: o texto de trava fica colado no fundo do bloco. */
+.ck-p-rodape.ck-p-rodape { padding: 0 var(--pp-s-5) var(--pp-s-4); }
+
+/* Lista com marcador de verdade (as unicas do cockpit: instrucao de repasse). */
+.ck-bullets { padding-left: var(--pp-s-5); line-height: 1.7; }
+
+/* Linha da fila de espera: fio em cima, respiro na grade. */
+.ck-fila__linha { padding: var(--pp-s-3) var(--pp-s-5); border-top: 1px solid var(--pp-edge-1); }
+
+/* Estado do camarote, ancorado no canto do card. */
+.ck-camarote__estado { position: absolute; top: var(--pp-s-4); right: 52px; }
+
+/* Bloco de alerta vermelho dentro da tela (par de .ck-aviso e .ck-ok). */
+.ck-alerta { border-color: rgba(255,59,48,0.40); background: rgba(255,59,48,0.06); }
+
+/* Maquete do navegador na previa da marca — e ilustracao, nao interface. */
+.ck-mock__barra { padding: var(--pp-s-3) var(--pp-s-4); background: var(--pp-ink-900); border-bottom: 1px solid var(--pp-edge-1); }
+.ck-mock__faixa { padding: var(--pp-s-4) var(--pp-s-5); border-bottom: 1px solid var(--pp-edge-1); }
+
+/* ── Quarta rodada: as formas que só apareceram depois de abrir cada tela ── */
+
+.ck-upper.ck-upper { text-transform: uppercase; }
+.ck-pt-0.ck-pt-0 { padding-top: 0; }
+.ck-jc-center.ck-jc-center { justify-content: center; }
+.ck-w-meta.ck-w-meta { max-width: 260px; }
+
+/* Caixa de linha destacada: conferência de caixa, divergência de carteira,
+   contador de flag. Mesma moldura em toda parte, porque é a mesma leitura. */
+.ck-caixa--sm { padding: var(--pp-s-2) var(--pp-s-3); border-radius: var(--pp-r-control); background: var(--pp-glass-1); border: 1px solid var(--pp-edge-1); }
+.ck-caixa--erro { background: rgba(255, 59, 48, 0.07); border-color: rgba(255, 59, 48, 0.22); }
+
+/* Card de item numa lista com moldura: chave de API, webhook, camarote. */
+.ck-item { border-radius: var(--pp-r-card); background: var(--pp-glass-1); border: 1px solid var(--pp-edge-2); }
+.ck-item--fraco { opacity: 0.65; border-color: var(--pp-edge-1); }
+.ck-item--falha { border-color: rgba(255, 59, 48, 0.28); }
+/* Fio vermelho na lateral: o item que está falhando se enxerga varrendo a
+   coluna com o olho, sem ler nenhum texto. */
+.ck-item__fio-erro {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: var(--pp-red); border-radius: var(--pp-r-card) 0 0 var(--pp-r-card);
+}
+
+/* Opção clicável dentro de um formulário (escopo de chave, evento de hook).
+   Marcada muda a BORDA — com treze na tela, treze fundos acesos deixariam a
+   lista ilegível. Mesma regra da matriz de permissões. */
+.ck-opcao {
+  display: flex; cursor: pointer;
+  padding: var(--pp-s-2) var(--pp-s-3); border-radius: var(--pp-r-control);
+  border: 1px solid var(--pp-edge-1); background: transparent;
+}
+.ck-opcao.is-on { background: var(--pp-glass-2); border-color: var(--pp-edge-3); }
+.ck-opcao--linha { cursor: pointer; padding: var(--pp-s-3) 0; }
+/* Opção de uma coluna de navegação (org selecionada no suporte). */
+.ck-opcao--lista {
+  width: 100%; text-align: left; font: inherit; color: var(--pp-fg);
+  padding: var(--pp-s-3); border-radius: var(--pp-r-control);
+  background: var(--pp-glass-1); border: 1px solid var(--pp-edge-1); cursor: pointer;
+}
+.ck-opcao--lista.is-on { background: var(--pp-glass-3); border-color: var(--pp-cyan); }
+
+/* Botão que é só texto dentro de um card. */
+.ck-linkbtn {
+  appearance: none; background: none; border: 0; padding: 0;
+  font: inherit; cursor: pointer; text-align: left;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+
+/* Campo numérico: 520px de largura mente sobre quanto se espera digitar. */
+.ck-input--num.ck-input--num    { max-width: 120px; }
+.ck-input--num-xs.ck-input--num-xs { max-width: 72px; }
+.ck-input--num-lg.ck-input--num-lg { max-width: 200px; }
+
+/* Colunas fixas de uma "tabela" feita em flex (ranking, barras por cidade). */
+.ck-col-rot { width: 120px; }
+.ck-col-val { width: 96px; }
+.ck-col-pos { width: 24px; }
+.ck-col-pct { width: 40px; }
+
+/* Miniatura de produto / avatar de org. */
+.ck-thumb {
+  position: relative; overflow: hidden; flex: 0 0 auto;
+  width: 40px; height: 40px; border-radius: var(--pp-r-control);
+  background: var(--pp-glass-2); border: 1px solid var(--pp-edge-1);
+  display: grid; place-items: center;
+}
+.ck-thumb--sm { width: 32px; height: 32px; }
+.ck-cover { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+/* Ponto de cor da série (lote, categoria). A cor vem do dado. */
+.ck-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+
+/* Tabela larga: rola DENTRO do card, nunca leva a página junto. */
+.ck-table--wide { min-width: 780px; }
+
+/* Valor longo em célula: url, id, mensagem de erro. Quebra em qualquer
+   ponto — valor cortado pela metade não serve para copiar nem para buscar. */
+.ck-td-longa { max-width: 240px; overflow-wrap: anywhere; }
+.ck-quebra { word-break: break-all; line-height: 1.6; }
+.ck-quebra-suave { overflow-wrap: anywhere; line-height: 1.5; }
+.ck-erro-inline {
+  padding: var(--pp-s-2) var(--pp-s-3); border-radius: var(--pp-r-control);
+  background: rgba(255, 59, 48, 0.08); border: 1px solid rgba(255, 59, 48, 0.22);
+  overflow-wrap: anywhere;
+}
+
+/* Bloco travado até a etapa anterior estar feita (PDV sem turno aberto).
+   Continua visível de propósito: some com ele e ninguém entende o que falta. */
+.ck-travado { opacity: 0.5; pointer-events: none; }
+.ck-esgotado { opacity: 0.55; }
+
+/* Comanda que acompanha a rolagem: o total nunca sai de vista. */
+.ck-fixa-fim { position: sticky; bottom: var(--pp-s-4); }
+
+/* Tela centrada (login, redefinir senha). */
+.ck-centro { min-height: 100dvh; display: grid; place-items: center; }
+
+/* Barra de composição empilhada (ingresso + bar no mesmo trilho). */
+.ck-mixbar { display: flex; overflow: hidden; height: 12px; border-radius: var(--pp-r-pill); background: var(--pp-glass-1); }
+
+/* Painel em destaque. Só a borda muda — fundo aceso em painel grande é o
+   que faz uma tela inteira parecer um aviso. */
+.ck-panel--pulse { border-color: rgba(var(--pp-pulse-rgb), 0.45); }
+.ck-panel--amber { border-color: rgba(255, 184, 0, 0.45); }
+.ck-panel--red   { border-color: rgba(255, 59, 48, 0.45); }
+
+/* Linha de total dentro de uma tabela. */
+.ck-tr-total > td { border-top: 1px solid var(--pp-edge-2); padding-top: var(--pp-s-2); }
+
+/* ── Leitor de QR na porta ── */
+.ck-scanvideo {
+  width: 100%; border-radius: var(--pp-r-card);
+  background: var(--pp-ink-950); aspect-ratio: 4 / 3; object-fit: cover;
+}
+/* Mira: centralizar o QR sem pensar. O escuro em volta é o que empurra o
+   olho para o meio — não é decoração, é o alvo. */
+.ck-mira {
+  position: absolute; inset: 18% 22%;
+  border: 2px solid rgba(var(--pp-pulse-rgb), 0.85);
+  border-radius: var(--pp-r-card);
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.28);
+  pointer-events: none;
+}
+
+/* Preview da marca (maquete de navegador). */
+.ck-mock { border-radius: var(--pp-r-card); border: 1px solid var(--pp-edge-2); background: var(--pp-ink-950); overflow: hidden; }
+.ck-mock__tela { border-radius: var(--pp-r-card); background: var(--pp-ink-950); border: 1px solid var(--pp-edge-2); display: grid; place-items: center; min-height: 120px; }
+.ck-mock__vazio { border-radius: var(--pp-r-card); background: var(--pp-ink-950); border: 1px dashed var(--pp-edge-3); }
+.ck-mock__url { padding: var(--pp-s-1) var(--pp-s-3); border-radius: var(--pp-r-control); background: rgba(0, 0, 0, 0.35); }
+.ck-mock__logo { max-height: 76px; max-width: 100%; }
+.ck-mock__cta { height: 48px; border-radius: var(--pp-r-control); border: 0; cursor: default; }
+
+/* Card de camarote: o estado tinge o card inteiro, porque de longe a cor
+   chega antes do texto. Fundo e borda vêm do dado. */
+.ck-camarote {
+  border-radius: var(--pp-r-card); min-height: 108px;
+  display: flex; flex-direction: column;
+}
+
+/* Capa do evento no cockpit: proporcao da vitrine, para a produtora ver o
+   mesmo enquadramento que o publico vai ver. */
+.ck-capa { aspect-ratio: 16 / 9; object-fit: cover; border-radius: var(--pp-r-card); }
+
+/* Icone de feed neutro: a cor vem do tipo do evento, a moldura nao. */
+.ck-feed__ic--neutro { background: var(--pp-glass-2); border-color: var(--pp-edge-2); }
+
+.ck-c-dim.ck-c-dim { color: var(--pp-fg-3); }
+
+/* Fila: o convite que esta perto de vencer acende de leve. Fundo, nao borda —
+   a linha ja tem fio em cima, e dois avisos na mesma linha viram ruido. */
+.ck-fila__linha--vencendo { background: rgba(255, 184, 0, 0.05); }
+
+/* Maquete da marca. */
+.ck-mock__amostra { width: 88px; border-radius: var(--pp-r-card); border: 1px solid var(--pp-edge-3); }
+.ck-mock__dot { width: 8px; height: 8px; border-radius: 50%; opacity: 0.7; }
+
+/* Composicao do GMV: ingresso e bar no mesmo trilho. */
+.ck-mixbar__a { background: var(--pp-pulse); }
+.ck-mixbar__b { background: var(--pp-violet); }
+
+/* Ponto da legenda: pinta com o tom do bloco, sem cor escrita a mao. */
+.ck-dot--tom { background: var(--k, var(--pp-fg-4)); }
+
+/* Amostra de cor da marca. Alvo de 40px na grade — o dedo escolhe cor de
+   marca uma vez na vida, mas escolhe errado se o alvo tiver 36. */
+.ck-swatch {
+  width: 40px; height: 40px; border-radius: var(--pp-r-control);
+  border: 1px solid var(--pp-edge-3); cursor: pointer;
+}
+.ck-swatch.is-on { border: 2px solid var(--pp-white); }

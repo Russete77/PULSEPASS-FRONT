@@ -30,13 +30,7 @@ function Thumb({ item }) {
   return (
     <div
       aria-hidden="true"
-      style={{
-        position: 'relative', flex: '0 0 auto', width: 40, height: 40,
-        borderRadius: 'var(--pp-r-control)', overflow: 'hidden',
-        background: 'var(--pp-glass-2)', border: '1px solid var(--pp-edge-1)',
-        display: 'grid', placeItems: 'center',
-        color: 'var(--pp-fg-4)', fontWeight: 700, fontSize: 15,
-      }}
+      className="ck-thumb pp-muted-2 ck-w-bold ck-t-body"
     >
       {(item.name?.[0] ?? '?').toUpperCase()}
       {item.image_url && (
@@ -46,10 +40,7 @@ function Thumb({ item }) {
         <img
           src={item.image_url} alt="" loading="lazy" decoding="async"
           onError={(e) => { e.currentTarget.style.display = 'none'; }}
-          style={{
-            position: 'absolute', inset: 0,
-            width: '100%', height: '100%', objectFit: 'cover',
-          }}
+          className="ck-cover"
         />
       )}
     </div>
@@ -58,14 +49,14 @@ function Thumb({ item }) {
 
 /** Margem em % e em reais. Sem custo informado, "—" — não se inventa lucro. */
 function margem(it) {
-  if (it.cost_cents == null || !it.price_cents) return <span style={{ color: 'var(--pp-fg-5)' }}>—</span>;
+  if (it.cost_cents == null || !it.price_cents) return <span className="pp-muted-2">—</span>;
   const lucro = it.price_cents - it.cost_cents;
   const pct = Math.round((lucro / it.price_cents) * 100);
-  // Cores só por token: prejuízo usa o vermelho do sistema, nada de hex solto.
-  const cor = pct < 0 ? 'var(--pp-red)' : pct < 30 ? 'var(--pp-amber)' : 'var(--pp-pulse)';
+  // Margem vira TOM: prejuízo é vermelho, apertada é âmbar, saudável é verde.
+  const tom = pct < 0 ? 'red' : pct < 30 ? 'amber' : 'pulse';
   return (
-    <span style={{ color: cor, fontVariantNumeric: 'tabular-nums', fontWeight: 600 }}>
-      {pct}%<span style={{ color: 'var(--pp-fg-4)', fontSize: 12, fontWeight: 400 }}> · {brl(lucro)}</span>
+    <span className={`pp-num ck-w-semi ck-c-${tom}`}>
+      {pct}%<span className="pp-muted-2 ck-t-support ck-w-reg"> · {brl(lucro)}</span>
     </span>
   );
 }
@@ -143,33 +134,33 @@ export default function Cardapio() {
 
       {/* KPIs no topo, com o fio de cor no topo do cartão como no mockup. */}
       {items.length > 0 && (
-        <div className="ck-metrics" style={{ marginBottom: 20 }}>
+        <div className="ck-metrics ck-mb-5">
           {kpis.map((k) => (
-            <div key={k.l} className="ck-metric" style={{ position: 'relative', overflow: 'hidden' }}>
-              <div aria-hidden="true" style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: k.cor, opacity: 0.7 }} />
+            <div key={k.l} className="ck-metric ck-rel ck-hidden">
+              <div aria-hidden="true" className="ck-fio" style={{ background: k.cor }} />
               <div className="lbl">{k.l}</div>
-              <div className="val" style={{ fontSize: 'var(--pp-fs-24)' }}>{k.v}</div>
-              <div style={{ marginTop: 4, fontSize: 11, color: 'var(--pp-fg-4)' }}>{k.d}</div>
+              <div className="val">{k.v}</div>
+              <div className="ck-mt-1 ck-t-label pp-muted-2">{k.d}</div>
             </div>
           ))}
         </div>
       )}
 
-      <form onSubmit={create} className="ck-card" style={{ maxWidth: 720 }}>
+      <form onSubmit={create} className="ck-card ck-w-read">
         <div className="ck-row">
-          <div className="ck-field" style={{ margin: 0 }}>
+          <div className="ck-field ck-m-0">
             <label htmlFor="cardapio-1" className="ck-label">Nome</label>
             <input id="cardapio-1" className="ck-input" value={form.name} onChange={set('name')} required />
           </div>
-          <div className="ck-field" style={{ margin: 0 }}>
+          <div className="ck-field ck-m-0">
             <label htmlFor="cardapio-2" className="ck-label">Categoria</label>
             <input id="cardapio-2" className="ck-input" value={form.category} onChange={set('category')} placeholder="Geral" />
           </div>
-          <div className="ck-field" style={{ margin: 0 }}>
+          <div className="ck-field ck-m-0">
             <label htmlFor="cardapio-3" className="ck-label">Preço (R$)</label>
             <input id="cardapio-3" className="ck-input" type="number" min="0" step="0.01" value={form.price_reais} onChange={set('price_reais')} required />
           </div>
-          <div className="ck-field" style={{ margin: 0 }}>
+          <div className="ck-field ck-m-0">
             <label htmlFor="cardapio-4" className="ck-label">Estoque</label>
             <input id="cardapio-4" className="ck-input" type="number" min="0" value={form.stock} onChange={set('stock')} placeholder="∞" />
           </div>
@@ -182,28 +173,28 @@ export default function Cardapio() {
               value={form.cost_reais} onChange={set('cost_reais')} placeholder="opcional" />
           </div>
         </div>
-        <button className="ck-btn ck-btn--primary" style={{ marginTop: 12 }} disabled={saving || !form.name.trim()}>
+        <button className="ck-btn ck-btn--primary ck-mt-3" disabled={saving || !form.name.trim()}>
           {saving ? 'Adicionando…' : '+ Adicionar item'}
         </button>
       </form>
 
-      <div className="ck-card" style={{ padding: 0, overflow: 'hidden', marginTop: 20 }}>
+      <div className="ck-card ck-card--flush ck-mt-5">
         <table className="ck-table">
           <thead><tr><th>Item</th><th>Preço</th><th>Custo</th><th>Margem</th><th>Estoque</th><th>Situação</th><th>Disponível</th><th></th></tr></thead>
           <tbody>
             {items.map((it) => (
               <tr key={it.id} style={it.available && it.stock === 0 ? { background: 'rgba(255,59,48,0.05)' } : undefined}>
                 <td>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div className="ck-flex ck-ai-center ck-gap-3">
                     <Thumb item={it} />
-                    <div style={{ minWidth: 0 }}>
-                      <div style={{ fontWeight: 600 }}>{it.name}</div>
-                      {it.category && <div style={{ color: 'var(--pp-fg-4)', fontSize: 12 }}>{it.category}</div>}
+                    <div className="ck-min0">
+                      <div className="ck-w-semi">{it.name}</div>
+                      {it.category && <div className="pp-muted-2 ck-t-support">{it.category}</div>}
                     </div>
                   </div>
                 </td>
-                <td style={{ fontFamily: 'var(--pp-font-mono)' }}>{brl(it.price_cents)}</td>
-                <td style={{ color: 'var(--pp-fg-3)', fontFamily: 'var(--pp-font-mono)' }}>{it.cost_cents != null ? brl(it.cost_cents) : '—'}</td>
+                <td className="pp-mono">{brl(it.price_cents)}</td>
+                <td className="pp-muted pp-mono">{it.cost_cents != null ? brl(it.cost_cents) : '—'}</td>
                 {/* A margem é o que decide o que promover: o chope de R$ 12
                     pode dar menos lucro que a água de R$ 6, e sem esta coluna
                     ninguém tem como saber. */}
@@ -211,7 +202,7 @@ export default function Cardapio() {
                 <td>
                   <input
                     type="number" min="0" defaultValue={it.stock ?? ''} placeholder="∞"
-                    className="ck-input" style={{ width: 72 }}
+                    className="ck-input ck-input--num-xs"
                     aria-label={`Estoque de ${it.name}`}
                     onBlur={(e) => {
                       const v = e.target.value;
@@ -227,20 +218,20 @@ export default function Cardapio() {
                     ? <span className="ck-badge ck-badge--danger">ruptura</span>
                     : !it.available
                       ? <span className="ck-badge">oculto</span>
-                      : <span style={{ color: 'var(--pp-fg-4)', fontSize: 12 }}>ok</span>}
+                      : <span className="pp-muted-2 ck-t-support">ok</span>}
                 </td>
                 <td>
                   <button className={`ck-btn ${it.available ? 'ck-btn--glass' : 'ck-btn--ghost'}`} onClick={() => patch(it, { available: !it.available })}>
                     {it.available ? 'Sim' : 'Não'}
                   </button>
                 </td>
-                <td style={{ textAlign: 'right' }}>
+                <td className="ck-right">
                   <button className="ck-iconbtn" onClick={() => remove(it)} title={`Excluir ${it.name}`} aria-label={`Excluir ${it.name}`}><Icon name="close" size={15} /></button>
                 </td>
               </tr>
             ))}
             {items.length === 0 && (
-              <tr><td colSpan={8} style={{ color: 'var(--pp-fg-3)' }}>Nenhum item no cardápio. Adicione o primeiro no formulário acima.</td></tr>
+              <tr><td colSpan={8} className="pp-muted">Nenhum item no cardápio. Adicione o primeiro no formulário acima.</td></tr>
             )}
           </tbody>
         </table>
@@ -250,15 +241,12 @@ export default function Cardapio() {
           Item zerado que continua "disponível" segue aparecendo pro cliente
           e falha na hora do pedido: é o alerta mais caro da noite. */}
       {rupturas.length > 0 && (
-        <div className="ck-card" style={{
-          marginTop: 16, borderColor: 'rgba(255,59,48,0.3)', background: 'rgba(255,59,48,0.06)',
-          display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap',
-        }}>
-          <div style={{ flex: 1, minWidth: 220 }}>
-            <div style={{ fontWeight: 600, fontSize: 13 }}>
+        <div className="ck-card ck-mt-4 ck-flex ck-ai-center ck-gap-3 pp-wrap ck-alerta">
+          <div className="ck-flex1 ck-fit--lg">
+            <div className="ck-w-semi ck-t-support">
               {rupturas.length} item(ns) à venda com estoque zerado
             </div>
-            <div style={{ color: 'var(--pp-fg-3)', fontSize: 12, marginTop: 2 }}>
+            <div className="pp-muted ck-meta">
               {rupturas.map((i) => i.name).join(' · ')} — reponha o estoque ou marque como indisponível.
             </div>
           </div>

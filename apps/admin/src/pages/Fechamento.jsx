@@ -124,21 +124,18 @@ export default function Fechamento() {
 
       <div className="ck-metrics">
         {kpis.map((k) => (
-          <div key={k.l} className="ck-metric" style={{ position: 'relative', overflow: 'hidden' }}>
-            <div aria-hidden="true" style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: k.cor, opacity: 0.7 }} />
+          <div key={k.l} className="ck-metric ck-rel ck-hidden">
+            <div aria-hidden="true" className="ck-fio" style={{ background: k.cor }} />
             <div className="lbl">{k.l}</div>
-            <div className="val" style={{ fontSize: 'var(--pp-fs-24)' }}>{k.v}</div>
-            <div style={{ marginTop: 4, fontSize: 11, color: 'var(--pp-fg-4)' }}>{k.d}</div>
+            <div className="val">{k.v}</div>
+            <div className="ck-mt-1 ck-t-label pp-muted-2">{k.d}</div>
           </div>
         ))}
       </div>
 
       {/* Duas colunas como no mockup: a conferência da gaveta ao lado do
           relatório por operador. */}
-      <div style={{
-        marginTop: 20, display: 'grid', gap: 16,
-        gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', alignItems: 'start',
-      }}>
+      <div className="ck-grid--md ck-mt-5 ck-ai-start">
         {/* Turno de caixa.
             O relatório ao lado mostra o CASHLESS, que não passa pela gaveta.
             O turno é o outro lado: dinheiro em espécie. Sem o fundo de troco,
@@ -148,12 +145,12 @@ export default function Fechamento() {
 
           {turno ? (
             <>
-              <p style={{ color: 'var(--pp-fg-2)', fontSize: 14, margin: '8px 0 14px' }}>
+              <p className="ck-c-fg2 ck-t-support ck-m-0 ck-mt-2 ck-mb-4">
                 Turno aberto{turno.station ? ` na praça ${turno.station}` : ''} desde{' '}
                 {hora(turno.opened_at)}, com fundo de <b>{brl(turno.opening_cents)}</b>.
               </p>
-              <div className="ck-row" style={{ alignItems: 'flex-end', gap: 10, flexWrap: 'wrap' }}>
-                <div className="ck-field" style={{ margin: 0, flex: '1 1 200px' }}>
+              <div className="ck-row ck-ai-end ck-gap-3 pp-wrap">
+                <div className="ck-field ck-m-0 ck-flex1 ck-fit">
                   <label className="ck-label" htmlFor="fech-contado">Quanto contou na gaveta (R$)</label>
                   <input id="fech-contado" className="ck-input" type="number" min="0" step="0.01"
                     inputMode="decimal" value={contado} onChange={(e) => setContado(e.target.value)}
@@ -164,7 +161,7 @@ export default function Fechamento() {
                   Fechar e conferir
                 </button>
               </div>
-              <div className="ck-field" style={{ marginTop: 10 }}>
+              <div className="ck-field ck-mt-3">
                 <label className="ck-label" htmlFor="fech-notas">Observação (opcional — vira registro do turno)</label>
                 <input id="fech-notas" className="ck-input" value={notas} maxLength={200}
                   onChange={(e) => setNotas(e.target.value)}
@@ -173,17 +170,17 @@ export default function Fechamento() {
             </>
           ) : (
             <>
-              <p style={{ color: 'var(--pp-fg-3)', fontSize: 14, margin: '8px 0 14px' }}>
+              <p className="pp-muted ck-t-support ck-m-0 ck-mt-2 ck-mb-4">
                 Nenhum turno seu aberto. Informe o fundo de troco com que a gaveta começa.
               </p>
-              <div className="ck-row" style={{ alignItems: 'flex-end', gap: 10, flexWrap: 'wrap' }}>
-                <div className="ck-field" style={{ margin: 0 }}>
+              <div className="ck-row ck-ai-end ck-gap-3 pp-wrap">
+                <div className="ck-field ck-m-0">
                   <label className="ck-label" htmlFor="fech-fundo">Fundo de troco (R$)</label>
                   <input id="fech-fundo" className="ck-input" type="number" min="0" step="0.01"
                     inputMode="decimal" value={fundo} onChange={(e) => setFundo(e.target.value)}
                     placeholder="0,00" />
                 </div>
-                <div className="ck-field" style={{ margin: 0 }}>
+                <div className="ck-field ck-m-0">
                   <label className="ck-label" htmlFor="fech-praca">Praça (opcional)</label>
                   <input id="fech-praca" className="ck-input" value={praca}
                     onChange={(e) => setPraca(e.target.value)} placeholder="Bar Central" />
@@ -202,19 +199,16 @@ export default function Fechamento() {
               diferença entre os dois é o achado da conferência. */}
           {conferencia && (
             <>
-              <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div className="ck-mt-4 ck-gap-2 ck-col">
                 {[
                   ['Fundo de troco', conferencia.fundo_cents],
                   ['Vendas em dinheiro', conferencia.vendas_cents],
                   ['Esperado na gaveta', conferencia.esperado_cents],
                   ['Contado pelo operador', conferencia.contado_cents],
                 ].map(([l, v]) => (
-                  <div key={l} className="ck-between" style={{
-                    padding: '10px 12px', borderRadius: 'var(--pp-r-md)',
-                    background: 'var(--pp-glass-1)', border: '1px solid var(--pp-edge-1)',
-                  }}>
-                    <span style={{ fontSize: 13 }}>{l}</span>
-                    <span style={{ fontFamily: 'var(--pp-font-mono)', fontWeight: 600 }}>{brl(v)}</span>
+                  <div key={l} className="ck-between ck-caixa--sm">
+                    <span className="ck-t-support">{l}</span>
+                    <span className="pp-mono ck-w-semi">{brl(v)}</span>
                   </div>
                 ))}
               </div>
@@ -225,7 +219,7 @@ export default function Fechamento() {
                       : conferencia.veredito === 'sobrou' ? 'Sobrou na gaveta'
                         : 'Faltou na gaveta'}
                   </strong>
-                  <span style={{ fontFamily: 'var(--pp-font-mono)', fontWeight: 700, fontSize: 'var(--pp-fs-18)' }}>
+                  <span className="pp-mono ck-w-bold ck-t-section">
                     {brl(Math.abs(conferencia.diferenca_cents))}
                   </span>
                 </div>
@@ -235,7 +229,7 @@ export default function Fechamento() {
         </div>
 
         {/* Cashless por operador. */}
-        <div className="ck-card" style={{ padding: 0, overflow: 'hidden' }}>
+        <div className="ck-card ck-card--flush">
           <table className="ck-table">
             <thead><tr><th>Operador</th><th className="num">Pedidos</th><th className="num">Total</th></tr></thead>
             <tbody>
@@ -243,11 +237,11 @@ export default function Fechamento() {
                 <tr key={r.operator_id}>
                   <td>{r.name || r.email}</td>
                   <td className="num">{r.orders}</td>
-                  <td className="num" style={{ fontFamily: 'var(--pp-font-mono)' }}>{brl(r.total_cents)}</td>
+                  <td className="num pp-mono">{brl(r.total_cents)}</td>
                 </tr>
               ))}
               {rows.length === 0 && (
-                <tr><td colSpan={3} style={{ color: 'var(--pp-fg-3)' }}>Nenhuma venda de PDV ainda.</td></tr>
+                <tr><td colSpan={3} className="pp-muted">Nenhuma venda de PDV ainda.</td></tr>
               )}
             </tbody>
           </table>
@@ -255,7 +249,7 @@ export default function Fechamento() {
       </div>
 
       {conf?.status === 'divergencias' && (
-        <p className="ck-sub" style={{ marginTop: 12, color: 'var(--pp-amber)' }}>
+        <p className="ck-sub ck-mt-3 ck-c-amber">
           ⚠ {conf.drifts.length} de {conf.conferidas} carteira(s) com saldo divergente da soma das
           transações — investigar antes de fechar a noite.
         </p>
@@ -264,7 +258,7 @@ export default function Fechamento() {
       {/* Sem consumo no bar não há carteira a conferir. Dizer isso é o
           oposto de dar OK: o silêncio aqui era o bug. */}
       {conf?.status === 'sem_movimento' && (
-        <p className="ck-sub" style={{ marginTop: 12, color: 'var(--pp-fg-4)' }}>
+        <p className="ck-sub ck-mt-3 pp-muted-2">
           Nenhuma carteira movimentou no bar deste evento — não há saldo a conferir.
         </p>
       )}
@@ -274,8 +268,8 @@ export default function Fechamento() {
           — é o que falta fechar antes de ir embora. */}
       {turnos.length > 0 && (
         <>
-          <h2 style={{ fontSize: 'var(--pp-fs-18)', marginTop: 28, marginBottom: 12 }}>Turnos da noite</h2>
-          <div className="ck-card" style={{ padding: 0, overflow: 'hidden' }}>
+          <h2 className="ck-secao">Turnos da noite</h2>
+          <div className="ck-card ck-card--flush">
             <table className="ck-table">
               <thead>
                 <tr>
@@ -288,17 +282,17 @@ export default function Fechamento() {
                   <tr key={t.id}>
                     <td>
                       {t.operador}
-                      {t.notas && <div style={{ color: 'var(--pp-fg-4)', fontSize: 12 }}>{t.notas}</div>}
+                      {t.notas && <div className="pp-muted-2 ck-t-support">{t.notas}</div>}
                     </td>
-                    <td style={{ color: 'var(--pp-fg-3)' }}>{t.praca ?? '—'}</td>
-                    <td style={{ fontFamily: 'var(--pp-font-mono)', fontSize: 13 }}>{diaHora(t.aberto_em)}</td>
-                    <td style={{ fontFamily: 'var(--pp-font-mono)', fontSize: 13 }}>
+                    <td className="pp-muted">{t.praca ?? '—'}</td>
+                    <td className="pp-mono ck-t-support">{diaHora(t.aberto_em)}</td>
+                    <td className="pp-mono ck-t-support">
                       {t.fechado_em
                         ? diaHora(t.fechado_em)
                         : <span className="ck-badge ck-badge--live">aberto</span>}
                     </td>
-                    <td className="num" style={{ fontFamily: 'var(--pp-font-mono)' }}>{brl(t.fundo_cents)}</td>
-                    <td className="num" style={{ fontFamily: 'var(--pp-font-mono)' }}>
+                    <td className="num pp-mono">{brl(t.fundo_cents)}</td>
+                    <td className="num pp-mono">
                       {t.contado_cents != null ? brl(t.contado_cents) : '—'}
                     </td>
                   </tr>

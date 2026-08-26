@@ -206,8 +206,12 @@
 /* Chips (filtros / seleção) */
 .pp-chip {
   display: inline-flex; align-items: center; gap: 6px;
-  height: 34px; padding: 0 var(--pp-s-4); border-radius: var(--pp-r-pill);
-  font-size: var(--pp-fs-13); font-weight: 600; color: var(--pp-fg-2);
+  /* 44px, não 34: o chip é ALVO DE TOQUE. No PDV ele filtra a categoria do
+     cardápio com fila no balcão, e no telefone ele é o filtro da vitrine —
+     nos dois casos, errar o toque custa mais que os 10px de altura. 44 é o
+     mínimo que um dedo acerta sem mirar. */
+  min-height: 44px; padding: 0 var(--pp-s-4); border-radius: var(--pp-r-pill);
+  font-size: var(--pp-t-support); font-weight: 600; color: var(--pp-fg-2);
   background: var(--pp-glass-1); border: 1px solid var(--pp-edge-2);
   transition: all var(--pp-dur-1) var(--pp-ease); cursor: pointer;
 }

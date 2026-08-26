@@ -20,26 +20,26 @@ export default function Orgs() {
     <AdmShell where={`${orgs?.length ?? 0} organizações`}>
       {error ? <ErrorBox>{error}</ErrorBox> : !orgs ? <Loading /> : (
         <div className="pp-stack pp-stack-5 pp-reveal">
-          <div className="pp-between" style={{ alignItems: 'flex-end' }}>
+          <div className="pp-between ck-ai-end">
             <div>
-              <div className="adm-eyebrow" style={{ color: 'var(--pp-violet-hi)' }}>Organizações</div>
+              <div className="adm-eyebrow ck-c-violet">Organizações</div>
               <div className="adm-h1">{orgs.length} orgs · saúde global</div>
             </div>
-            <span className="adm-btn-pink" style={{ opacity: 0.5, cursor: 'not-allowed' }}><Icon name="plus" size={15} /> Cadastrar org</span>
+            <span className="adm-btn-pink ck-off"><Icon name="plus" size={15} /> Cadastrar org</span>
           </div>
 
-          <div className="adm-kpis" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
-            <div className="adm-kpi" style={{ '--k': 'var(--pp-pulse)' }}><div className="l">Orgs ativas</div><div className="v">{orgs.length}</div></div>
-            <div className="adm-kpi" style={{ '--k': '#A78BFA' }}><div className="l">GMV agregado</div><div className="v">{brl(gmvTotal)}</div></div>
-            <div className="adm-kpi" style={{ '--k': '#22D3EE' }}><div className="l">Com vendas</div><div className="v">{orgs.filter((o) => o.gmv_cents > 0).length}</div></div>
+          <div className="adm-kpis ck-cols-3">
+            <div className="adm-kpi ck-k--pulse"><div className="l">Orgs ativas</div><div className="v">{orgs.length}</div></div>
+            <div className="adm-kpi ck-k--violet"><div className="l">GMV agregado</div><div className="v">{brl(gmvTotal)}</div></div>
+            <div className="adm-kpi ck-k--cyan"><div className="l">Com vendas</div><div className="v">{orgs.filter((o) => o.gmv_cents > 0).length}</div></div>
           </div>
 
-          <div className="pp-inputwrap" style={{ maxWidth: 420 }}>
+          <div className="pp-inputwrap ck-w-form">
             <Icon name="search" size={16} />
             <input className="pp-input" placeholder="Buscar por nome, e-mail ou cidade" value={q} onChange={(e) => setQ(e.target.value)} />
           </div>
 
-          <div className="ck-card" style={{ padding: 0, overflow: 'auto' }}>
+          <div className="ck-card ck-p-0 ck-scroll">
             <table className="ck-table">
               <thead><tr><th>Org</th><th>Dono</th><th>Cidade</th><th className="num">Eventos</th><th className="num">GMV</th><th>Desde</th></tr></thead>
               <tbody>
@@ -47,18 +47,18 @@ export default function Orgs() {
                   <tr key={o.id}>
                     <td>
                       <span className="pp-row">
-                        <span className="pp-order__thumb" style={{ width: 30, height: 30, fontSize: 12 }}>{o.name[0]?.toUpperCase()}</span>
+                        <span className="pp-order__thumb ck-t-support ck-thumb--sm">{o.name[0]?.toUpperCase()}</span>
                         <b>{o.name}</b>
                       </span>
                     </td>
-                    <td className="pp-mono pp-muted" style={{ fontSize: 'var(--pp-fs-12)' }}>{o.owner_email}</td>
+                    <td className="pp-mono pp-muted ck-t-support">{o.owner_email}</td>
                     <td className="pp-mono">{o.city}</td>
                     <td className="num pp-mono">{o.events}</td>
                     <td className="num"><span className="pp-price">{brl(o.gmv_cents)}</span></td>
-                    <td className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)' }}>{dateTime(o.created_at)}</td>
+                    <td className="pp-muted ck-t-support">{dateTime(o.created_at)}</td>
                   </tr>
                 ))}
-                {filtered.length === 0 && <tr><td colSpan={6} className="pp-muted" style={{ padding: 'var(--pp-s-6)' }}>Nenhuma org encontrada.</td></tr>}
+                {filtered.length === 0 && <tr><td colSpan={6} className="pp-muted ck-p-6">Nenhuma org encontrada.</td></tr>}
               </tbody>
             </table>
           </div>

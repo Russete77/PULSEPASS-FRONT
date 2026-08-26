@@ -108,36 +108,36 @@ export default function Bilheteria() {
     return (
       <Shell>
         <OpsBack eventId={id} />
-        <div className="ck-card" style={{ maxWidth: 520 }}>
+        <div className="ck-card ck-w-form">
           <div className="ck-eyebrow">venda concluída</div>
           {sale.change_cents > 0 ? (
             <>
-              <div className="ck-label" style={{ marginTop: 8 }}>Troco</div>
-              <div style={{ fontFamily: 'var(--pp-font-display)', fontSize: 52, fontWeight: 700, color: 'var(--pp-pulse)', lineHeight: 1.1, fontVariantNumeric: 'tabular-nums' }}>
+              <div className="ck-label ck-mt-2">Troco</div>
+              <div className="ck-t-money ck-t-money--lg ck-c-pulse">
                 {brl(sale.change_cents)}
               </div>
             </>
           ) : (
-            <h1 className="ck-h1" style={{ color: 'var(--pp-pulse)' }}>Sem troco</h1>
+            <h1 className="ck-h1 ck-c-pulse">Sem troco</h1>
           )}
-          <p className="ck-sub" style={{ marginTop: 4 }}>
+          <p className="ck-sub ck-mt-1">
             Cobrado {brl(sale.total_cents)}
             {sale.received_cents ? ` · recebido ${brl(sale.received_cents)}` : ''}
           </p>
 
-          <div className="ck-label" style={{ marginTop: 20 }}>Ingressos emitidos</div>
+          <div className="ck-label ck-mt-5">Ingressos emitidos</div>
           {sale.tickets.map((t) => (
-            <div key={t.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid var(--pp-edge-1)' }}>
-              <span style={{ fontFamily: 'var(--pp-font-mono)', letterSpacing: 1 }}>{t.code}</span>
-              <span style={{ color: 'var(--pp-fg-3)', fontSize: 13 }}>{t.tier}</span>
+            <div key={t.id} className="ck-linha">
+              <span className="pp-mono ck-cod">{t.code}</span>
+              <span className="pp-muted ck-t-support">{t.tier}</span>
             </div>
           ))}
-          <p style={{ color: 'var(--pp-fg-4)', fontSize: 12, marginTop: 12 }}>
+          <p className="pp-muted-2 ck-t-support ck-mt-3">
             {sale.emailed
               ? 'Ingressos também enviados por e-mail.'
               : 'Venda ao portador — o código acima é o ingresso. Anote ou fotografe.'}
           </p>
-          <button className="ck-btn ck-btn--primary" style={{ marginTop: 18, width: '100%', height: 52 }} onClick={() => setSale(null)}>
+          <button className="ck-btn ck-btn--primary ck-mt-5 ck-full ck-btn--lg" onClick={() => setSale(null)}>
             Próxima venda
           </button>
         </div>
@@ -150,27 +150,27 @@ export default function Bilheteria() {
       <OpsBack eventId={id} />
 
       {/* Cabeçalho com o selo do operador, como no mockup. */}
-      <div className="ck-between" style={{ alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
+      <div className="ck-between ck-ai-start pp-wrap ck-gap-3">
         <div>
           <div className="ck-eyebrow">bilheteria física · venda no balcão</div>
           <h1 className="ck-h1">Vender ingresso</h1>
-          <p className="ck-sub" style={{ marginBottom: 0 }}>
+          <p className="ck-sub ck-mb-0">
             Dinheiro, maquininha, Pix ou cortesia. O ingresso sai na hora.
           </p>
         </div>
         {operador && (
           <span className="ck-badge ck-badge--success">
-            <span className="pp-pulse-dot" style={{ width: 6, height: 6 }} /> operador · {operador}
+            <span className="pp-pulse-dot" /> operador · {operador}
           </span>
         )}
       </div>
 
-      <div className="ck-split" style={{ marginTop: 20 }}>
+      <div className="ck-split ck-mt-5">
         {/* ══ Coluna da seleção ══ */}
         <div>
           {/* Lotes em cards com preço grande — a grade do mockup. O stepper
               fica no próprio card: aqui vende-se mais de um lote por venda. */}
-          <div className="ck-label" style={{ marginBottom: 10 }}>Lotes</div>
+          <div className="ck-label ck-mb-3">Lotes</div>
           {tiers.length === 0 && <div className="ck-empty">Nenhum lote disponível.</div>}
           <div className="ck-bo-lotes">
             {tiers.map((t) => {
@@ -185,7 +185,7 @@ export default function Bilheteria() {
                     {restam === null ? 'sem limite' : esgotado ? 'esgotado' : `restam ${restam}`}
                     {t.half_price_cents != null && ` · meia ${brl(t.half_price_cents)}`}
                   </div>
-                  <div className="pp-stepper" style={{ marginTop: 10 }}>
+                  <div className="pp-stepper ck-mt-3">
                     <button type="button" onClick={() => setQty(t.id, -1)} disabled={!n}
                       aria-label={`Tirar um ${t.name}`}>−</button>
                     <span className="qty" aria-live="polite" aria-label={`${n} ${t.name}`}>{n}</span>
@@ -198,7 +198,7 @@ export default function Bilheteria() {
           </div>
 
           {/* Forma de pagamento em cards com rádio, como no mockup. */}
-          <div className="ck-label" style={{ margin: '20px 0 10px' }}>Forma de pagamento</div>
+          <div className="ck-label ck-m-0 ck-mt-5 ck-mb-3">Forma de pagamento</div>
           <div className="ck-pays" role="radiogroup" aria-label="Forma de pagamento">
             {METHODS.map((m) => {
               const on = method === m.key;
@@ -215,15 +215,15 @@ export default function Bilheteria() {
 
           {/* Comprador (opcional): com e-mail o ingresso vai pro app; sem, é
               ao portador. */}
-          <div className="ck-label" style={{ margin: '20px 0 10px' }}>Comprador (opcional)</div>
+          <div className="ck-label ck-m-0 ck-mt-5 ck-mb-3">Comprador (opcional)</div>
           <div className="ck-card">
             <div className="ck-row">
-              <div className="ck-field" style={{ margin: 0 }}>
+              <div className="ck-field ck-m-0">
                 <label htmlFor="bilheteria-nome" className="ck-label">Nome</label>
                 <input id="bilheteria-nome" className="ck-input" autoComplete="name" value={buyerName}
                   onChange={(e) => setBuyerName(e.target.value)} placeholder="Vai impresso no ingresso" />
               </div>
-              <div className="ck-field" style={{ margin: 0 }}>
+              <div className="ck-field ck-m-0">
                 <label htmlFor="bilheteria-email" className="ck-label">E-mail</label>
                 <input id="bilheteria-email" className="ck-input" type="email" autoComplete="email"
                   inputMode="email" autoCapitalize="off" autoCorrect="off" spellCheck="false"
@@ -235,15 +235,15 @@ export default function Bilheteria() {
 
           {/* Últimas vendas — o extrato curto que resolve "cobrei essa pessoa?" */}
           {(state.data.recent_sales ?? []).length > 0 && (
-            <div className="ck-card" style={{ marginTop: 16 }}>
+            <div className="ck-card ck-mt-4">
               <div className="ck-label">Últimas vendas</div>
               {state.data.recent_sales.slice(0, 8).map((s) => (
-                <div key={s.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 0', borderBottom: '1px solid var(--pp-edge-1)', fontSize: 13 }}>
-                  <span style={{ color: 'var(--pp-fg-3)' }}>
+                <div key={s.id} className="ck-linha ck-t-support">
+                  <span className="pp-muted">
                     {METHODS.find((m) => m.key === s.method)?.label ?? s.method}
                     {s.buyer_name ? ` · ${s.buyer_name}` : ''}
                   </span>
-                  <span style={{ fontFamily: 'var(--pp-font-mono)' }}>{brl(s.amount_cents)}</span>
+                  <span className="pp-mono">{brl(s.amount_cents)}</span>
                 </div>
               ))}
             </div>
@@ -253,7 +253,7 @@ export default function Bilheteria() {
         {/* ══ Comanda (aside do mockup) ══ */}
         <aside className="ck-bo-comanda" aria-label="Comanda atual">
           <div className="ck-bo-comanda__in">
-            <div className="ck-label" style={{ marginBottom: 10 }}>Comanda atual</div>
+            <div className="ck-label ck-mb-3">Comanda atual</div>
 
             {/* Caixa do dia sempre à vista de quem opera. */}
             <div className="ck-bo-caixa">
@@ -273,50 +273,46 @@ export default function Bilheteria() {
 
             <div className="ck-bo-itens">
               {itemCount === 0 && (
-                <p style={{ color: 'var(--pp-fg-4)', fontSize: 13, margin: '10px 0' }}>
+                <p className="pp-muted-2 ck-t-support ck-m-0 ck-mt-3 ck-mb-3">
                   Toque num lote pra começar a venda.
                 </p>
               )}
               {tiers.filter((t) => cart[t.id]).map((t) => (
-                <div key={t.id} className="ck-between" style={{ padding: '6px 0' }}>
-                  <span style={{ fontSize: 14, fontWeight: 600 }}>{cart[t.id]}× {t.name}</span>
-                  <span className="pp-mono" style={{ fontWeight: 600 }}>{brl(cart[t.id] * t.price_cents)}</span>
+                <div key={t.id} className="ck-between ck-py-2">
+                  <span className="ck-t-support ck-w-semi">{cart[t.id]}× {t.name}</span>
+                  <span className="pp-mono ck-w-semi">{brl(cart[t.id] * t.price_cents)}</span>
                 </div>
               ))}
             </div>
 
             <div className="ck-bo-total">
-              <div className="ck-between" style={{ fontSize: 13, color: 'var(--pp-fg-3)' }}>
+              <div className="ck-between ck-t-support pp-muted">
                 <span>Subtotal · {itemCount} ingresso(s)</span>
                 <span className="pp-mono">{isCourtesy ? brl(0) : brl(subtotal)}</span>
               </div>
               {!isCourtesy && (
-                <p style={{ color: 'var(--pp-fg-4)', fontSize: 11, margin: '4px 0 0' }}>
+                <p className="pp-muted-2 ck-t-label ck-m-0 ck-mt-1">
                   A taxa de serviço do evento, se houver, entra no total final.
                 </p>
               )}
-              <div className="ck-between" style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid var(--pp-edge-2)' }}>
+              <div className="ck-total">
                 <strong>Total</strong>
-                <span className="pp-money" style={{ fontSize: 'var(--pp-fs-28)' }}>
+                <span className="pp-money">
                   {isCourtesy ? brl(0) : brl(subtotal)}
                 </span>
               </div>
             </div>
 
             {method === 'cash' && (
-              <div className="ck-field" style={{ marginTop: 14, marginBottom: 0 }}>
+              <div className="ck-field ck-mt-4 ck-mb-0">
                 <label htmlFor="bilheteria-recebido" className="ck-label">Valor recebido (pro troco)</label>
-                <input id="bilheteria-recebido" className="ck-input" inputMode="decimal" value={received}
-                  onChange={(e) => setReceived(e.target.value)} placeholder="Ex.: 200,00"
-                  style={{ fontFamily: 'var(--pp-font-mono)', fontSize: 20 }} />
+                <input id="bilheteria-recebido" className="ck-input pp-mono ck-t-section" inputMode="decimal" value={received} onChange={(e) => setReceived(e.target.value)} placeholder="Ex.: 200,00"/>
               </div>
             )}
 
             {error && <ErrorBox>{error}</ErrorBox>}
 
-            <button className={`ck-btn ck-btn--primary ${busy ? 'is-loading' : ''}`}
-              style={{ marginTop: 14, width: '100%', height: 56, fontSize: 16 }}
-              onClick={finalize} disabled={busy || itemCount === 0}>
+            <button className={`ck-btn ck-btn--primary ${busy ? 'is-loading' : ''} ck-mt-4 ck-full ck-t-body ck-btn--lg`} onClick={finalize} disabled={busy || itemCount === 0}>
               {busy ? 'Emitindo…' : (
                 <>
                   <Icon name="ticket" size={17} />
@@ -325,8 +321,7 @@ export default function Bilheteria() {
               )}
             </button>
             {itemCount > 0 && (
-              <button className="ck-btn ck-btn--ghost" style={{ marginTop: 8, width: '100%' }}
-                onClick={() => { setCart({}); setReceived(''); }}>
+              <button className="ck-btn ck-btn--ghost ck-mt-2 ck-full" onClick={() => { setCart({}); setReceived(''); }}>
                 Cancelar comanda
               </button>
             )}

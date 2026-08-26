@@ -193,7 +193,7 @@ export default function Totem() {
                 return (
                   <div key={it.id} className={`ck-totem__item ${n ? 'is-on' : ''} ${fora ? 'is-off' : ''}`}>
                     <div className="ck-totem__fio" style={{ background: corDaCategoria(it.category) }} aria-hidden="true" />
-                    <div className="ck-between" style={{ alignItems: 'flex-start' }}>
+                    <div className="ck-between ck-ai-start">
                       <div className="ck-totem__nome">{it.name}</div>
                       {/* Um botão só no card, como no mockup: tirar e ajustar
                           acontece no carrinho, onde a pessoa está olhando. */}
@@ -224,15 +224,15 @@ export default function Totem() {
           <>
             <div className="ck-totem__caritens">
               {escolhidos.length === 0 && (
-                <p className="ck-totem__vazio" style={{ fontSize: 'var(--pp-fs-15)' }}>
+                <p className="ck-totem__vazio ck-t-body">
                   Nada aqui ainda — toque no “+” de um item pra começar.
                 </p>
               )}
               {escolhidos.map((it) => (
                 <div key={it.id} className="ck-totem__caritem">
                   <div className="pp-grow">
-                    <div style={{ fontWeight: 600 }}>{it.name}</div>
-                    <div className="pp-mono" style={{ fontSize: 13, color: 'var(--pp-fg-3)', marginTop: 2 }}>
+                    <div className="ck-w-semi">{it.name}</div>
+                    <div className="pp-mono ck-t-support pp-muted ck-mt-1">
                       {brl(it.price_cents)}
                     </div>
                   </div>
@@ -247,7 +247,7 @@ export default function Totem() {
 
             <div className="ck-totem__carpe">
               <div className="ck-between">
-                <span style={{ fontSize: 'var(--pp-fs-16)', fontWeight: 600 }}>Total</span>
+                <span className="ck-t-body ck-w-semi">Total</span>
                 <span className="ck-totem__barra-val">{brl(total)}</span>
               </div>
               <button className="ck-btn ck-btn--primary ck-totem__acao"
@@ -255,7 +255,7 @@ export default function Totem() {
                 Continuar <Icon name="arrowRight" size={18} />
               </button>
               {qtd > 0 && (
-                <button className="ck-btn ck-btn--ghost" style={{ width: '100%', marginTop: 8 }} onClick={reiniciar}>
+                <button className="ck-btn ck-btn--ghost ck-full ck-mt-2" onClick={reiniciar}>
                   Recomeçar
                 </button>
               )}
@@ -282,10 +282,10 @@ export default function Totem() {
             ) : (
               <>
                 <p className="ck-totem__sub">Olá, {cliente.full_name ?? cliente.email}</p>
-                <div className="ck-totem__codigo" style={{ fontSize: 40 }}>{brl(cliente.balance_cents)}</div>
+                <div className="ck-totem__codigo ck-totem__codigo--sm">{brl(cliente.balance_cents)}</div>
                 <p className="ck-totem__sub">é o seu saldo</p>
                 {semSaldo && (
-                  <p style={{ color: 'var(--pp-amber)', marginTop: 12 }}>
+                  <p className="ck-c-amber ck-mt-3">
                     Faltam {brl(total - cliente.balance_cents)}. Recarregue pelo app e volte aqui.
                   </p>
                 )}
@@ -296,8 +296,7 @@ export default function Totem() {
                 </button>
               </>
             )}
-            <button className="ck-btn ck-btn--ghost" style={{ width: '100%', marginTop: 8 }}
-              onClick={() => { setEtapa('carrinho'); setErro(''); }}>
+            <button className="ck-btn ck-btn--ghost ck-full ck-mt-2" onClick={() => { setEtapa('carrinho'); setErro(''); }}>
               Voltar ao pedido
             </button>
           </div>

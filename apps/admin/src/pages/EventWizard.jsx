@@ -187,7 +187,7 @@ export default function EventWizard() {
               <>
                 <h1 className="ck-h1">Onde e quando <span className="pp-accent">vai rolar?</span></h1>
                 <p className="ck-sub">O nome e a data são o que aparece na vitrine. Dá pra editar depois.</p>
-                <div className="ck-card" style={{ maxWidth: 720 }}>
+                <div className="ck-card ck-w-read">
                   <div className="ck-field">
                     <label htmlFor="wiz-titulo" className="ck-label">Título</label>
                     <input id="wiz-titulo" className="ck-input" value={form.title} onChange={set('title')} required minLength={2} />
@@ -226,31 +226,29 @@ export default function EventWizard() {
                 <p className="ck-sub">
                   A capa sobe depois, na página do evento — aqui é o texto e as regras da casa.
                 </p>
-                <div className="ck-card" style={{ maxWidth: 720 }}>
+                <div className="ck-card ck-w-read">
                   <div className="ck-field">
                     <label htmlFor="wiz-desc" className="ck-label">Descrição</label>
                     <textarea id="wiz-desc" className="ck-textarea" value={form.description} onChange={set('description')} />
                   </div>
                   <div className="ck-field">
                     <label htmlFor="wiz-taxa" className="ck-label">Taxa de serviço (%) — aplicada sobre o subtotal no checkout</label>
-                    <input id="wiz-taxa" className="ck-input" type="number" min="0" max="100" step="0.01" placeholder="0" value={form.service_fee_pct} onChange={set('service_fee_pct')} style={{ maxWidth: 200 }} />
+                    <input id="wiz-taxa" className="ck-input ck-input--num-lg" type="number" min="0" max="100" step="0.01" placeholder="0" value={form.service_fee_pct} onChange={set('service_fee_pct')} />
                   </div>
 
                   {/* Reentrada: desligada por padrão de propósito. Liberar sem a casa
                       pedir é convite a ingresso emprestado. */}
-                  <div className="ck-field" style={{ marginBottom: 0 }}>
+                  <div className="ck-field ck-mb-0">
                     <label className="ck-label">Reentrada</label>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', padding: '10px 0' }}>
+                    <label className="ck-flex ck-ai-center ck-gap-3 ck-opcao--linha">
                       <input type="checkbox" checked={form.reentry_enabled}
                         onChange={(e) => setForm((f) => ({ ...f, reentry_enabled: e.target.checked }))} />
                       <span>Permitir sair e voltar com o mesmo ingresso</span>
                     </label>
                     {form.reentry_enabled && (
-                      <input className="ck-input" type="number" min="1" max="20" placeholder="Máximo de entradas (vazio = sem limite)"
-                        value={form.reentry_max} onChange={set('reentry_max')} style={{ maxWidth: 320 }}
-                        aria-label="Máximo de entradas por ingresso" />
+                      <input className="ck-input ck-w-xs" type="number" min="1" max="20" placeholder="Máximo de entradas (vazio = sem limite)" value={form.reentry_max} onChange={set('reentry_max')} aria-label="Máximo de entradas por ingresso"/>
                     )}
-                    <p style={{ color: 'var(--pp-fg-4)', fontSize: 12, marginTop: 6 }}>
+                    <p className="pp-muted-2 ck-t-support ck-mt-2">
                       Com reentrada, a porta alterna entrada e saída e mostra a lotação ao vivo.
                     </p>
                   </div>
@@ -269,25 +267,25 @@ export default function EventWizard() {
                 {/* Lotes como cards com fio lateral — a estrutura da lista de
                     lotes do mockup. A barra de "vendidos" ficou de fora: o
                     evento ainda não existe, não há venda pra mostrar. */}
-                <div style={{ maxWidth: 760, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div className="ck-w-read ck-gap-3 ck-col">
                   {tiers.map((t, i) => (
                     <div key={i} className="ck-lote">
                       <div className="ck-lote__fio" aria-hidden="true" />
                       <div className="ck-lote__corpo">
-                        <div className="ck-tier" style={{ marginBottom: 0 }}>
-                          <div className="ck-field" style={{ margin: 0 }}>
+                        <div className="ck-tier ck-mb-0">
+                          <div className="ck-field ck-m-0">
                             <label htmlFor={`lote-${i}-nome`} className="ck-label">Nome</label>
                             <input id={`lote-${i}-nome`} className="ck-input" value={t.name} onChange={(e) => setTier(i, 'name', e.target.value)} />
                           </div>
-                          <div className="ck-field" style={{ margin: 0 }}>
+                          <div className="ck-field ck-m-0">
                             <label htmlFor={`lote-${i}-preco`} className="ck-label">Preço (R$)</label>
                             <input id={`lote-${i}-preco`} className="ck-input" type="number" min="0" step="0.01" value={t.price_reais} onChange={(e) => setTier(i, 'price_reais', e.target.value)} />
                           </div>
-                          <div className="ck-field" style={{ margin: 0 }}>
+                          <div className="ck-field ck-m-0">
                             <label htmlFor={`lote-${i}-meia`} className="ck-label">Meia (R$)</label>
                             <input id={`lote-${i}-meia`} className="ck-input" type="number" min="0" step="0.01" placeholder="—" value={t.half_reais} onChange={(e) => setTier(i, 'half_reais', e.target.value)} />
                           </div>
-                          <div className="ck-field" style={{ margin: 0 }}>
+                          <div className="ck-field ck-m-0">
                             <label htmlFor={`lote-${i}-qtd`} className="ck-label">Qtd.</label>
                             <input id={`lote-${i}-qtd`} className="ck-input" type="number" min="0" value={t.quantity_total} onChange={(e) => setTier(i, 'quantity_total', e.target.value)} />
                           </div>
@@ -298,12 +296,12 @@ export default function EventWizard() {
                             <Icon name="close" size={15} />
                           </button>
                         </div>
-                        <div className="ck-row" style={{ marginTop: 8 }}>
-                          <div className="ck-field" style={{ margin: 0 }}>
+                        <div className="ck-row ck-mt-2">
+                          <div className="ck-field ck-m-0">
                             <label htmlFor={`lote-${i}-ini`} className="ck-label">Início das vendas (opcional)</label>
                             <input id={`lote-${i}-ini`} className="ck-input" type="datetime-local" value={t.sales_start} onChange={(e) => setTier(i, 'sales_start', e.target.value)} />
                           </div>
-                          <div className="ck-field" style={{ margin: 0 }}>
+                          <div className="ck-field ck-m-0">
                             <label htmlFor={`lote-${i}-fim`} className="ck-label">Fim das vendas (opcional)</label>
                             <input id={`lote-${i}-fim`} className="ck-input" type="datetime-local" value={t.sales_end} onChange={(e) => setTier(i, 'sales_end', e.target.value)} />
                           </div>
@@ -326,7 +324,7 @@ export default function EventWizard() {
                 <p className="ck-sub">
                   Rascunho fica invisível na vitrine; publicado começa a vender na hora.
                 </p>
-                <div className="ck-card" style={{ maxWidth: 720 }}>
+                <div className="ck-card ck-w-read">
                   <div className="ck-label">Resumo</div>
                   <dl className="ck-wiz__resumo">
                     <div><dt>Evento</dt><dd>{form.title || '—'}</dd></div>
@@ -353,7 +351,7 @@ export default function EventWizard() {
                     </div>
                   </dl>
                   {lotesValidos.length === 0 && (
-                    <p style={{ color: 'var(--pp-amber)', fontSize: 13, marginTop: 10 }}>
+                    <p className="ck-c-amber ck-t-support ck-mt-3">
                       Sem lote com nome, preço e quantidade, ninguém consegue comprar.{' '}
                       <button type="button" className="pp-link" onClick={() => setPasso(2)}>Voltar aos lotes</button>
                     </p>
@@ -371,7 +369,7 @@ export default function EventWizard() {
               </button>
             ) : <span />}
 
-            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <div className="ck-flex ck-gap-3 pp-wrap">
               {passo < PASSOS.length - 1 ? (
                 <button type="button" className="ck-btn ck-btn--primary" onClick={avancar}>
                   Próximo · {PASSOS[passo + 1].n} <Icon name="arrowRight" size={15} />

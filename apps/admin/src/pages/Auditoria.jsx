@@ -158,18 +158,18 @@ export default function Auditoria() {
       {/* Cabeçalho no layout do mockup: título à esquerda, selo de contexto à
           direita. O selo substitui o "4.2M eventos · 30d" do design — aqui o
           número honesto é quantos registros a consulta atual devolveu. */}
-      <div className="ck-between" style={{ alignItems: 'flex-end', flexWrap: 'wrap', gap: 12 }}>
+      <div className="ck-between ck-ai-end pp-wrap ck-gap-3">
         <div>
           <div className="ck-eyebrow">confiança · auditoria</div>
           <h1 className="ck-h1">Auditoria do evento</h1>
-          <p className="ck-sub" style={{ marginBottom: 0 }}>
+          <p className="ck-sub ck-mb-0">
             Registro de quem fez o quê. Não pode ser alterado nem apagado — nem por nós.
           </p>
         </div>
         {/* Selo + exportar do lado direito do título. O CSV existe porque a
             trilha só vira prova quando sai daqui: contador, advogado e sócio
             não entram no admin — recebem um arquivo. */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+        <div className="ck-flex ck-ai-center ck-gap-3 pp-wrap">
           <span className="pp-badge" title="Total retornado pela consulta atual">
             {trilha.entries.length} registro(s) · imutável
           </span>
@@ -187,34 +187,29 @@ export default function Auditoria() {
           "ação aguardando aprovação" do mockup — ícone, contexto e o botão
           de decidir na mesma linha. */}
       {abertos.length > 0 && (
-        <div className="ck-card" style={{
-          marginTop: 20, borderColor: 'rgba(255,59,48,0.4)', background: 'rgba(255,59,48,0.06)',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
-            <strong style={{ fontSize: 'var(--pp-fs-18)' }}>
+        <div className="ck-card ck-mt-5 ck-alerta">
+          <div className="ck-flex ck-ai-base ck-gap-3 pp-wrap">
+            <strong className="ck-t-section">
               {abertos.length} caso(s) para você decidir
             </strong>
-            <span style={{ color: 'var(--pp-fg-3)' }}>
+            <span className="pp-muted">
               {brl(fraude.prejuizo_aberto_cents)} em jogo
             </span>
           </div>
-          <p style={{ color: 'var(--pp-fg-3)', fontSize: 13, margin: '6px 0 14px' }}>
+          <p className="pp-muted ck-t-support ck-m-0 ck-mt-2 ck-mb-4">
             O pagamento foi revertido depois do consumo. Não há como desfazer a
             entrada de quem já passou pela porta nem a bebida que já foi servida —
             a decisão de cobrar, bloquear ou deixar passar é sua.
           </p>
           {abertos.map((c) => (
-            <div key={c.id} style={{
-              display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap',
-              padding: '12px 0', borderTop: '1px solid var(--pp-edge-1)',
-            }}>
-              <div style={{ flex: 1, minWidth: 220 }}>
-                <div style={{ fontWeight: 600 }}>{TIPO_CASO[c.kind] ?? c.kind}</div>
-                <div style={{ color: 'var(--pp-fg-4)', fontSize: 12, marginTop: 2 }}>
+            <div key={c.id} className="ck-linha ck-linha--top pp-wrap">
+              <div className="ck-flex1 ck-fit--lg">
+                <div className="ck-w-semi">{TIPO_CASO[c.kind] ?? c.kind}</div>
+                <div className="pp-muted-2 ck-meta">
                   {c.detail} · {dateTime(c.created_at)}
                 </div>
               </div>
-              <span style={{ fontFamily: 'var(--pp-font-mono)' }}>{brl(c.amount_cents ?? 0)}</span>
+              <span className="pp-mono">{brl(c.amount_cents ?? 0)}</span>
               <button className="ck-btn ck-btn--glass ck-btn--sm"
                 disabled={busy === c.id} onClick={() => resolver(c)}>
                 {busy === c.id ? '…' : 'Marcar resolvido'}
@@ -228,7 +223,7 @@ export default function Auditoria() {
           backend (prefixo de action + amount_cents not null): é o backend que
           refaz a consulta, então o resultado é o total de verdade. */}
       <div role="group" aria-label="Filtrar registros no servidor"
-        style={{ display: 'flex', gap: 8, alignItems: 'center', margin: '20px 0 12px', flexWrap: 'wrap' }}>
+        className="ck-flex ck-gap-2 ck-ai-center ck-m-0 ck-mt-5 ck-mb-3 pp-wrap">
         {DOMINIOS.map((d) => (
           <button key={d.k} type="button"
             className={`pp-chip ${dominio === d.k ? 'pp-chip--active' : ''}`}
@@ -249,20 +244,18 @@ export default function Auditoria() {
           dizem isso na cara — quem procura um nome e não acha precisa saber
           que a resposta é "não está nesta página", não "não existe". */}
       {carregadas.length > 0 && (
-        <div className="ck-field" style={{ maxWidth: 420, marginBottom: 12 }}>
+        <div className="ck-field ck-mb-3 ck-w-form">
           <label htmlFor="auditoria-filtro" className="ck-label">
             Filtrar nesta página
           </label>
           <div className="pp-inputwrap">
             <Icon name="search" size={16} />
-            <input id="auditoria-filtro" type="search" className="ck-input"
-              style={{ width: '100%', paddingLeft: 46 }}
-              value={q} onChange={(e) => setQ(e.target.value)}
+            <input id="auditoria-filtro" type="search" className="ck-input ck-full" value={q} onChange={(e) => setQ(e.target.value)}
               placeholder="e-mail, IP, ação, entidade…"
               aria-describedby="auditoria-filtro-ajuda" />
           </div>
           <p id="auditoria-filtro-ajuda"
-            style={{ color: 'var(--pp-fg-4)', fontSize: 12, margin: '6px 0 0' }}>
+            className="pp-muted-2 ck-t-support ck-m-0 ck-mt-2">
             Peneira só os {carregadas.length} registro(s) carregados (os mais
             recentes). Para varrer o histórico inteiro, use os chips acima —
             esses vão ao servidor.
@@ -272,7 +265,7 @@ export default function Auditoria() {
 
       {visiveis.length === 0 ? (
         <div className="ck-empty">
-          <p style={{ margin: '0 0 12px' }}>
+          <p className="ck-m-0 ck-mb-3">
             {q.trim()
               ? `Nenhum dos ${carregadas.length} registro(s) desta página bate com “${q.trim()}”. Pode existir em registros mais antigos — filtre pelo domínio para o servidor buscar de novo.`
               : (dominio || soDinheiro)
@@ -289,7 +282,7 @@ export default function Auditoria() {
       ) : (
         /* Stream de log do mockup: colunas fixas, timestamp e valor em mono.
            Sem coluna de role/hash/status — o banco não tem esses campos. */
-        <div className="ck-card" style={{ padding: 0 }}>
+        <div className="ck-card ck-p-0">
           <table className="ck-table">
             <thead>
               <tr>
@@ -303,35 +296,32 @@ export default function Auditoria() {
             <tbody>
               {visiveis.map((e) => (
                 <tr key={e.id}>
-                  <td style={{
-                    fontFamily: 'var(--pp-font-mono)', fontSize: 12,
-                    color: 'var(--pp-fg-3)', whiteSpace: 'nowrap',
-                  }}>
+                  <td className="pp-mono ck-t-support pp-muted ck-nowrap">
                     {dateTime(e.at)}
                   </td>
                   <td>
-                    <div style={{ fontWeight: 600 }}>{e.actor_email ?? 'sistema'}</div>
+                    <div className="ck-w-semi">{e.actor_email ?? 'sistema'}</div>
                     {e.actor_ip && (
-                      <div style={{ color: 'var(--pp-fg-4)', fontSize: 11, fontFamily: 'var(--pp-font-mono)' }}>
+                      <div className="pp-muted-2 ck-t-label pp-mono">
                         {e.actor_ip}
                       </div>
                     )}
                   </td>
                   <td>
-                    <div style={{ fontWeight: 600 }}>{rotulo(e.action)}</div>
+                    <div className="ck-w-semi">{rotulo(e.action)}</div>
                     {/* O código cru embaixo mantém o clima de log do mockup e
                         serve de referência exata pra quem for investigar. */}
-                    <div style={{ color: 'var(--pp-fg-4)', fontSize: 11, fontFamily: 'var(--pp-font-mono)' }}>
+                    <div className="pp-muted-2 ck-t-label pp-mono">
                       {e.action}
                     </div>
                   </td>
-                  <td style={{ color: 'var(--pp-fg-3)', fontSize: 13 }}>
+                  <td className="pp-muted ck-t-support">
                     {/* Antes → depois é o que responde "o que mudou". */}
                     {e.before && e.after
                       ? <>{resumo(e.before)} → {resumo(e.after)}</>
                       : (e.note ?? '—')}
                   </td>
-                  <td className="num" style={{ fontFamily: 'var(--pp-font-mono)' }}>
+                  <td className="num pp-mono">
                     {e.amount_cents != null ? brl(e.amount_cents) : '—'}
                   </td>
                 </tr>

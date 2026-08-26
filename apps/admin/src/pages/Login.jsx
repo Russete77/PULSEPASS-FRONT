@@ -68,9 +68,9 @@ export default function Login() {
           </div>
         </div>
 
-        <div className="ck-card" style={{ padding: 'var(--pp-s-6)' }}>
+        <div className="ck-card ck-p-6">
           {!authEnabled && <ErrorBox>Configure VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY no .env</ErrorBox>}
-          {info && <div className="ck-error" style={{ background: 'rgba(0,255,133,0.08)', borderColor: 'rgba(0,255,133,0.3)', color: 'var(--pp-pulse)' }}>{info}</div>}
+          {info && <div className="ck-error ck-c-pulse ck-ok">{info}</div>}
 
           {/* name + autoComplete não são enfeite: sem eles o gerenciador de senha
               não oferece preencher nem se oferece pra salvar — e a produtora
@@ -99,12 +99,12 @@ export default function Login() {
             )}
             {error && <ErrorBox>{error}</ErrorBox>}
             {/* CTA em bloco, o peso do botão "Continuar" do mockup. */}
-            <button className="ck-btn ck-btn--primary" style={{ width: '100%', marginTop: 8, height: 52 }} disabled={busy || !authEnabled}>
+            <button className="ck-btn ck-btn--primary ck-full ck-mt-2 ck-btn--lg" disabled={busy || !authEnabled}>
               {busy ? 'Aguarde…' : mode === 'login' ? 'Entrar no cockpit' : mode === 'signup' ? 'Criar conta' : 'Enviar link'}
             </button>
           </form>
 
-          <div className="pp-authfoot" style={{ marginTop: 12, textAlign: 'center', color: 'var(--pp-fg-3)', fontSize: 14, display: 'flex', flexDirection: 'column' }}>
+          <div className="pp-authfoot ck-mt-3 ck-center pp-muted ck-t-support ck-col">
             {mode === 'login' && (
               <>
                 <button className="pp-link pp-link--muted" onClick={() => trocar('forgot')}>Esqueci minha senha</button>
@@ -119,7 +119,7 @@ export default function Login() {
 
         {/* O caminho do cliente, no lugar do lembrete "Produtora ou ADM?" do
             mockup — aqui é o inverso: quem compra ingresso não é daqui. */}
-        <p className="pp-muted-2" style={{ textAlign: 'center', fontSize: 'var(--pp-fs-12)', marginTop: 'var(--pp-s-5)' }}>
+        <p className="pp-muted-2 ck-center ck-t-support ck-mt-5">
           Procurando seus ingressos? Este é o cockpit da produtora — compre e
           acesse ingressos no app PulsePass.
         </p>

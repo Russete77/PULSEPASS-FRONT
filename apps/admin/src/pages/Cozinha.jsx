@@ -26,11 +26,13 @@ import { brl } from '../lib/format.js';
 const LIMITE_ATENCAO = 8;
 const LIMITE_ATRASO = 12;
 
-function corDoTempo(min) {
-  if (min == null) return 'var(--pp-fg-3)';
-  if (min >= LIMITE_ATRASO) return '#FF6B61';
-  if (min >= LIMITE_ATENCAO) return 'var(--pp-amber)';
-  return 'var(--pp-fg-2)';
+/* O tempo vira TOM, não cor solta — mesmo vocabulário do Ao vivo, para o
+   mesmo atraso ter a mesma cor nas duas telas. */
+function tomDoTempo(min) {
+  if (min == null) return 'dim';
+  if (min >= LIMITE_ATRASO) return 'red';
+  if (min >= LIMITE_ATENCAO) return 'amber';
+  return 'fg2';
 }
 
 /** O tempo e o rótulo que importam mudam com a etapa do pedido. */
@@ -112,20 +114,20 @@ export default function Cozinha() {
 
       {/* ── Barra de status (top bar do mockup) ── */}
       <div className="ck-kds__topo">
-        <div className="ck-row" style={{ flexWrap: 'wrap' }}>
+        <div className="ck-row pp-wrap">
           <span className={`ck-badge ${atrasados > 0 ? 'ck-badge--danger' : 'ck-badge--warning'}`}>
             cozinha · {fila.length === 0 ? 'sem fila' : `${fila.length} pedido${fila.length > 1 ? 's' : ''} em aberto`}
           </span>
           {atrasados > 0 && (
-            <span style={{ color: '#FF6B61', fontWeight: 700, fontSize: 'var(--pp-fs-14)' }}>
+            <span className="ck-c-red ck-w-bold ck-t-support">
               {atrasados} {atrasados === 1 ? 'atrasado' : 'atrasados'} (+{LIMITE_ATRASO} min)
             </span>
           )}
         </div>
         <div className="ck-row">
           {tempoMedio != null && (
-            <span className="pp-mono" style={{ fontSize: 'var(--pp-fs-14)', color: 'var(--pp-fg-3)' }}>
-              espera média: <b style={{ color: corDoTempo(tempoMedio) }}>{tempoMedio} min</b>
+            <span className="pp-mono ck-t-support pp-muted">
+              espera média: <b className={`ck-c-${tomDoTempo(tempoMedio)}`}>{tempoMedio} min</b>
             </span>
           )}
           <span className="ck-kds__relogio" aria-label="Hora atual">{hora}</span>
@@ -135,7 +137,7 @@ export default function Cozinha() {
       {erro && <ErrorBox>{erro}</ErrorBox>}
 
       {/* ── Pílulas de filtro por etapa ── */}
-      <div className="ck-tabs" style={{ marginTop: 14 }}>
+      <div className="ck-tabs ck-mt-4">
         {FILTROS.map((f) => (
           <button key={f.key} className={`ck-tab ${filtro === f.key ? 'is-on' : ''}`}
             onClick={() => setFiltro(f.key)}>
@@ -145,15 +147,15 @@ export default function Cozinha() {
       </div>
 
       {fila.length === 0 ? (
-        <div className="ck-card" style={{ maxWidth: 520, marginTop: 20 }}>
+        <div className="ck-card ck-w-form ck-mt-5">
           <strong>Nenhum pedido em aberto</strong>
-          <p style={{ color: 'var(--pp-fg-3)', fontSize: 14, margin: '6px 0 0' }}>
+          <p className="pp-muted ck-t-support ck-m-0 ck-mt-2">
             Assim que alguém pedir no app, no PDV ou pelo garçom, aparece aqui.
             A tela se atualiza sozinha.
           </p>
         </div>
       ) : visiveis.length === 0 ? (
-        <p style={{ color: 'var(--pp-fg-3)', marginTop: 18 }}>Nada nesta etapa agora.</p>
+        <p className="pp-muted ck-mt-5">Nada nesta etapa agora.</p>
       ) : (
         <div className="ck-kds">
           {visiveis.map((p) => {
@@ -162,15 +164,15 @@ export default function Cozinha() {
             return (
               <article key={p.id} className={`ck-kds__card ck-kds__card--${et.tom}`}>
                 <div className="ck-kds__stripe" aria-hidden="true" />
-                <header className="ck-between" style={{ alignItems: 'flex-start' }}>
+                <header className="ck-between ck-ai-start">
                   <div>
-                    <div className="pp-mono" style={{ fontSize: 11, color: 'var(--pp-fg-4)', letterSpacing: '0.05em' }}>
+                    <div className="ck-eyebrow pp-muted-2">
                       {p.pickup_code}
                     </div>
                     <div className="ck-kds__cliente">{p.cliente}</div>
                   </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <div className="ck-kds__tempo" style={{ color: p.status === 'ready' ? 'var(--pp-violet)' : corDoTempo(min) }}>
+                  <div className="ck-right">
+                    <div className={`ck-kds__tempo ck-c-${p.status === 'ready' ? 'violet' : tomDoTempo(min)}`}>
                       {min}<span>min</span>
                     </div>
                     <div className="ck-kds__etapa">{et.rotulo}</div>
@@ -194,8 +196,8 @@ export default function Cozinha() {
                   ))}
                 </ul>
 
-                <footer style={{ marginTop: 'auto' }}>
-                  <div className="pp-mono" style={{ fontSize: 12, color: 'var(--pp-fg-4)', margin: '8px 0' }}>
+                <footer className="ck-mt-auto">
+                  <div className="pp-mono ck-t-support pp-muted-2 ck-m-0 ck-mt-2 ck-mb-2">
                     {brl(p.total_cents)}
                   </div>
                   <button
@@ -212,7 +214,7 @@ export default function Cozinha() {
         </div>
       )}
 
-      <p className="ck-live" style={{ marginTop: 16 }}>
+      <p className="ck-live ck-mt-4">
         <span className="pp-pulse-dot" /> atualizando a cada 8s
       </p>
     </Shell>

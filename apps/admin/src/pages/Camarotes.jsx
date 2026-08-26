@@ -133,23 +133,20 @@ export default function Camarotes() {
 
       {/* Cabeçalho do mockup: título à esquerda, pills de status à direita —
           é o resumo que se lê de longe no meio da operação. */}
-      <div className="ck-between" style={{ alignItems: 'flex-end', flexWrap: 'wrap', gap: 12 }}>
+      <div className="ck-between ck-ai-end pp-wrap ck-gap-3">
         <div>
           <div className="ck-eyebrow">azlist · camarotes</div>
           <h1 className="ck-h1">Camarotes & reservas</h1>
-          <p className="ck-sub" style={{ marginBottom: 0 }}>
+          <p className="ck-sub ck-mb-0">
             Cadastre camarotes/mesas com consumação mínima e aprove as solicitações de reserva.
           </p>
         </div>
         {tables.length > 0 && (
-          <div style={{ display: 'flex', gap: 10 }}>
+          <div className="ck-flex ck-gap-3">
             {[['Livres', 'livre'], ['Ocupadas', 'ocupada'], ['Reservadas', 'reservada']].map(([l, k]) => (
-              <div key={k} style={{
-                padding: '8px 14px', borderRadius: 'var(--pp-r-md)',
-                background: ESTADO[k].fundo, border: `1px solid ${ESTADO[k].borda}`,
-              }}>
-                <div style={{ fontSize: 10, fontFamily: 'var(--pp-font-mono)', letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--pp-fg-3)' }}>{l}</div>
-                <div style={{ fontFamily: 'var(--pp-font-mono)', fontWeight: 700, fontSize: 18, color: ESTADO[k].cor }}>{contagem[k]}</div>
+              <div key={k} className="ck-caixa--sm" style={{ background: ESTADO[k].fundo, borderColor: ESTADO[k].borda }}>
+                <div className="ck-eyebrow">{l}</div>
+                <div className="pp-mono ck-w-bold ck-t-section" style={{ color: ESTADO[k].cor }}>{contagem[k]}</div>
               </div>
             ))}
           </div>
@@ -160,8 +157,8 @@ export default function Camarotes() {
 
       {/* Reserva lançada pela casa, aberta a partir do cartão da mesa. */}
       {reservando && (
-        <form onSubmit={lancarReserva} className="ck-card" style={{ maxWidth: 720, marginTop: 16 }}>
-          <div className="ck-between" style={{ marginBottom: 10 }}>
+        <form onSubmit={lancarReserva} className="ck-card ck-w-read ck-mt-4">
+          <div className="ck-between ck-mb-3">
             <strong>Reservar {tables.find((t) => t.id === reservando)?.name}</strong>
             <button type="button" className="ck-iconbtn" onClick={() => { setReservando(null); setError(''); }}
               aria-label="Cancelar reserva">
@@ -169,23 +166,23 @@ export default function Camarotes() {
             </button>
           </div>
           <div className="ck-row">
-            <div className="ck-field" style={{ margin: 0, flex: '1 1 220px' }}>
+            <div className="ck-field ck-m-0 ck-flex1 ck-fit--lg">
               <label className="ck-label" htmlFor="res-nome">Nome de quem reservou</label>
               <input id="res-nome" className="ck-input" required minLength={2} autoComplete="name"
                 value={reserva.name} onChange={(e) => setReserva((r) => ({ ...r, name: e.target.value }))} />
             </div>
-            <div className="ck-field" style={{ margin: 0, flex: '1 1 180px' }}>
+            <div className="ck-field ck-m-0 ck-flex1 ck-fit">
               <label className="ck-label" htmlFor="res-contato">Contato (telefone/WhatsApp)</label>
               <input id="res-contato" className="ck-input" type="tel" autoComplete="tel"
                 value={reserva.contact} onChange={(e) => setReserva((r) => ({ ...r, contact: e.target.value }))} />
             </div>
-            <div className="ck-field" style={{ margin: 0, width: 120 }}>
+            <div className="ck-field ck-m-0 ck-input--num">
               <label className="ck-label" htmlFor="res-pessoas">Pessoas</label>
               <input id="res-pessoas" className="ck-input" type="number" min="1" inputMode="numeric"
                 value={reserva.party_size} onChange={(e) => setReserva((r) => ({ ...r, party_size: e.target.value }))} />
             </div>
           </div>
-          <p className="ck-sub" style={{ margin: '8px 0 10px', fontSize: 13 }}>
+          <p className="ck-sub ck-m-0 ck-mt-2 ck-mb-3 ck-t-support">
             Entra como solicitação e aparece na fila abaixo — confirme para ocupar a mesa.
           </p>
           <button className={`ck-btn ck-btn--primary ${saving ? 'is-loading' : ''}`} disabled={saving}>
@@ -196,60 +193,51 @@ export default function Camarotes() {
 
       {/* A "planta": cada mesa é um cartão colorido pelo estado. */}
       {tables.length === 0 ? (
-        <div className="ck-empty" style={{ marginTop: 20 }}>
-          <p style={{ margin: '0 0 4px' }}>Nenhum camarote cadastrado.</p>
-          <p style={{ margin: 0, fontSize: 13 }}>Adicione o primeiro no formulário abaixo.</p>
+        <div className="ck-empty ck-mt-5">
+          <p className="ck-m-0 ck-mb-1">Nenhum camarote cadastrado.</p>
+          <p className="ck-m-0 ck-t-support">Adicione o primeiro no formulário abaixo.</p>
         </div>
       ) : (
-        <div style={{
-          marginTop: 20, display: 'grid', gap: 12,
-          gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-        }}>
+        <div className="ck-grid--sm ck-mt-5">
           {tables.map((t) => {
             const est = ESTADO[estadoDe(t)];
             const info = porMesa.get(t.name);
             const consumo = consumoPorMesa.get(t.id);
             return (
-              <div key={t.id} style={{
-                position: 'relative', padding: 14, borderRadius: 'var(--pp-r-lg)',
-                background: est.fundo, border: `1.5px solid ${est.borda}`,
-                display: 'flex', flexDirection: 'column', gap: 10, minHeight: 108,
-              }}>
-                <div className="ck-between" style={{ alignItems: 'flex-start' }}>
+              <div key={t.id} className="ck-rel ck-p-4 ck-gap-3 ck-camarote" style={{ background: est.fundo, border: `1.5px solid ${est.borda}` }}>
+                <div className="ck-between ck-ai-start">
                   <div>
-                    <div style={{ fontWeight: 700 }}>{t.name}</div>
-                    <div style={{ color: 'var(--pp-fg-4)', fontSize: 12, marginTop: 2 }}>
+                    <div className="ck-w-bold">{t.name}</div>
+                    <div className="pp-muted-2 ck-meta">
                       {t.area}{t.capacity ? ` · ${t.capacity}p` : ''}
                     </div>
                   </div>
-                  <div style={{ display: 'flex', gap: 4 }}>
+                  <div className="ck-flex ck-gap-1">
                     {/* Reservar só faz sentido em mesa livre — oferecer o
                         botão numa mesa ocupada convida ao erro de reservar
                         por cima de quem já está sentado. */}
                     {estadoDe(t) === 'livre' && (
-                      <button className="ck-iconbtn" style={{ width: 32, height: 32 }}
-                        onClick={() => { setReservando(t.id); setError(''); }}
+                      <button className="ck-iconbtn ck-iconbtn--sm" onClick={() => { setReservando(t.id); setError(''); }}
                         title={`Reservar ${t.name}`} aria-label={`Reservar ${t.name}`}>
                         <Icon name="plus" size={13} />
                       </button>
                     )}
-                    <button className="ck-iconbtn" style={{ width: 32, height: 32 }}
-                      onClick={() => removeTable(t)} title={`Excluir ${t.name}`} aria-label={`Excluir ${t.name}`}>
+                    <button className="ck-iconbtn ck-iconbtn--sm" onClick={() => removeTable(t)} title={`Excluir ${t.name}`} aria-label={`Excluir ${t.name}`}>
                       <Icon name="close" size={13} />
                     </button>
                   </div>
                 </div>
-                <div style={{ marginTop: 'auto' }}>
+                <div className="ck-mt-auto">
                   {info ? (
                     <>
-                      <div style={{ fontSize: 13, fontWeight: 600 }}>{info.reserva.name}</div>
-                      <div style={{ fontSize: 11, fontFamily: 'var(--pp-font-mono)', color: 'var(--pp-fg-4)', marginTop: 2 }}>
+                      <div className="ck-t-support ck-w-semi">{info.reserva.name}</div>
+                      <div className="ck-t-label pp-mono pp-muted-2 ck-mt-1">
                         {info.reserva.party_size ? `${info.reserva.party_size} pessoas` : ''}
                         {info.estado === 'ocupada' && info.reserva.seated_at ? ` · há ${ocupadaHa(info.reserva.seated_at)}` : ''}
                       </div>
                     </>
                   ) : (
-                    <div style={{ fontSize: 12, color: 'var(--pp-fg-4)' }}>
+                    <div className="ck-t-support pp-muted-2">
                       {t.min_spend_cents ? `consumação ${brl(t.min_spend_cents)}` : 'sem consumação mínima'}
                     </div>
                   )}
@@ -261,12 +249,7 @@ export default function Camarotes() {
                       onClick={() => setMesaAberta(mesaAberta === t.id ? null : t.id)}
                       aria-expanded={mesaAberta === t.id}
                       title={`Ver o que a ${t.name} consumiu`}
-                      style={{
-                        appearance: 'none', background: 'none', border: 0, padding: 0, marginTop: 4,
-                        font: 'inherit', fontSize: 12, fontFamily: 'var(--pp-font-mono)',
-                        color: 'var(--pp-pulse)', cursor: 'pointer', textAlign: 'left',
-                        textDecoration: 'underline', textUnderlineOffset: 3,
-                      }}>
+                      className="ck-linkbtn ck-mt-1 ck-t-support pp-mono ck-c-pulse">
                       {brl(consumo.consumo_cents)} em aberto
                     </button>
                   )}
@@ -279,22 +262,18 @@ export default function Camarotes() {
                     reserva; sem party_size ele some, em vez de dividir por 1
                     e afirmar que a mesa inteira é de uma pessoa só. */}
                 {mesaAberta === t.id && consumo && (
-                  <div style={{
-                    borderTop: '1px solid var(--pp-edge-2)', paddingTop: 8, marginTop: 2,
-                  }}>
+                  <div className="ck-total ck-mt-1">
                     {consumo.itens?.length > 0 ? (
-                      <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: 2 }}>
+                      <ul className="ck-lista ck-gap-1 ck-grade">
                         {consumo.itens.map((linha, i) => (
-                          <li key={`${t.id}-item-${i}`} style={{ fontSize: 12, color: 'var(--pp-fg-2)' }}>{linha}</li>
+                          <li key={`${t.id}-item-${i}`} className="ck-t-support ck-c-fg2">{linha}</li>
                         ))}
                       </ul>
                     ) : (
-                      <div style={{ fontSize: 12, color: 'var(--pp-fg-4)' }}>Sem itens detalhados.</div>
+                      <div className="ck-t-support pp-muted-2">Sem itens detalhados.</div>
                     )}
                     {info?.reserva?.party_size > 1 && (
-                      <div style={{
-                        fontSize: 11, fontFamily: 'var(--pp-font-mono)', color: 'var(--pp-fg-4)', marginTop: 6,
-                      }}>
+                      <div className="ck-t-label pp-mono pp-muted-2 ck-mt-2">
                         {brl(Math.round(consumo.consumo_cents / info.reserva.party_size))} por pessoa
                         {' '}({info.reserva.party_size})
                       </div>
@@ -302,11 +281,7 @@ export default function Camarotes() {
                   </div>
                 )}
 
-                <span style={{
-                  position: 'absolute', top: 14, right: 52,
-                  fontSize: 10, fontFamily: 'var(--pp-font-mono)', letterSpacing: '0.06em',
-                  textTransform: 'uppercase', color: est.cor,
-                }}>
+                <span className="ck-eyebrow ck-camarote__estado" style={{ color: est.cor }}>
                   {est.rotulo}
                 </span>
               </div>
@@ -316,42 +291,42 @@ export default function Camarotes() {
       )}
 
       {/* Cadastro de mesa/camarote. */}
-      <h2 style={{ fontSize: 'var(--pp-fs-18)', marginTop: 28, marginBottom: 12 }}>Novo camarote</h2>
-      <form onSubmit={create} className="ck-card" style={{ maxWidth: 720 }}>
+      <h2 className="ck-secao">Novo camarote</h2>
+      <form onSubmit={create} className="ck-card ck-w-read">
         <div className="ck-row">
-          <div className="ck-field" style={{ margin: 0 }}>
+          <div className="ck-field ck-m-0">
             <label htmlFor="camarotes-1" className="ck-label">Nome</label>
             <input id="camarotes-1" className="ck-input" value={form.name} onChange={set('name')} required placeholder="Camarote A" />
           </div>
-          <div className="ck-field" style={{ margin: 0 }}>
+          <div className="ck-field ck-m-0">
             <label htmlFor="camarotes-2" className="ck-label">Área</label>
             <input id="camarotes-2" className="ck-input" value={form.area} onChange={set('area')} placeholder="Camarote" />
           </div>
-          <div className="ck-field" style={{ margin: 0 }}>
+          <div className="ck-field ck-m-0">
             <label htmlFor="camarotes-3" className="ck-label">Capacidade</label>
             <input id="camarotes-3" className="ck-input" type="number" min="1" value={form.capacity} onChange={set('capacity')} placeholder="—" />
           </div>
-          <div className="ck-field" style={{ margin: 0 }}>
+          <div className="ck-field ck-m-0">
             <label htmlFor="camarotes-4" className="ck-label">Consumação mín. (R$)</label>
             <input id="camarotes-4" className="ck-input" type="number" min="0" step="0.01" value={form.min_reais} onChange={set('min_reais')} placeholder="0,00" />
           </div>
         </div>
-        <button className="ck-btn ck-btn--primary" style={{ marginTop: 12 }} disabled={saving || !form.name.trim()}>
+        <button className="ck-btn ck-btn--primary ck-mt-3" disabled={saving || !form.name.trim()}>
           {saving ? 'Adicionando…' : '+ Adicionar camarote'}
         </button>
       </form>
 
       {/* Fila de reservas. As pendentes primeiro no título: são elas que
           têm gente esperando resposta no WhatsApp. */}
-      <h2 style={{ fontSize: 'var(--pp-fs-18)', marginTop: 28, marginBottom: 12 }}>
+      <h2 className="ck-secao">
         Solicitações de reserva
         {pendentes.length > 0 && (
-          <span className="ck-badge ck-badge--warning" style={{ marginLeft: 10, verticalAlign: 'middle' }}>
+          <span className="ck-badge ck-badge--warning ck-ml-3 ck-vmid">
             {pendentes.length} aguardando
           </span>
         )}
       </h2>
-      <div className="ck-card" style={{ padding: 0, overflow: 'hidden' }}>
+      <div className="ck-card ck-card--flush">
         <table className="ck-table">
           <thead><tr><th>Cliente</th><th>Camarote</th><th>Pessoas</th><th>Status</th><th></th></tr></thead>
           <tbody>
@@ -364,7 +339,7 @@ export default function Camarotes() {
                       num campo de observação que ninguém abre no meio da
                       noite. */}
                   {r.ocasiao && <span className="ck-ocasiao">{r.ocasiao}</span>}
-                  <div style={{ color: 'var(--pp-fg-4)', fontSize: 12 }}>{r.contact}</div>
+                  <div className="pp-muted-2 ck-t-support">{r.contact}</div>
                 </td>
                 <td>{r.event_tables?.name ?? '—'}</td>
                 <td>{r.party_size ?? '—'}</td>
@@ -382,8 +357,8 @@ export default function Camarotes() {
                     <div className="ck-ocupada">há {ocupadaHa(r.seated_at)}</div>
                   )}
                 </td>
-                <td style={{ textAlign: 'right' }}>
-                  <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+                <td className="ck-right">
+                  <div className="ck-flex ck-gap-2 ck-jc-end pp-wrap">
                     {r.status === 'requested' && (
                       <>
                         <button className="ck-btn ck-btn--primary ck-btn--sm" onClick={() => setRes(r, 'confirmed')}>Confirmar</button>
@@ -404,7 +379,7 @@ export default function Camarotes() {
                 </td>
               </tr>
             ))}
-            {reservations.length === 0 && <tr><td colSpan={5} style={{ color: 'var(--pp-fg-3)' }}>Nenhuma solicitação ainda. Divulgue a página pública do evento para receber pedidos de reserva.</td></tr>}
+            {reservations.length === 0 && <tr><td colSpan={5} className="pp-muted">Nenhuma solicitação ainda. Divulgue a página pública do evento para receber pedidos de reserva.</td></tr>}
           </tbody>
         </table>
       </div>

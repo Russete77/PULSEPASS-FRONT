@@ -27,18 +27,18 @@ export default function Fraud() {
       {error ? <ErrorBox>{error}</ErrorBox> : !drifts ? <Loading /> : (
         <div className="pp-stack pp-stack-5 pp-reveal">
           <div>
-            <div className="adm-eyebrow" style={{ color: '#FF7A75' }}>Antifraude · integridade</div>
+            <div className="adm-eyebrow ck-c-red">Antifraude · integridade</div>
             <div className="adm-h1">
-              {clean ? <>Ledger <span className="accent" style={{ color: 'var(--pp-pulse)' }}>íntegro</span></> : <>{drifts.length} <span className="accent">divergência{drifts.length > 1 ? 's' : ''}</span></>}
+              {clean ? <>Ledger <span className="accent ck-c-pulse">íntegro</span></> : <>{drifts.length} <span className="accent">divergência{drifts.length > 1 ? 's' : ''}</span></>}
             </div>
           </div>
 
-          <div className="pp-cols-2" style={{ gridTemplateColumns: '1.3fr 1fr', alignItems: 'start' }}>
+          <div className="ck-duo">
             <div className="adm-panel">
-              <div style={{ fontFamily: 'var(--pp-font-display)', fontWeight: 600, fontSize: 'var(--pp-fs-18)' }}>Divergências de saldo</div>
-              <p className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)', margin: '2px 0 var(--pp-s-4)' }}>Carteiras cujo saldo ≠ soma do ledger (sinal real de fraude/bug).</p>
+              <div className="ck-display ck-w-semi ck-t-section">Divergências de saldo</div>
+              <p className="pp-muted ck-t-support ck-m-0 ck-mt-1 ck-mb-4">Carteiras cujo saldo ≠ soma do ledger (sinal real de fraude/bug).</p>
               {clean ? (
-                <div className="pp-note pp-note--pulse pp-row" style={{ color: 'var(--pp-pulse)' }}>
+                <div className="pp-note pp-note--pulse pp-row ck-c-pulse">
                   <Icon name="check" size={18} /> Nenhuma divergência. Todo saldo bate com o histórico de transações.
                 </div>
               ) : (
@@ -59,17 +59,17 @@ export default function Fraud() {
             </div>
 
             <div className="adm-panel">
-              <div className="pp-eyebrow" style={{ color: 'var(--pp-pulse)' }}>Regras ativas · {RULES.length}</div>
-              <div className="pp-stack pp-stack-2" style={{ marginTop: 'var(--pp-s-4)' }}>
+              <div className="pp-eyebrow ck-c-pulse">Regras ativas · {RULES.length}</div>
+              <div className="pp-stack pp-stack-2 ck-mt-4">
                 {RULES.map((r, i) => (
-                  <div key={i} className="pp-row" style={{ padding: '8px 10px', borderRadius: 10, background: 'var(--pp-glass-1)', border: '1px solid var(--pp-edge-1)' }}>
-                    <span className="ck-badge" style={{ fontSize: 9 }}>{r.cat}</span>
-                    <span className="pp-grow" style={{ fontSize: 'var(--pp-fs-13)' }}>{r.l}</span>
-                    <span className="pp-toggle on" aria-checked="true" style={{ pointerEvents: 'none' }} />
+                  <div key={i} className="pp-row ck-caixa">
+                    <span className="ck-badge ck-t-label">{r.cat}</span>
+                    <span className="pp-grow ck-t-support">{r.l}</span>
+                    <span className="pp-toggle on ck-nopointer" aria-checked="true"/>
                   </div>
                 ))}
               </div>
-              <p className="pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 'var(--pp-s-3)' }}>
+              <p className="pp-muted-2 ck-t-support ck-mt-3">
                 Engine de ML (scoring PIX/CC/QR) é o próximo passo — hoje a defesa é determinística e já ativa.
               </p>
             </div>

@@ -6,12 +6,9 @@ import { brl } from '../lib/format.js';
 
 function Row({ label, value, sub, strong, accent }) {
   return (
-    <div style={{
-      display: 'flex', justifyContent: 'space-between', padding: '10px 0',
-      borderBottom: '1px solid var(--pp-edge-2)', fontWeight: strong ? 700 : 400,
-    }}>
-      <span style={{ color: sub ? 'var(--pp-fg-3)' : 'var(--pp-fg)', fontSize: sub ? 13 : undefined }}>{label}</span>
-      <span style={{ fontFamily: 'var(--pp-font-mono)', color: accent ? 'var(--pp-pulse)' : undefined }}>{value}</span>
+    <div className={`ck-linha ${strong ? 'ck-w-bold' : 'ck-w-reg'}`}>
+      <span className={sub ? 'pp-muted ck-t-support' : 'ck-c-fg'}>{label}</span>
+      <span className={`pp-mono ${accent ? 'ck-c-pulse' : ''}`}>{value}</span>
     </div>
   );
 }
@@ -56,7 +53,7 @@ export default function Conciliacao() {
     <Shell>
       <BackLink to={`/eventos/${id}`} label="Dashboard" />
       <div className="ck-eyebrow">financeiro · conciliação</div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 8 }}>
+      <div className="ck-flex ck-jc-btw ck-ai-base pp-wrap ck-gap-2">
         <h1 className="ck-h1">Conciliação do evento</h1>
         <button className="ck-btn ck-btn--glass ck-btn--sm" onClick={exportarCsv}>Exportar CSV</button>
       </div>
@@ -64,21 +61,22 @@ export default function Conciliacao() {
 
       {/* Os quatro números que respondem "como foi a noite" antes da conta
           detalhada — mesma faixa de KPIs de Cardápio e Fechamento. */}
-      <div className="ck-grid" style={{ maxWidth: 560, marginBottom: 16 }}>
+      <div className="ck-grid ck-w-mid ck-mb-4">
         {[
           ['Bruto de ingressos', brl(r.tickets_gross_cents), 'var(--pp-pulse)'],
           ['Taxa da plataforma', `− ${brl(r.platform_fee_cents)}`, 'var(--pp-amber)'],
           ['Repasse ao produtor', brl(r.producer_net_cents), 'var(--pp-pulse)'],
           ['Bar (cashless)', brl(r.bar_gross_cents), 'var(--pp-fg-3)'],
         ].map(([rotulo, valor, cor]) => (
-          <div key={rotulo} className="ck-card" style={{ borderTop: `2px solid ${cor}`, padding: '12px 16px' }}>
+          <div key={rotulo} className="ck-card ck-rel ck-hidden" style={{ '--k': cor }}>
+            <span aria-hidden="true" className="ck-fio" />
             <div className="ck-label">{rotulo}</div>
-            <div style={{ fontFamily: 'var(--pp-font-mono)', fontWeight: 700, fontSize: 'var(--pp-fs-18)', marginTop: 4 }}>{valor}</div>
+            <div className="pp-mono ck-w-bold ck-t-section ck-mt-1">{valor}</div>
           </div>
         ))}
       </div>
 
-      <div className="ck-card" style={{ maxWidth: 560 }}>
+      <div className="ck-card ck-w-mid">
         <Row label="Receita bruta de ingressos" value={brl(r.tickets_gross_cents)} />
         <Row label="↳ taxa de serviço inclusa" value={brl(r.service_fees_cents)} sub />
         <Row label="↳ descontos (cupons) aplicados" value={`− ${brl(r.discounts_cents)}`} sub />
@@ -92,9 +90,9 @@ export default function Conciliacao() {
         <Row label="Repasse líquido ao produtor" value={brl(r.producer_net_cents)} strong accent />
       </div>
 
-      <div className="ck-card" style={{ maxWidth: 560, marginTop: 16 }}>
+      <div className="ck-card ck-w-mid ck-mt-4">
         <Row label="Receita de bar (cashless)" value={brl(r.bar_gross_cents)} sub />
-        <p className="ck-sub" style={{ marginTop: 8 }}>
+        <p className="ck-sub ck-mt-2">
           O acerto do cashless (recargas e consumo) é separado do repasse de ingressos.
         </p>
       </div>
