@@ -73,7 +73,7 @@ function EscolhaDeCidade({ cidade, cidades, detectando, aviso, aoEscolher, aoLoc
   const opcoes = (cidades.length ? cidades : CIDADES_CONHECIDAS).slice(0, 8);
 
   return (
-    <div className="pp-stack" style={{ marginTop: 'var(--pp-s-5)' }}>
+    <div className="pp-stack pp-mt-5">
       <button type="button" className="pp-btn pp-btn--glass pp-btn--block" onClick={aoLocalizar}
         disabled={detectando}>
         <Icon name="pin" size={15} />
@@ -95,9 +95,9 @@ function EscolhaDeCidade({ cidade, cidades, detectando, aviso, aoEscolher, aoLoc
         })}
       </div>
 
-      {aviso && <p className="pp-note" role="status" style={{ margin: 0 }}>{aviso}</p>}
+      {aviso && <p className="pp-note pp-m0" role="status">{aviso}</p>}
 
-      <p className="pp-muted-2" style={{ margin: 0, fontSize: 'var(--pp-fs-13)' }}>
+      <p className="pp-muted-2 pp-t-support pp-m0">
         {cidade
           ? `A vitrine vai abrir em ${cidade.city}/${cidade.state}.`
           : 'Sem escolher, a vitrine abre com o Brasil todo.'}
@@ -186,8 +186,8 @@ export default function Bemvindo() {
   return (
     <Page>
       <div className="pp-authwrap">
-        <div className="pp-card pp-card--pad-lg" style={{ width: '100%', maxWidth: 560 }}>
-          <div className="pp-between" style={{ alignItems: 'center' }}>
+        <div className="pp-card pp-card--pad-lg pp-block pp-coluna">
+          <div className="pp-between">
             <div className="pp-eyebrow">passo {passo + 1} de {PASSOS.length}</div>
             {/* Botão e não link de texto: no telefone o "Pular" precisa de alvo
                 de dedo, e o --sm é quem ganha a expansão para 44px. */}
@@ -197,39 +197,24 @@ export default function Bemvindo() {
           </div>
 
           {/* Barras são resumo visual do que o eyebrow já diz em texto. */}
-          <div className="pp-steps" aria-hidden="true" style={{ marginTop: 'var(--pp-s-3)' }}>
+          <div className="pp-steps pp-mt-3" aria-hidden="true">
             {PASSOS.map((p, n) => <div key={p.id} className={`bar ${n <= passo ? 'on' : ''}`} />)}
           </div>
 
           <div key={atual.id} className="pp-reveal">
-            <div aria-hidden="true" style={{
-              position: 'relative',
-              aspectRatio: '16 / 9',
-              borderRadius: 'var(--pp-r-card)',
-              border: '1px solid var(--pp-edge-2)',
-              background: FLYER_GRADS[passo % FLYER_GRADS.length],
-              display: 'grid',
-              placeItems: 'center',
-              overflow: 'hidden',
-            }}>
-              <div style={{
-                width: 76, height: 76, borderRadius: 'var(--pp-r-pill)',
-                background: 'var(--pp-glass-3)', border: '1px solid var(--pp-edge-3)',
-                backdropFilter: 'var(--pp-blur-sm)', WebkitBackdropFilter: 'var(--pp-blur-sm)',
-                display: 'grid', placeItems: 'center', color: 'var(--pp-fg)',
-              }}>
+            <div aria-hidden="true" className="pp-passo-arte"
+              style={{ background: FLYER_GRADS[passo % FLYER_GRADS.length] }}>
+              <div className="pp-passo-arte__selo">
                 <Icon name={atual.icone} size={32} />
               </div>
             </div>
 
             {/* h1 por passo, com foco programático: é o nome do que está na
                 tela agora, e é para onde a pessoa "chega" ao avançar. */}
-            <h1 ref={tituloRef} tabIndex={-1} className="pp-t-title" style={{ margin: 'var(--pp-s-5) 0 0' }}>
+            <h1 ref={tituloRef} tabIndex={-1} className="pp-t-title pp-mt-5">
               {atual.titulo}
             </h1>
-            <p style={{ color: 'var(--pp-fg-2)', fontSize: 'var(--pp-fs-15)', lineHeight: 1.55, margin: 'var(--pp-s-3) 0 0' }}>
-              {atual.texto}
-            </p>
+            <p className="pp-prosa pp-mt-3">{atual.texto}</p>
 
             {atual.id === 'cidade' && (
               <EscolhaDeCidade
@@ -243,13 +228,10 @@ export default function Bemvindo() {
             )}
 
             {atual.pontos.length > 0 && (
-              <ul className="pp-stack pp-stack-3" style={{ listStyle: 'none', padding: 0, margin: 'var(--pp-s-5) 0 0' }}>
+              <ul className="pp-stack pp-stack-3 pp-lista-nua pp-mt-5">
                 {atual.pontos.map((p) => (
-                  <li key={p} style={{
-                    display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 'var(--pp-s-3)',
-                    alignItems: 'start', color: 'var(--pp-fg-2)', fontSize: 'var(--pp-fs-14)', lineHeight: 1.5,
-                  }}>
-                    <span aria-hidden="true" style={{ color: 'var(--pp-pulse)', marginTop: 2 }}>
+                  <li key={p} className="pp-item-check">
+                    <span aria-hidden="true" className="pp-item-check__mark">
                       <Icon name="check" size={15} />
                     </span>
                     <span>{p}</span>
@@ -262,19 +244,16 @@ export default function Bemvindo() {
           {/* Empilhado, não lado a lado: o avanço fica sempre no mesmo lugar e
               com a mesma largura em todos os passos — é o que o polegar
               procura. "Voltar" é secundário e não disputa esse espaço. */}
-          <div className="pp-stack pp-stack-3" style={{ marginTop: 'var(--pp-s-6)' }}>
+          <div className="pp-stack pp-stack-3 pp-mt-6">
             <button type="button" className="pp-btn pp-btn--primary pp-btn--lg pp-btn--block"
               onClick={() => (ultimo ? sair('/') : avancar())}>
               {ultimo ? 'Ver os eventos' : 'Continuar'} <Icon name="arrowRight" size={15} />
             </button>
             {ultimo && (
-              <p className="pp-muted-2" style={{ margin: 0, textAlign: 'center', fontSize: 'var(--pp-fs-13)' }}>
-                {destinoFinal}
-              </p>
+              <p className="pp-muted-2 pp-tc pp-t-support pp-m0">{destinoFinal}</p>
             )}
             {passo > 0 && (
-              <button type="button" className="pp-btn pp-btn--bare pp-btn--sm" onClick={voltar}
-                style={{ alignSelf: 'center' }}>
+              <button type="button" className="pp-btn pp-btn--bare pp-btn--sm pp-auto-centro" onClick={voltar}>
                 <Icon name="arrowLeft" size={15} /> Voltar
               </button>
             )}

@@ -202,22 +202,19 @@ export default function EventDetail() {
           </div>
 
           {event.description && (
-            <p style={{ lineHeight: 1.6, color: 'var(--pp-fg-2)', margin: 0 }}>{event.description}</p>
+            <p className="pp-prosa">{event.description}</p>
           )}
 
           {/* Quando há lugar marcado, a pessoa precisa VER que a compra vai
               com assento — senão parece que a escolha no mapa se perdeu. */}
           {assentos?.length > 0 && (
-            <div className="pp-card pp-card--pad" style={{
-              borderColor: 'rgba(var(--pp-pulse-rgb), 0.4)',
-              background: 'rgba(var(--pp-pulse-rgb), 0.06)',
-            }}>
+            <div className="pp-card pp-card--pad pp-realce">
               <div className="pp-between">
                 <div>
                   <strong>
                     {assentos.length} {assentos.length === 1 ? 'lugar marcado' : 'lugares marcados'}
                   </strong>
-                  <div className="pp-muted" style={{ fontSize: 13, marginTop: 2 }}>
+                  <div className="pp-muted pp-t-support pp-mt-1">
                     Reservados por poucos minutos. Conclua a compra para garantir.
                   </div>
                 </div>
@@ -252,7 +249,7 @@ export default function EventDetail() {
         </div>
 
         <aside className="pp-card pp-summary">
-          <div className="pp-eyebrow" style={{ marginBottom: 12 }}>Ingressos</div>
+          <div className="pp-eyebrow pp-mb-3">Ingressos</div>
 
           {event.tiers.map((t) => {
             const s = sel[t.id] ?? emptySel;
@@ -270,7 +267,7 @@ export default function EventDetail() {
                     ? `Restam ${t.available} ${t.available === 1 ? 'ingresso' : 'ingressos'}`
                     : '';
             return (
-              <div key={t.id} style={{ borderBottom: '1px solid var(--pp-edge-2)', paddingBottom: 10, marginBottom: 10 }}>
+              <div key={t.id} className="pp-lote">
                 <TierRow
                   label={t.name}
                   price={t.price_cents}
@@ -306,46 +303,43 @@ export default function EventDetail() {
 
           {feeCents > 0 && (
             <>
-              <div className="pp-summary__row" style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--pp-fg-3)', fontSize: 13 }}>
+              <div className="pp-summary__row">
                 <span>Subtotal</span><span>{brl(subtotalCents)}</span>
               </div>
-              <div className="pp-summary__row" style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--pp-fg-3)', fontSize: 13, marginTop: 4 }}>
+              <div className="pp-summary__row">
                 <span>Taxa de serviço ({(feeBps / 100).toFixed(feeBps % 100 ? 2 : 0)}%)</span><span>{brl(feeCents)}</span>
               </div>
             </>
           )}
 
-          <div className="pp-summary__total" style={{ marginTop: 12 }}>
+          <div className="pp-summary__total pp-mt-3">
             <span>Total</span>
             <span>{brl(totalCents)}</span>
           </div>
 
           {itemCount > 0 && (
             <>
-              <div className="pp-field" style={{ marginTop: 16 }}>
+              <div className="pp-field pp-mt-4">
                 <label htmlFor="eventdetai-1" className="pp-label">Cupom de desconto (opcional)</label>
                 <input id="eventdetai-1"
-                  className="pp-input"
+                  className="pp-input pp-caixa-alta"
                   value={coupon}
                   onChange={(e) => setCoupon(e.target.value.toUpperCase())}
                   placeholder="Tem um cupom?"
-                  style={{ textTransform: 'uppercase' }}
                 />
               </div>
 
-              <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
+              <div className="pp-row pp-mt-4">
                 <button
                   type="button"
-                  className={`pp-btn ${method === 'pix' ? 'pp-btn--primary' : 'pp-btn--glass'}`}
-                  style={{ flex: 1 }}
+                  className={`pp-btn pp-grow ${method === 'pix' ? 'pp-btn--primary' : 'pp-btn--glass'}`}
                   onClick={() => setMethod('pix')}
                 >
                   Pix
                 </button>
                 <button
                   type="button"
-                  className={`pp-btn ${method === 'card' ? 'pp-btn--primary' : 'pp-btn--glass'}`}
-                  style={{ flex: 1 }}
+                  className={`pp-btn pp-grow ${method === 'card' ? 'pp-btn--primary' : 'pp-btn--glass'}`}
                   onClick={() => setMethod('card')}
                 >
                   Cartão
@@ -363,8 +357,7 @@ export default function EventDetail() {
           )}
 
           <button
-            className="pp-btn pp-btn--primary pp-btn--block pp-btn--lg"
-            style={{ marginTop: 16 }}
+            className="pp-btn pp-btn--primary pp-btn--block pp-btn--lg pp-mt-4"
             disabled={itemCount === 0 || submitting || (method === 'card' && !cardValid)}
             onClick={handleCheckout}
           >
@@ -384,11 +377,11 @@ export default function EventDetail() {
 
 function TierRow({ label, sublabel, price, qty, onDec, onInc, decDisabled, incDisabled, note }) {
   return (
-    <div className="pp-tier" style={sublabel ? { marginTop: 6, opacity: 0.95 } : undefined}>
+    <div className={`pp-tier ${sublabel ? 'pp-tier--meia' : ''}`}>
       <div>
-        <div className="pp-tier__name" style={sublabel ? { fontSize: 13, color: 'var(--pp-fg-3)' } : undefined}>{label}</div>
+        <div className="pp-tier__name">{label}</div>
         <div className="pp-tier__price">{brl(price)}</div>
-        {note && !sublabel && <div style={{ fontSize: 12, color: 'var(--pp-red)' }}>{note}</div>}
+        {note && !sublabel && <div className="pp-tier__nota">{note}</div>}
       </div>
       <div className="pp-stepper">
         <button onClick={onDec} disabled={decDisabled} aria-label="diminuir">−</button>
@@ -433,12 +426,12 @@ function FilaDeEspera({ slug, tier }) {
 
   if (pronto) {
     return (
-      <div className="pp-card" style={{ marginTop: 10, padding: 14, background: 'rgba(0,255,133,0.07)' }}>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center', color: 'var(--pp-pulse)', fontWeight: 600 }}>
+      <div className="pp-card pp-card--pad pp-realce pp-mt-3">
+        <div className="pp-row pp-accent">
           <Icon name="check" size={16} />
           {pronto.already ? 'Você já está na fila' : 'Pronto, você está na fila'}
         </div>
-        <p style={{ color: 'var(--pp-fg-3)', fontSize: 13, marginTop: 6 }}>
+        <p className="pp-muted pp-t-support pp-mt-2">
           {pronto.ahead === 0
             ? 'Você é o próximo a ser chamado quando abrir vaga.'
             : `Há ${pronto.ahead} pessoa(s) na sua frente.`}
@@ -450,7 +443,7 @@ function FilaDeEspera({ slug, tier }) {
 
   if (!aberto) {
     return (
-      <button type="button" className="pp-btn pp-btn--glass pp-btn--sm" style={{ marginTop: 8 }}
+      <button type="button" className="pp-btn pp-btn--glass pp-btn--sm pp-mt-2"
         onClick={() => setAberto(true)}>
         <Icon name="clock" size={14} /> Avise-me se abrir vaga
       </button>
@@ -458,13 +451,13 @@ function FilaDeEspera({ slug, tier }) {
   }
 
   return (
-    <form onSubmit={entrar} style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
+    <form onSubmit={entrar} className="pp-stack pp-stack-2 pp-mt-3">
       <input className="pp-input" type="email" autoComplete="email" inputMode="email" autoCapitalize="off" autoCorrect="off" spellCheck="false" required placeholder="seu@email.com"
         value={email} onChange={(e) => setEmail(e.target.value)} />
       <input className="pp-input" placeholder="Seu nome (opcional)"
         value={nome} onChange={(e) => setNome(e.target.value)} />
-      {erro && <span style={{ color: '#FF6B61', fontSize: 12 }}>{erro}</span>}
-      <div style={{ display: 'flex', gap: 8 }}>
+      {erro && <span className="pp-erro">{erro}</span>}
+      <div className="pp-row">
         <button className="pp-btn pp-btn--primary pp-btn--sm" disabled={enviando}>
           {enviando ? 'Entrando…' : 'Entrar na fila'}
         </button>

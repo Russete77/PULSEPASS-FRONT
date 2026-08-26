@@ -87,15 +87,15 @@ export default function Wallet() {
     <Page>
       <div className="pp-wallet pp-reveal">
         <div className="pp-eyebrow">carteira pulsepass</div>
-        <h1 style={{ marginBottom: 'var(--pp-s-6)' }}>Cashless</h1>
+        <h1 className="pp-mb-6">Cashless</h1>
 
         {/* Carteira bloqueada vinha do servidor (wallets.blocked_at) e não
             aparecia em lugar nenhum: a pessoa só descobria no balcão, com o
             barman recusando o pedido e sem saber explicar o porquê. */}
         {bloqueada && (
-          <div className="pp-note" role="alert" style={{ marginBottom: 'var(--pp-s-4)', borderColor: 'var(--pp-red)', color: 'var(--pp-fg)' }}>
+          <div className="pp-note pp-note--alerta pp-mb-4" role="alert">
             <strong>Carteira bloqueada para novos gastos.</strong>
-            <div className="pp-muted" style={{ fontSize: 'var(--pp-fs-13)', marginTop: 4 }}>
+            <div className="pp-muted pp-t-support pp-mt-1">
               {wallet.block_reason || 'Procure a organização do evento para regularizar.'}
             </div>
           </div>
@@ -103,7 +103,7 @@ export default function Wallet() {
 
         <div className="pp-balance">
           <div className="pp-balance__label">{devendo ? 'Saldo devedor' : 'Saldo disponível'}</div>
-          <div className="pp-balance__amount" style={devendo ? { color: 'var(--pp-red)' } : undefined}>
+          <div className={`pp-balance__amount ${devendo ? 'pp-balance__amount--devendo' : ''}`}>
             <span className="cur">{devendo ? '− R$' : 'R$'}</span>
             <span>{reais}</span>
             <span className="cents">,{centavos}</span>
@@ -111,7 +111,7 @@ export default function Wallet() {
           {/* A linha do desenho anuncia o evento da última recarga; o dado que
               existe de verdade é a própria recarga (valor e quando). */}
           {ultimaRecarga && !devendo && (
-            <div className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 6, position: 'relative' }}>
+            <div className="pp-balance__nota">
               Última recarga: {brl(Math.abs(ultimaRecarga.amount_cents))} · {dateTime(ultimaRecarga.created_at)}
             </div>
           )}
@@ -129,9 +129,9 @@ export default function Wallet() {
           </div>
         </div>
 
-        {error && <div style={{ marginTop: 'var(--pp-s-4)' }}><ErrorBox>{error}</ErrorBox></div>}
+        {error && <div className="pp-mt-4"><ErrorBox>{error}</ErrorBox></div>}
 
-        <div className="pp-section-head" style={{ margin: 'var(--pp-s-8) 0 var(--pp-s-2)' }}>
+        <div className="pp-section-head pp-mt-8 pp-mb-2">
           <div><div className="pp-eyebrow">Atividade</div><h2>Extrato</h2></div>
         </div>
 
@@ -140,7 +140,7 @@ export default function Wallet() {
             <div className="pp-empty__icon"><Icon name="wallet" size={30} /></div>
             <div className="pp-empty__title">Sem movimentações ainda</div>
             <p>Recarregue para começar a usar o cashless no bar.</p>
-            <button className="pp-btn pp-btn--primary pp-btn--sm" style={{ marginTop: 'var(--pp-s-4)' }} onClick={() => setRechargeOpen(true)}>
+            <button className="pp-btn pp-btn--primary pp-btn--sm pp-mt-4" onClick={() => setRechargeOpen(true)}>
               Recarregar carteira
             </button>
           </Empty>
@@ -150,7 +150,7 @@ export default function Wallet() {
                 horas, e sem o corte por data o extrato vira um borrão. */}
             {agruparPorDia(txs).map((g) => (
               <div key={g.rotulo}>
-                <div className="pp-eyebrow" style={{ margin: 'var(--pp-s-4) 0 var(--pp-s-2)' }}>{g.rotulo}</div>
+                <div className="pp-eyebrow pp-mt-4 pp-mb-2">{g.rotulo}</div>
                 {g.itens.map((t) => {
                   const entrada = t.amount_cents > 0;
                   return (
@@ -158,7 +158,7 @@ export default function Wallet() {
                       <div className={`pp-tx__icon ${entrada ? 'pp-tx__icon--in' : ''}`}>
                         <Icon name={TX_ICONE[t.type] ?? 'receipt'} size={18} />
                       </div>
-                      <div className="pp-grow" style={{ minWidth: 0 }}>
+                      <div className="pp-grow">
                         {/* O tipo é o dado do razão; a descrição é o texto que
                             o servidor escreveu (ex.: "Pedido no bar · B4821").
                             Antes o rótulo saía do SINAL do valor, e estorno —
@@ -261,8 +261,8 @@ export function RechargeSheet({ onClose, onPaid, eventId = null, faltando = 0, s
         {step === 'form' ? (
           <div className="pp-modal__body pp-stack pp-stack-4">
             {faltando > 0 && (
-              <p style={{ margin: 0, fontSize: 14, color: 'var(--pp-fg-2)', lineHeight: 1.45 }}>
-                Faltam <strong style={{ color: 'var(--pp-fg)' }}>{brl(faltando)}</strong> para
+              <p className="pp-prosa pp-t-support">
+                Faltam <strong>{brl(faltando)}</strong> para
                 fechar seu pedido. Já deixamos {brl(sugerido)} escolhido.
               </p>
             )}
@@ -270,14 +270,14 @@ export function RechargeSheet({ onClose, onPaid, eventId = null, faltando = 0, s
             {/* O valor escolhido em corpo grande, como na RechargeScreen: é a
                 única informação da tela que a pessoa precisa conferir antes de
                 gerar um Pix. */}
-            <div className="pp-center pp-stack pp-stack-1" style={{ textAlign: 'center' }}>
+            <div className="pp-center pp-stack pp-stack-1 pp-tc">
               <div className="pp-eyebrow">Quanto carregar?</div>
               <div className="pp-money pp-money--lg" aria-live="polite">
                 {valorValido ? brl(cents) : '—'}
               </div>
               {saldoAtual != null && valorValido && (
-                <div className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)' }}>
-                  Novo saldo: <strong style={{ color: 'var(--pp-pulse)' }}>{brl(saldoAtual + cents)}</strong>
+                <div className="pp-muted pp-t-support">
+                  Novo saldo: <strong className="pp-accent">{brl(saldoAtual + cents)}</strong>
                 </div>
               )}
             </div>
@@ -295,7 +295,7 @@ export function RechargeSheet({ onClose, onPaid, eventId = null, faltando = 0, s
               ))}
             </div>
             {faltando > 0 && cents < faltando && (
-              <p role="status" style={{ margin: 0, fontSize: 13, color: 'var(--pp-amber)' }}>
+              <p role="status" className="pp-t-support pp-m0 pp-aviso">
                 Com {brl(cents)} ainda faltam {brl(faltando - cents)} para o pedido.
               </p>
             )}
@@ -309,17 +309,17 @@ export function RechargeSheet({ onClose, onPaid, eventId = null, faltando = 0, s
             </button>
           </div>
         ) : (
-          <div className="pp-modal__body pp-stack pp-stack-4" style={{ alignItems: 'center' }}>
+          <div className="pp-modal__body pp-stack pp-stack-4 pp-eixo-centro">
             <div className="pp-tag-secure">AGUARDANDO PAGAMENTO</div>
             <div className="pp-qrcard pp-qrcard--sm">
-              {qrSrc ? <img src={qrSrc} alt="QR Pix da recarga" /> : <div className="pp-center" style={{ width: 200, height: 200 }}><div className="pp-spinner" /></div>}
+              {qrSrc ? <img src={qrSrc} alt="QR Pix da recarga" /> : <div className="pp-qrslot"><div className="pp-spinner" /></div>}
             </div>
-            <div className="pp-pixcode" style={{ width: '100%' }}>
+            <div className="pp-pixcode pp-block">
               <code>{topup?.pix?.payload}</code>
               <button className="pp-btn pp-btn--primary pp-btn--sm" onClick={copyPix}>{copied ? 'Copiado!' : 'Copiar'}</button>
             </div>
-            <p className="pp-muted" style={{ textAlign: 'center', fontSize: 'var(--pp-fs-13)' }} role="status" aria-live="polite">
-              <span className="pp-spinner pp-spinner--sm" style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: 8 }} />
+            <p className="pp-muted pp-tc pp-t-support" role="status" aria-live="polite">
+              <span className="pp-spinner pp-spinner--sm pp-spinner--inline" />
               A confirmação cai aqui automaticamente e o saldo entra na hora.
             </p>
             {error && <ErrorBox>{error}</ErrorBox>}

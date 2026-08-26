@@ -36,16 +36,16 @@ export default function RedefinirSenha() {
 
   return (
     <Page>
-      <div className="pp-card" style={{ maxWidth: 420, margin: '0 auto', padding: 'var(--pp-s-8)' }}>
+      <div className="pp-card pp-authcard">
         <div className="pp-eyebrow">nova senha</div>
-        <h1 style={{ fontSize: 'var(--pp-fs-28)', marginTop: 8 }}>Redefinir senha</h1>
+        <h1 className="pp-t-title pp-mt-2">Redefinir senha</h1>
 
         {done ? (
-          <p style={{ color: 'var(--pp-pulse)', marginTop: 16 }}>Senha atualizada! Redirecionando…</p>
+          <p className="pp-accent pp-mt-4">Senha atualizada! Redirecionando…</p>
         ) : !user ? (
           <ErrorBox>Link inválido ou expirado. Solicite um novo na tela de login.</ErrorBox>
         ) : (
-          <form onSubmit={submit} style={{ marginTop: 16 }}>
+          <form onSubmit={submit} className="pp-mt-4">
             {/* Aqui ver o que se digita importa mais do que em qualquer lugar:
                 é uma senha nova, que a pessoa ainda não decorou. */}
             <CampoSenha
@@ -53,7 +53,7 @@ export default function RedefinirSenha() {
               valor={password} aoMudar={(e) => setPassword(e.target.value)}
             />
             {error && <ErrorBox>{error}</ErrorBox>}
-            <button className="pp-btn pp-btn--primary pp-btn--block pp-btn--lg" disabled={busy} style={{ marginTop: 8 }}>
+            <button className="pp-btn pp-btn--primary pp-btn--block pp-btn--lg pp-mt-2" disabled={busy}>
               {busy ? 'Salvando…' : 'Salvar nova senha'}
             </button>
           </form>

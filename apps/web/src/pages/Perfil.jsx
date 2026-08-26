@@ -96,7 +96,7 @@ export default function Perfil() {
     <Page>
       <div className="pp-reveal">
         <div className="pp-eyebrow">sua conta</div>
-        <h1 style={{ margin: '4px 0 0' }}>
+        <h1 className="pp-titulo-sob">
           {nome ? <>Oi, <span className="pp-accent">{nome.split(/\s+/)[0]}</span></> : 'Seu perfil'}
         </h1>
       </div>
@@ -108,38 +108,18 @@ export default function Perfil() {
         <>
           {/* Identidade. O avatar é decorativo (as iniciais repetem o nome que
               está logo ao lado), por isso sai da árvore de acessibilidade. */}
-          <section
-            className="pp-card pp-card--pad"
-            aria-labelledby="perfil-identidade"
-            style={{ marginTop: 'var(--pp-s-6)', display: 'flex', alignItems: 'center', gap: 'var(--pp-s-4)' }}
-          >
-            <div
-              aria-hidden="true"
-              style={{
-                width: 72, height: 72, flexShrink: 0, borderRadius: '50%',
-                background: 'linear-gradient(135deg, var(--pp-violet), var(--pp-pink))',
-                display: 'grid', placeItems: 'center',
-                fontFamily: 'var(--pp-font-display)', fontWeight: 700, fontSize: 'var(--pp-fs-24)',
-                color: 'var(--pp-white)', boxShadow: 'var(--pp-shine-strong)',
-              }}
-            >
-              {iniciais(nome, email)}
-            </div>
-            <div className="pp-grow" style={{ minWidth: 0 }}>
-              <h2
-                id="perfil-identidade"
-                className="pp-truncate"
-                style={{ margin: 0, fontSize: 'var(--pp-fs-20)', fontFamily: 'var(--pp-font-display)' }}
-              >
+          {/* Identidade numa linha: retrato, nome, e o papel da conta. Os
+              tres degraus de texto sao os do sistema — section, support,
+              etiqueta — em vez de tres tamanhos escolhidos aqui. */}
+          <section className="pp-card pp-card--pad pp-linha pp-mt-6" aria-labelledby="perfil-identidade">
+            <div className="pp-avatar pp-avatar--lg" aria-hidden="true">{iniciais(nome, email)}</div>
+            <div className="pp-grow">
+              <h2 id="perfil-identidade" className="pp-t-section pp-truncate">
                 {nome || 'Sem nome cadastrado'}
               </h2>
-              <div className="pp-muted pp-truncate" style={{ fontSize: 'var(--pp-fs-14)', marginTop: 2 }}>
-                {email}
-              </div>
+              <div className="pp-muted pp-truncate pp-t-support pp-mt-1">{email}</div>
               {papel && (
-                <span className={`pp-badge ${papel.cls}`} style={{ marginTop: 'var(--pp-s-2)' }}>
-                  {papel.rotulo}
-                </span>
+                <span className={`pp-badge ${papel.cls} pp-mt-2`}>{papel.rotulo}</span>
               )}
             </div>
           </section>
@@ -148,37 +128,25 @@ export default function Perfil() {
               checkout. Sem endpoint de edição, o honesto é explicar por que
               aparece assim em vez de oferecer um campo que não salva. */}
           {!nome && (
-            <p className="pp-muted-2" style={{ fontSize: 'var(--pp-fs-13)', marginTop: 'var(--pp-s-3)' }}>
+            <p className="pp-muted-2 pp-t-support pp-mt-3">
               Seu nome ainda não foi preenchido. A edição de perfil ainda não
               está disponível — por enquanto, fale com o suporte para corrigir.
             </p>
           )}
 
-          <section aria-labelledby="perfil-atalhos" style={{ marginTop: 'var(--pp-s-8)' }}>
-            <h2 id="perfil-atalhos" className="pp-t-section" style={{ margin: '0 0 var(--pp-s-3)' }}>
-              Suas coisas
-            </h2>
+          <section aria-labelledby="perfil-atalhos" className="pp-mt-8">
+            <h2 id="perfil-atalhos" className="pp-t-section pp-mb-3">Suas coisas</h2>
             <div className="pp-stack pp-stack-3">
               {ATALHOS.map((a) => (
-                <Link key={a.to} to={a.to} className="pp-card pp-card--interactive pp-card--pad"
-                  style={{ display: 'flex', alignItems: 'center', gap: 'var(--pp-s-3)' }}>
-                  <span
-                    aria-hidden="true"
-                    style={{
-                      width: 36, height: 36, flexShrink: 0, borderRadius: 'var(--pp-r-control)',
-                      background: 'var(--pp-glass-2)', border: '1px solid var(--pp-edge-2)',
-                      display: 'grid', placeItems: 'center', color: 'var(--pp-fg-2)',
-                    }}
-                  >
+                <Link key={a.to} to={a.to} className="pp-card pp-card--interactive pp-card--pad pp-linha">
+                  <span className="pp-icontile pp-icontile--sm" aria-hidden="true">
                     <Icon name={a.icone} size={17} />
                   </span>
-                  <span className="pp-grow" style={{ minWidth: 0 }}>
-                    <span style={{ display: 'block', fontWeight: 600, fontSize: 'var(--pp-fs-14)' }}>{a.titulo}</span>
-                    <span className="pp-muted-2" style={{ display: 'block', fontSize: 'var(--pp-fs-12)', marginTop: 2 }}>
-                      {a.apoio}
-                    </span>
+                  <span className="pp-grow">
+                    <span className="pp-linha__titulo pp-block">{a.titulo}</span>
+                    <span className="pp-linha__apoio pp-block">{a.apoio}</span>
                   </span>
-                  <Icon name="chevronRight" size={18} />
+                  <Icon name="chevronRight" size={18} className="pp-muted-2" />
                 </Link>
               ))}
             </div>
@@ -189,26 +157,20 @@ export default function Perfil() {
               elas vêm vazias e a seção inteira some, em vez de virar um bloco
               "Você não é produtora" que não serve para nada. */}
           {(organizacoes.length > 0 || escalacoes.length > 0) && (
-            <section aria-labelledby="perfil-trabalho" style={{ marginTop: 'var(--pp-s-8)' }}>
-              <h2 id="perfil-trabalho" className="pp-t-section" style={{ margin: '0 0 var(--pp-s-3)' }}>
-                Trabalho
-              </h2>
+            <section aria-labelledby="perfil-trabalho" className="pp-mt-8">
+              <h2 id="perfil-trabalho" className="pp-t-section pp-mb-3">Trabalho</h2>
               <div className="pp-stack pp-stack-3">
                 {organizacoes.map((o) => (
                   <div key={o.id} className="pp-card pp-card--pad pp-between">
-                    <span className="pp-truncate" style={{ fontWeight: 600, fontSize: 'var(--pp-fs-14)' }}>{o.name}</span>
+                    <span className="pp-truncate pp-linha__titulo">{o.name}</span>
                     <span className="pp-badge pp-badge--pulse">Produtora</span>
                   </div>
                 ))}
                 {escalacoes.map((e) => (
                   <div key={`${e.role}-${e.event?.id}`} className="pp-card pp-card--pad pp-between">
-                    <span style={{ minWidth: 0 }}>
-                      <span className="pp-truncate" style={{ display: 'block', fontWeight: 600, fontSize: 'var(--pp-fs-14)' }}>
-                        {e.event?.title}
-                      </span>
-                      <span className="pp-muted-2 pp-truncate" style={{ display: 'block', fontSize: 'var(--pp-fs-12)', marginTop: 2 }}>
-                        {e.event?.city}/{e.event?.state}
-                      </span>
+                    <span className="pp-grow">
+                      <span className="pp-truncate pp-linha__titulo pp-block">{e.event?.title}</span>
+                      <span className="pp-truncate pp-linha__apoio pp-block">{e.event?.city}/{e.event?.state}</span>
                     </span>
                     <span className="pp-badge pp-badge--violet">{PAPEL_STAFF[e.role] ?? e.role}</span>
                   </div>
@@ -217,16 +179,14 @@ export default function Perfil() {
               {/* O cockpit é outro app (apps/admin), em outro endereço. Sem uma
                   URL configurada não há para onde linkar — dizer onde a pessoa
                   encontra é melhor que um link quebrado. */}
-              <p className="pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 'var(--pp-s-3)' }}>
+              <p className="pp-muted-2 pp-t-support pp-mt-3">
                 A gestão de eventos e equipe fica no painel da produtora.
               </p>
             </section>
           )}
 
-          <section aria-labelledby="perfil-acesso" style={{ marginTop: 'var(--pp-s-8)' }}>
-            <h2 id="perfil-acesso" className="pp-t-section" style={{ margin: '0 0 var(--pp-s-3)' }}>
-              Acesso
-            </h2>
+          <section aria-labelledby="perfil-acesso" className="pp-mt-8">
+            <h2 id="perfil-acesso" className="pp-t-section pp-mb-3">Acesso</h2>
             <div className="pp-stack pp-stack-3">
               {/* Vale para quem já está logado: a tela usa updateUser sobre a
                   sessão corrente, não só sobre o link do e-mail. */}

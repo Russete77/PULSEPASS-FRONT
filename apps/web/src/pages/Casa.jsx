@@ -101,7 +101,7 @@ export default function Casa() {
     return (
       <Page>
         <ErrorBox>{erro}</ErrorBox>
-        <div style={{ marginTop: 'var(--pp-s-4)' }}>
+        <div className="pp-mt-4">
           <Link to="/" className="pp-btn pp-btn--glass pp-btn--sm">
             <Icon name="arrowLeft" size={15} /> Ver todos os eventos
           </Link>
@@ -141,7 +141,7 @@ export default function Casa() {
             : <div className="pp-casa-hero__sigla" aria-hidden="true">{iniciais(casa.nome)}</div>}
           <h1 className="pp-casa-hero__nome">{casa.nome}</h1>
 
-          <div className="pp-cluster pp-cluster-2" style={{ justifyContent: 'center' }}>
+          <div className="pp-cluster pp-cluster-2 pp-centro">
             {casa.instagram && (
               <a className="pp-link pp-link--muted" href={`https://instagram.com/${casa.instagram}`}
                 target="_blank" rel="noopener noreferrer nofollow">@{casa.instagram}</a>
@@ -160,7 +160,7 @@ export default function Casa() {
 
         {/* Números reais, os três que o banco sustenta. Nenhum é decorativo:
             todos saem da mesma agenda listada abaixo. */}
-        <div className="pp-casa-kpis" style={{ marginTop: 'var(--pp-s-5)' }}>
+        <div className="pp-casa-kpis pp-mt-5">
           <div className="pp-promo-kpi">
             <div className="v accent">{eventos.length}</div>
             <div className="l">{eventos.length === 1 ? 'evento no ar' : 'eventos no ar'}</div>
@@ -178,18 +178,18 @@ export default function Casa() {
         </div>
 
         {cidades.length > 0 && (
-          <p className="pp-muted" style={{ fontSize: 'var(--pp-fs-13)', marginTop: 'var(--pp-s-3)' }}>
+          <p className="pp-muted pp-t-support pp-mt-3">
             Produz em {cidades.map((c) => `${c.city}/${c.state}`).join(' · ')}
           </p>
         )}
 
-        <section style={{ marginTop: 'var(--pp-s-8)' }}>
-          <div className="pp-between" style={{ alignItems: 'flex-end', marginBottom: 'var(--pp-s-4)' }}>
+        <section className="pp-mt-8">
+          <div className="pp-between pp-baseline pp-mb-4">
             <div>
               <div className="pp-eyebrow">agenda</div>
-              <h2 className="pp-t-section" style={{ margin: '2px 0 0' }}>Próximos eventos</h2>
+              <h2 className="pp-t-section pp-mt-1">Próximos eventos</h2>
             </div>
-            <span className="pp-muted-2 pp-num" style={{ fontSize: 13 }}>{eventos.length}</span>
+            <span className="pp-muted-2 pp-num pp-t-support">{eventos.length}</span>
           </div>
 
           {eventos.length === 0 ? (
@@ -202,7 +202,7 @@ export default function Casa() {
                 {casa.nome} ainda não publicou a próxima data.
                 {casa.instagram ? ' O Instagram costuma anunciar primeiro.' : ''}
               </p>
-              <div className="pp-cluster pp-cluster-2" style={{ justifyContent: 'center', marginTop: 'var(--pp-s-4)' }}>
+              <div className="pp-cluster pp-cluster-2 pp-centro pp-mt-4">
                 <Link to="/" className="pp-btn pp-btn--primary pp-btn--sm">Ver o que está rolando</Link>
                 {casa.instagram && (
                   <a className="pp-btn pp-btn--glass pp-btn--sm"
@@ -235,8 +235,7 @@ export default function Casa() {
                       {/* Urgência vem do backend (≥70% vendido), a mesma da
                           vitrine — não é recalculada aqui para não divergir. */}
                       {ev.urgencia && (
-                        <span className={`pp-badge ${ev.urgencia === 'esgotado' ? 'pp-badge--neutral' : 'pp-badge--pulse'}`}
-                          style={{ marginTop: 6 }}>
+                        <span className={`pp-badge ${ev.urgencia === 'esgotado' ? 'pp-badge--neutral' : 'pp-badge--pulse'} pp-mt-2`}>
                           {ev.urgencia === 'esgotado' ? 'Esgotado' : `${ev.sold_pct}% vendido`}
                         </span>
                       )}

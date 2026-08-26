@@ -68,28 +68,19 @@ export default function GuestSignup() {
 
   return (
     <Page>
-      <div style={{ maxWidth: 480, margin: '0 auto' }} className="pp-reveal-group">
+      <div className="pp-reveal-group pp-folha">
 
         {/* Chip do promoter flutuando no topo, centralizado. A pessoa chegou
             aqui por um link de alguém que ela conhece — é esse nome que faz
             o convite parecer convite, e não anúncio. */}
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <div style={{
-            padding: '8px 14px 8px 8px', borderRadius: 'var(--pp-r-pill)',
-            background: 'var(--pp-glass-2)', border: '1px solid var(--pp-edge-2)',
-            backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
-            display: 'flex', alignItems: 'center', gap: 10,
-          }}>
-            <div aria-hidden="true" style={{
-              width: 28, height: 28, borderRadius: '50%',
-              background: 'var(--pp-glass-3)', border: '1px solid var(--pp-edge-2)',
-              display: 'grid', placeItems: 'center', fontSize: 12, fontWeight: 700,
-            }}>
+        <div className="pp-row pp-centro">
+          <div className="pp-convite-chip">
+            <div className="pp-avatar pp-avatar--sm" aria-hidden="true">
               {promoter.name.trim().charAt(0).toUpperCase()}
             </div>
             <div>
-              <div className="pp-eyebrow" style={{ fontSize: 10 }}>convite de</div>
-              <div style={{ fontSize: 13, fontWeight: 600, lineHeight: 1, marginTop: 2 }}>{promoter.name}</div>
+              <div className="pp-eyebrow">convite de</div>
+              <div className="pp-convite-chip__nome">{promoter.name}</div>
             </div>
           </div>
         </div>
@@ -97,33 +88,19 @@ export default function GuestSignup() {
         {/* Herói tipográfico: data em eyebrow, nome do evento no degrau de
             cartaz, local embaixo — a ordem do mockup. A capa do evento entra
             como fundo atenuado; sem capa, o herói continua só tipográfico. */}
-        <div style={{
-          textAlign: 'center', padding: 'var(--pp-s-7) 0 0', position: 'relative',
-        }}>
+        <div className="pp-convite-hero">
           {list.event?.cover_url && (
-            <div aria-hidden="true" style={{
-              position: 'absolute', inset: '-12px -24px', zIndex: -1,
-              backgroundImage: `url(${list.event.cover_url})`,
-              backgroundSize: 'cover', backgroundPosition: 'center',
-              borderRadius: 'var(--pp-r-lg)', opacity: 0.22,
-              // O degradê deixa a base do herói escura de novo, para o local
-              // e o cartão logo abaixo não brigarem com a imagem.
-              maskImage: 'linear-gradient(to bottom, black 30%, transparent 95%)',
-              WebkitMaskImage: 'linear-gradient(to bottom, black 30%, transparent 95%)',
-            }} />
+            <div aria-hidden="true" className="pp-convite-hero__capa"
+              style={{ backgroundImage: `url(${list.event.cover_url})` }} />
           )}
-          <div className="pp-eyebrow" style={{ color: 'var(--pp-pulse)' }}>
+          <div className="pp-eyebrow pp-accent">
             {eventDate(list.event?.starts_at)}
           </div>
-          <h1 style={{
-            fontFamily: 'var(--pp-font-display)', fontWeight: 800,
-            fontSize: 'clamp(34px, 9vw, 48px)', lineHeight: 0.98,
-            letterSpacing: '-0.035em', margin: '12px 0 0', textWrap: 'balance',
-          }}>
-            {list.event?.title}
-          </h1>
+          {/* O nome do evento no papel de herói — o mesmo degrau da página
+              do evento. Antes era um clamp inventado só para esta tela. */}
+          <h1 className="pp-t-hero">{list.event?.title}</h1>
           {(list.event?.venue_name || list.event?.city) && (
-            <p className="pp-muted" style={{ margin: '10px 0 0', fontSize: 'var(--pp-fs-13)' }}>
+            <p className="pp-muted pp-t-support pp-mt-3">
               {list.event?.venue_name}
               {list.event?.venue_name && list.event?.city ? ' · ' : ''}
               {list.event?.city ? `${list.event.city}/${list.event.state}` : ''}
@@ -132,12 +109,10 @@ export default function GuestSignup() {
         </div>
 
         {/* Cartão de vidro com o formulário. */}
-        <div className="pp-card pp-authcard" style={{ marginTop: 'var(--pp-s-6)' }}>
-          <div style={{ fontFamily: 'var(--pp-font-display)', fontWeight: 600, fontSize: 'var(--pp-fs-18)', letterSpacing: '-0.01em' }}>
-            Entre na lista de {promoter.name}
-          </div>
+        <div className="pp-card pp-authcard pp-mt-6">
+          <div className="pp-t-section">Entre na lista de {promoter.name}</div>
           {regra && (
-            <span className="pp-badge pp-badge--pulse" style={{ marginTop: 'var(--pp-s-3)' }}>{regra}</span>
+            <span className="pp-badge pp-badge--pulse pp-mt-3">{regra}</span>
           )}
 
           {done ? (
@@ -151,7 +126,7 @@ export default function GuestSignup() {
               </p>
             </div>
           ) : (
-            <form onSubmit={submit} className="pp-stack" style={{ marginTop: 'var(--pp-s-5)' }}>
+            <form onSubmit={submit} className="pp-stack pp-mt-5">
               <CampoComCheck id="guestsignu-1" label="Nome completo" valido={okNome}>
                 <input id="guestsignu-1" className="pp-input" name="name" autoComplete="name"
                   value={form.name} onChange={set('name')} required minLength={2} />
@@ -183,7 +158,7 @@ export default function GuestSignup() {
                   ))}
                 </div>
                 {acompanhantes > 0 && (
-                  <p className="pp-muted" style={{ fontSize: 13, marginTop: 8 }}>
+                  <p className="pp-muted pp-t-support pp-mt-2">
                     Vocês entram como {1 + acompanhantes} pessoas na lista de {promoter.name}.
                   </p>
                 )}
@@ -194,7 +169,7 @@ export default function GuestSignup() {
                 disabled={busy || !okNome}>
                 {acompanhantes > 0 ? `Entrar na lista · ${1 + acompanhantes} pessoas` : 'Entrar na lista'}
               </button>
-              <p className="pp-muted" style={{ textAlign: 'center', fontSize: 11, margin: 0 }}>
+              <p className="pp-muted pp-tc pp-t-support pp-m0">
                 Sem pagamento agora — apresente seu nome e documento na porta.
               </p>
             </form>
@@ -214,13 +189,10 @@ function CampoComCheck({ id, label, valido, children }) {
   return (
     <div className="pp-field">
       <label htmlFor={id} className="pp-label">{label}</label>
-      <div style={{ position: 'relative' }}>
+      <div className="pp-relativo">
         {children}
         {valido && (
-          <span aria-hidden="true" style={{
-            position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)',
-            color: 'var(--pp-pulse)', display: 'flex', pointerEvents: 'none',
-          }}>
+          <span aria-hidden="true" className="pp-campo-ok">
             <Icon name="check" size={16} strokeWidth={2.5} />
           </span>
         )}

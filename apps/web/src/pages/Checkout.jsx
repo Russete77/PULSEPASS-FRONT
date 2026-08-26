@@ -141,7 +141,7 @@ export default function Checkout() {
             servidor não mandou expiração — inventar um relógio que não
             corresponde a nada é pior que não ter relógio. */}
         {temPix && restanteMs != null && (
-          <div style={{ marginTop: 'var(--pp-s-4)' }}>
+          <div className="pp-mt-4">
             <span className="pp-countdown" role="status" aria-live="polite">
               <Icon name="clock" size={14} />
               {expirado ? 'Pix expirado' : `${formatarRestante(restanteMs)} para pagar`}
@@ -149,14 +149,14 @@ export default function Checkout() {
           </div>
         )}
 
-        <div className="pp-stack pp-stack-5" style={{ marginTop: 'var(--pp-s-6)', alignItems: 'center' }}>
+        <div className="pp-stack pp-stack-5 pp-eixo-centro pp-mt-6">
           {temPix && !expirado && (
             <>
               <div className="pp-qrcard">
                 {qrSrc ? <img src={qrSrc} alt="QR Code Pix" /> : <div className="pp-spinner" />}
               </div>
 
-              <div className="pp-pixcode" style={{ width: '100%' }}>
+              <div className="pp-pixcode pp-block">
                 <code>{order.pix_payload}</code>
                 <button className="pp-btn pp-btn--primary pp-btn--sm" onClick={copyPix}>
                   {copied ? 'Copiado!' : 'Copiar'}
@@ -166,12 +166,12 @@ export default function Checkout() {
           )}
 
           {temPix && expirado && (
-            <div className="pp-card pp-card--pad" style={{ width: '100%', textAlign: 'center' }}>
-              <p style={{ margin: 0, fontSize: 'var(--pp-fs-14)', color: 'var(--pp-fg-2)', lineHeight: 1.5 }}>
+            <div className="pp-card pp-card--pad pp-block pp-tc">
+              <p className="pp-prosa pp-t-support">
                 Este Pix venceu e não pode mais ser pago. O lugar volta para o
                 estoque — refaça a compra na página do evento.
               </p>
-              <Link to="/" className="pp-btn pp-btn--primary pp-btn--block" style={{ marginTop: 'var(--pp-s-4)' }}>
+              <Link to="/" className="pp-btn pp-btn--primary pp-btn--block pp-mt-4">
                 Voltar para os eventos
               </Link>
             </div>
@@ -179,16 +179,16 @@ export default function Checkout() {
 
           {/* Resumo do pedido: quantidade e lote saem de order_items, que é o
               que o servidor devolve. Nome do evento não vem nesta rota. */}
-          <div className="pp-ordersum" style={{ width: '100%' }}>
+          <div className="pp-ordersum pp-block">
             <div className="pp-ordersum__thumb" />
-            <div className="pp-grow" style={{ minWidth: 0 }}>
-              <div style={{ fontWeight: 600, fontSize: 'var(--pp-fs-14)' }}>
+            <div className="pp-grow">
+              <div className="pp-linha__titulo">
                 {totalIngressos > 0
                   ? `${totalIngressos} ${totalIngressos === 1 ? 'ingresso' : 'ingressos'}`
                   : 'Seu pedido'}
               </div>
               {itens.length > 0 && (
-                <div className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 2 }}>
+                <div className="pp-muted pp-linha__apoio">
                   {itens.map((i) => `${i.quantity}× ${i.ticket_tiers?.name ?? 'Ingresso'}`).join(' · ')}
                 </div>
               )}
@@ -199,15 +199,15 @@ export default function Checkout() {
           {/* Desconto entra porque sem ele o total parece errado: a pessoa viu
               um preço na página do evento e paga outro aqui. */}
           {order.discount_cents > 0 && (
-            <div className="pp-summary__row" style={{ width: '100%', margin: 0 }}>
+            <div className="pp-summary__row pp-block pp-m0">
               <span>Cupom {order.coupon_code ? `· ${order.coupon_code}` : 'aplicado'}</span>
-              <span style={{ color: 'var(--pp-pulse)' }}>− {brl(order.discount_cents)}</span>
+              <span className="pp-accent">− {brl(order.discount_cents)}</span>
             </div>
           )}
 
           {!expirado && (
-            <p className="pp-muted" style={{ textAlign: 'center', fontSize: 'var(--pp-fs-13)' }} role="status" aria-live="polite">
-              <span className="pp-spinner pp-spinner--sm" style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: 8 }} />
+            <p className="pp-muted pp-tc pp-t-support" role="status" aria-live="polite">
+              <span className="pp-spinner pp-spinner--sm pp-spinner--inline" />
               {temPix
                 ? 'A confirmação chega aqui em até 30 segundos. Você pode fechar a página.'
                 : 'Assim que o banco aprovar, seus ingressos aparecem em Meus ingressos.'}

@@ -144,11 +144,11 @@ export default function MyTickets() {
           com o QR a um toque — não é uma linha de lista. */}
       {status === 'done' && destaque && (
         <>
-          <div className="pp-eyebrow" style={{ marginTop: 'var(--pp-s-6)', display: 'flex', alignItems: 'center', gap: 6 }}>
+          <div className="pp-eyebrow pp-row pp-mt-6">
             {aoVivo && <span className="pp-pulse-dot" />}
             {rotuloDestaque(destaque.events?.starts_at) ?? 'próximo ingresso'}
           </div>
-          <Link to={`/ingresso/${destaque.id}`} className="pp-tktnext pp-reveal" style={{ marginTop: 'var(--pp-s-3)' }}>
+          <Link to={`/ingresso/${destaque.id}`} className="pp-tktnext pp-reveal pp-mt-3">
             <div className="pp-tktnext__art">
               {destaque.events?.cover_url && <img src={destaque.events.cover_url} alt="" />}
               {aoVivo && (
@@ -160,11 +160,11 @@ export default function MyTickets() {
             <div className="pp-tktnext__body">
               <div className="pp-meta">{bigDate(destaque.events?.starts_at)}</div>
               <div className="pp-tktnext__title">{destaque.events?.title}</div>
-              <div className="pp-muted" style={{ fontSize: 13, marginTop: 2 }}>
+              <div className="pp-muted pp-linha__apoio">
                 {destaque.events?.venue_name ? `${destaque.events.venue_name} · ` : ''}
                 {destaque.ticket_tiers?.name}
               </div>
-              <span className="pp-btn pp-btn--primary pp-btn--block" style={{ marginTop: 'var(--pp-s-4)' }}>
+              <span className="pp-btn pp-btn--primary pp-btn--block pp-mt-4">
                 Abrir ingresso <Icon name="arrowRight" size={16} />
               </span>
             </div>
@@ -174,7 +174,7 @@ export default function MyTickets() {
 
       {status === 'done' && tickets.length > 0 && (proximos.length > 0 || passados.length > 0) && (
         <>
-          <div className="pp-segmented" style={{ margin: 'var(--pp-s-7) 0 var(--pp-s-4)' }}>
+          <div className="pp-segmented pp-mt-8 pp-mb-4">
             <button className={aba === 'proximos' ? 'active' : ''} onClick={() => setAba('proximos')}>
               Próximas noites · {proximos.length}
             </button>
@@ -184,7 +184,7 @@ export default function MyTickets() {
           </div>
 
           {lista.length === 0 ? (
-            <p className="pp-muted" style={{ fontSize: 14 }}>
+            <p className="pp-muted pp-t-support">
               {aba === 'proximos' ? 'Só o ingresso em destaque acima.' : 'Nenhum evento passado ainda.'}
             </p>
           ) : (
@@ -207,7 +207,7 @@ export default function MyTickets() {
                       <img src={t.events.cover_url} alt="" loading="lazy" />
                     </div>
                   )}
-                  <div className="pp-grow" style={{ minWidth: 0 }}>
+                  <div className="pp-grow">
                     <div className="pp-tkt__date">{bigDate(t.events?.starts_at)}</div>
                     <div className="pp-tkt__title">{t.events?.title}</div>
                     {/* Casa + setor na mesma linha, como no desenho: é assim
@@ -220,7 +220,7 @@ export default function MyTickets() {
                         quem, quando duas pessoas dividiram o pedido. Vinha do
                         servidor (checked_in_at) e não aparecia em lugar nenhum. */}
                     {t.checked_in_at && (
-                      <div className="pp-muted-2" style={{ fontSize: 12, marginTop: 3 }}>
+                      <div className="pp-muted-2 pp-linha__apoio">
                         Entrada às {horaCurta(t.checked_in_at)}
                       </div>
                     )}

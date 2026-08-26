@@ -98,40 +98,35 @@ export default function PedidoConfirmado() {
         {/* role=status para o leitor de tela anunciar o desfecho, que é a
             informação inteira desta página. */}
         <div className="pp-eyebrow" role="status">Pagamento aprovado</div>
-        <h2 style={{ fontSize: 'var(--pp-fs-28)' }}>
+        <h2>
           {totalIngressos > 1 ? 'Seus ingressos chegaram.' : 'Seu ingresso chegou.'}
         </h2>
-        <p className="pp-muted" style={{ fontSize: 'var(--pp-fs-14)', maxWidth: 420, margin: '0 auto' }}>
+        <p className="pp-muted pp-t-support pp-folha--estreita">
           {evento
             ? <>Guardamos o seu lugar em <strong>{evento.title}</strong>. Apresente o QR na entrada.</>
             : 'Seu pagamento foi confirmado. Os ingressos já estão na sua carteira.'}
         </p>
       </div>
 
-      <div className="pp-stack pp-stack-3" style={{ maxWidth: 480, margin: '0 auto' }}>
+      <div className="pp-stack pp-stack-3 pp-folha">
         {/* Card do ingresso — só aparece quando o ingresso já existe do lado do
             servidor. A emissão é atômica com a confirmação, mas se por algum
             motivo ainda não voltou na lista, o resumo do pedido abaixo já
             sustenta a tela sozinho. */}
         {evento && (
-          <div className="pp-card pp-card--pad" style={{ display: 'flex', gap: 'var(--pp-s-3)', alignItems: 'center' }}>
+          /* A capa na proporcao de cartaz, a mesma de toda superficie que
+             mostra evento. Era um quadrado de 64 — a arte do flyer aparecia
+             cortada nos dois lados justo na tela que celebra a compra. */
+          <div className="pp-card pp-card--pad pp-linha">
             {evento.cover_url && (
-              <div
-                aria-hidden="true"
-                style={{
-                  width: 64, height: 64, flexShrink: 0, borderRadius: 'var(--pp-r-card)',
-                  overflow: 'hidden', border: '1px solid var(--pp-edge-2)',
-                }}
-              >
-                <img src={evento.cover_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <div className="pp-capa" aria-hidden="true">
+                <img src={evento.cover_url} alt="" />
               </div>
             )}
-            <div className="pp-grow" style={{ minWidth: 0 }}>
+            <div className="pp-grow">
               <div className="pp-meta">{bigDate(evento.starts_at)}</div>
-              <div className="pp-truncate" style={{ fontFamily: 'var(--pp-font-display)', fontWeight: 700, fontSize: 'var(--pp-fs-18)', marginTop: 2 }}>
-                {evento.title}
-              </div>
-              <div className="pp-muted-2 pp-truncate" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 2 }}>
+              <div className="pp-truncate pp-t-section pp-mt-1">{evento.title}</div>
+              <div className="pp-muted-2 pp-truncate pp-linha__apoio">
                 {evento.venue_name ? `${evento.venue_name} · ` : ''}{evento.city}/{evento.state}
               </div>
             </div>
@@ -142,17 +137,19 @@ export default function PedidoConfirmado() {
             o que ela confere na porta. Vem de tickets.code. */}
         {ingressos.length > 0 && (
           <div className="pp-card pp-card--pad">
-            <div className="pp-label" style={{ marginBottom: 'var(--pp-s-2)' }}>
+            <div className="pp-label pp-mb-2">
               {ingressos.length > 1 ? `${ingressos.length} ingressos` : 'Ingresso'}
             </div>
-            <ul className="pp-stack pp-stack-1" style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+            <ul className="pp-stack pp-stack-1 pp-lista-nua">
               {ingressos.map((t) => (
-                <li key={t.id} className="pp-between" style={{ gap: 'var(--pp-s-3)' }}>
-                  <span className="pp-truncate" style={{ fontSize: 'var(--pp-fs-14)' }}>
+                <li key={t.id} className="pp-between">
+                  <span className="pp-truncate pp-t-support">
                     {t.ticket_tiers?.name ?? 'Ingresso'}
                     {t.holder_name ? ` · ${t.holder_name}` : ''}
                   </span>
-                  <span className="pp-mono pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)' }}>{t.code}</span>
+                  {/* Codigo do ingresso: dado tecnico, e o unico lugar
+                      desta tela onde o mono tem funcao. */}
+                  <span className="pp-mono pp-muted-2 pp-t-label">{t.code}</span>
                 </li>
               ))}
             </ul>
@@ -162,31 +159,32 @@ export default function PedidoConfirmado() {
         {/* Resumo financeiro. O desconto entra porque sem ele o total parece
             errado para quem usou cupom. */}
         <div className="pp-card pp-card--pad">
-          <div className="pp-label" style={{ marginBottom: 'var(--pp-s-2)' }}>Pedido</div>
+          <div className="pp-label pp-mb-2">Pedido</div>
           {itens.length > 0 && (
-            <div className="pp-muted" style={{ fontSize: 'var(--pp-fs-13)' }}>
+            <div className="pp-muted pp-t-support">
               {itens.map((i) => `${i.quantity}× ${i.ticket_tiers?.name ?? 'Ingresso'}`).join(' · ')}
             </div>
           )}
           {pedido.discount_cents > 0 && (
-            <div className="pp-summary__row" style={{ margin: 'var(--pp-s-2) 0 0' }}>
+            <div className="pp-summary__row pp-mt-2">
               <span>Cupom {pedido.coupon_code ? `· ${pedido.coupon_code}` : 'aplicado'}</span>
-              <span style={{ color: 'var(--pp-pulse)' }}>− {brl(pedido.discount_cents)}</span>
+              <span className="pp-accent">− {brl(pedido.discount_cents)}</span>
             </div>
           )}
-          <div className="pp-between" style={{ marginTop: 'var(--pp-s-3)' }}>
-            <span className="pp-muted" style={{ fontSize: 'var(--pp-fs-13)' }}>Total pago</span>
-            <span className="pp-num" style={{ fontWeight: 700, fontSize: 'var(--pp-fs-18)' }}>{brl(pedido.total_cents)}</span>
+          {/* Total no papel de dinheiro: e o numero que a pessoa confere. */}
+          <div className="pp-summary__total pp-mt-3">
+            <span>Total pago</span>
+            <span>{brl(pedido.total_cents)}</span>
           </div>
         </div>
 
         {/* O envio por e-mail acontece de verdade na confirmação do pagamento;
             o endereço não volta nesta resposta, por isso não é impresso. */}
-        <p className="pp-muted-2" style={{ fontSize: 'var(--pp-fs-12)', textAlign: 'center', margin: 0 }}>
+        <p className="pp-muted-2 pp-t-support pp-tc pp-m0">
           Enviamos os ingressos e o comprovante para o e-mail da sua conta.
         </p>
 
-        <div className="pp-stack pp-stack-3" style={{ marginTop: 'var(--pp-s-3)' }}>
+        <div className="pp-stack pp-stack-3 pp-mt-3">
           {umSo ? (
             <Link to={`/ingresso/${ingressos[0].id}`} className="pp-btn pp-btn--primary pp-btn--block pp-btn--lg">
               Abrir meu ingresso <Icon name="arrowRight" size={16} />
@@ -199,7 +197,7 @@ export default function PedidoConfirmado() {
           <Link to="/meus-pedidos" className="pp-btn pp-btn--glass pp-btn--block">
             Ver o pedido
           </Link>
-          <Link to="/" className="pp-link pp-link--muted" style={{ textAlign: 'center' }}>
+          <Link to="/" className="pp-link pp-link--muted pp-tc">
             Explorar outros eventos
           </Link>
         </div>

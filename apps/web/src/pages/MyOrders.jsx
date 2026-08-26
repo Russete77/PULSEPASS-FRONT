@@ -83,7 +83,7 @@ export default function MyOrders() {
               <div className="pp-grow">
                 <div className="pp-order__title">{title}</div>
                 <div className="pp-order__date">{dateTime(o.created_at)}</div>
-                <span className={`pp-badge ${st.cls}`} style={{ marginTop: 8 }}>{st.label}</span>
+                <span className={`pp-badge ${st.cls} pp-mt-2`}>{st.label}</span>
               </div>
               <div className="pp-order__right">
                 <span className="pp-order__total">{brl(o.total_cents)}</span>

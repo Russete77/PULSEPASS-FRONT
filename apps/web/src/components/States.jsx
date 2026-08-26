@@ -2,7 +2,7 @@ export function Loading({ label = 'Carregando…' }) {
   return (
     <div className="pp-loading">
       <div className="pp-spinner" />
-      <p style={{ marginTop: 16 }}>{label}</p>
+      <p className="pp-mt-4">{label}</p>
     </div>
   );
 }

@@ -70,7 +70,7 @@ export default function PromoterPortal() {
 
   return (
     <Page>
-      <div className="pp-reveal" style={{ maxWidth: 720 }}>
+      <div className="pp-reveal pp-coluna--larga">
         <div className="pp-eyebrow">promoter mode</div>
         <h1>Sua lista</h1>
         <p className="sub">Seus links, inscritos, presenças e comissão.</p>
@@ -84,7 +84,7 @@ export default function PromoterPortal() {
         </Empty>
       )}
 
-      <div className="pp-stack pp-stack-5 pp-reveal-group" style={{ maxWidth: 720 }}>
+      <div className="pp-stack pp-stack-5 pp-reveal-group pp-coluna--larga">
         {rows.map((p) => {
           const pct = p.goal_checkins ? Math.min(100, (p.checked_in / p.goal_checkins) * 100) : 0;
           const aberto = openId === p.promoter_id;
@@ -93,10 +93,10 @@ export default function PromoterPortal() {
           return (
             <div key={p.promoter_id} className="pp-card pp-card--pad">
               {/* Cabeçalho do evento (o "event selector" do mockup). */}
-              <div className="pp-between" style={{ alignItems: 'flex-start' }}>
+              <div className="pp-between pp-top">
                 <div>
-                  <div style={{ fontFamily: 'var(--pp-font-display)', fontWeight: 600, fontSize: 'var(--pp-fs-16)' }}>{p.event.title}</div>
-                  <div className="pp-muted" style={{ fontSize: 'var(--pp-fs-13)', marginTop: 2 }}>{eventDate(p.event.starts_at)}</div>
+                  <div className="pp-linha__titulo">{p.event.title}</div>
+                  <div className="pp-muted pp-linha__apoio">{eventDate(p.event.starts_at)}</div>
                 </div>
                 {p.commission_paid_at && (
                   <span className="pp-badge pp-badge--success">comissão paga</span>
@@ -105,7 +105,7 @@ export default function PromoterPortal() {
 
               {/* KPIs em cards pequenos, como no mockup — número em cima,
                   rótulo mono embaixo. */}
-              <div className="pp-promo-kpis" style={{ marginTop: 'var(--pp-s-4)' }}>
+              <div className="pp-promo-kpis pp-mt-4">
                 {[
                   { l: 'Cliques', v: p.clicks ?? 0 },
                   { l: 'Inscritos', v: p.confirmed },
@@ -122,8 +122,8 @@ export default function PromoterPortal() {
               {/* Share card — o herói da tela. O link é o trabalho do
                   promoter; escondê-lo atrás de um botãozinho era esconder o
                   produto. */}
-              <div className="pp-share" style={{ marginTop: 'var(--pp-s-4)' }}>
-                <div className="pp-eyebrow" style={{ color: 'var(--pp-violet)' }}>Seu link pessoal</div>
+              <div className="pp-share pp-mt-4">
+                <div className="pp-eyebrow pp-eyebrow--violet">Seu link pessoal</div>
                 <div className="pp-share__link">
                   {window.location.host}/lista/<b>{p.code}</b>
                 </div>
@@ -147,10 +147,10 @@ export default function PromoterPortal() {
               </div>
 
               {p.goal_checkins != null && (
-                <div style={{ marginTop: 'var(--pp-s-5)', maxWidth: 340 }}>
-                  <div className="pp-between" style={{ marginBottom: 6 }}>
+                <div className="pp-meta-bloco pp-mt-5">
+                  <div className="pp-between pp-mb-2">
                     <span className="pp-stat__l">Meta de presenças</span>
-                    <span className="pp-mono pp-num" style={{ fontSize: 'var(--pp-fs-13)', color: 'var(--pp-fg-2)' }}>{p.checked_in}/{p.goal_checkins}</span>
+                    <span className="pp-mono pp-num pp-t-support">{p.checked_in}/{p.goal_checkins}</span>
                   </div>
                   <div className="pp-progress"><i style={{ width: `${pct}%` }} /></div>
                 </div>
@@ -159,7 +159,7 @@ export default function PromoterPortal() {
               {/* Convidados: título + segmented, como no mockup. A lista só é
                   buscada ao abrir — um promoter com 5 eventos não precisa de
                   5 requisições na entrada. */}
-              <div className="pp-between" style={{ marginTop: 'var(--pp-s-5)' }}>
+              <div className="pp-between pp-mt-5">
                 <button className="pp-link pp-link--muted" onClick={() => toggleGuests(p)} aria-expanded={aberto}>
                   {aberto ? 'Ocultar convidados ↑' : `Ver convidados · ${p.confirmed} ↓`}
                 </button>
@@ -176,7 +176,7 @@ export default function PromoterPortal() {
               </div>
 
               {aberto && (
-                <div style={{ marginTop: 'var(--pp-s-3)' }}>
+                <div className="pp-mt-3">
                   {guests === null ? <Loading />
                     : visiveis.length === 0 ? (
                       <p className="pp-muted">
@@ -187,13 +187,13 @@ export default function PromoterPortal() {
                         {visiveis.map((g) => (
                           <div key={g.id} className="pp-guest">
                             <span className="pp-guest__avatar" aria-hidden="true">{(g.name || '?')[0].toUpperCase()}</span>
-                            <span className="pp-grow" style={{ minWidth: 0 }}>
+                            <span className="pp-grow">
                               <span className="pp-guest__nome pp-truncate">{g.name}</span>
                               {g.party_size > 1 && (
                                 <span className="pp-guest__extra">+ {g.party_size - 1} acompanhante{g.party_size > 2 ? 's' : ''}</span>
                               )}
                             </span>
-                            <span style={{ textAlign: 'right' }}>
+                            <span className="pp-tr">
                               <span className={`pp-badge ${g.status === 'checked_in' ? 'pp-badge--success pp-badge--dot' : 'pp-badge--neutral'}`}>
                                 {g.status === 'checked_in' ? 'Presente' : 'Inscrito'}
                               </span>

@@ -50,61 +50,34 @@ const precoDesde = (cents) => (cents == null ? null : cents === 0 ? 'Grátis' : 
 function Resultado({ ev, i }) {
   const preco = precoDesde(ev.min_price_cents);
   return (
-    <Link
-      to={`/eventos/${ev.slug}`}
-      className="pp-card pp-card--interactive pp-card--pad"
-      style={{ display: 'flex', gap: 'var(--pp-s-3)', alignItems: 'center' }}
-    >
-      <div
-        aria-hidden="true"
-        style={{
-          width: 72, height: 92, flexShrink: 0, borderRadius: 'var(--pp-r-card)',
-          overflow: 'hidden', position: 'relative', border: '1px solid var(--pp-edge-2)',
-          background: ev.cover_url ? undefined : FLYER_GRADS[i % FLYER_GRADS.length],
-        }}
-      >
-        {ev.cover_url && (
-          <img src={ev.cover_url} alt="" loading="lazy"
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-        )}
-        <span
-          className="pp-mono"
-          style={{
-            position: 'absolute', top: 6, left: 6, padding: '3px 6px',
-            borderRadius: 'var(--pp-r-control)', background: 'var(--pp-ink-950)',
-            fontSize: 9, letterSpacing: '0.08em', color: 'var(--pp-fg-2)',
-          }}
-        >
-          {dataCurta(ev.starts_at)}
-        </span>
+    <Link to={`/eventos/${ev.slug}`} className="pp-card pp-card--interactive pp-card--pad pp-achado">
+      {/* A arte na proporcao de cartaz, com a data sobre ela. Era um
+          retangulo de medida propria (72×92) que nao batia com nenhuma
+          outra capa do app. */}
+      <div className="pp-capa" aria-hidden="true"
+        style={ev.cover_url ? undefined : { background: FLYER_GRADS[i % FLYER_GRADS.length] }}>
+        {ev.cover_url && <img src={ev.cover_url} alt="" loading="lazy" />}
+        <span className="pp-capa__tag">{dataCurta(ev.starts_at)}</span>
       </div>
 
-      <div className="pp-grow" style={{ minWidth: 0 }}>
-        <div
-          className="pp-truncate"
-          style={{ fontFamily: 'var(--pp-font-display)', fontWeight: 600, fontSize: 'var(--pp-fs-16)' }}
-        >
-          {ev.title}
-        </div>
-        <div className="pp-muted-2 pp-truncate" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 4 }}>
+      <div className="pp-grow">
+        <div className="pp-truncate pp-linha__titulo">{ev.title}</div>
+        <div className="pp-muted-2 pp-truncate pp-linha__apoio">
           {ev.venue_name ? `${ev.venue_name} · ` : ''}{ev.city}/{ev.state}
         </div>
         {/* Urgência vem calculada do servidor (% vendido). É o único selo que
             corresponde a um número real. */}
         {ev.urgencia && (
-          <span
-            className={`pp-badge ${ev.urgencia === 'esgotado' ? 'pp-badge--neutral' : 'pp-badge--amber'}`}
-            style={{ marginTop: 'var(--pp-s-2)' }}
-          >
+          <span className={`pp-badge ${ev.urgencia === 'esgotado' ? 'pp-badge--neutral' : 'pp-badge--amber'} pp-mt-2`}>
             {ev.urgencia === 'esgotado' ? 'Esgotado' : `${ev.sold_pct}% vendido`}
           </span>
         )}
       </div>
 
       {preco && !ev.sold_out && (
-        <div style={{ textAlign: 'right', flexShrink: 0 }}>
-          <div className="pp-muted-2 pp-mono" style={{ fontSize: 10 }}>desde</div>
-          <div className="pp-num" style={{ fontWeight: 700, fontSize: 'var(--pp-fs-16)', marginTop: 2 }}>{preco}</div>
+        /* Preco em display: peca de desejo, nao dado de terminal. */
+        <div className="pp-achado__preco">
+          <span className="pp-achado__desde">desde</span>{preco}
         </div>
       )}
     </Link>
@@ -181,9 +154,9 @@ export default function Busca() {
     <Page>
       <div className="pp-reveal">
         <div className="pp-eyebrow">busca</div>
-        <h1 style={{ margin: '4px 0 0' }}>O que você procura?</h1>
+        <h1 className="pp-titulo-sob">O que você procura?</h1>
 
-        <form className="pp-searchbar" style={{ marginTop: 'var(--pp-s-4)' }} onSubmit={submeter} role="search">
+        <form className="pp-searchbar pp-mt-4" onSubmit={submeter} role="search">
           <div className="pp-inputwrap">
             <Icon name="search" size={16} />
             <input
@@ -204,7 +177,7 @@ export default function Busca() {
         {/* Filtros ativos como chips removíveis: mostra o que está restringindo
             o resultado e dá o caminho de volta no mesmo toque. */}
         {temFiltro && (
-          <div className="pp-cluster pp-cluster-2" style={{ marginTop: 'var(--pp-s-3)' }}>
+          <div className="pp-cluster pp-cluster-2 pp-mt-3">
             {q && (
               <button className="pp-chip pp-chip--active" onClick={() => aplicar({ [CHAVES.q]: '' })}
                 aria-label={`Remover o termo ${q}`}>
@@ -227,7 +200,7 @@ export default function Busca() {
           </div>
         )}
 
-        <div className="pp-chiprow" style={{ marginTop: 'var(--pp-s-4)' }}>
+        <div className="pp-chiprow pp-mt-4">
           {CATEGORIAS.map((c) => (
             <button
               key={c.id}
@@ -255,16 +228,15 @@ export default function Busca() {
           existem de verdade: a cidade que a pessoa já escolheu antes e as
           cidades que têm evento publicado agora (com a contagem). */}
       {status === 'idle' && (
-        <section aria-labelledby="busca-sugestoes" style={{ marginTop: 'var(--pp-s-8)' }}>
-          <h2 id="busca-sugestoes" className="pp-t-section" style={{ margin: 0 }}>Por onde começar</h2>
-          <p className="pp-muted" style={{ fontSize: 'var(--pp-fs-14)', marginTop: 'var(--pp-s-2)' }}>
+        <section aria-labelledby="busca-sugestoes" className="pp-mt-8">
+          <h2 id="busca-sugestoes" className="pp-t-section">Por onde começar</h2>
+          <p className="pp-muted pp-t-support pp-mt-2">
             Busque pelo nome do evento ou da casa — ou escolha uma cidade.
           </p>
 
           {salva && (
             <button
-              className="pp-btn pp-btn--primary pp-btn--sm"
-              style={{ marginTop: 'var(--pp-s-3)' }}
+              className="pp-btn pp-btn--primary pp-btn--sm pp-mt-3"
               onClick={() => aplicar({ [CHAVES.city]: salva.city, [CHAVES.q]: texto.trim() }, { replace: false })}
             >
               <Icon name="pin" size={14} /> Ver tudo em {salva.city}
@@ -273,7 +245,7 @@ export default function Busca() {
 
           {cidades.length > 0 && (
             <>
-              <div className="pp-label" style={{ margin: 'var(--pp-s-6) 0 var(--pp-s-3)' }}>Cidades com evento no ar</div>
+              <div className="pp-label pp-mt-6 pp-mb-3">Cidades com evento no ar</div>
               <div className="pp-cluster pp-cluster-2">
                 {cidades.slice(0, 10).map((c) => (
                   <button
@@ -292,7 +264,7 @@ export default function Busca() {
             </>
           )}
 
-          <p style={{ marginTop: 'var(--pp-s-8)' }}>
+          <p className="pp-mt-8">
             <Link to="/" className="pp-link">Ou veja a vitrine completa</Link>
           </p>
         </section>
@@ -312,7 +284,7 @@ export default function Busca() {
               ? <>Não achamos nada em {city}. Procuramos por nome do evento e da casa.</>
               : 'Procuramos por nome do evento e nome da casa. Tente outra palavra.'}
           </p>
-          <div className="pp-cluster pp-cluster-2" style={{ justifyContent: 'center', marginTop: 'var(--pp-s-4)' }}>
+          <div className="pp-cluster pp-cluster-2 pp-centro pp-mt-4">
             {city && (
               <button className="pp-btn pp-btn--primary pp-btn--sm"
                 onClick={() => aplicar({ [CHAVES.city]: '' }, { replace: false })}>
@@ -334,12 +306,12 @@ export default function Busca() {
         <>
           {/* A ordem é por data porque é o que o servidor faz — dizer
               "relevância", como no desenho, seria descrever outra coisa. */}
-          <div className="pp-eyebrow" role="status" aria-live="polite" style={{ marginTop: 'var(--pp-s-6)' }}>
+          <div className="pp-eyebrow pp-mt-6" role="status" aria-live="polite">
             <span className="pp-accent">
               {resultados.length} {resultados.length === 1 ? 'resultado' : 'resultados'}
             </span> · em ordem de data
           </div>
-          <div className="pp-stack pp-stack-3 pp-reveal-group" style={{ marginTop: 'var(--pp-s-3)' }}>
+          <div className="pp-stack pp-stack-3 pp-reveal-group pp-mt-3">
             {resultados.map((ev, i) => <Resultado key={ev.id} ev={ev} i={i} />)}
           </div>
         </>

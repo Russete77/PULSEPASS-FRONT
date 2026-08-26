@@ -73,12 +73,14 @@ export default function OrderAhead() {
     return (
       <Page>
         <div className="pp-authwrap">
-          <div className="pp-card pp-authcard pp-reveal" style={{ textAlign: 'center' }}>
-            <div className="pp-success__icon" style={{ margin: '0 auto var(--pp-s-4)' }}><Icon name="check" size={30} strokeWidth={2.5} /></div>
+          <div className="pp-card pp-authcard pp-reveal pp-tc">
+            <div className="pp-success__icon"><Icon name="check" size={30} strokeWidth={2.5} /></div>
             <div className="pp-eyebrow">retire no balcão</div>
-            <h1 style={{ fontFamily: 'var(--pp-font-mono)', fontSize: 'var(--pp-fs-40)', color: 'var(--pp-pulse)', margin: '8px 0' }}>{done.pickup_code}</h1>
+            {/* O código É a tela: mono (dado que se lê em voz alta) no
+                maior degrau que o sistema tem. */}
+            <h1 className="pp-pickup">{done.pickup_code}</h1>
             <p className="pp-muted">Mostre esse código no bar. Debitamos {brl(done.total_cents)} do seu saldo.</p>
-            <div className="pp-stack pp-stack-2" style={{ marginTop: 'var(--pp-s-5)' }}>
+            <div className="pp-stack pp-stack-2 pp-mt-5">
               <button className="pp-btn pp-btn--primary pp-btn--block" onClick={() => setDone(null)}>Pedir mais</button>
               <Link to="/carteira" className="pp-btn pp-btn--glass pp-btn--block">Ver carteira</Link>
             </div>
@@ -91,12 +93,12 @@ export default function OrderAhead() {
   return (
     <Page>
       <div className="pp-bar pp-reveal">
-        <Link to={`/eventos/${slug}`} className="pp-btn pp-btn--glass pp-btn--sm" style={{ marginBottom: 'var(--pp-s-4)' }}>
+        <Link to={`/eventos/${slug}`} className="pp-btn pp-btn--glass pp-btn--sm pp-mb-4">
           <Icon name="arrowLeft" size={16} /> Voltar ao evento
         </Link>
         <div className="pp-eyebrow">bar cashless</div>
         <h1>Pedir no bar</h1>
-        <p className="sub" style={{ margin: '4px 0 var(--pp-s-5)' }}>Peça pelo app e retire no balcão com seu código.</p>
+        <p className="sub pp-mt-1 pp-mb-5">Peça pelo app e retire no balcão com seu código.</p>
 
         <div className="pp-bar__balance">
           <div><div className="lbl">Saldo da sua carteira</div><div className="val">{brl(balance)}</div></div>

@@ -4,6 +4,32 @@
    @pulsepass/shared/components.css. Tokens de @pulsepass/shared/tokens.css.
    Aqui: reset, shell, scaffolding de página e componentes de domínio
    (catálogo, evento, checkout, ingresso).
+
+   v5 · O FLYER É O PRODUTO
+   ────────────────────────
+   A medição anterior encontrou 4% de adoção dos PAPÉIS tipográficos
+   (--pp-t-*) contra a escala crua (--pp-fs-*). Cada tela escolhia o
+   próprio degrau, e o olho lê isso como falta de acabamento mesmo sem
+   saber nomear.
+
+   Duas regras passaram a valer em toda a web:
+
+   1. NENHUM tamanho de texto sai da escala crua. Só papéis:
+      hero (nome do evento) · title (título de tela) · money (preço,
+      saldo, total) · section (título de bloco) · body · support ·
+      label (mono, caixa alta). Onde a tela pedia um degrau que não
+      existe, ela passou a usar o papel mais próximo — que é o mesmo
+      que dizer que aquele degrau não devia existir.
+
+   2. A ARTE LIDERA. Cultura de evento no Brasil roda em flyer: a capa
+      é a peça de desejo, não um enfeite ao lado do texto. Toda
+      superfície que mostra evento herda a proporção de cartaz (3/4 no
+      telefone) e o texto se APOIA na arte, dentro do mesmo bloco, em
+      vez de sentar num cartão genérico ao lado dela.
+
+   E uma consequência: preço saiu do mono em toda parte. Mono é para
+   dado técnico — código de ingresso, copia-e-cola do Pix, linha de
+   extrato. Preço é peça de desejo e vai em display, no papel money.
    ═══════════════════════════════════════════════════════════ */
 
 /* App escuro: popup de select, scrollbar, date picker e autofill nascem escuros. */
@@ -15,6 +41,70 @@ img { display: block; max-width: 100%; }
 input, button, select, textarea { font-family: inherit; }
 
 #root { min-height: 100dvh; display: flex; flex-direction: column; }
+
+/* ═══════════════════════════════════════════════════════════
+   UTILIDADES DE RITMO E MEDIDA
+   Existem para matar o style={{}} repetido. Cada uma só entrega
+   valores da grade de 4px ou uma medida de coluna de leitura — nunca
+   um número solto. Se o valor que a tela quer não está aqui, o valor
+   está errado.
+   ═══════════════════════════════════════════════════════════ */
+.pp-mt-1 { margin-top: var(--pp-s-1); }
+.pp-mt-2 { margin-top: var(--pp-s-2); }
+.pp-mt-3 { margin-top: var(--pp-s-3); }
+.pp-mt-4 { margin-top: var(--pp-s-4); }
+.pp-mt-5 { margin-top: var(--pp-s-5); }
+.pp-mt-6 { margin-top: var(--pp-s-6); }
+.pp-mt-8 { margin-top: var(--pp-s-8); }
+.pp-mb-2 { margin-bottom: var(--pp-s-2); }
+.pp-mb-3 { margin-bottom: var(--pp-s-3); }
+.pp-mb-4 { margin-bottom: var(--pp-s-4); }
+.pp-mb-6 { margin-bottom: var(--pp-s-6); }
+.pp-m0   { margin: 0; }
+.pp-tc   { text-align: center; }
+.pp-centro { justify-content: center; }
+.pp-eixo-centro { align-items: center; }
+.pp-tr   { text-align: right; }
+.pp-top  { align-items: flex-start; }
+.pp-baseline { align-items: flex-end; }
+.pp-block { width: 100%; }
+
+/* Parágrafo corrido. O papel de corpo com a cor e a entrelinha de texto
+   para LER — não de rótulo. Era o style inline mais repetido do app. */
+.pp-prosa { font-size: var(--pp-t-body); line-height: 1.6; color: var(--pp-fg-2); margin: 0; }
+/* Aviso curto em vermelho, no papel de apoio. Sai do token, não de um hex. */
+.pp-erro { font-size: var(--pp-t-support); color: var(--pp-red); }
+/* Bloco realçado com a cor da marca (que na página do evento é a da
+   produtora). Baixa opacidade: destaca sem virar caixa de alerta. */
+.pp-realce { border-color: rgba(var(--pp-pulse-rgb), 0.4); background: rgba(var(--pp-pulse-rgb), 0.06); }
+.pp-caixa-alta { text-transform: uppercase; }
+/* Lista sem marcador, que é como quase toda "lista" do app se apresenta. */
+.pp-lista-nua { list-style: none; margin: 0; padding: 0; }
+/* Aviso âmbar: ainda dá para resolver. Vermelho é para o que já falhou. */
+.pp-aviso { color: var(--pp-amber); }
+/* Spinner dentro de uma linha de texto, alinhado à altura da letra. */
+.pp-spinner--inline { display: inline-block; vertical-align: middle; margin-right: var(--pp-s-2); }
+/* Nota que já é um alerta: a borda vermelha, o texto em contraste cheio. */
+.pp-note--alerta { border-color: var(--pp-red); color: var(--pp-fg); }
+.pp-eyebrow--violet { color: var(--pp-violet); }
+.pp-mb-0 { margin-bottom: 0; }
+.pp-mb-5 { margin-bottom: var(--pp-s-5); }
+/* Bloco de medida curta (barra de progresso, meta): mais largo que isso
+   a barra vira régua e o número deixa de ser comparável de relance. */
+.pp-meta-bloco { max-width: 340px; }
+/* Botão que é item de lista: ícone à esquerda, rótulo colado nele. */
+.pp-btn--lista { justify-content: flex-start; gap: var(--pp-s-3); }
+/* Respiro do QR dentro do ingresso e do estado sem QR. */
+.pp-qrbox { padding: var(--pp-s-2) 0; }
+.pp-semqr { padding: var(--pp-s-6) var(--pp-s-2); }
+
+/* Colunas de leitura. Nomeadas pelo PAPEL, não pelo número de pixels:
+   quem lê o JSX sabe que "folha" é uma tela de formulário e "coluna" é
+   uma lista, sem precisar decorar que uma tem 480 e a outra 640. */
+.pp-folha  { max-width: 480px; margin-left: auto; margin-right: auto; }
+.pp-folha--estreita { max-width: 420px; }
+.pp-coluna { max-width: 560px; margin-left: auto; margin-right: auto; }
+.pp-coluna--larga { max-width: 720px; }
 
 /* ── Layout container ── */
 .pp-container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 var(--pp-s-5); }
@@ -30,30 +120,44 @@ input, button, select, textarea { font-family: inherit; }
   border-bottom: 1px solid var(--pp-edge-1);
 }
 .pp-brand {
-  display: flex; align-items: center; gap: 10px;
-  font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-18); letter-spacing: -0.02em;
+  display: flex; align-items: center; gap: var(--pp-s-3);
+  font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-section); letter-spacing: -0.02em;
 }
 .pp-brand .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--pp-pulse); animation: pp-pulse-ring 1.8s var(--pp-ease) infinite; }
 .pp-topbar-actions { display: flex; align-items: center; gap: var(--pp-s-3); }
 
 /* nav leve — links de texto, sem pílulas */
 .pp-nav { display: flex; align-items: center; gap: var(--pp-s-6); }
-.pp-navlink { color: var(--pp-fg-3); font-size: var(--pp-fs-14); font-weight: 500; transition: color var(--pp-dur-1) var(--pp-ease); white-space: nowrap; }
+.pp-navlink { color: var(--pp-fg-3); font-size: var(--pp-t-support); font-weight: 500; transition: color var(--pp-dur-1) var(--pp-ease); white-space: nowrap; }
 .pp-navlink:hover { color: var(--pp-fg); }
 .pp-navlink.active { color: var(--pp-fg); }
 @media (max-width: 560px) { .pp-nav { gap: var(--pp-s-4); } .pp-navlink { display: none; } }
 
 /* ── Page scaffolding ── */
 .pp-page { flex: 1; padding: var(--pp-s-8) 0 var(--pp-s-16); }
-.pp-page h1 { font-family: var(--pp-font-display); font-weight: 800; font-size: var(--pp-t-title); line-height: 1.06; letter-spacing: -0.03em; margin: 0 0 var(--pp-s-2); }
+/* O h1 padrão da página é o papel de TÍTULO DE TELA — mas é só um
+   padrão, e precisa perder para quem pede um papel de propósito.
+   :where() zera a especificidade do .pp-page, deixando esta regra no
+   nível de um seletor de elemento: qualquer classe a vence.
 
-.pp-page .sub { color: var(--pp-fg-3); margin: 0 0 var(--pp-s-8); font-size: var(--pp-fs-15); }
+   Sem isso, `.pp-page h1` (classe + elemento) ganhava de .pp-t-hero e de
+   .pp-hero__title, e o NOME DO EVENTO — o degrau de cartaz, a coisa mais
+   importante da página — vinha renderizando no tamanho de título de tela
+   o tempo todo. O mesmo acontecia com o código de retirada do bar, que
+   perdia o mono e o tamanho. A hierarquia existia no CSS e não chegava
+   na tela; era este seletor que a comia. */
+:where(.pp-page) h1 { font-family: var(--pp-font-display); font-weight: 800; font-size: var(--pp-t-title); line-height: 1.06; letter-spacing: -0.03em; margin: 0 0 var(--pp-s-2); }
+
+.pp-page .sub { color: var(--pp-fg-3); margin: 0 0 var(--pp-s-8); font-size: var(--pp-t-body); }
+/* Título que vem logo abaixo de uma sobrancelha: pouco espaço acima,
+   muito abaixo — a regra do ritmo no lugar onde ela mais se repete. */
+.pp-titulo-sob { margin: var(--pp-s-1) 0 0; }
 
 /* ── Auth (login / signup) ── */
 .pp-authwrap { display: grid; place-items: start center; padding-top: var(--pp-s-6); }
 .pp-authcard { width: 100%; max-width: 420px; margin: 0 auto; padding: var(--pp-s-8); }
-.pp-authcard h1 { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-28); letter-spacing: -0.02em; margin: 8px 0 0; }
-.pp-authfoot { margin-top: var(--pp-s-5); text-align: center; color: var(--pp-fg-3); font-size: var(--pp-fs-14); display: flex; flex-direction: column; gap: var(--pp-s-2); }
+:where(.pp-authcard) h1 { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-title); letter-spacing: -0.025em; margin: var(--pp-s-2) 0 0; }
+.pp-authfoot { margin-top: var(--pp-s-5); text-align: center; color: var(--pp-fg-3); font-size: var(--pp-t-support); display: flex; flex-direction: column; gap: var(--pp-s-2); }
 
 /* ── Header editorial (home) ── */
 .pp-home-head { max-width: 720px; }
@@ -71,29 +175,195 @@ input, button, select, textarea { font-family: inherit; }
 
 /* ── Section header ── */
 .pp-section-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--pp-s-4); margin: var(--pp-s-10) 0 var(--pp-s-5); }
-.pp-section-head h2 { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-24); letter-spacing: -0.02em; margin: 4px 0 0; }
-.pp-section-head .see { font-size: var(--pp-fs-13); color: var(--pp-fg-3); }
+:where(.pp-section-head) h2 { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-section); letter-spacing: -0.02em; margin: var(--pp-s-1) 0 0; }
+.pp-section-head .see { font-size: var(--pp-t-support); color: var(--pp-fg-3); }
 
-/* ── Featured card (destaque grande — spec Home) ── */
-.pp-featured { position: relative; border-radius: var(--pp-r-card); overflow: hidden; border: 1px solid rgba(255,255,255,0.10); box-shadow: 0 20px 40px rgba(0,0,0,0.5); isolation: isolate; display: block; }
+/* ═══════════════════════════════════════════════════════════
+   A CAPA COMO PEÇA
+   Uma única forma de mostrar a arte de um evento, em qualquer tela:
+   proporção de cartaz, canto do sistema, e a imagem preenchendo tudo.
+   Antes cada tela inventava a sua (64×64 aqui, 72×92 ali, 48×48 no
+   checkout) e o app parecia montado por pessoas diferentes.
+   ═══════════════════════════════════════════════════════════ */
+.pp-capa {
+  position: relative; flex-shrink: 0; overflow: hidden;
+  width: 72px; aspect-ratio: 3 / 4;
+  border-radius: var(--pp-r-card);
+  border: 1px solid var(--pp-edge-2);
+  background: var(--pp-ink-900);
+}
+.pp-capa--lg { width: 96px; }
+.pp-capa img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* Etiqueta sobre a arte (data curta). Mono caixa-alta no papel de label:
+   é reconhecimento, não leitura. */
+.pp-capa__tag {
+  position: absolute; top: var(--pp-s-1); left: var(--pp-s-1);
+  padding: var(--pp-s-1); border-radius: var(--pp-r-control);
+  background: rgba(12, 9, 16, 0.82);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  font-family: var(--pp-font-mono); font-size: var(--pp-t-label);
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--pp-fg-2);
+}
+
+/* ── Tile de ícone ──
+   O mesmo quadrado de vidro que já existia em três lugares com três
+   medidas. Uma forma, dois tamanhos. */
+.pp-icontile {
+  width: 40px; height: 40px; flex-shrink: 0;
+  border-radius: var(--pp-r-control);
+  display: grid; place-items: center;
+  background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2);
+  color: var(--pp-fg-2);
+}
+.pp-icontile--sm { width: 36px; height: 36px; }
+
+/* ── Avatar ── */
+.pp-avatar {
+  border-radius: 50%; flex-shrink: 0; display: grid; place-items: center;
+  font-family: var(--pp-font-display); font-weight: 700;
+}
+.pp-avatar--lg {
+  width: 72px; height: 72px; font-size: var(--pp-t-section);
+  background: linear-gradient(135deg, var(--pp-violet), var(--pp-pink));
+  color: var(--pp-white); box-shadow: var(--pp-shine-strong);
+}
+.pp-avatar--sm {
+  width: 28px; height: 28px; font-size: var(--pp-t-support);
+  background: var(--pp-glass-3); border: 1px solid var(--pp-edge-2);
+}
+
+/* ── Linha de conteúdo ──
+   Arte à esquerda, texto no meio, ação/valor à direita. É a forma de
+   quase toda lista do app (busca, atalhos do perfil, camarotes,
+   confirmação). Os três degraus de texto são fixos: título em display,
+   apoio em support, e nada entre eles. */
+.pp-linha { display: flex; align-items: center; gap: var(--pp-s-4); }
+.pp-linha__titulo {
+  font-family: var(--pp-font-display); font-weight: 600;
+  font-size: var(--pp-t-body); letter-spacing: -0.01em; line-height: 1.2;
+}
+.pp-linha__apoio {
+  font-size: var(--pp-t-support); color: var(--pp-fg-3);
+  margin-top: var(--pp-s-1); line-height: 1.35;
+}
+
+/* ── Featured (destaque da vitrine) ──
+   Um bloco só: arte e texto no MESMO retângulo. A versão anterior
+   tinha uma barra de vidro colada embaixo do cartaz com casa, preço e
+   botão — o cartão genérico ao lado da arte que esta revisão veio
+   desfazer. Agora o rodapé mora dentro da arte, sobre o degradê. */
+.pp-featured {
+  position: relative; border-radius: var(--pp-r-card); overflow: hidden;
+  border: 1px solid var(--pp-edge-2); box-shadow: var(--pp-shadow-2);
+  isolation: isolate; display: block; max-width: 920px;
+}
 /* width:100% é obrigatório aqui: sem largura definida, o aspect-ratio deriva a
-   LARGURA a partir do min-height (260 × 1.6 = 416px) e o art vaza pra fora do
-   card. Com a largura fixada, o ratio passa a derivar a altura e o min-height
-   volta a ser só um piso. */
-.pp-featured__art { position: relative; width: 100%; aspect-ratio: 16 / 10; min-height: 260px; background: radial-gradient(90% 90% at 25% 15%, #1E1826, transparent 62%), radial-gradient(80% 80% at 85% 95%, #2A2235, transparent 60%), var(--pp-ink-950); }
-@media (min-width: 700px) { .pp-featured__art { aspect-ratio: auto; height: 340px; min-height: 0; } }
-.pp-featured { max-width: 920px; }
+   LARGURA a partir do min-height e o art vaza pra fora do card. Com a largura
+   fixada, o ratio passa a derivar a altura. */
+.pp-featured__art {
+  position: relative; width: 100%;
+  /* Proporção de cartaz no telefone: é assim que o flyer circula no
+     grupo do WhatsApp, e é a forma que a pessoa já reconhece. */
+  aspect-ratio: 4 / 5;
+  background:
+    radial-gradient(90% 90% at 25% 15%, var(--pp-ink-800), transparent 62%),
+    radial-gradient(80% 80% at 85% 95%, var(--pp-ink-700), transparent 60%),
+    var(--pp-ink-950);
+}
+@media (min-width: 700px) { .pp-featured__art { aspect-ratio: 16 / 9; } }
 .pp-featured__art img { width: 100%; height: 100%; object-fit: cover; }
-.pp-featured__art::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.85)); }
-.pp-featured__live { position: absolute; top: 16px; left: 16px; z-index: 1; display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; background: rgba(0,0,0,0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.16); font-family: var(--pp-font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #fff; }
+.pp-featured__art::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 30%, rgba(12, 9, 16, 0.92) 92%);
+}
+.pp-featured__live {
+  position: absolute; top: var(--pp-s-4); left: var(--pp-s-4); z-index: 1;
+  display: inline-flex; align-items: center; gap: var(--pp-s-2);
+  padding: var(--pp-s-2) var(--pp-s-3); border-radius: var(--pp-r-pill);
+  background: rgba(12, 9, 16, 0.6);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--pp-edge-3);
+  font-family: var(--pp-font-mono); font-size: var(--pp-t-label);
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--pp-white);
+}
 .pp-featured__live::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--pp-pink); box-shadow: 0 0 0 0 rgba(255,61,136,0.7); animation: pp-pulse-ring 1.6s var(--pp-ease) infinite; }
-.pp-featured__info { position: absolute; bottom: 16px; left: 16px; right: 16px; z-index: 1; }
+/* Toda a informação encostada na base da arte, empilhada na ordem em
+   que se lê um cartaz: data, nome, casa, preço + ação. */
+.pp-featured__info {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 1;
+  padding: var(--pp-s-5);
+  display: flex; flex-direction: column; gap: var(--pp-s-3);
+}
 /* Data em branco translucido: sobre foto, acento verde compete com o CTA. */
 .pp-featured__date { font-family: var(--pp-font-mono); font-size: var(--pp-t-label); letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.72); }
-.pp-featured__title { font-family: var(--pp-font-display); font-weight: 800; font-size: clamp(28px, 5vw, 44px); line-height: 0.98; letter-spacing: -0.035em; margin-top: 8px; color: #fff; }
-.pp-featured__foot { padding: 14px; background: rgba(18, 14, 23, 0.66); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; align-items: center; justify-content: space-between; gap: var(--pp-s-3); border-top: 1px solid rgba(255,255,255,0.06); }
-.pp-featured__venue { font-size: var(--pp-fs-13); color: rgba(255,255,255,0.75); }
-.pp-featured__meta { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 2px; font-family: var(--pp-font-mono); }
+.pp-featured__title { font-family: var(--pp-font-display); font-weight: 800; font-size: var(--pp-t-hero); line-height: 0.96; letter-spacing: -0.035em; margin-top: var(--pp-s-2); color: var(--pp-white); text-wrap: balance; }
+.pp-featured__foot { display: flex; align-items: center; justify-content: space-between; gap: var(--pp-s-3); }
+.pp-featured__venue { font-size: var(--pp-t-support); color: rgba(255,255,255,0.78); }
+/* Preço em display, não em mono: é o número que decide a compra. */
+.pp-featured__meta { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-body); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; color: var(--pp-white); margin-top: var(--pp-s-1); }
+
+/* ── Convite (lista do promoter) ──
+   A pessoa chegou por um link de alguém que ela conhece. A ordem é: quem
+   convidou, a arte do evento, o nome do evento, e só então o formulário.
+   A capa entra como fundo do herói, atenuada — o cartaz continua sendo a
+   peça, mesmo servindo de pano de fundo para a tipografia. */
+.pp-convite-chip {
+  display: inline-flex; align-items: center; gap: var(--pp-s-3);
+  padding: var(--pp-s-2) var(--pp-s-4) var(--pp-s-2) var(--pp-s-2);
+  border-radius: var(--pp-r-pill);
+  background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2);
+  backdrop-filter: var(--pp-blur-md); -webkit-backdrop-filter: var(--pp-blur-md);
+}
+.pp-convite-chip__nome { font-size: var(--pp-t-support); font-weight: 600; line-height: 1; margin-top: var(--pp-s-1); }
+.pp-convite-hero { position: relative; text-align: center; padding-top: var(--pp-s-8); }
+.pp-convite-hero__capa {
+  /* A sangria lateral é EXATAMENTE o respiro do container (--pp-s-5). Com
+     24px a arte passava 4px da borda em 375px e a página rolava de lado. */
+  position: absolute; inset: calc(-1 * var(--pp-s-3)) calc(-1 * var(--pp-s-5)) auto;
+  height: 100%; z-index: -1;
+  background-size: cover; background-position: center;
+  border-radius: var(--pp-r-card); opacity: 0.22;
+  /* O degradê devolve o escuro na base: o local e o cartão logo abaixo
+     não podem brigar com a imagem. */
+  mask-image: linear-gradient(to bottom, black 30%, transparent 95%);
+  -webkit-mask-image: linear-gradient(to bottom, black 30%, transparent 95%);
+}
+.pp-convite-hero h1 { margin-top: var(--pp-s-3); }
+
+/* Check de campo preenchido, dentro do próprio campo. */
+.pp-campo-ok {
+  position: absolute; right: var(--pp-s-4); top: 50%; transform: translateY(-50%);
+  color: var(--pp-pulse); display: flex; pointer-events: none;
+}
+.pp-relativo { position: relative; }
+/* Número do cartão: dígitos espaçados para conferir de olho. */
+.pp-cartao-num { letter-spacing: 0.06em; }
+.pp-cartao-marca {
+  position: absolute; right: var(--pp-s-3); top: 50%; transform: translateY(-50%);
+  font-size: var(--pp-t-support); color: var(--pp-fg-3); pointer-events: none;
+}
+
+/* ── Passo do tour de boas-vindas ── */
+.pp-passo-arte {
+  position: relative; aspect-ratio: 16 / 9; overflow: hidden;
+  border-radius: var(--pp-r-card); border: 1px solid var(--pp-edge-2);
+  display: grid; place-items: center;
+}
+.pp-passo-arte__selo {
+  width: 76px; height: 76px; border-radius: var(--pp-r-pill);
+  background: var(--pp-glass-3); border: 1px solid var(--pp-edge-3);
+  backdrop-filter: var(--pp-blur-sm); -webkit-backdrop-filter: var(--pp-blur-sm);
+  display: grid; place-items: center; color: var(--pp-fg);
+}
+/* Item de lista com marcador em ícone: o ícone não empurra o texto quando
+   ele quebra em duas linhas. */
+.pp-item-check {
+  display: grid; grid-template-columns: auto 1fr; gap: var(--pp-s-3);
+  align-items: start; color: var(--pp-fg-2);
+  font-size: var(--pp-t-support); line-height: 1.5;
+}
+.pp-item-check__mark { color: var(--pp-pulse); margin-top: var(--pp-s-1); }
+.pp-auto-centro { align-self: center; }
 
 /* ── Event grid (catálogo) ── */
 .pp-grid { display: grid; gap: var(--pp-s-4); grid-template-columns: repeat(2, 1fr); }
@@ -101,23 +371,24 @@ input, button, select, textarea { font-family: inherit; }
 @media (min-width: 980px) { .pp-grid { grid-template-columns: repeat(4, 1fr); } }
 
 /* ── Flyer card (spec Flyer) ── */
-.pp-flyer { display: block; position: relative; border-radius: var(--pp-r-card); overflow: hidden; border: 1px solid rgba(255,255,255,0.08); isolation: isolate; transition: transform var(--pp-dur-2) var(--pp-ease); }
+.pp-flyer { display: block; position: relative; border-radius: var(--pp-r-card); overflow: hidden; border: 1px solid var(--pp-edge-2); isolation: isolate; transition: transform var(--pp-dur-2) var(--pp-ease); }
 .pp-flyer:hover { transform: translateY(-4px); }
+@media (prefers-reduced-motion: reduce) { .pp-flyer:hover { transform: none; } }
 .pp-flyer__art { position: relative; aspect-ratio: 3 / 4; }
 .pp-flyer__art img { width: 100%; height: 100%; object-fit: cover; }
-.pp-flyer__art::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 45%, rgba(0,0,0,0.78)); }
-.pp-flyer__tag { position: absolute; top: 10px; left: 10px; padding: 4px 8px; border-radius: 6px; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font-size: 10px; font-family: var(--pp-font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: #fff; }
-.pp-flyer__body { position: absolute; bottom: 12px; left: 12px; right: 12px; }
-.pp-flyer__title { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-16); line-height: 1.05; letter-spacing: -0.02em; color: #fff; text-shadow: 0 2px 12px rgba(0,0,0,0.6); }
-.pp-flyer__meta { font-family: var(--pp-font-mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(255,255,255,0.6); margin-top: 4px; }
+.pp-flyer__art::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 42%, rgba(12,9,16,0.88)); }
+.pp-flyer__tag { position: absolute; top: var(--pp-s-2); left: var(--pp-s-2); padding: var(--pp-s-1) var(--pp-s-2); border-radius: var(--pp-r-control); background: rgba(12,9,16,0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font-size: var(--pp-t-label); font-family: var(--pp-font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--pp-white); }
+.pp-flyer__body { position: absolute; bottom: var(--pp-s-3); left: var(--pp-s-3); right: var(--pp-s-3); }
+.pp-flyer__title { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-body); line-height: 1.05; letter-spacing: -0.02em; color: var(--pp-white); text-shadow: 0 2px 12px rgba(0,0,0,0.6); }
+.pp-flyer__meta { font-family: var(--pp-font-mono); font-size: var(--pp-t-label); letter-spacing: 0.06em; text-transform: uppercase; color: rgba(255,255,255,0.6); margin-top: var(--pp-s-1); }
 /* PRECO: display + branco. O tamanho destaca, nao a cor — ver a auditoria
    v4. tabular-nums para alinhar as colunas numa lista de lotes. */
-.pp-flyer__price { font-family: var(--pp-font-display); font-size: var(--pp-fs-15); font-weight: 700; color: var(--pp-fg); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin-top: 4px; }
-.pp-flyer__rank { position: absolute; top: 10px; right: 10px; padding: 3px 8px; border-radius: 999px; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font-family: var(--pp-font-mono); font-size: 11px; font-weight: 700; color: var(--pp-pink); }
+.pp-flyer__price { font-family: var(--pp-font-display); font-size: var(--pp-t-body); font-weight: 700; color: var(--pp-fg); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin-top: var(--pp-s-1); }
+.pp-flyer__rank { position: absolute; top: var(--pp-s-2); right: var(--pp-s-2); padding: var(--pp-s-1) var(--pp-s-2); border-radius: var(--pp-r-pill); background: rgba(12,9,16,0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font-family: var(--pp-font-mono); font-size: var(--pp-t-label); font-weight: 700; color: var(--pp-pink); }
 
 /* header de cidade (estilo Catalog/Sympla) */
-.pp-cityhead { display: flex; align-items: baseline; gap: 10px; }
-.pp-cityhead h1 { margin: 2px 0 0; }
+.pp-cityhead { display: flex; align-items: baseline; gap: var(--pp-s-3); }
+.pp-cityhead h1 { margin: var(--pp-s-1) 0 0; }
 .pp-cityhead .city { font-weight: 700; color: var(--pp-pulse); }
 
 /* scroll horizontal (bombando) */
@@ -126,153 +397,206 @@ input, button, select, textarea { font-family: inherit; }
 .pp-hscroll > .pp-flyer { width: 200px; flex-shrink: 0; scroll-snap-align: start; }
 .pp-hscroll > .pp-flyer .pp-flyer__art { aspect-ratio: 4 / 5; }
 
-/* ── Event detail ── */
-.pp-detail { display: grid; gap: var(--pp-s-8); grid-template-columns: 1fr; }
+/* ── Achado (linha de resultado da busca) ──
+   Cartaz miniatura à esquerda com a data sobre a arte, texto no meio,
+   preço à direita. O flyer lidera até no resultado de busca. */
+.pp-achado { display: flex; align-items: center; gap: var(--pp-s-4); }
+.pp-achado__preco {
+  flex-shrink: 0; text-align: right;
+  font-family: var(--pp-font-display); font-weight: 700;
+  font-size: var(--pp-t-section); letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums; line-height: 1;
+}
+.pp-achado__desde {
+  display: block; font-family: var(--pp-font-mono); font-size: var(--pp-t-label);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--pp-fg-3); font-weight: 400; margin-bottom: var(--pp-s-1);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PÁGINA DO EVENTO
+   ═══════════════════════════════════════════════════════════ */
+.pp-detail { position: relative; display: grid; gap: var(--pp-s-8); grid-template-columns: 1fr; }
 @media (min-width: 900px) { .pp-detail { grid-template-columns: 1.6fr 1fr; align-items: start; } }
+
+/* White-label: a cor da produtora (definida inline em --pp-pulse, no
+   escopo desta div) tinge a página inteira com um véu de baixa opacidade.
+   color-mix é o que permite tingir a partir de uma cor DESCONHECIDA em
+   tempo de build — a produtora escolhe o hex no cockpit, e o app não
+   precisa de um segundo token rgb para compor a transparência.
+   Fica dentro de .pp-detail de propósito: a barra de cima e o rodapé
+   continuam sendo do PulsePass, e é isso que o comprador distingue. */
+.pp-detail::before {
+  content: ''; position: absolute; inset: -10% -20% auto; height: 520px;
+  z-index: -1; pointer-events: none;
+  background: radial-gradient(60% 60% at 30% 0%, color-mix(in srgb, var(--pp-pulse) 14%, transparent), transparent 72%);
+  filter: blur(40px);
+}
+
 /* Sem foto, o hero era um borrão verde-e-roxo: bonito, esquecível e igual ao
    de qualquer app. Enquanto a produtora não sobe a capa, o lugar é ocupado por
    uma trama fina de linhas sobre a base ameixa — lê como papel de cartaz, não
    como wallpaper de gradiente, e não disputa com o nome do evento. */
 .pp-hero {
-  position: relative; aspect-ratio: 16 / 9; border-radius: var(--pp-r-card); overflow: hidden;
+  position: relative;
+  /* Cartaz no telefone. A capa é a peça de desejo do evento: espremê-la
+     num 16/9 é tratá-la como banner de topo de página. */
+  aspect-ratio: 4 / 5;
+  border-radius: var(--pp-r-card); overflow: hidden;
   background:
     repeating-linear-gradient(115deg, rgba(255,255,255,0.05) 0 1px, transparent 1px 10px),
     radial-gradient(130% 95% at 12% 0%, var(--pp-ink-700), transparent 62%),
     var(--pp-ink-900);
-  display: grid; place-items: end start; padding: var(--pp-s-6);
+  display: grid; place-items: end start; padding: var(--pp-s-5);
 }
+@media (min-width: 700px) { .pp-hero { aspect-ratio: 16 / 9; padding: var(--pp-s-6); } }
 .pp-hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.pp-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 38%, rgba(12,9,16,0.94)); }
+.pp-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 34%, rgba(12,9,16,0.94)); }
 .pp-hero__in { position: relative; z-index: 1; }
 /* Nome do evento: o degrau de heroi. Peso 800 e tracking negativo dao a
    energia de cartaz — com o eixo optico da display, quanto maior, mais
    apertado o desenho. */
-.pp-hero__title { font-family: var(--pp-font-display); font-weight: 800; font-size: var(--pp-t-hero); line-height: 0.96; letter-spacing: -0.04em; margin: 14px 0 0; text-wrap: balance; }
+.pp-hero__title { font-family: var(--pp-font-display); font-weight: 800; font-size: var(--pp-t-hero); line-height: 0.96; letter-spacing: -0.04em; margin: var(--pp-s-3) 0 0; text-wrap: balance; }
 
 /* Feature chips (recursos reais do evento) */
-.pp-feature-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.pp-feature-chips { display: flex; flex-wrap: wrap; gap: var(--pp-s-2); }
 
 /* Meta card — tiles com ícone (spec EventScreen) */
-.pp-metacard { display: grid; grid-template-columns: auto 1fr; gap: 12px 14px; align-items: center; }
-.pp-metacard__icon { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2); color: var(--pp-fg-2); }
-.pp-metacard__k { font-family: var(--pp-font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--pp-fg-3); }
-.pp-metacard__v { font-size: var(--pp-fs-14); font-weight: 600; margin-top: 2px; }
+.pp-metacard { display: grid; grid-template-columns: auto 1fr; gap: var(--pp-s-3) var(--pp-s-4); align-items: center; }
+.pp-metacard__icon { width: 40px; height: 40px; border-radius: var(--pp-r-control); display: grid; place-items: center; background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2); color: var(--pp-fg-2); }
+.pp-metacard__k { font-family: var(--pp-font-mono); font-size: var(--pp-t-label); letter-spacing: 0.08em; text-transform: uppercase; color: var(--pp-fg-3); }
+.pp-metacard__v { font-size: var(--pp-t-support); font-weight: 600; margin-top: var(--pp-s-1); }
 
 /* ── Tier row ── */
 .pp-tier { display: flex; align-items: center; justify-content: space-between; gap: var(--pp-s-4); padding: var(--pp-s-4); border-bottom: 1px solid var(--pp-edge-1); }
 .pp-tier:last-child { border-bottom: none; }
-.pp-tier__name { font-weight: 600; }
-.pp-tier__price { font-family: var(--pp-font-display); color: var(--pp-fg); font-weight: 700; font-size: var(--pp-fs-20); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.pp-tier__name { font-weight: 600; font-size: var(--pp-t-body); }
+.pp-tier--meia .pp-tier__name { font-size: var(--pp-t-support); color: var(--pp-fg-3); }
+/* Preço do lote no papel de dinheiro, um degrau abaixo do total. */
+.pp-tier__price { font-family: var(--pp-font-display); color: var(--pp-fg); font-weight: 700; font-size: var(--pp-t-section); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1.1; margin-top: var(--pp-s-1); }
+.pp-tier__nota { font-size: var(--pp-t-support); color: var(--pp-red); margin-top: var(--pp-s-1); }
+/* Cada lote é uma decisão: a linha divisória separa uma da outra. */
+.pp-lote + .pp-lote { border-top: 1px solid var(--pp-edge-2); padding-top: var(--pp-s-3); margin-top: var(--pp-s-3); }
 
 /* ── Summary / checkout ── */
 .pp-summary { padding: var(--pp-s-5); position: sticky; top: 84px; }
-.pp-summary__row { display: flex; justify-content: space-between; padding: var(--pp-s-2) 0; font-size: var(--pp-fs-14); color: var(--pp-fg-2); }
-.pp-summary__total { display: flex; justify-content: space-between; padding-top: var(--pp-s-3); margin-top: var(--pp-s-2); border-top: 1px solid var(--pp-edge-2); font-weight: 700; font-size: var(--pp-fs-18); }
+.pp-summary__row { display: flex; justify-content: space-between; padding: var(--pp-s-2) 0; font-size: var(--pp-t-support); color: var(--pp-fg-2); }
+.pp-summary__total { display: flex; align-items: baseline; justify-content: space-between; gap: var(--pp-s-3); padding-top: var(--pp-s-3); margin-top: var(--pp-s-2); border-top: 1px solid var(--pp-edge-2); }
+.pp-summary__total > :first-child { font-size: var(--pp-t-support); color: var(--pp-fg-3); }
+/* O total é o número que a pessoa confere antes de pagar: papel money. */
+.pp-summary__total > :last-child { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-money); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; line-height: 1; }
 
 /* ══ CHECKOUT PIX (spec CheckoutPixScreen) ══ */
 .pp-checkout { max-width: 460px; margin: 0 auto; }
 .pp-checkout__nav { display: flex; align-items: center; justify-content: space-between; gap: var(--pp-s-3); margin-bottom: var(--pp-s-4); }
-.pp-checkout__nav .title { font-size: var(--pp-fs-13); font-weight: 600; color: var(--pp-fg-2); }
-.pp-tag-secure { font-family: var(--pp-font-mono); font-size: 11px; color: var(--pp-pulse); padding: 4px 8px; border-radius: 8px; background: rgba(0,255,133,0.12); border: 1px solid rgba(0,255,133,0.25); }
-.pp-steps { display: flex; gap: 6px; margin-bottom: var(--pp-s-6); }
-.pp-steps .bar { flex: 1; height: 4px; border-radius: 99px; background: rgba(255,255,255,0.1); }
+.pp-checkout__nav .title { font-size: var(--pp-t-support); font-weight: 600; color: var(--pp-fg-2); }
+.pp-tag-secure { font-family: var(--pp-font-mono); font-size: var(--pp-t-label); color: var(--pp-pulse); padding: var(--pp-s-1) var(--pp-s-2); border-radius: var(--pp-r-control); background: rgba(var(--pp-pulse-rgb),0.12); border: 1px solid rgba(var(--pp-pulse-rgb),0.25); }
+.pp-steps { display: flex; gap: var(--pp-s-2); margin-bottom: var(--pp-s-6); }
+.pp-steps .bar { flex: 1; height: 4px; border-radius: var(--pp-r-pill); background: var(--pp-edge-2); }
 .pp-steps .bar.on { background: var(--pp-pulse); }
-.pp-checkout h1 { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-28); line-height: 1; letter-spacing: -0.025em; margin: 8px 0 0; }
-.pp-checkout h1 .accent { font-weight: 700; color: var(--pp-pulse); font-size: var(--pp-fs-24); }
+:where(.pp-checkout) h1 { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-title); line-height: 1.04; letter-spacing: -0.03em; margin: var(--pp-s-2) 0 0; }
+.pp-checkout h1 .accent { font-weight: 700; color: var(--pp-pulse); }
 /* Relógio da cobrança Pix. A cor sai do token âmbar (era um hex solto) —
    é aviso, não erro: ainda dá tempo de pagar. */
-.pp-countdown { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; background: rgba(255,184,0,0.10); border: 1px solid rgba(255,184,0,0.25); font-family: var(--pp-font-mono); font-size: var(--pp-fs-13); font-weight: 600; color: var(--pp-amber); }
+.pp-countdown { display: inline-flex; align-items: center; gap: var(--pp-s-2); padding: var(--pp-s-2) var(--pp-s-4); border-radius: var(--pp-r-pill); background: rgba(255,184,0,0.10); border: 1px solid rgba(255,184,0,0.25); font-family: var(--pp-font-mono); font-size: var(--pp-t-support); font-weight: 600; color: var(--pp-amber); }
 
-.pp-qrcard { padding: 18px; border-radius: 28px; background: var(--pp-white); box-shadow: 0 20px 60px rgba(0,255,133,0.2), 0 0 0 1px rgba(255,255,255,0.2); display: inline-grid; place-items: center; position: relative; }
+.pp-qrcard { padding: var(--pp-s-5); border-radius: var(--pp-r-card); background: var(--pp-white); box-shadow: var(--pp-shadow-2), 0 0 0 1px var(--pp-edge-4); display: inline-grid; place-items: center; position: relative; }
 .pp-qrcard img { width: 220px; height: 220px; display: block; image-rendering: pixelated; }
 .pp-qrcard--sm img { width: 200px; height: 200px; }
+/* Enquanto o QR não chega, o buraco tem a medida final: sem isso o
+   cartão pula de tamanho na frente da pessoa quando a imagem entra. */
+.pp-qrslot { display: grid; place-items: center; width: 200px; height: 200px; }
 
-.pp-pixcode { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.10); }
-.pp-pixcode code { flex: 1; min-width: 0; font-family: var(--pp-font-mono); font-size: var(--pp-fs-12); color: rgba(255,255,255,0.75); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pp-pixcode { display: flex; align-items: center; gap: var(--pp-s-3); padding: var(--pp-s-3) var(--pp-s-4); border-radius: var(--pp-r-control); background: var(--pp-glass-1); border: 1px solid var(--pp-edge-2); }
+/* Copia-e-cola do Pix é dado técnico: aqui o mono é função, não enfeite. */
+.pp-pixcode code { flex: 1; min-width: 0; font-family: var(--pp-font-mono); font-size: var(--pp-t-support); color: var(--pp-fg-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-.pp-ordersum { display: flex; align-items: center; gap: 12px; padding: 16px; border-radius: 18px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); }
-.pp-ordersum__thumb { width: 48px; height: 48px; border-radius: 10px; flex-shrink: 0; background: radial-gradient(var(--pp-pulse), transparent), var(--pp-violet); }
-.pp-ordersum__price { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-money); letter-spacing: -0.03em; color: var(--pp-fg); font-variant-numeric: tabular-nums; }
+.pp-ordersum { display: flex; align-items: center; gap: var(--pp-s-4); padding: var(--pp-s-4); border-radius: var(--pp-r-card); background: var(--pp-glass-1); border: 1px solid var(--pp-edge-2); }
+.pp-ordersum__thumb { width: 48px; height: 64px; border-radius: var(--pp-r-control); flex-shrink: 0; background: radial-gradient(var(--pp-pulse), transparent), var(--pp-violet); }
+.pp-ordersum__price { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-money); letter-spacing: -0.03em; color: var(--pp-fg); font-variant-numeric: tabular-nums; line-height: 1; }
 
-/* ══ TICKET QR (spec TicketScreen) — moldura cônica rotativa ══ */
+/* ══ TICKET QR (spec TicketScreen) ══ */
 .pp-ticketwrap { max-width: 420px; margin: 0 auto; }
-.pp-ticketcard { position: relative; border-radius: 26px; padding: 1px; background: linear-gradient(160deg, rgba(255,255,255,0.18), rgba(255,255,255,0.05) 40%, rgba(255,255,255,0.02)); box-shadow: 0 20px 50px -24px rgba(0,0,0,0.7); }
-.pp-ticketcard__inner { background: rgba(11,13,18,0.92); backdrop-filter: blur(40px) saturate(180%); -webkit-backdrop-filter: blur(40px) saturate(180%); border-radius: 24px; padding: 20px; position: relative; overflow: hidden; }
-.pp-ticketcard__top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-.pp-ticketcard__date { font-family: var(--pp-font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--pp-pulse); }
-.pp-ticketcard__title { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-20); line-height: 1.05; letter-spacing: -0.02em; margin-top: 6px; }
-.pp-ticketcard__thumb { width: 56px; height: 56px; border-radius: 14px; flex-shrink: 0; background: radial-gradient(var(--pp-pulse), transparent), var(--pp-violet); border: 1px solid rgba(255,255,255,0.1); }
-.pp-perf { position: relative; margin: 16px -20px; height: 1px; }
-.pp-perf::before { content: ''; position: absolute; inset: 0; border-top: 1.5px dashed rgba(255,255,255,0.15); }
+.pp-ticketcard { position: relative; border-radius: var(--pp-r-card); padding: 1px; background: linear-gradient(160deg, var(--pp-edge-4), var(--pp-edge-1) 40%, transparent); box-shadow: var(--pp-shadow-2); }
+.pp-ticketcard__inner { background: rgba(23,19,30,0.94); backdrop-filter: var(--pp-blur-lg); -webkit-backdrop-filter: var(--pp-blur-lg); border-radius: var(--pp-r-card); padding: var(--pp-s-5); position: relative; overflow: hidden; }
+.pp-ticketcard__top { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--pp-s-3); }
+.pp-ticketcard__date { font-family: var(--pp-font-mono); font-size: var(--pp-t-label); letter-spacing: 0.12em; text-transform: uppercase; color: var(--pp-pulse); }
+.pp-ticketcard__title { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-section); line-height: 1.05; letter-spacing: -0.02em; margin-top: var(--pp-s-2); }
+/* Miniatura na proporção de cartaz, como toda capa do app. */
+.pp-ticketcard__thumb { width: 48px; height: 64px; border-radius: var(--pp-r-control); flex-shrink: 0; background: radial-gradient(var(--pp-pulse), transparent), var(--pp-violet); border: 1px solid var(--pp-edge-2); }
+.pp-perf { position: relative; margin: var(--pp-s-4) calc(-1 * var(--pp-s-5)); height: 1px; }
+.pp-perf::before { content: ''; position: absolute; inset: 0; border-top: 1.5px dashed var(--pp-edge-3); }
 .pp-perf__notch { position: absolute; top: -10px; width: 20px; height: 20px; border-radius: 50%; background: var(--pp-ink-950); }
 .pp-perf__notch.l { left: -10px; } .pp-perf__notch.r { right: -10px; }
-.pp-jwt { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; background: rgba(0,255,133,0.08); border: 1px solid rgba(0,255,133,0.2); font-family: var(--pp-font-mono); font-size: 11px; font-weight: 600; color: var(--pp-pulse); }
+.pp-jwt { display: inline-flex; align-items: center; gap: var(--pp-s-2); padding: var(--pp-s-2) var(--pp-s-4); border-radius: var(--pp-r-pill); background: rgba(var(--pp-pulse-rgb),0.08); border: 1px solid rgba(var(--pp-pulse-rgb),0.2); font-family: var(--pp-font-mono); font-size: var(--pp-t-label); font-weight: 600; color: var(--pp-pulse); }
 .pp-jwt::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--pp-pulse); }
-.pp-stub { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
-.pp-stub__k { font-family: var(--pp-font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.5); }
-.pp-stub__v { font-size: var(--pp-fs-14); font-weight: 600; margin-top: 3px; }
-.pp-ticket-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
-.pp-ticket-actions button { padding: 14px; border-radius: 16px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: var(--pp-fs-12); font-weight: 600; color: var(--pp-fg); }
+.pp-stub { display: grid; grid-template-columns: 1fr 1fr; gap: var(--pp-s-3); margin-top: var(--pp-s-4); }
+.pp-stub__k { font-family: var(--pp-font-mono); font-size: var(--pp-t-label); letter-spacing: 0.08em; text-transform: uppercase; color: var(--pp-fg-3); }
+.pp-stub__v { font-size: var(--pp-t-support); font-weight: 600; margin-top: var(--pp-s-1); }
+.pp-ticket-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--pp-s-2); margin-top: var(--pp-s-5); }
+.pp-ticket-actions button { padding: var(--pp-s-4); border-radius: var(--pp-r-card); background: var(--pp-glass-1); border: 1px solid var(--pp-edge-2); display: flex; flex-direction: column; align-items: center; gap: var(--pp-s-2); font-size: var(--pp-t-label); font-family: var(--pp-font-body); text-transform: none; letter-spacing: 0; font-weight: 600; color: var(--pp-fg); }
 .pp-ticket-actions button:hover { background: var(--pp-glass-2); }
 
 /* Mini-mapa embutido (Como chegar) */
-.pp-map { width: 100%; height: 220px; border: 1px solid var(--pp-edge-2); border-radius: var(--pp-r-md); background: var(--pp-ink-800); display: block; }
+.pp-map { width: 100%; height: 220px; border: 1px solid var(--pp-edge-2); border-radius: var(--pp-r-card); background: var(--pp-ink-800); display: block; }
 
 /* ── Ticket list card (carteira de ingressos) ── */
 .pp-tktlist { display: flex; flex-direction: column; gap: var(--pp-s-3); max-width: 620px; }
-.pp-tkt { display: flex; align-items: center; gap: 14px; padding: 14px; }
-.pp-tkt__thumb { width: 48px; height: 60px; border-radius: 10px; flex-shrink: 0; overflow: hidden; background: radial-gradient(var(--pp-pulse), transparent), var(--pp-violet); border: 1px solid rgba(255,255,255,0.1); display: grid; place-items: center; font-family: var(--pp-font-display); font-weight: 700; color: rgba(255,255,255,0.85); }
+.pp-tkt { display: flex; align-items: center; gap: var(--pp-s-4); padding: var(--pp-s-4); }
+.pp-tkt__thumb { width: 48px; height: 64px; border-radius: var(--pp-r-control); flex-shrink: 0; overflow: hidden; background: radial-gradient(var(--pp-pulse), transparent), var(--pp-violet); border: 1px solid var(--pp-edge-2); display: grid; place-items: center; font-family: var(--pp-font-display); font-weight: 700; color: var(--pp-fg-2); }
 .pp-tkt__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 /* Bloco de data (spec MyTicketsScreen): dia grande + mês em mono. É o que a
    pessoa procura primeiro numa lista com quatro noites marcadas. */
-.pp-tkt__day { width: 54px; padding: 8px 0; border-radius: 12px; flex-shrink: 0; text-align: center; background: var(--pp-glass-1); border: 1px solid var(--pp-edge-1); }
-.pp-tkt__day .d { display: block; font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-20); line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
-.pp-tkt__day .m { display: block; font-family: var(--pp-font-mono); font-size: 9px; font-weight: 600; letter-spacing: 0.1em; color: var(--pp-pulse); margin-top: 3px; }
+.pp-tkt__day { width: 56px; padding: var(--pp-s-2) 0; border-radius: var(--pp-r-control); flex-shrink: 0; text-align: center; background: var(--pp-glass-1); border: 1px solid var(--pp-edge-1); }
+.pp-tkt__day .d { display: block; font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-section); line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.pp-tkt__day .m { display: block; font-family: var(--pp-font-mono); font-size: var(--pp-t-label); font-weight: 600; letter-spacing: 0.1em; color: var(--pp-pulse); margin-top: var(--pp-s-1); }
 /* No telefone estreito a capa sai antes do texto: data + nome + setor é o
    mínimo que precisa caber sem quebrar. */
 @media (max-width: 430px) { .pp-tkt__thumb { display: none; } }
-.pp-tkt__date { font-family: var(--pp-font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--pp-pulse); }
-.pp-tkt__title { font-family: var(--pp-font-display); font-weight: 600; font-size: var(--pp-fs-16); letter-spacing: -0.01em; margin-top: 2px; }
-.pp-tkt__tier { font-size: var(--pp-fs-13); color: var(--pp-fg-3); margin-top: 2px; }
-.pp-tkt__chev { color: var(--pp-fg-4); font-size: var(--pp-fs-20); }
+.pp-tkt__date { font-family: var(--pp-font-mono); font-size: var(--pp-t-label); letter-spacing: 0.1em; text-transform: uppercase; color: var(--pp-pulse); }
+.pp-tkt__title { font-family: var(--pp-font-display); font-weight: 600; font-size: var(--pp-t-body); letter-spacing: -0.01em; margin-top: var(--pp-s-1); }
+.pp-tkt__tier { font-size: var(--pp-t-support); color: var(--pp-fg-3); margin-top: var(--pp-s-1); }
+.pp-tkt__chev { color: var(--pp-fg-4); }
 
 /* ── Order list card ── */
 .pp-orderlist { display: flex; flex-direction: column; gap: var(--pp-s-3); max-width: 640px; }
-.pp-order { display: flex; align-items: center; gap: 14px; padding: 14px; }
-.pp-order__thumb { width: 48px; height: 48px; border-radius: 12px; flex-shrink: 0; background: radial-gradient(var(--pp-pulse), transparent), var(--pp-violet); border: 1px solid rgba(255,255,255,0.1); display: grid; place-items: center; font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-14); color: rgba(255,255,255,0.85); }
-.pp-order__title { font-family: var(--pp-font-display); font-weight: 600; font-size: var(--pp-fs-16); }
-.pp-order__date { font-size: var(--pp-fs-12); color: var(--pp-fg-3); margin-top: 2px; }
-.pp-order__right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
-.pp-order__total { font-family: var(--pp-font-mono); font-weight: 700; font-size: var(--pp-fs-16); font-variant-numeric: tabular-nums; }
+.pp-order { display: flex; align-items: center; gap: var(--pp-s-4); padding: var(--pp-s-4); }
+.pp-order__thumb { width: 48px; height: 48px; border-radius: var(--pp-r-control); flex-shrink: 0; background: radial-gradient(var(--pp-pulse), transparent), var(--pp-violet); border: 1px solid var(--pp-edge-2); display: grid; place-items: center; font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-support); color: var(--pp-fg-2); }
+.pp-order__title { font-family: var(--pp-font-display); font-weight: 600; font-size: var(--pp-t-body); }
+.pp-order__date { font-size: var(--pp-t-support); color: var(--pp-fg-3); margin-top: var(--pp-s-1); }
+.pp-order__right { display: flex; flex-direction: column; align-items: flex-end; gap: var(--pp-s-2); flex-shrink: 0; }
+/* Total do pedido em display: é dinheiro, não é dado de razão. */
+.pp-order__total { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-section); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 
 /* ── Stats / KPIs (promoter) ── */
 .pp-stats { display: flex; flex-wrap: wrap; gap: var(--pp-s-6); }
-.pp-stat__l { font-family: var(--pp-font-mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--pp-fg-3); }
-.pp-stat__v { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-20); letter-spacing: -0.02em; margin-top: 3px; font-variant-numeric: tabular-nums; }
-.pp-stat__v.accent { color: var(--pp-pulse); font-family: var(--pp-font-mono); }
-.pp-progress { height: 6px; background: var(--pp-edge-2); border-radius: 99px; overflow: hidden; }
-.pp-progress > i { display: block; height: 100%; background: var(--pp-pulse); border-radius: 99px; transition: width var(--pp-dur-3) var(--pp-ease); }
+.pp-stat__l { font-family: var(--pp-font-mono); font-size: var(--pp-t-label); letter-spacing: 0.06em; text-transform: uppercase; color: var(--pp-fg-3); }
+.pp-stat__v { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-section); letter-spacing: -0.02em; margin-top: var(--pp-s-1); font-variant-numeric: tabular-nums; }
+.pp-stat__v.accent { color: var(--pp-pulse); }
+.pp-progress { height: 6px; background: var(--pp-edge-2); border-radius: var(--pp-r-pill); overflow: hidden; }
+.pp-progress > i { display: block; height: 100%; background: var(--pp-pulse); border-radius: var(--pp-r-pill); transition: width var(--pp-dur-3) var(--pp-ease); }
+@media (prefers-reduced-motion: reduce) { .pp-progress > i { transition: none; } }
 
 /* ── Portal do promoter (estrutura da PromoterScreen) ──
    KPIs em cards pequenos + share card do link pessoal como herói. Só a
    estrutura veio do mockup: o gradiente violeta com glow virou glass com
    borda violeta discreta, dentro dos tokens v4. */
-.pp-promo-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.pp-promo-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--pp-s-2); }
 @media (max-width: 560px) { .pp-promo-kpis { grid-template-columns: repeat(2, 1fr); } }
 .pp-promo-kpi {
-  padding: 12px; border-radius: var(--pp-r-card);
+  padding: var(--pp-s-3); border-radius: var(--pp-r-card);
   background: var(--pp-glass-1); border: 1px solid var(--pp-edge-1);
   min-width: 0;
 }
 .pp-promo-kpi .v {
-  font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-18);
+  font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-section);
   letter-spacing: -0.02em; font-variant-numeric: tabular-nums;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .pp-promo-kpi .v.accent { color: var(--pp-pulse); }
 .pp-promo-kpi .l {
-  font-family: var(--pp-font-mono); font-size: 10px; letter-spacing: 0.06em;
-  text-transform: uppercase; color: var(--pp-fg-3); margin-top: 3px;
+  font-family: var(--pp-font-mono); font-size: var(--pp-t-label); letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--pp-fg-3); margin-top: var(--pp-s-1);
 }
 
 .pp-share {
@@ -282,91 +606,115 @@ input, button, select, textarea { font-family: inherit; }
   box-shadow: var(--pp-shine);
 }
 .pp-share__link {
-  font-family: var(--pp-font-mono); font-weight: 600; font-size: var(--pp-fs-16);
-  margin-top: 8px; word-break: break-all;
+  font-family: var(--pp-font-mono); font-weight: 600; font-size: var(--pp-t-body);
+  margin-top: var(--pp-s-2); word-break: break-all;
 }
 .pp-share__link b { color: var(--pp-violet); font-weight: 700; }
-.pp-share__hint { font-size: var(--pp-fs-13); color: var(--pp-fg-2); margin: 8px 0 0; }
-.pp-share__acoes { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+.pp-share__hint { font-size: var(--pp-t-support); color: var(--pp-fg-2); margin: var(--pp-s-2) 0 0; }
+.pp-share__acoes { display: flex; gap: var(--pp-s-2); margin-top: var(--pp-s-4); flex-wrap: wrap; }
 .pp-share__acoes > * { flex: 1; min-width: 110px; }
 
 /* Convidado na lista do promoter — avatar de inicial + estado à direita. */
 .pp-guest {
-  display: flex; align-items: center; gap: 10px;
-  padding: 8px 10px; border-radius: var(--pp-r-card);
+  display: flex; align-items: center; gap: var(--pp-s-3);
+  padding: var(--pp-s-2) var(--pp-s-3); border-radius: var(--pp-r-card);
   background: var(--pp-glass-1); border: 1px solid var(--pp-edge-1);
 }
 .pp-guest__avatar {
   width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
   display: grid; place-items: center;
-  font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-14);
+  font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-support);
   background: rgba(var(--pp-pulse-rgb), 0.12); border: 1px solid rgba(var(--pp-pulse-rgb), 0.3);
   color: var(--pp-pulse);
 }
-.pp-guest__nome { display: block; font-size: var(--pp-fs-14); font-weight: 600; }
-.pp-guest__extra { display: block; font-size: var(--pp-fs-12); color: var(--pp-fg-3); margin-top: 1px; }
+.pp-guest__nome { display: block; font-size: var(--pp-t-support); font-weight: 600; }
+.pp-guest__extra { display: block; font-size: var(--pp-t-support); color: var(--pp-fg-3); margin-top: 1px; }
 .pp-guest__hora {
-  display: block; font-family: var(--pp-font-mono); font-size: 10px;
-  color: var(--pp-fg-4); margin-top: 4px;
+  display: block; font-family: var(--pp-font-mono); font-size: var(--pp-t-label);
+  color: var(--pp-fg-3); margin-top: var(--pp-s-1);
 }
 
 /* ── Success state (check em círculo) ── */
 .pp-success { text-align: center; padding: var(--pp-s-6) 0; }
-.pp-success__icon { display: inline-grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: rgba(0,255,133,0.12); border: 1px solid rgba(0,255,133,0.35); color: var(--pp-pulse); margin-bottom: var(--pp-s-4); }
-.pp-success h2 { font-family: var(--pp-font-display); font-weight: 700; color: var(--pp-pulse); margin: 0 0 6px; }
+.pp-success__icon { display: inline-grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: rgba(var(--pp-pulse-rgb),0.12); border: 1px solid rgba(var(--pp-pulse-rgb),0.35); color: var(--pp-pulse); margin-bottom: var(--pp-s-4); }
+:where(.pp-success) h2 { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-title); letter-spacing: -0.025em; color: var(--pp-pulse); margin: 0 0 var(--pp-s-2); }
+/* O título do desfecho é o herói da tela de confirmação. */
+.pp-success--forte h2 { color: var(--pp-fg); }
 
 /* ══ CARTEIRA CASHLESS (spec WalletScreen) ══ */
 .pp-wallet { max-width: 560px; margin: 0 auto; }
 .pp-balance {
-  position: relative; border-radius: 24px; padding: 22px; overflow: hidden;
-  background: linear-gradient(135deg, rgba(0,255,133,0.18) 0%, rgba(34,211,238,0.12) 50%, rgba(167,139,250,0.18) 100%), rgba(11,13,18,0.7);
-  backdrop-filter: blur(30px) saturate(180%); -webkit-backdrop-filter: blur(30px) saturate(180%);
-  border: 1px solid rgba(255,255,255,0.14);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 12px 32px rgba(0,0,0,0.4), 0 0 40px rgba(0,255,133,0.12);
+  position: relative; border-radius: var(--pp-r-card); padding: var(--pp-s-6); overflow: hidden;
+  background: linear-gradient(135deg, rgba(var(--pp-pulse-rgb),0.18) 0%, rgba(34,211,238,0.12) 50%, rgba(167,139,250,0.18) 100%), rgba(18,14,23,0.7);
+  backdrop-filter: var(--pp-blur-lg); -webkit-backdrop-filter: var(--pp-blur-lg);
+  border: 1px solid var(--pp-edge-3);
+  box-shadow: var(--pp-shine-strong), var(--pp-shadow-2);
 }
-.pp-balance::after { content: ''; position: absolute; top: -40px; right: -40px; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(0,255,133,0.25), transparent 70%); filter: blur(20px); pointer-events: none; }
-.pp-balance__label { font-family: var(--pp-font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.65); position: relative; }
-.pp-balance__amount { margin-top: 8px; font-family: var(--pp-font-mono); font-weight: 700; font-size: 42px; letter-spacing: -0.02em; display: flex; align-items: baseline; gap: 6px; position: relative; }
-.pp-balance__amount .cur { font-size: 22px; color: rgba(255,255,255,0.55); }
-.pp-balance__amount .cents { font-size: 28px; color: rgba(255,255,255,0.6); }
-.pp-balance__actions { margin-top: 18px; display: grid; grid-template-columns: 1.35fr 1fr; gap: 10px; position: relative; }
+.pp-balance::after { content: ''; position: absolute; top: -40px; right: -40px; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(var(--pp-pulse-rgb),0.25), transparent 70%); filter: blur(20px); pointer-events: none; }
+.pp-balance__label { font-family: var(--pp-font-mono); font-size: var(--pp-t-label); letter-spacing: 0.1em; text-transform: uppercase; color: var(--pp-fg-3); position: relative; }
+/* Saldo em DISPLAY, não em mono. Mono é para o extrato — aqui o número é
+   a peça de desejo da tela, e o mono o fazia parecer um terminal. */
+.pp-balance__amount {
+  margin-top: var(--pp-s-2); font-family: var(--pp-font-display); font-weight: 700;
+  font-size: clamp(2.25rem, 7vw, 3rem); letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums; line-height: 1;
+  display: flex; align-items: baseline; gap: var(--pp-s-2); position: relative;
+}
+/* Saldo devedor: o único caso em que o número é a má notícia. */
+.pp-balance__amount--devendo { color: var(--pp-red); }
+.pp-balance__nota { position: relative; margin-top: var(--pp-s-2); font-size: var(--pp-t-support); color: var(--pp-fg-3); }
+.pp-balance__amount .cur { font-size: var(--pp-t-section); color: var(--pp-fg-3); letter-spacing: -0.02em; }
+.pp-balance__amount .cents { font-size: var(--pp-t-money); color: var(--pp-fg-2); }
+.pp-balance__actions { margin-top: var(--pp-s-5); display: grid; grid-template-columns: 1.35fr 1fr; gap: var(--pp-s-3); position: relative; }
 /* min-width:0 permite o botão encolher abaixo do seu min-content; sem isso os
-   3 botões somados estouram o cartão de saldo em telas de 375px. */
+   botões somados estouram o cartão de saldo em telas de 375px. */
 .pp-balance__actions > * { min-width: 0; }
-.pp-balance__actions .pp-btn { height: 44px; padding-left: 10px; padding-right: 10px; }
+.pp-balance__actions .pp-btn { height: 44px; padding-left: var(--pp-s-3); padding-right: var(--pp-s-3); }
 
 .pp-txlist { margin-top: var(--pp-s-6); }
-.pp-tx { display: flex; align-items: center; gap: 12px; padding: 10px 4px; }
-.pp-tx__icon { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; flex-shrink: 0; background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2); color: var(--pp-fg-2); }
-.pp-tx__icon--in { background: rgba(0,255,133,0.12); border-color: rgba(0,255,133,0.25); color: var(--pp-pulse); }
-.pp-tx__name { font-size: var(--pp-fs-14); font-weight: 600; }
-.pp-tx__meta { font-size: var(--pp-fs-12); color: var(--pp-fg-3); margin-top: 2px; }
-.pp-tx__amt { font-family: var(--pp-font-mono); font-weight: 700; font-size: var(--pp-fs-14); font-variant-numeric: tabular-nums; }
+.pp-tx { display: flex; align-items: center; gap: var(--pp-s-3); padding: var(--pp-s-3) var(--pp-s-1); }
+.pp-tx__icon { width: 40px; height: 40px; border-radius: var(--pp-r-control); display: grid; place-items: center; flex-shrink: 0; background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2); color: var(--pp-fg-2); }
+.pp-tx__icon--in { background: rgba(var(--pp-pulse-rgb),0.12); border-color: rgba(var(--pp-pulse-rgb),0.25); color: var(--pp-pulse); }
+.pp-tx__name { font-size: var(--pp-t-support); font-weight: 600; }
+.pp-tx__meta { font-size: var(--pp-t-support); color: var(--pp-fg-3); margin-top: var(--pp-s-1); }
+/* Extrato É dado técnico: aqui o mono é a escolha certa — coluna de
+   valores que não dança quando o número muda. */
+.pp-tx__amt { font-family: var(--pp-font-mono); font-weight: 700; font-size: var(--pp-t-support); font-variant-numeric: tabular-nums; }
 .pp-tx__amt.in { color: var(--pp-pulse); }
 
-.pp-amounts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.pp-amounts button { height: 48px; border-radius: var(--pp-r-md); background: var(--pp-glass-1); border: 1px solid var(--pp-edge-2); color: var(--pp-fg); font-family: var(--pp-font-mono); font-weight: 600; font-size: var(--pp-fs-15); }
-.pp-amounts button.sel { background: rgba(0,255,133,0.12); border-color: rgba(0,255,133,0.4); color: var(--pp-pulse); }
+.pp-amounts { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--pp-s-2); }
+.pp-amounts button { height: 48px; border-radius: var(--pp-r-control); background: var(--pp-glass-1); border: 1px solid var(--pp-edge-2); color: var(--pp-fg); font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-body); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.pp-amounts button.sel { background: rgba(var(--pp-pulse-rgb),0.12); border-color: rgba(var(--pp-pulse-rgb),0.4); color: var(--pp-pulse); }
 
 /* ══ BAR / OrderAhead ══ */
 .pp-bar { max-width: 560px; margin: 0 auto; padding-bottom: 120px; }
-.pp-bar__balance { display: flex; align-items: center; justify-content: space-between; gap: var(--pp-s-3); padding: 14px 16px; border-radius: var(--pp-r-lg); background: rgba(0,255,133,0.06); border: 1px solid rgba(0,255,133,0.20); margin-bottom: var(--pp-s-6); }
-.pp-bar__balance .lbl { font-family: var(--pp-font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--pp-fg-3); }
-.pp-bar__balance .val { font-family: var(--pp-font-mono); font-weight: 700; font-size: var(--pp-fs-18); color: var(--pp-pulse); font-variant-numeric: tabular-nums; }
-.pp-barcat { font-family: var(--pp-font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--pp-fg-3); margin: var(--pp-s-6) 0 var(--pp-s-2); }
-.pp-menuitem { display: flex; align-items: center; gap: var(--pp-s-4); padding: 12px 0; border-bottom: 1px solid var(--pp-edge-1); }
-.pp-menuitem__name { font-weight: 600; font-size: var(--pp-fs-15); }
-.pp-menuitem__desc { font-size: var(--pp-fs-12); color: var(--pp-fg-3); margin-top: 2px; }
-.pp-menuitem__price { font-family: var(--pp-font-display); color: var(--pp-fg); font-weight: 700; font-size: var(--pp-fs-18); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin-top: 3px; }
-.pp-menuitem__out { font-size: var(--pp-fs-12); color: var(--pp-fg-4); }
+.pp-bar__balance { display: flex; align-items: center; justify-content: space-between; gap: var(--pp-s-3); padding: var(--pp-s-4); border-radius: var(--pp-r-card); background: rgba(var(--pp-pulse-rgb),0.06); border: 1px solid rgba(var(--pp-pulse-rgb),0.20); margin-bottom: var(--pp-s-6); }
+.pp-bar__balance .lbl { font-family: var(--pp-font-mono); font-size: var(--pp-t-label); letter-spacing: 0.08em; text-transform: uppercase; color: var(--pp-fg-3); }
+.pp-bar__balance .val { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-section); letter-spacing: -0.02em; color: var(--pp-pulse); font-variant-numeric: tabular-nums; margin-top: var(--pp-s-1); }
+.pp-barcat { font-family: var(--pp-font-mono); font-size: var(--pp-t-label); letter-spacing: 0.1em; text-transform: uppercase; color: var(--pp-fg-3); margin: var(--pp-s-6) 0 var(--pp-s-2); }
+.pp-menuitem { display: flex; align-items: center; gap: var(--pp-s-4); padding: var(--pp-s-3) 0; border-bottom: 1px solid var(--pp-edge-1); }
+.pp-menuitem__name { font-weight: 600; font-size: var(--pp-t-body); }
+.pp-menuitem__desc { font-size: var(--pp-t-support); color: var(--pp-fg-3); margin-top: var(--pp-s-1); }
+.pp-menuitem__price { font-family: var(--pp-font-display); color: var(--pp-fg); font-weight: 700; font-size: var(--pp-t-section); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin-top: var(--pp-s-1); }
+/* "Esgotado" e ESTADO, nao decoracao: em --pp-fg-4 dava 2,6:1 de
+   contraste — abaixo do minimo, e justamente na palavra que decide se
+   a pessoa continua no cardapio. */
+.pp-menuitem__out { font-size: var(--pp-t-support); color: var(--pp-fg-3); }
 .pp-barbar {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
   padding: var(--pp-s-4) var(--pp-s-5) calc(var(--pp-s-4) + env(safe-area-inset-bottom));
-  background: linear-gradient(180deg, transparent, rgba(6,7,10,0.96) 24%);
+  background: linear-gradient(180deg, transparent, rgba(12,9,16,0.96) 24%);
 }
 .pp-barbar__in { max-width: 560px; margin: 0 auto; display: flex; align-items: center; gap: var(--pp-s-4); }
-.pp-barbar__total .lbl { font-family: var(--pp-font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--pp-fg-3); }
-.pp-barbar__total .val { font-family: var(--pp-font-mono); font-weight: 700; font-size: var(--pp-fs-20); font-variant-numeric: tabular-nums; }
+.pp-barbar__total .lbl { font-family: var(--pp-font-mono); font-size: var(--pp-t-label); letter-spacing: 0.08em; text-transform: uppercase; color: var(--pp-fg-3); }
+.pp-barbar__total .val { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-money); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; line-height: 1; margin-top: var(--pp-s-1); }
+/* Código de retirada: dado técnico que a pessoa LÊ em voz alta no
+   balcão. Mono, e no maior degrau que existe — é a tela inteira. */
+.pp-pickup {
+  font-family: var(--pp-font-mono); font-weight: 700;
+  font-size: var(--pp-t-hero); line-height: 1; letter-spacing: 0.02em;
+  color: var(--pp-pulse); margin: var(--pp-s-2) 0;
+}
 
 /* ══ CASA / página pública da produtora (CasaProfileScreen) ══
    O mockup centra tudo no logo: é a marca da casa que a pessoa reconhece,
@@ -379,7 +727,7 @@ input, button, select, textarea { font-family: inherit; }
   gap: var(--pp-s-3); padding: var(--pp-s-6) 0 0;
 }
 .pp-casa-hero__logo {
-  width: 104px; height: 104px; padding: 10px; object-fit: contain;
+  width: 104px; height: 104px; padding: var(--pp-s-3); object-fit: contain;
   border-radius: var(--pp-r-card); background: var(--pp-glass-2);
   border: 1px solid var(--pp-edge-3); box-shadow: var(--pp-shine), var(--pp-shadow-1);
 }
@@ -390,7 +738,7 @@ input, button, select, textarea { font-family: inherit; }
   border: 1px solid rgba(var(--pp-pulse-rgb), 0.35);
   color: var(--pp-pulse);
   font-family: var(--pp-font-display); font-weight: 700;
-  font-size: var(--pp-fs-32); letter-spacing: -0.04em;
+  font-size: var(--pp-t-title); letter-spacing: -0.04em;
 }
 .pp-casa-hero__nome {
   font-family: var(--pp-font-display); font-weight: 700;
@@ -398,7 +746,7 @@ input, button, select, textarea { font-family: inherit; }
 }
 /* Três números, e três em qualquer largura: são curtos e a comparação entre
    eles é o ponto. Empilhar no telefone quebraria a leitura horizontal. */
-.pp-casa-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.pp-casa-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--pp-s-2); }
 .pp-casa-agenda { display: flex; flex-direction: column; gap: var(--pp-s-2); }
 .pp-casa-ev {
   display: flex; align-items: center; gap: var(--pp-s-4);
@@ -408,22 +756,22 @@ input, button, select, textarea { font-family: inherit; }
 }
 .pp-casa-ev:hover { background: var(--pp-glass-2); border-color: var(--pp-edge-3); }
 .pp-casa-ev__data {
-  width: 58px; flex-shrink: 0; text-align: center; padding: 7px 0;
+  width: 58px; flex-shrink: 0; text-align: center; padding: var(--pp-s-2) 0;
   border-radius: var(--pp-r-control);
   background: var(--pp-glass-2); border: 1px solid var(--pp-edge-2);
 }
-.pp-casa-ev__dia { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-fs-18); line-height: 1; }
+.pp-casa-ev__dia { font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-section); line-height: 1; }
 .pp-casa-ev__mes {
-  font-family: var(--pp-font-mono); font-size: 10px; font-weight: 600;
-  letter-spacing: 0.08em; color: var(--pp-pulse); margin-top: 3px;
+  font-family: var(--pp-font-mono); font-size: var(--pp-t-label); font-weight: 600;
+  letter-spacing: 0.08em; color: var(--pp-pulse); margin-top: var(--pp-s-1);
 }
 .pp-casa-ev__meio { flex: 1; min-width: 0; }
-.pp-casa-ev__titulo { font-weight: 600; font-size: var(--pp-fs-15); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.pp-casa-ev__local { font-size: var(--pp-fs-12); color: var(--pp-fg-3); margin-top: 3px; }
+.pp-casa-ev__titulo { font-weight: 600; font-size: var(--pp-t-body); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pp-casa-ev__local { font-size: var(--pp-t-support); color: var(--pp-fg-3); margin-top: var(--pp-s-1); }
 .pp-casa-ev__preco {
-  font-family: var(--pp-font-mono); font-weight: 700; font-size: var(--pp-fs-14);
-  font-variant-numeric: tabular-nums; flex-shrink: 0;
+  font-family: var(--pp-font-display); font-weight: 700; font-size: var(--pp-t-body);
+  letter-spacing: -0.02em; font-variant-numeric: tabular-nums; flex-shrink: 0;
 }
 
 /* ── Footer ── */
-.pp-footer { border-top: 1px solid var(--pp-edge-1); padding: var(--pp-s-6) 0; color: var(--pp-fg-4); font-size: var(--pp-fs-13); text-align: center; }
+.pp-footer { border-top: 1px solid var(--pp-edge-1); padding: var(--pp-s-6) 0; color: var(--pp-fg-3); font-size: var(--pp-t-support); text-align: center; }

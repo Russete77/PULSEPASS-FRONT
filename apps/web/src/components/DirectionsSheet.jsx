@@ -36,9 +36,9 @@ export function DirectionsButton({ venue, address, city, state, className = '', 
             <div className="pp-modal__body pp-stack pp-stack-4">
               <div>
                 <div className="pp-eyebrow">Local</div>
-                <div style={{ fontWeight: 600, marginTop: 4 }}>{venue || 'Local do evento'}</div>
+                <div className="pp-linha__titulo pp-mt-1">{venue || 'Local do evento'}</div>
                 {(address || city) && (
-                  <div className="pp-muted" style={{ fontSize: 'var(--pp-fs-13)', marginTop: 2 }}>
+                  <div className="pp-muted pp-linha__apoio">
                     {[address, city && state ? `${city}/${state}` : city].filter(Boolean).join(' · ')}
                   </div>
                 )}
@@ -61,7 +61,7 @@ export function DirectionsButton({ venue, address, city, state, className = '', 
                     href={a.href}
                     target="_blank"
                     rel="noreferrer"
-                    style={{ justifyContent: 'flex-start', gap: 12 }}
+                    className="pp-btn pp-btn--glass pp-btn--block pp-btn--lista"
                   >
                     <Icon name={a.icon} size={18} />
                     {a.label}

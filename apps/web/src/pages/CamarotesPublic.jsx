@@ -41,14 +41,14 @@ export default function CamarotesPublic() {
 
   return (
     <Page>
-      <div className="pp-stack pp-stack-5 pp-reveal" style={{ maxWidth: 560 }}>
+      <div className="pp-stack pp-stack-5 pp-reveal pp-coluna">
         <div>
-          <Link to={`/eventos/${slug}`} className="pp-btn pp-btn--glass pp-btn--sm" style={{ marginBottom: 'var(--pp-s-4)' }}>
+          <Link to={`/eventos/${slug}`} className="pp-btn pp-btn--glass pp-btn--sm pp-mb-4">
             <Icon name="arrowLeft" size={16} /> Voltar ao evento
           </Link>
           <div className="pp-eyebrow">reserva</div>
           <h1>Camarotes &amp; mesas</h1>
-          <p className="sub" style={{ margin: '4px 0 0' }}>Solicite sua reserva — a produtora confirma o pedido.</p>
+          <p className="sub pp-mt-1 pp-mb-0">Solicite sua reserva — a produtora confirma o pedido.</p>
         </div>
 
         {error && <ErrorBox>{error}</ErrorBox>}
@@ -62,18 +62,17 @@ export default function CamarotesPublic() {
 
         {tables.map((t) => (
           <div key={t.id} className="pp-card pp-card--pad">
-            <div className="pp-between" style={{ alignItems: 'flex-start' }}>
-              <div className="pp-row" style={{ alignItems: 'flex-start' }}>
-                <div className="pp-order__thumb"><Icon name="sofa" size={20} /></div>
+            <div className="pp-between pp-top">
+              <div className="pp-row pp-top">
+                <div className="pp-icontile"><Icon name="sofa" size={20} /></div>
                 <div>
-                  <div style={{ fontWeight: 600, fontFamily: 'var(--pp-font-display)', fontSize: 'var(--pp-fs-16)' }}>{t.name}</div>
-                  <div className="pp-muted" style={{ fontSize: 'var(--pp-fs-13)', marginTop: 3 }}>
+                  <div className="pp-linha__titulo">{t.name}</div>
+                  <div className="pp-muted pp-linha__apoio">
                     {t.area}{t.capacity ? ` · até ${t.capacity} pessoas` : ''}
                   </div>
                   {t.min_spend_cents ? (
-                    <div className="pp-price" style={{ fontSize: 'var(--pp-fs-13)', marginTop: 4 }}>
-                      consumação mín. {brl(t.min_spend_cents)}
-                    </div>
+                    /* Consumação mínima é preço: display, não mono. */
+                    <div className="pp-tier__price">consumação mín. {brl(t.min_spend_cents)}</div>
                   ) : null}
                 </div>
               </div>
@@ -87,7 +86,7 @@ export default function CamarotesPublic() {
             </div>
 
             {openId === t.id && (
-              <div className="pp-stack" style={{ marginTop: 'var(--pp-s-4)' }}>
+              <div className="pp-stack pp-mt-4">
                 <div className="pp-field"><label htmlFor={`cam-${t.id}-nome`} className="pp-label">Seu nome</label>
                   <input id={`cam-${t.id}-nome`} className="pp-input" value={form.name} onChange={set('name')} required minLength={2} /></div>
                 <div className="pp-field"><label htmlFor={`cam-${t.id}-contato`} className="pp-label">Contato (WhatsApp/e-mail)</label>

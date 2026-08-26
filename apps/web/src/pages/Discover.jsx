@@ -101,17 +101,17 @@ function Flyer({ ev, i, rank }) {
 function Trilha({ titulo, legenda, eventos, inicio = 0 }) {
   if (!eventos.length) return null;
   return (
-    <section style={{ marginTop: 'var(--pp-s-8)' }}>
+    <section className="pp-mt-8">
       {/* Eyebrow ACIMA do título, como na HomeScreen: a etiqueta em mono
           caixa-alta é o degrau que separa uma trilha da outra quando três
           delas se sucedem na mesma rolagem. Embaixo do título ela virava
           legenda e o olho perdia o corte entre as seções. */}
-      <div className="pp-between" style={{ marginBottom: 'var(--pp-s-4)', alignItems: 'flex-end' }}>
+      <div className="pp-between pp-baseline pp-mb-4">
         <div>
           {legenda && <div className="pp-eyebrow">{legenda}</div>}
-          <h2 className="pp-t-section" style={{ margin: legenda ? '2px 0 0' : 0 }}>{titulo}</h2>
+          <h2 className={`pp-t-section ${legenda ? 'pp-mt-1' : ''}`}>{titulo}</h2>
         </div>
-        <span className="pp-muted-2 pp-num" style={{ fontSize: 13 }}>{eventos.length}</span>
+        <span className="pp-muted-2 pp-num pp-t-support">{eventos.length}</span>
       </div>
       {/* pp-grid e não pp-grid-auto: o desenho é de DUAS colunas no telefone.
           O auto-fill de 240px colapsa para uma coluna em 375px e a vitrine
@@ -195,10 +195,10 @@ export default function Discover() {
   return (
     <Page>
       <div className="pp-reveal">
-        <div className="pp-between" style={{ alignItems: 'flex-start' }}>
+        <div className="pp-between pp-top">
           <div>
             <div className="pp-meta">{hojeExtenso()}</div>
-            <h1 style={{ margin: '4px 0 0' }}>
+            <h1 className="pp-titulo-sob">
               {cidade ? <>O que rola em <span className="pp-accent">{cidade.city}</span></> : 'O que vai rolar'}
             </h1>
           </div>
@@ -206,7 +206,7 @@ export default function Discover() {
 
         {/* Cidade: a primeira decisão da tela, e por isso a primeira coisa
             clicável. Antes era um chip perdido no meio dos filtros. */}
-        <div className="pp-cluster pp-cluster-2" style={{ marginTop: 'var(--pp-s-3)' }}>
+        <div className="pp-cluster pp-cluster-2 pp-mt-3">
           <button className="pp-btn pp-btn--glass pp-btn--sm"
             onClick={() => setTrocandoCidade((v) => !v)}
             aria-expanded={trocandoCidade}>
@@ -222,13 +222,13 @@ export default function Discover() {
         </div>
 
         {trocandoCidade && (
-          <div className="pp-card" style={{ marginTop: 'var(--pp-s-3)', padding: 'var(--pp-s-4)' }}>
+          <div className="pp-card pp-card--pad pp-mt-3">
             <button className="pp-btn pp-btn--ghost pp-btn--sm pp-btn--block" onClick={usarMinhaLocalizacao}>
               <Icon name="pin" size={14} /> Usar minha localização
             </button>
             {/* Só cidades com evento no ar. Oferecer uma lista fixa de
                 capitais levaria a pessoa a um "nada por aqui". */}
-            <div className="pp-cluster pp-cluster-2" style={{ marginTop: 'var(--pp-s-4)' }}>
+            <div className="pp-cluster pp-cluster-2 pp-mt-4">
               {(cidades.length ? cidades : CIDADES_CONHECIDAS.slice(0, 8)).map((c) => (
                 <button key={`${c.city}-${c.state}`}
                   className={`pp-chip ${cidade?.city === c.city ? 'pp-chip--active' : ''}`}
@@ -245,7 +245,7 @@ export default function Discover() {
             quer uma lista de resultados, e não a vitrine reordenada por trás
             do card de destaque e das trilhas de tempo — por isso o submit
             entrega o termo (e os filtros já escolhidos) para /busca. */}
-        <form className="pp-searchbar" style={{ marginTop: 'var(--pp-s-4)' }} role="search"
+        <form className="pp-searchbar pp-mt-4" role="search"
           onSubmit={(e) => {
             e.preventDefault();
             const p = new URLSearchParams();
@@ -263,7 +263,7 @@ export default function Discover() {
           <button className="pp-btn pp-btn--glass" type="submit">Buscar</button>
         </form>
 
-        <div className="pp-chiprow" style={{ marginTop: 'var(--pp-s-4)' }}>
+        <div className="pp-chiprow pp-mt-4">
           <button className={`pp-chip ${categoria === null ? 'pp-chip--active' : ''}`} onClick={() => setCategoria(null)}>
             Tudo
           </button>
@@ -292,7 +292,7 @@ export default function Discover() {
               ? 'Tente outra categoria ou procure pelo nome.'
               : cidade ? 'Veja o que está rolando no resto do país.' : 'Volte em breve.'}
           </p>
-          <div className="pp-cluster pp-cluster-2" style={{ justifyContent: 'center', marginTop: 'var(--pp-s-4)' }}>
+          <div className="pp-cluster pp-cluster-2 pp-centro pp-mt-4">
             {categoria && (
               <button className="pp-btn pp-btn--glass pp-btn--sm" onClick={() => setCategoria(null)}>
                 Limpar categoria
@@ -308,25 +308,30 @@ export default function Discover() {
       )}
 
       {status === 'done' && destaque && (
-        <Link to={`/eventos/${destaque.slug}`} className="pp-featured pp-reveal" style={{ marginTop: 'var(--pp-s-6)' }}>
+        /* Um bloco só: a arte é o cartaz e o texto se apoia nela. A barra de
+           vidro que ficava colada embaixo era o "cartão genérico ao lado da
+           arte" — separava a informação da peça que faz querer ir. */
+        <Link to={`/eventos/${destaque.slug}`} className="pp-featured pp-reveal pp-mt-6">
           <div className="pp-featured__art">
             {destaque.cover_url && <img src={destaque.cover_url} alt="" />}
             <span className="pp-featured__live">
               {destaque.urgencia === 'esgotando' ? `Esgotando · ${destaque.sold_pct}% vendido` : 'Vendas abertas'}
             </span>
             <div className="pp-featured__info">
-              <div className="pp-featured__date">{bigDate(destaque.starts_at)}</div>
-              <div className="pp-featured__title">{destaque.title}</div>
-            </div>
-          </div>
-          <div className="pp-featured__foot">
-            <div className="pp-grow">
-              <div className="pp-featured__venue">{destaque.venue_name ? `${destaque.venue_name} · ` : ''}{destaque.city}/{destaque.state}</div>
-              <div className="pp-featured__meta">
-                {destaque.min_price_cents != null ? `a partir de ${priceLabel(destaque.min_price_cents)}` : 'Ingressos · Lista · Bar'}
+              <div>
+                <div className="pp-featured__date">{bigDate(destaque.starts_at)}</div>
+                <div className="pp-featured__title">{destaque.title}</div>
+              </div>
+              <div className="pp-featured__foot">
+                <div className="pp-grow">
+                  <div className="pp-featured__venue">{destaque.venue_name ? `${destaque.venue_name} · ` : ''}{destaque.city}/{destaque.state}</div>
+                  <div className="pp-featured__meta">
+                    {destaque.min_price_cents != null ? `a partir de ${priceLabel(destaque.min_price_cents)}` : 'Ingressos · Lista · Bar'}
+                  </div>
+                </div>
+                <span className="pp-btn pp-btn--primary pp-btn--sm">Comprar <Icon name="arrowRight" size={15} /></span>
               </div>
             </div>
-            <span className="pp-btn pp-btn--primary pp-btn--sm">Comprar <Icon name="arrowRight" size={15} /></span>
           </div>
         </Link>
       )}

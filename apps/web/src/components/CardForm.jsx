@@ -62,47 +62,46 @@ export default function CardForm({ amountCents, email, onChange }) {
   const err = (k) => touched && validation.errors[k];
 
   return (
-    <div style={{ display: 'grid', gap: 12, marginTop: 12 }} onBlur={() => setTouched(true)}>
+    <div className="pp-stack pp-stack-3 pp-mt-3" onBlur={() => setTouched(true)}>
       <div className="pp-field">
         <label htmlFor="cardform-1" className="pp-label">Número do cartão</label>
-        <div style={{ position: 'relative' }}>
+        <div className="pp-relativo">
+          {/* Número do cartão em mono: é dado que se confere dígito a
+              dígito, e é para isso que a largura fixa serve. */}
           <input id="cardform-1"
-            className="pp-input"
+            className="pp-input pp-mono pp-cartao-num"
             inputMode="numeric"
             value={formatCardNumber(number)}
             onChange={(e) => setNumber(onlyDigits(e.target.value))}
             placeholder="0000 0000 0000 0000"
-            style={{ fontFamily: 'var(--pp-font-mono)', letterSpacing: 1 }}
           />
           {brand !== 'UNKNOWN' && (
-            <span style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', fontSize: 12, color: 'var(--pp-fg-3)' }}>
-              {brand}
-            </span>
+            <span className="pp-cartao-marca">{brand}</span>
           )}
         </div>
-        {err('number') && <small style={{ color: 'var(--pp-red)' }}>{validation.errors.number}</small>}
+        {err('number') && <small className="pp-erro">{validation.errors.number}</small>}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+      <div className="pp-cols-2">
         <div className="pp-field">
           <label htmlFor="cardform-2" className="pp-label">Validade</label>
           <input id="cardform-2" className="pp-input" inputMode="numeric" value={expiry} onChange={(e) => onExpiry(e.target.value)} placeholder="MM/AA" />
-          {err('expiry') && <small style={{ color: 'var(--pp-red)' }}>{validation.errors.expiry}</small>}
+          {err('expiry') && <small className="pp-erro">{validation.errors.expiry}</small>}
         </div>
         <div className="pp-field">
           <label htmlFor="cardform-3" className="pp-label">CVV</label>
           <input id="cardform-3" className="pp-input" inputMode="numeric" value={ccv} onChange={(e) => setCcv(onlyDigits(e.target.value).slice(0, 4))} placeholder="123" />
-          {err('ccv') && <small style={{ color: 'var(--pp-red)' }}>{validation.errors.ccv}</small>}
+          {err('ccv') && <small className="pp-erro">{validation.errors.ccv}</small>}
         </div>
       </div>
 
       <div className="pp-field">
         <label htmlFor="cardform-4" className="pp-label">Nome impresso no cartão</label>
         <input id="cardform-4" className="pp-input" value={holderName} onChange={(e) => setHolderName(e.target.value)} placeholder="Como está no cartão" />
-        {err('holderName') && <small style={{ color: 'var(--pp-red)' }}>{validation.errors.holderName}</small>}
+        {err('holderName') && <small className="pp-erro">{validation.errors.holderName}</small>}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+      <div className="pp-cols-2">
         <div className="pp-field">
           <label htmlFor="cardform-5" className="pp-label">CPF do titular</label>
           <input id="cardform-5" className="pp-input" inputMode="numeric" value={cpf} onChange={(e) => setCpf(onlyDigits(e.target.value).slice(0, 11))} placeholder="Somente números" />
@@ -113,7 +112,7 @@ export default function CardForm({ amountCents, email, onChange }) {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+      <div className="pp-cols-2">
         <div className="pp-field">
           <label htmlFor="cardform-7" className="pp-label">Número (endereço)</label>
           <input id="cardform-7" className="pp-input" value={addressNumber} onChange={(e) => setAddressNumber(e.target.value)} placeholder="123" />

@@ -467,6 +467,9 @@ select option, select optgroup, .pp-select option, .pp-select optgroup {
   font-size: var(--pp-t-section); font-weight: 600;
   line-height: 1.2; letter-spacing: -0.015em; margin: 0;
 }
+/* Corpo. É o degrau padrão de leitura — o único que existia de fato antes,
+   e que agora precisa ser PEDIDO em vez de acontecer por omissão. */
+.pp-t-body { font-size: var(--pp-t-body); line-height: 1.55; }
 .pp-t-support { font-size: var(--pp-t-support); color: var(--pp-fg-3); }
 
 /* Etiqueta: o ÚNICO lugar onde caixa-alta espaçada faz sentido —
@@ -487,7 +490,7 @@ select option, select optgroup, .pp-select option, .pp-select optgroup {
   color: var(--pp-fg);   /* branco: o TAMANHO destaca, não a cor */
   line-height: 1;
 }
-.pp-money--sm { font-size: var(--pp-fs-20); }
+.pp-money--sm { font-size: var(--pp-t-section); }
 .pp-money--lg { font-size: clamp(2.25rem, 7vw, 3rem); }
 /* Verde só quando o número É a boa notícia (saldo disponível, entrada). */
 .pp-money--positivo { color: var(--pp-pulse); }
@@ -688,7 +691,9 @@ h1[tabindex="-1"]:focus { outline: none; }
   letter-spacing: 0.3em; color: var(--pp-fg-3);
 }
 
-.pp-setor { margin-bottom: var(--pp-s-7); text-align: center; }
+/* --pp-s-7 não existe na grade de 4px (a escala pula de 24 para 32): a regra
+   caía inteira e o setor ficava sem respiro embaixo. */
+.pp-setor { margin-bottom: var(--pp-s-8); text-align: center; }
 .pp-setor__cab {
   font-family: var(--pp-font-mono); font-size: 10px; font-weight: 600;
   letter-spacing: 0.12em; text-transform: uppercase;

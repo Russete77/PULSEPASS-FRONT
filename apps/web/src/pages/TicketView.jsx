@@ -124,7 +124,7 @@ export default function TicketView() {
     <Page>
       <div className="pp-ticketwrap pp-stack pp-stack-5 pp-reveal">
         <div className="pp-between">
-          <h1 className="pp-display" style={{ fontSize: 'var(--pp-fs-24)' }}>Ingresso</h1>
+          <h1 className="pp-t-title">Ingresso</h1>
           <span className={`pp-badge ${valid ? 'pp-badge--pulse pp-badge--dot' : 'pp-badge--neutral'}`}>
             {valid ? 'Válido' : ticket.status}
           </span>
@@ -136,7 +136,7 @@ export default function TicketView() {
               <div className="pp-grow">
                 <div className="pp-ticketcard__date">{bigDate(ev.starts_at)}</div>
                 <div className="pp-ticketcard__title">{ev.title}</div>
-                <div className="pp-muted" style={{ fontSize: 'var(--pp-fs-12)', marginTop: 4 }}>
+                <div className="pp-muted pp-linha__apoio">
                   {ev.venue_name ? `${ev.venue_name} · ` : ''}{ev.city}/{ev.state}
                 </div>
               </div>
@@ -150,14 +150,14 @@ export default function TicketView() {
 
             {valid ? (
               <>
-                <div className="pp-center" style={{ padding: '8px 0' }}>
+                <div className="pp-center pp-qrbox">
                   <div className="pp-qrcard pp-qrcard--sm">
                     {qr?.qr_data_url
                       ? <img src={qr.qr_data_url} alt="QR do ingresso (rotativo)" />
-                      : <div className="pp-center" style={{ width: 200, height: 200 }}><div className="pp-spinner" /></div>}
+                      : <div className="pp-qrslot"><div className="pp-spinner" /></div>}
                   </div>
                 </div>
-                <div className="pp-center" style={{ marginTop: 14 }}>
+                <div className="pp-center pp-mt-4">
                   <span className="pp-jwt" role="status" aria-live="off">
                     {secondsLeft != null
                       ? `Código rotativo · expira em ${contagem(secondsLeft)}`
@@ -169,9 +169,9 @@ export default function TicketView() {
               /* Ingresso sem QR não ganha um QR de mentira. O que estava aqui
                  era um quadriculado decorativo — a pessoa apontava a leitora
                  para ele na porta e não entendia por que não passava. */
-              <div className="pp-center pp-stack pp-stack-2" style={{ padding: '24px 8px', textAlign: 'center' }}>
+              <div className="pp-center pp-stack pp-stack-2 pp-tc pp-semqr">
                 <Icon name="ticket" size={30} />
-                <p className="pp-muted" style={{ margin: 0, fontSize: 'var(--pp-fs-14)', lineHeight: 1.5 }}>
+                <p className="pp-muted pp-prosa pp-t-support">
                   {MOTIVO_SEM_QR[ticket.status] ?? 'Este ingresso não está válido para entrada.'}
                 </p>
               </div>
@@ -250,10 +250,10 @@ export default function TicketView() {
               value={tEmail}
               onChange={(e) => setTEmail(e.target.value)}
               placeholder="amigo@email.com"
-              style={{ marginTop: 6 }}
+              className="pp-input pp-mt-1"
             />
-            {tMsg && <p className="pp-note pp-note--pulse" style={{ marginTop: 10, color: 'var(--pp-pulse)' }} role="status">{tMsg}</p>}
-            <div className="pp-row" style={{ marginTop: 12 }}>
+            {tMsg && <p className="pp-note pp-note--pulse pp-accent pp-mt-3" role="status">{tMsg}</p>}
+            <div className="pp-row pp-mt-3">
               <button
                 className={`pp-btn pp-btn--primary pp-grow ${tBusy ? 'is-loading' : ''}`}
                 disabled={tBusy || !tEmail.includes('@')}

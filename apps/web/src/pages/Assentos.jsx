@@ -135,7 +135,7 @@ export default function Assentos() {
           <div className="pp-empty__title">Este evento não tem lugar marcado</div>
           <p>A entrada é por ordem de chegada — o ingresso se compra direto na página do evento.</p>
           <Link to={`/eventos/${slug}`} className="pp-btn pp-btn--primary pp-btn--sm"
-            style={{ marginTop: 'var(--pp-s-4)' }}>
+            className="pp-btn pp-btn--primary pp-btn--sm pp-mt-4">
             Ver ingressos
           </Link>
         </Empty>
@@ -146,7 +146,7 @@ export default function Assentos() {
             <header className="pp-seatmap__head">
               <div>
                 <div className="pp-eyebrow">ingresso numerado</div>
-                <h1 style={{ margin: '4px 0 0' }}>
+                <h1 className="pp-titulo-sob">
                   Escolha seu lugar
                   {mapa.evento.casa && <> · <span className="pp-accent">{mapa.evento.casa}</span></>}
                 </h1>
@@ -210,7 +210,7 @@ export default function Assentos() {
               <div className="pp-eyebrow">seus assentos · {escolhidos.length}</div>
 
               {escolhidos.length === 0 ? (
-                <p className="pp-muted" style={{ fontSize: 14, marginTop: 10 }}>
+                <p className="pp-muted pp-t-support pp-mt-3">
                   Toque numa poltrona livre para começar.
                 </p>
               ) : (
@@ -246,7 +246,7 @@ export default function Assentos() {
                     </div>
                   )}
 
-                  <div className="pp-between" style={{ marginTop: 'var(--pp-s-4)' }}>
+                  <div className="pp-between pp-mt-4">
                     <span className="pp-muted">
                       Total · {escolhidos.length} {escolhidos.length === 1 ? 'assento' : 'assentos'}
                     </span>
@@ -255,8 +255,7 @@ export default function Assentos() {
 
                   {erro && <ErrorBox>{erro}</ErrorBox>}
 
-                  <button className="pp-btn pp-btn--primary pp-btn--block pp-btn--lg"
-                    style={{ marginTop: 'var(--pp-s-4)' }}
+                  <button className="pp-btn pp-btn--primary pp-btn--block pp-btn--lg pp-mt-4"
                     disabled={ocupado}
                     onClick={() => navigate(`/eventos/${slug}`, { state: { assentos: escolhidos } })}>
                     Continuar <Icon name="arrowRight" size={16} />

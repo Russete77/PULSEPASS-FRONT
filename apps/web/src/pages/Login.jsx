@@ -71,20 +71,20 @@ export default function Login() {
           <h1>{titles[mode]}</h1>
 
           {mode !== 'forgot' && (
-            <div className="pp-segmented pp-btn--block" style={{ display: 'flex', marginTop: 'var(--pp-s-4)' }}>
+            <div className="pp-segmented pp-btn--block pp-row pp-mt-4">
               <button type="button" className={`pp-grow ${mode === 'login' ? 'active' : ''}`} onClick={() => switchMode('login')}>Entrar</button>
               <button type="button" className={`pp-grow ${mode === 'signup' ? 'active' : ''}`} onClick={() => switchMode('signup')}>Criar conta</button>
             </div>
           )}
 
           {!authEnabled && (
-            <div style={{ marginTop: 'var(--pp-s-4)' }}>
+            <div className="pp-mt-4">
               <ErrorBox>Auth desativado: configure <code>VITE_SUPABASE_URL</code> e <code>VITE_SUPABASE_ANON_KEY</code>.</ErrorBox>
             </div>
           )}
-          {info && <div className="pp-note pp-note--pulse" style={{ marginTop: 'var(--pp-s-4)', color: 'var(--pp-pulse)' }}>{info}</div>}
+          {info && <div className="pp-note pp-note--pulse pp-accent pp-mt-4">{info}</div>}
 
-          <form onSubmit={submit} className="pp-stack" style={{ marginTop: 'var(--pp-s-5)' }}>
+          <form onSubmit={submit} className="pp-stack pp-mt-5">
             {/* Aqui a maioria compra pelo celular, com pressa, muitas vezes na
                 fila. Cada campo declara o que é (autoComplete) e que teclado
                 pedir (inputMode) — é a diferença entre tocar uma vez e digitar
