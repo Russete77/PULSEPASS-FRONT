@@ -25,6 +25,16 @@ export const api = {
   platformFraud: () => request('/platform/fraud'),
   platformFinance: () => request('/platform/finance'),
   platformActivity: () => request('/platform/activity'),
+  /**
+   * Suporte: a ficha do comprador.
+   *
+   * Por e-mail (o que a pessoa lembra) ou por código do ingresso (o que ela
+   * tem no print). É a única rota que alcança pedido de outra pessoa, e ela
+   * nunca devolve o `qr_secret` — atendimento não precisa do que abre a porta.
+   */
+  platformBuscarComprador: ({ email, code }) => request(
+    `/platform/orders?${new URLSearchParams(email ? { email } : { code })}`,
+  ),
   // Taxa da plataforma (padrao + excecao por produtora)
   platformBilling: () => request('/platform/billing'),
   setDefaultFee: (fee_bps) => request('/platform/billing/default-fee', { method: 'PATCH', body: { fee_bps } }),

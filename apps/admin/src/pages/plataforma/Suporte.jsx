@@ -30,6 +30,158 @@ const KIND = {
 
 const norm = (v) => (v ?? '').toString().toLowerCase().trim();
 
+/**
+ * "Cadê meu ingresso?" — a pergunta que o atendimento mais recebe.
+ *
+ * Dois caminhos porque são os dois que a pessoa do outro lado tem: ela lembra
+ * com que e-mail comprou, ou está com o print do QR na mão. O código também
+ * resolve o caso em que a compra saiu no e-mail de outra pessoa.
+ *
+ * O `qr_secret` nunca chega aqui: dá para responder tudo sem o segredo que
+ * abre a porta, e um registro de suporte com ele seria uma cópia funcional
+ * do ingresso.
+ */
+function BuscaDoComprador() {
+  const [termo, setTermo] = useState('');
+  const [modo, setModo] = useState('email');
+  const [carregando, setCarregando] = useState(false);
+  const [erro, setErro] = useState('');
+  const [res, setRes] = useState(null);
+
+  async function buscar(e) {
+    e.preventDefault();
+    const v = termo.trim();
+    if (v.length < 3) { setErro('Informe ao menos 3 caracteres.'); return; }
+    setCarregando(true); setErro(''); setRes(null);
+    try {
+      setRes(await api.platformBuscarComprador(modo === 'email' ? { email: v } : { code: v }));
+    } catch (err) { setErro(err.message); } finally { setCarregando(false); }
+  }
+
+  return (
+    <section className="ck-panel ck-mt-4" aria-label="Buscar comprador">
+      <h2 className="ck-panel__title">Cadê o ingresso do cliente</h2>
+      <p className="ck-panel__sub">Busque pelo e-mail da compra ou pelo código do ingresso.</p>
+
+      <form onSubmit={buscar} className="ck-mt-4" role="search">
+        <div className="ck-tabs ck-mb-3" role="group" aria-label="Buscar por">
+          {[['email', 'E-mail da compra'], ['codigo', 'Código do ingresso']].map(([k, r]) => (
+            <button key={k} type="button" className={`ck-tab ${modo === k ? 'is-on' : ''}`}
+              aria-pressed={modo === k} onClick={() => { setModo(k); setRes(null); setErro(''); }}>
+              {r}
+            </button>
+          ))}
+        </div>
+
+        <div className="ck-row ck-ai-end">
+          <div className="ck-field ck-grow ck-m-0">
+            <label className="ck-label" htmlFor="sup-comprador">
+              {modo === 'email' ? 'E-mail (ou parte dele)' : 'Código do ingresso'}
+            </label>
+            <input id="sup-comprador" className="ck-input" value={termo}
+              onChange={(ev) => setTermo(ev.target.value)}
+              placeholder={modo === 'email' ? 'maria@' : 'PP-XXXX-XXXX'}
+              autoComplete="off" spellCheck="false" />
+          </div>
+          <button className={`ck-btn ck-btn--primary ${carregando ? 'is-loading' : ''}`} disabled={carregando}>
+            {carregando ? 'Buscando…' : 'Buscar'}
+          </button>
+        </div>
+      </form>
+
+      {erro && <ErrorBox>{erro}</ErrorBox>}
+
+      {res && !res.encontrado && (
+        <p className="pp-muted ck-t-support ck-mt-4">
+          Nada encontrado. Confira se o e-mail é o mesmo da compra — muita gente
+          compra com um endereço e é cobrada em outro.
+        </p>
+      )}
+
+      {res?.ingresso && (
+        <div className="ck-caixa ck-mt-4">
+          <div className="ck-label">Ingresso {res.ingresso.code}</div>
+          <div className="ck-t-body ck-mt-2">{res.ingresso.evento} · {res.ingresso.produtora}</div>
+          <div className="ck-meta">
+            {res.ingresso.lote ?? 'lote não informado'}
+            {res.ingresso.titular ? ` · ${res.ingresso.titular}` : ''}
+            {' · '}
+            {res.ingresso.checked_in_at
+              ? `entrou em ${dateTime(res.ingresso.checked_in_at)}`
+              : 'ainda não entrou'}
+          </div>
+        </div>
+      )}
+
+      {res?.pessoas?.map((f) => (
+        <div key={f.pessoa.id} className="ck-mt-4">
+          <div className="ck-between ck-ai-start">
+            <div>
+              <div className="ck-t-section">{f.pessoa.nome ?? 'sem nome no cadastro'}</div>
+              <div className="ck-meta">
+                {f.pessoa.email}{f.pessoa.telefone ? ` · ${f.pessoa.telefone}` : ''}
+              </div>
+            </div>
+            <span className="ck-t-label">{f.pedidos.length} pedido(s)</span>
+          </div>
+
+          {f.pedidos.length === 0 ? (
+            <p className="pp-muted ck-t-support ck-mt-3">
+              A conta existe, mas nunca comprou. Se a pessoa garante que comprou,
+              o pedido está em outro e-mail.
+            </p>
+          ) : (
+            <div className="ck-mt-3">
+              {f.pedidos.map((p) => (
+                <div key={p.id} className={`ck-linha ${p.revertido_em ? 'ck-item--falha' : ''}`}>
+                  <div className="ck-grow">
+                    <div className="ck-t-body">
+                      {p.evento ?? 'evento removido'}
+                      <span className={`ck-badge ck-ml-2 ${p.status === 'paid' ? 'pp-badge--success' : p.status === 'refunded' ? 'pp-badge--red' : 'pp-badge--neutral'}`}>
+                        {p.status}
+                      </span>
+                    </div>
+                    <div className="ck-meta">
+                      {p.produtora ? `${p.produtora} · ` : ''}
+                      {p.pago_em ? `pago em ${dateTime(p.pago_em)}` : `criado em ${dateTime(p.criado_em)}`}
+                      {p.cupom ? ` · cupom ${p.cupom}` : ''}
+                      {p.revertido_em ? ` · revertido (${p.tipo_reversao ?? 'estorno'})` : ''}
+                    </div>
+
+                    {p.ingressos.length > 0 && (
+                      <div className="ck-meta ck-mt-2">
+                        {p.ingressos.map((i) => (
+                          <span key={i.code} className="ck-cod ck-mr-2">
+                            {i.code}{i.checked_in_at ? ' ✓' : ''}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* "Não recebi o e-mail" se responde com fato, não com achismo. */}
+                    {p.entrega && (
+                      <div className="ck-meta">
+                        e-mail {p.entrega.status === 'sent' ? 'enviado' : p.entrega.status} para {p.entrega.para}
+                        {p.entrega.erro ? ` · ${p.entrega.erro}` : ''}
+                      </div>
+                    )}
+
+                    {/* A referência que a produtora leva ao provedor na contestação. */}
+                    {p.pagamento_externo && (
+                      <div className="ck-meta"><span className="ck-cod">{p.pagamento_externo}</span></div>
+                    )}
+                  </div>
+                  <div className="ck-t-money">{brl(p.total_cents)}</div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
+    </section>
+  );
+}
+
 export default function Suporte() {
   const [state, setState] = useState({ status: 'loading' });
   const [q, setQ] = useState('');
@@ -120,17 +272,11 @@ export default function Suporte() {
           </p>
         </div>
 
-        {/* O buraco fica escrito na tela, não escondido: quem usar precisa saber
-            o que NÃO dá pra responder por aqui antes de tentar. */}
-        <div className="pp-note">
-          <strong>Ainda não dá para buscar pelo comprador.</strong>{' '}
-          Nenhuma rota de plataforma expõe pedido ou ingresso, e <code className="pp-mono">GET /orders/:id</code>{' '}
-          só devolve o pedido de quem está pedindo (filtra por <code className="pp-mono">buyer_id</code>).
-          Para atender “cadê meu ingresso?” pelo nome do cliente falta{' '}
-          <code className="pp-mono">GET /platform/orders?email=&amp;code=</code> devolvendo pedido, status do
-          pagamento e os ingressos emitidos. Enquanto isso, a consulta aqui é por
-          produtora, evento e movimento recente.
-        </div>
+        {/* "Cadê meu ingresso?" é a ligação que o atendimento mais recebe, e por
+            isso ela vem antes de tudo nesta tela. Dois caminhos porque são os
+            dois que a pessoa do outro lado tem: ou lembra o e-mail da compra,
+            ou está com o print do QR na mão. */}
+        <BuscaDoComprador />
 
         <form role="search" onSubmit={(e) => e.preventDefault()} className="pp-stack pp-stack-1 ck-w-form">
           <label className="pp-label" htmlFor="busca-suporte">Buscar</label>
